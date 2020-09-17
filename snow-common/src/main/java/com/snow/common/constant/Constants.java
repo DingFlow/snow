@@ -91,4 +91,18 @@ public class Constants
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
+
+
+    public static final String POST="POST";
+
+    public static final String GET="GET";
+    /**
+     * 钉钉企业内部APPkey
+     */
+    public static final String ENTERPRICE_APP_KEY="enterpriceAppKey";
+    /**
+     * 钉钉企业内部ENTERPRICE_APP_SECRET
+     */
+    public static final String ENTERPRICE_APP_SECRET="enterpriceAppSecret";
+
 }

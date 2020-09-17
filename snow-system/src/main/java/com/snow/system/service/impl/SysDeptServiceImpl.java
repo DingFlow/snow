@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.snow.system.domain.SysDept;
+import com.snow.system.event.SyncEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.snow.common.annotation.DataScope;
@@ -18,6 +20,8 @@ import com.snow.system.domain.SysRole;
 import com.snow.system.mapper.SysDeptMapper;
 import com.snow.system.service.ISysDeptService;
 
+import javax.annotation.Resource;
+
 /**
  * 部门管理 服务实现
  * 
@@ -28,6 +32,9 @@ public class SysDeptServiceImpl implements ISysDeptService
 {
     @Autowired
     private SysDeptMapper deptMapper;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     /**
      * 查询部门管理数据
@@ -204,6 +211,8 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new BusinessException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
+        SyncEvent syncEvent = new SyncEvent(dept, 1, dept);
+        applicationContext.publishEvent(syncEvent);
         return deptMapper.insertDept(dept);
     }
 

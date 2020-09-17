@@ -56,4 +56,12 @@ public enum BusinessType
      * 清空
      */
     CLEAN,
+    /**
+     * 钉钉
+     */
+    DING_TALK,
+    /**
+     * 同步
+     */
+    SYNCHRONIZATION
 }
