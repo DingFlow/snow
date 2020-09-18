@@ -1,5 +1,6 @@
 package com.snow.dingtalk.service;
 
+import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiDepartmentCreateRequest;
@@ -37,12 +38,13 @@ public class DepartmentService extends BaseService {
         try {
             OapiDepartmentCreateResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,response.getMessage(),"createDepartment",JSON.toJSONString(request));
                 return response.getId();
             }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,response.getErrmsg(),"createDepartment");
+                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,response.getErrmsg(),"createDepartment",JSON.toJSONString(request));
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,e.getMessage(),"createDepartment");
+            syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,e.getMessage(),"createDepartment",JSON.toJSONString(request));
             e.printStackTrace();
         }
         return null;

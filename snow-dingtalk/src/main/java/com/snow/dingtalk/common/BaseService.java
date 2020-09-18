@@ -7,6 +7,7 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.BusinessType;
+import com.snow.common.json.JSON;
 import com.snow.common.utils.StringUtils;
 import com.snow.system.domain.SysOperLog;
 import com.snow.system.service.ISysConfigService;
@@ -47,15 +48,16 @@ public class BaseService {
             try {
                 OapiGettokenResponse response = client.execute(request);
                 if(response.getErrcode()==0){
-                    timedCache.put( TOKEN,response.getAccessToken());
+                    timedCache.put(TOKEN,response.getAccessToken());
+                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getMessage(),"getDingTalkToken()", com.alibaba.fastjson.JSON.toJSONString(request));
                     return response.getAccessToken();
                 }else {
                     //记录获取token失败日志
-                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getErrmsg(),"getDingTalkToken()");
+                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getErrmsg(),"getDingTalkToken()", com.alibaba.fastjson.JSON.toJSONString(request));
                     return null;
                 }
             } catch (ApiException e) {
-                syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,e.getMessage(),"getDingTalkToken()");
+                syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,e.getMessage(),"getDingTalkToken()",com.alibaba.fastjson.JSON.toJSONString(request));
                 e.printStackTrace();
             }
             return null;
@@ -71,7 +73,7 @@ public class BaseService {
      * @param errorMessage
      * @param method
      */
-    public void syncDingTalkErrorOperLog(String url,String errorMessage,String method){
+    public void syncDingTalkErrorOperLog(String url,String errorMessage,String method,String operParam){
         SysOperLog sysOperLog=new SysOperLog();
         sysOperLog.setOperTime(new Date());
         sysOperLog.setErrorMsg(errorMessage);
@@ -79,7 +81,30 @@ public class BaseService {
         sysOperLog.setOperName("系统自动记录");
         sysOperLog.setOperUrl(url);
         sysOperLog.setMethod(method);
+        sysOperLog.setOperParam(operParam);
         sysOperLog.setTitle("系统调用钉钉异常");
+        sysOperLog.setStatus(1);
+        iSysOperLogService.insertOperlog(sysOperLog);
+    }
+
+    /**
+     * 成功
+     * @param url
+     * @param successMessage
+     * @param method
+     * @param operParam
+     */
+    public void syncDingTalkSuccessOperLog(String url,String successMessage,String method,String operParam){
+        SysOperLog sysOperLog=new SysOperLog();
+        sysOperLog.setOperTime(new Date());
+        sysOperLog.setBusinessType(BusinessType.SYNCHRONIZATION.ordinal());
+        sysOperLog.setJsonResult(successMessage);
+        sysOperLog.setOperName("系统自动记录");
+        sysOperLog.setOperUrl(url);
+        sysOperLog.setMethod(method);
+        sysOperLog.setOperParam(operParam);
+        sysOperLog.setTitle("调用钉钉成功");
+        sysOperLog.setStatus(0);
         iSysOperLogService.insertOperlog(sysOperLog);
     }
 
