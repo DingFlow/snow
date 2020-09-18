@@ -15,4 +15,10 @@ public class BaseConstantUrl {
      * 创建部门
      */
     public static final String DEPARTMENT_CREATE="https://oapi.dingtalk.com/department/create";
+
+    /**
+     * 创建流程
+     *
+     */
+    public static final String FLOW_CREATE="https://oapi.dingtalk.com/topapi/processinstance/create";
 }

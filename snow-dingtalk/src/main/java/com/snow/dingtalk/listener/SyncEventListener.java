@@ -2,7 +2,7 @@ package com.snow.dingtalk.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.snow.common.enums.DingTalkListenerType;
-import com.snow.dingtalk.model.DepartmentDTO;
+import com.snow.dingtalk.model.DepartmentCreateRequest;
 import com.snow.dingtalk.service.DepartmentService;
 import com.snow.system.domain.SysDept;
 import com.snow.system.event.SyncEvent;
@@ -30,7 +30,7 @@ public class SyncEventListener implements ApplicationListener<SyncEvent> {
         Integer eventType = syncEvent.getEventType();
         if(eventType==DingTalkListenerType.DEPARTMENT_CREATE.getCode()){
             SysDept sysDept=(SysDept)syncEvent.getT();
-            DepartmentDTO departmentDTO = DepartmentDTO.builder().name(sysDept.getDeptName()).order(sysDept.getOrderNum())
+            DepartmentCreateRequest departmentDTO = DepartmentCreateRequest.builder().name(sysDept.getDeptName()).order(sysDept.getOrderNum())
                     .parentid(sysDept.getParentName()).build();
             departmentService.createDepartment(departmentDTO);
         }

@@ -99,10 +99,13 @@ public class Constants
     /**
      * 钉钉企业内部APPkey
      */
-    public static final String ENTERPRICE_APP_KEY="enterpriceAppKey";
+    public static final String ENTERPRICE_APP_KEY="enterprice.app.key";
     /**
      * 钉钉企业内部ENTERPRICE_APP_SECRET
      */
-    public static final String ENTERPRICE_APP_SECRET="enterpriceAppSecret";
-
+    public static final String ENTERPRICE_APP_SECRET="enterprice.app.secret";
+    /**
+     * 钉钉企业内部 AGENT_ID
+     */
+    public static final String AGENT_ID="agent.id";
 }

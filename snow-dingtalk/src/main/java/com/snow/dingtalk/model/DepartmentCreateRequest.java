@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepartmentDTO {
+public class DepartmentCreateRequest {
     /**
      *    部门名称，长度限制为1~64个字符，不允许包含字符‘-’‘，’以及‘,’
      */

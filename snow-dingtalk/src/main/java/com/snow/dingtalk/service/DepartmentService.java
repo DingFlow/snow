@@ -7,10 +7,9 @@ import com.dingtalk.api.request.OapiDepartmentCreateRequest;
 import com.dingtalk.api.response.OapiDepartmentCreateResponse;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.DepartmentDTO;
+import com.snow.dingtalk.model.DepartmentCreateRequest;
 import com.taobao.api.ApiException;
 import com.taobao.api.Constants;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,7 +25,7 @@ public class DepartmentService extends BaseService {
      * @param departmentDTO
      * @return
      */
-    public Long createDepartment(DepartmentDTO departmentDTO){
+    public Long createDepartment(DepartmentCreateRequest departmentDTO){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DEPARTMENT_CREATE);
         OapiDepartmentCreateRequest request = new OapiDepartmentCreateRequest();
         request.setParentid(departmentDTO.getParentid());
