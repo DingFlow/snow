@@ -4,19 +4,15 @@ package com.snow.common.enums;
  * @author qimingjin
  * @Title:
  * @Description:
- * @date 2020/9/18 10:18
+ * @date 2020/9/21 15:21
  */
-public enum  DingTalkListenerType {
-    DEPARTMENT_CREATE(1, "部门创建"),
-    DEPARTMENT_UPDATE(2, "部门更新"),
-    DEPARTMENT_DELETED(3, "部门删除"),
-
-    USER_CREATED(4,"用户创建");
+public enum  WorkRecordStatus {
+    FINISHED(1, "完成"), NO_FINISHED(0, "未完成");
 
     private final Integer code;
     private final String info;
 
-    DingTalkListenerType(Integer code, String info)
+    WorkRecordStatus(Integer code, String info)
     {
         this.code = code;
         this.info = info;

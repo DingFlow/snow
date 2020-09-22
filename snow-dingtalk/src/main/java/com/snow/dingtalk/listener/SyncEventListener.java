@@ -34,6 +34,9 @@ public class SyncEventListener implements ApplicationListener<SyncEvent> {
                     .parentid(sysDept.getParentName()).build();
             departmentService.createDepartment(departmentDTO);
         }
+        else if(eventType == DingTalkListenerType.USER_CREATED.getCode()){
+
+        }
 
         log.info("监听到的事件类型:"+eventType+JSON.toJSONString(syncEvent));
     }

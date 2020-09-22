@@ -14,11 +14,14 @@ public class SyncEvent<T> extends ApplicationEvent {
 
     private T t;
 
+
+
     public SyncEvent(Object source,Integer eventType,T t) {
         super(source);
         this.eventType = eventType;
         this.t=t;
     }
+
 
     public T getT() {
         return t;
@@ -35,4 +38,5 @@ public class SyncEvent<T> extends ApplicationEvent {
     public void setEventType(Integer eventType) {
         this.eventType = eventType;
     }
+
 }

@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.snow.system.domain.SysUserPost;
 import com.snow.system.domain.SysUserRole;
+import com.snow.system.event.SyncEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.snow.common.annotation.DataScope;
@@ -54,6 +56,9 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 根据条件分页查询用户列表
@@ -203,6 +208,9 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user.getUserId(), user.getRoleIds());
+        //同步用户数据
+        SyncEvent syncEvent = new SyncEvent(user, 4, user);
+        applicationContext.publishEvent(syncEvent);
         return rows;
     }
 

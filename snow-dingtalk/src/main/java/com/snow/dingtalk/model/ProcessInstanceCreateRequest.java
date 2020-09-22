@@ -1,6 +1,6 @@
 package com.snow.dingtalk.model;
 
-import com.dingtalk.api.request.OapiProcessinstanceCreateRequest;
+
 import com.taobao.api.internal.mapping.ApiField;
 import com.taobao.api.internal.mapping.ApiListField;
 import com.taobao.api.internal.util.json.JSONWriter;
@@ -14,7 +14,7 @@ import java.util.List;
  * @Description:
  * @date 2020/9/18 15:26
  */
-public class ProcessinstanceCreateRequest {
+public class ProcessInstanceCreateRequest {
     /**
      *
      * 审批人userid列表，最大列表长度20。
@@ -59,7 +59,7 @@ public class ProcessinstanceCreateRequest {
     private String processCode;
 
 
-    public ProcessinstanceCreateRequest() {
+    public ProcessInstanceCreateRequest() {
     }
 
     public void setApprovers(String approvers) {
@@ -74,7 +74,7 @@ public class ProcessinstanceCreateRequest {
         this.approversV2 = approversV2;
     }
 
-    public void setApproversV2(List<OapiProcessinstanceCreateRequest.ProcessInstanceApproverVo> approversV2) {
+    public void setApproversV2(List<ProcessInstanceCreateRequest.ProcessInstanceApproverVo> approversV2) {
         this.approversV2 = (new JSONWriter(false, false, true)).write(approversV2);
     }
 
@@ -110,7 +110,7 @@ public class ProcessinstanceCreateRequest {
         this.formComponentValues = formComponentValues;
     }
 
-    public void setFormComponentValues(List<OapiProcessinstanceCreateRequest.FormComponentValueVo> formComponentValues) {
+    public void setFormComponentValues(List<ProcessInstanceCreateRequest.FormComponentValueVo> formComponentValues) {
         this.formComponentValues = (new JSONWriter(false, false, true)).write(formComponentValues);
     }
 
