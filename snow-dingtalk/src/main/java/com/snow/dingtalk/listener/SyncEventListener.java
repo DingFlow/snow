@@ -20,7 +20,8 @@ public class SyncEventListener implements ApplicationListener<SyncEvent> {
     public void onApplicationEvent(SyncEvent syncEvent) {
         log.info("进入监听器.....");
         SyncDingTalkInfoFactory syncEventListenerFactory = new SyncDingTalkInfoFactory();
-        syncEventListenerFactory.getSyncDingTalkService(syncEvent);
+        ISyncDingTalkInfo syncDingTalkService = syncEventListenerFactory.getSyncDingTalkService(syncEvent);
+        syncDingTalkService.syncDingTalkInfoEvent(syncEvent);
         log.info("监听到的事件类型:"+JSON.toJSONString(syncEvent));
     }
 
