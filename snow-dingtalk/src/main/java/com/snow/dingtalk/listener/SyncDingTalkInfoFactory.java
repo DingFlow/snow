@@ -3,6 +3,7 @@ package com.snow.dingtalk.listener;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author qimingjin
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class SyncDingTalkInfoFactory  {
+
+
 
     public ISyncDingTalkInfo getSyncDingTalkService(SyncEvent syncEvent){
 

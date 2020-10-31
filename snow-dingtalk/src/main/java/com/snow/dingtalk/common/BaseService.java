@@ -7,14 +7,14 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.BusinessType;
-import com.snow.common.json.JSON;
 import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.spring.SpringUtils;
 import com.snow.system.domain.SysOperLog;
 import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.ISysOperLogService;
+import com.snow.system.service.impl.SysConfigServiceImpl;
+import com.snow.system.service.impl.SysOperLogServiceImpl;
 import com.taobao.api.ApiException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -26,11 +26,11 @@ import java.util.Date;
  */
 public class BaseService {
 
-    public static final String TOKEN="token";
-    @Autowired
-    private ISysConfigService isysConfigService;
-    @Autowired
-    private ISysOperLogService iSysOperLogService;
+    public static final String TOKEN="dingtalk_token";
+
+    private SysConfigServiceImpl sysConfigService=SpringUtils.getBean("sysConfigServiceImpl");
+
+    private SysOperLogServiceImpl iSysOperLogService=SpringUtils.getBean("sysOperLogServiceImpl");
 
     /**
      * 获取token
@@ -42,8 +42,8 @@ public class BaseService {
         if(StringUtils.isEmpty(timedCache.get(TOKEN))){
             DefaultDingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_TOKEN_URL);
             OapiGettokenRequest request = new OapiGettokenRequest();
-            request.setAppkey(isysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY));
-            request.setAppsecret(isysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET));
+            request.setAppkey(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY));
+            request.setAppsecret(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET));
             request.setHttpMethod(Constants.GET);
             try {
                 OapiGettokenResponse response = client.execute(request);

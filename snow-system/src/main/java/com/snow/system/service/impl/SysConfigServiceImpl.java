@@ -19,7 +19,7 @@ import com.snow.system.service.ISysConfigService;
  * 
  * @author snow
  */
-@Service
+@Service("sysConfigServiceImpl")
 public class SysConfigServiceImpl implements ISysConfigService
 {
     @Autowired

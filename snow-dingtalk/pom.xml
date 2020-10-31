@@ -16,7 +16,7 @@
         <!-- 通用工具-->
         <dependency>
             <groupId>com.snow</groupId>
-            <artifactId>snow-system</artifactId>
+            <artifactId>snow-framework</artifactId>
             <version>4.3.1</version>
         </dependency>
         <dependency>

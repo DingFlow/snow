@@ -1,12 +1,12 @@
 package com.snow.dingtalk.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.model.DepartmentCreateRequest;
-import com.snow.dingtalk.service.DepartmentService;
+import com.snow.dingtalk.service.impl.DepartmentServiceImpl;
 import com.snow.system.domain.SysDept;
 import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author qimingjin
@@ -17,8 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class DepartmentCreateEventService implements ISyncDingTalkInfo {
 
-    @Autowired
-    private DepartmentService departmentService;
+
+    private DepartmentServiceImpl departmentService=SpringUtils.getBean("departmentServiceImpl");
+
 
     @Override
     public void syncDingTalkInfoEvent(SyncEvent syncEvent) {

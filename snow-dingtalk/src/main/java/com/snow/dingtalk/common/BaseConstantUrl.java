@@ -22,6 +22,11 @@ public class BaseConstantUrl {
     public static final String DEPARTMENT_CREATE="https://oapi.dingtalk.com/department/create";
 
     /**
+     * 获取钉钉部门信息
+     */
+    public static final String DEPARTMENT_LIST="https://oapi.dingtalk.com/department/list";
+
+    /**
      * 创建流程
      *
      */
