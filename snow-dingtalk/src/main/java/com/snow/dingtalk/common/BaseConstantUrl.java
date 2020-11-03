@@ -46,4 +46,9 @@ public class BaseConstantUrl {
      * 更新待办
      */
     public static final String WORK_RECORD_UPDATE="https://oapi.dingtalk.com/topapi/workrecord/update";
+
+    /**
+     * 注册回调
+     */
+    public static final String REGISTER_CALL_BACK="https://oapi.dingtalk.com/call_back/register_call_back";
 }

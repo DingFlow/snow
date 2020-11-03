@@ -11,7 +11,12 @@ public enum  DingTalkListenerType {
     DEPARTMENT_UPDATE(2, "部门更新"),
     DEPARTMENT_DELETED(3, "部门删除"),
 
-    USER_CREATED(4,"用户创建");
+    USER_CREATED(4,"用户创建"),
+
+    CALL_BACK_REGISTER(10, "回调注册"),
+    ;
+
+
 
     private final Integer code;
     private final String info;
