@@ -22,11 +22,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDingtalkCallBackEventList" parameterType="DingtalkCallBackEvent" resultMap="DingtalkCallBackEventResult">
         <include refid="selectDingtalkCallBackEventVo"/>
-        <where>  
+       where del_flag=0
             <if test="eventName != null  and eventName != ''"> and event_name like concat('%', #{eventName}, '%')</if>
             <if test="callBanckId != null "> and call_banck_id = #{callBanckId}</if>
             <if test="eventDesc != null  and eventDesc != ''"> and event_desc = #{eventDesc}</if>
-        </where>
     </select>
     
     <select id="selectDingtalkCallBackEventById" parameterType="Integer" resultMap="DingtalkCallBackEventResult">

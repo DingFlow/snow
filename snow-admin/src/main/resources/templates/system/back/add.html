@@ -46,7 +46,7 @@
                 <label class="col-sm-3 control-label">通讯录事件回调：</label>
                 <div class="col-sm-8" th:with="type=${@dict.getType('address_book')}">
                     <label th:each="dict : ${type}" class="check-box">
-                        <input name="eventName" type="checkbox" th:value="${dict.dictValue}" th:text="${dict.dictLabel}">
+                        <input name="eventNameList" type="checkbox" th:value="${dict.dictValue}" th:text="${dict.dictLabel}">
                     </label>
                 </div>
             </div>

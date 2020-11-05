@@ -1,9 +1,11 @@
 package com.snow.system.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
 import com.snow.system.domain.DingtalkCallBackEvent;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.DingtalkCallBackEventMapper;
@@ -15,6 +17,7 @@ import com.snow.system.mapper.DingtalkCallBackMapper;
 import com.snow.system.domain.DingtalkCallBack;
 import com.snow.system.service.IDingtalkCallBackService;
 import com.snow.common.core.text.Convert;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -44,7 +47,17 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     @Override
     public DingtalkCallBack selectDingtalkCallBackById(Long id)
     {
-        return dingtalkCallBackMapper.selectDingtalkCallBackById(id);
+        DingtalkCallBack dingtalkCallBack = dingtalkCallBackMapper.selectDingtalkCallBackById(id);
+        if(StringUtils.isNotNull(dingtalkCallBack)){
+            DingtalkCallBackEvent dingtalkCallBackEvent=new DingtalkCallBackEvent();
+            dingtalkCallBackEvent.setCallBanckId(id);
+            List<DingtalkCallBackEvent> dingtalkCallBackEvents = dingtalkCallBackEventMapper.selectDingtalkCallBackEventList(dingtalkCallBackEvent);
+            List<String> eventNameList = dingtalkCallBackEvents.stream()
+                    .map(DingtalkCallBackEvent::getEventName)
+                    .collect(Collectors.toList());
+            dingtalkCallBack.setEventNameList(eventNameList);
+        }
+        return dingtalkCallBack;
     }
 
     /**
@@ -66,6 +79,7 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insertDingtalkCallBack(DingtalkCallBack dingtalkCallBack)
     {
         dingtalkCallBack.setCreateTime(DateUtils.getNowDate());
@@ -77,7 +91,7 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
             dingtalkCallBackEvent.setEventName(t);
             String addressBook = sysDictDataServiceImpl.selectDictLabel("address_book", t);
             dingtalkCallBackEvent.setEventDesc(addressBook);
-            dingtalkCallBackEvent.setId(i);
+            dingtalkCallBackEvent.setCallBanckId((long)i);
             dingtalkCallBackEventMapper.insertDingtalkCallBackEvent(dingtalkCallBackEvent);
         });
         // 同步到dingding
@@ -96,6 +110,19 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     public int updateDingtalkCallBack(DingtalkCallBack dingtalkCallBack)
     {
         dingtalkCallBack.setUpdateTime(DateUtils.getNowDate());
+        dingtalkCallBackEventMapper.deleteDingtalkCallBackEventById(dingtalkCallBack.getId().intValue());
+        DingtalkCallBackEvent dingtalkCallBackEvent=new DingtalkCallBackEvent();
+        BeanUtils.copyProperties(dingtalkCallBack,dingtalkCallBackEvent);
+        List<String> eventNameList = dingtalkCallBack.getEventNameList();
+        eventNameList.forEach(t->{
+            dingtalkCallBackEvent.setEventName(t);
+            String addressBook = sysDictDataServiceImpl.selectDictLabel("address_book", t);
+            dingtalkCallBackEvent.setEventDesc(addressBook);
+            dingtalkCallBackEvent.setCallBanckId(dingtalkCallBack.getId());
+            dingtalkCallBackEvent.setCreateTime(DateUtils.getNowDate());
+            dingtalkCallBackEvent.setCreateBy(dingtalkCallBack.getUpdateBy());
+            dingtalkCallBackEventMapper.insertDingtalkCallBackEvent(dingtalkCallBackEvent);
+        });
         return dingtalkCallBackMapper.updateDingtalkCallBack(dingtalkCallBack);
     }
 

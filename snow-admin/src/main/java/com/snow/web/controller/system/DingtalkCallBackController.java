@@ -1,6 +1,8 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+
+import com.snow.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -86,6 +88,7 @@ public class DingtalkCallBackController extends BaseController
     @ResponseBody
     public AjaxResult addSave(DingtalkCallBack dingtalkCallBack)
     {
+        dingtalkCallBack.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(dingtalkCallBackService.insertDingtalkCallBack(dingtalkCallBack));
     }
 
@@ -109,6 +112,7 @@ public class DingtalkCallBackController extends BaseController
     @ResponseBody
     public AjaxResult editSave(DingtalkCallBack dingtalkCallBack)
     {
+        dingtalkCallBack.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(dingtalkCallBackService.updateDingtalkCallBack(dingtalkCallBack));
     }
 
