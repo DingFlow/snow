@@ -110,7 +110,7 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     public int updateDingtalkCallBack(DingtalkCallBack dingtalkCallBack)
     {
         dingtalkCallBack.setUpdateTime(DateUtils.getNowDate());
-        dingtalkCallBackEventMapper.deleteDingtalkCallBackEventById(dingtalkCallBack.getId().intValue());
+        dingtalkCallBackEventMapper.deleteDingtalkCallBackEventByCallBanckId(dingtalkCallBack.getId().intValue());
         DingtalkCallBackEvent dingtalkCallBackEvent=new DingtalkCallBackEvent();
         BeanUtils.copyProperties(dingtalkCallBack,dingtalkCallBackEvent);
         List<String> eventNameList = dingtalkCallBack.getEventNameList();

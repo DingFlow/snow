@@ -52,6 +52,13 @@ public interface DingtalkCallBackEventMapper
     public int deleteDingtalkCallBackEventById(Integer id);
 
     /**
+     *
+     * @param id
+     * @return
+     */
+    public int deleteDingtalkCallBackEventByCallBanckId(Integer id);
+
+    /**
      * 批量删除事件表
      * 
      * @param ids 需要删除的数据ID

@@ -76,6 +76,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from dingtalk_call_back_event where id = #{id}
     </delete>
 
+    <delete id="deleteDingtalkCallBackEventByCallBanckId" parameterType="Integer">
+        delete from dingtalk_call_back_event where call_banck_id = #{id}
+    </delete>
+
     <delete id="deleteDingtalkCallBackEventByIds" parameterType="String">
         delete from dingtalk_call_back_event where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
