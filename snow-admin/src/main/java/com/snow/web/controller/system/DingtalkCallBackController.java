@@ -2,6 +2,8 @@ package com.snow.web.controller.system;
 
 import java.util.List;
 
+import com.dingtalk.api.response.OapiCallBackGetCallBackFailedResultResponse;
+import com.snow.dingtalk.service.impl.CallBackServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class DingtalkCallBackController extends BaseController
 
     @Autowired
     private IDingtalkCallBackService dingtalkCallBackService;
+    @Autowired
+    private CallBackServiceImpl callBackServiceImpl;
 
     @RequiresPermissions("system:back:view")
     @GetMapping()
@@ -132,7 +136,8 @@ public class DingtalkCallBackController extends BaseController
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Long operId, ModelMap mmap)
     {
-        mmap.put("operLog", "");
+        List<OapiCallBackGetCallBackFailedResultResponse.Failed> callBackFailedResult = callBackServiceImpl.getCallBackFailedResult();
+        mmap.put("operLog", callBackFailedResult);
         return prefix + "/detail";
     }
 }

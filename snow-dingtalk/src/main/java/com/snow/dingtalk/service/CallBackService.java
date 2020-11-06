@@ -1,6 +1,9 @@
 package com.snow.dingtalk.service;
 
+import com.dingtalk.api.response.OapiCallBackGetCallBackFailedResultResponse;
 import com.snow.system.domain.DingtalkCallBack;
+
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -29,5 +32,5 @@ public interface CallBackService {
     /**
      * 获取回调失败结果
      */
-    void getCallBackFailedResult();
+    List<OapiCallBackGetCallBackFailedResultResponse.Failed> getCallBackFailedResult();
 }

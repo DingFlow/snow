@@ -20,6 +20,8 @@ public enum  DingTalkListenerType {
     CALL_BACK_UPDATE(21,10, "回调更新"),
 
     CALL_BACK_DELETE(22,10, "回调删除"),
+
+    CALL_BACK_FAILED_RESULT(23,10, "获取回调失败结果"),
     ;
 
 

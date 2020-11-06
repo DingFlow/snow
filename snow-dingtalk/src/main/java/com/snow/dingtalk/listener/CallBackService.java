@@ -24,13 +24,18 @@ public class CallBackService implements ISyncDingTalkInfo {
     @Override
     public void syncDingTalkInfoEvent(SyncEvent syncEvent) {
         log.info("调用创建钉钉注册回调传入的原始参数:{}"+JSON.toJSONString(syncEvent));
-        Enum eventType =(Enum) syncEvent.getT();
-        if(eventType.equals(DingTalkListenerType.CALL_BACK_REGISTER.getCode())){
-            callBackServiceImpl.registerCallBack((DingtalkCallBack) syncEvent.getT());
+        DingTalkListenerType eventType =(DingTalkListenerType) syncEvent.getT();
+        Integer code = eventType.getCode();
+        if(code.equals(DingTalkListenerType.CALL_BACK_REGISTER.getCode())){
+            callBackServiceImpl.registerCallBack((DingtalkCallBack) syncEvent.getSource());
         }
-        else if( eventType.equals(DingTalkListenerType.CALL_BACK_UPDATE.getCode())){
-            callBackServiceImpl.updateCallBack((DingtalkCallBack) syncEvent.getT());
+        else if( code.equals(DingTalkListenerType.CALL_BACK_UPDATE.getCode())){
+            callBackServiceImpl.updateCallBack((DingtalkCallBack) syncEvent.getSource());
         }
+        else if(code.equals(DingTalkListenerType.CALL_BACK_DELETE.getCode())){
+            callBackServiceImpl.deleteCallBack((DingtalkCallBack) syncEvent.getSource());
+        }
+
 
     }
 }

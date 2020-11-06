@@ -16,7 +16,8 @@ import com.snow.system.domain.DingtalkCallBack;
 import com.taobao.api.ApiException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * @author qimingjin
@@ -38,7 +39,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
         request.setToken(dingtalkCallBack.getToken());
         request.setCallBackTag(dingtalkCallBack.getEventNameList());
         try {
-            OapiCallBackRegisterCallBackResponse response = client.execute(request,getCallBackDingTalkToken(dingtalkCallBack));
+            OapiCallBackRegisterCallBackResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
                 syncDingTalkErrorOperLog(BaseConstantUrl.REGISTER_CALL_BACK,response.getMessage(),"registerCallBack()", JSON.toJSONString(request));
             }else {
@@ -60,7 +61,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
         request.setToken(dingtalkCallBack.getToken());
         request.setCallBackTag(dingtalkCallBack.getEventNameList());
         try {
-            OapiCallBackUpdateCallBackResponse response = client.execute(request,getCallBackDingTalkToken(dingtalkCallBack));
+            OapiCallBackUpdateCallBackResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
                 syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,response.getMessage(),"updateCallBack()", JSON.toJSONString(request));
             }else {
@@ -93,27 +94,31 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    public void getCallBackFailedResult() {
+    public List<OapiCallBackGetCallBackFailedResultResponse.Failed> getCallBackFailedResult() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CALL_BACK_FAILED_RESULT);
         OapiCallBackGetCallBackFailedResultRequest request = new OapiCallBackGetCallBackFailedResultRequest();
         request.setHttpMethod("GET");
         try {
             OapiCallBackGetCallBackFailedResultResponse response = client.execute(request, getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+                List<OapiCallBackGetCallBackFailedResultResponse.Failed> failedList = response.getFailedList();
+                syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+                return failedList;
             }else {
                 //记录获取token失败日志
-                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getErrmsg(),"getCallBackFailedResult()", JSON.toJSONString(request));
+                syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getErrmsg(),"getCallBackFailedResult()", JSON.toJSONString(request));
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,e.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+            syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,e.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
             e.printStackTrace();
         }
+        return null;
     }
     /**
      * 获取token
      * @return
      */
+    @Deprecated
     public String getCallBackDingTalkToken(DingtalkCallBack dingtalkCallBack){
         //创建缓存，缓存默认是7100S
         TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);

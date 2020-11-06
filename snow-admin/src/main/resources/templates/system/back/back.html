@@ -46,6 +46,7 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:back:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:back:remove')}]];
+        var detailFlag = [[${@permission.hasPermi('system:back:detail')}]];
         var prefix = ctx + "system/back";
 
         $(function() {
