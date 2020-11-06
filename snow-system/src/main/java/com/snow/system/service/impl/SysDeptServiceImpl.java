@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysDept;
 import com.snow.system.event.SyncEvent;
 import org.apache.commons.lang3.ArrayUtils;
@@ -211,7 +212,8 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new BusinessException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
-        SyncEvent syncEvent = new SyncEvent(dept, 1, dept);
+        //同步钉钉数据
+        SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
         applicationContext.publishEvent(syncEvent);
         return deptMapper.insertDept(dept);
     }

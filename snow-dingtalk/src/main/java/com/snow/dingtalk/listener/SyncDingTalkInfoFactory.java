@@ -17,15 +17,15 @@ public class SyncDingTalkInfoFactory  {
 
     public ISyncDingTalkInfo getSyncDingTalkService(SyncEvent syncEvent){
 
-        Integer eventType = syncEvent.getEventType();
+        Enum dingTalkEnum = (Enum) syncEvent.getT();
 
-        if(eventType.equals(DingTalkListenerType.DEPARTMENT_CREATE.getCode())){
+        if(dingTalkEnum.equals(DingTalkListenerType.DEPARTMENT_CREATE.getType())){
             return  new DepartmentCreateEventService();
         }
-        else if(eventType.equals(DingTalkListenerType.USER_CREATED.getCode())){
+        else if(dingTalkEnum.equals(DingTalkListenerType.USER_CREATED.getType())){
             return new UserCreateEventService();
         }
-        else if(eventType.equals(DingTalkListenerType.CALL_BACK_REGISTER.getCode())){
+        else if(dingTalkEnum.equals(DingTalkListenerType.CALL_BACK_REGISTER.getType())){
             return new CallBackService();
         }
 

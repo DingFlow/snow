@@ -127,4 +127,12 @@ public class DingtalkCallBackController extends BaseController
     {
         return toAjax(dingtalkCallBackService.deleteDingtalkCallBackByIds(ids));
     }
+
+    @RequiresPermissions("system:back:detail")
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable("id") Long operId, ModelMap mmap)
+    {
+        mmap.put("operLog", "");
+        return prefix + "/detail";
+    }
 }

@@ -3,6 +3,7 @@ package com.snow.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysUserPost;
 import com.snow.system.domain.SysUserRole;
 import com.snow.system.event.SyncEvent;
@@ -209,7 +210,7 @@ public class SysUserServiceImpl implements ISysUserService
         // 新增用户与角色管理
         insertUserRole(user.getUserId(), user.getRoleIds());
         //同步用户数据
-        SyncEvent syncEvent = new SyncEvent(user, 4, user);
+        SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATED);
         applicationContext.publishEvent(syncEvent);
         return rows;
     }

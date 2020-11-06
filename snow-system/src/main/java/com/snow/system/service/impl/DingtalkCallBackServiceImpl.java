@@ -1,12 +1,15 @@
 package com.snow.system.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.system.domain.DingtalkCallBackEvent;
+import com.snow.system.domain.SysDictData;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.DingtalkCallBackEventMapper;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +41,7 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     private SysDictDataServiceImpl sysDictDataServiceImpl;
     @Resource
     private ApplicationContext applicationContext;
+
     /**
      * 查询回调事件
      * 
@@ -89,13 +93,13 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
         int i = dingtalkCallBackMapper.insertDingtalkCallBack(dingtalkCallBack);
         eventNameList.forEach(t->{
             dingtalkCallBackEvent.setEventName(t);
-            String addressBook = sysDictDataServiceImpl.selectDictLabel("address_book", t);
+            String addressBook = sysDictDataServiceImpl.selectDictLabel(Constants.ADDRESS_BOOK, t);
             dingtalkCallBackEvent.setEventDesc(addressBook);
             dingtalkCallBackEvent.setCallBanckId((long)i);
             dingtalkCallBackEventMapper.insertDingtalkCallBackEvent(dingtalkCallBackEvent);
         });
         // 同步到dingding
-        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER.getCode(), dingtalkCallBack);
+        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
         applicationContext.publishEvent(syncEvent);
         return 1;
     }
@@ -107,6 +111,7 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateDingtalkCallBack(DingtalkCallBack dingtalkCallBack)
     {
         dingtalkCallBack.setUpdateTime(DateUtils.getNowDate());
@@ -116,14 +121,18 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
         List<String> eventNameList = dingtalkCallBack.getEventNameList();
         eventNameList.forEach(t->{
             dingtalkCallBackEvent.setEventName(t);
-            String addressBook = sysDictDataServiceImpl.selectDictLabel("address_book", t);
+            String addressBook = sysDictDataServiceImpl.selectDictLabel(Constants.ADDRESS_BOOK, t);
             dingtalkCallBackEvent.setEventDesc(addressBook);
             dingtalkCallBackEvent.setCallBanckId(dingtalkCallBack.getId());
             dingtalkCallBackEvent.setCreateTime(DateUtils.getNowDate());
             dingtalkCallBackEvent.setCreateBy(dingtalkCallBack.getUpdateBy());
             dingtalkCallBackEventMapper.insertDingtalkCallBackEvent(dingtalkCallBackEvent);
         });
-        return dingtalkCallBackMapper.updateDingtalkCallBack(dingtalkCallBack);
+        int i = dingtalkCallBackMapper.updateDingtalkCallBack(dingtalkCallBack);
+        // 同步到dingding
+        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_UPDATE);
+        applicationContext.publishEvent(syncEvent);
+        return i;
     }
 
     /**
@@ -135,7 +144,15 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     @Override
     public int deleteDingtalkCallBackByIds(String ids)
     {
-        return dingtalkCallBackMapper.deleteDingtalkCallBackByIds(Convert.toStrArray(ids));
+        List<String> idList = Arrays.asList(Convert.toStrArray(ids));
+        idList.forEach(t->{
+            dingtalkCallBackEventMapper.deleteDingtalkCallBackEventByCallBanckId(Integer.parseInt(t));
+        });
+        int i = dingtalkCallBackMapper.deleteDingtalkCallBackByIds(Convert.toStrArray(ids));
+        // 同步到dingding
+        SyncEvent syncEvent = new SyncEvent(idList, DingTalkListenerType.CALL_BACK_DELETE);
+        applicationContext.publishEvent(syncEvent);
+        return i;
     }
 
     /**
@@ -149,4 +166,5 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
     {
         return dingtalkCallBackMapper.deleteDingtalkCallBackById(id);
     }
+
 }

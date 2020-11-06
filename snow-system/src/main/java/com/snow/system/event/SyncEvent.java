@@ -15,11 +15,25 @@ public class SyncEvent<T> extends ApplicationEvent {
     private T t;
 
 
+    public SyncEvent(Object source) {
+        super(source);
+    }
 
-    public SyncEvent(Object source,Integer eventType,T t) {
+    public SyncEvent(Object source,T t) {
+        super(source);
+        this.t=t;
+    }
+    public SyncEvent(Object source,Integer eventType) {
+        super(source);
+        this.eventType = eventType;
+
+    }
+
+    public SyncEvent(Integer eventType,Object source,T t) {
         super(source);
         this.eventType = eventType;
         this.t=t;
+
     }
 
 

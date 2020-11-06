@@ -5,10 +5,8 @@ import cn.hutool.cache.impl.TimedCache;
 import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiCallBackRegisterCallBackRequest;
-import com.dingtalk.api.request.OapiGettokenRequest;
-import com.dingtalk.api.response.OapiCallBackRegisterCallBackResponse;
-import com.dingtalk.api.response.OapiGettokenResponse;
+import com.dingtalk.api.request.*;
+import com.dingtalk.api.response.*;
 import com.snow.common.constant.Constants;
 import com.snow.common.utils.StringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -53,7 +51,65 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
         }
     }
 
+    @Override
+    public void updateCallBack(DingtalkCallBack dingtalkCallBack) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.UPDATE_CALL_BACK);
+        OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
+        request.setUrl(dingtalkCallBack.getUrl());
+        request.setAesKey(dingtalkCallBack.getAesKey());
+        request.setToken(dingtalkCallBack.getToken());
+        request.setCallBackTag(dingtalkCallBack.getEventNameList());
+        try {
+            OapiCallBackUpdateCallBackResponse response = client.execute(request,getCallBackDingTalkToken(dingtalkCallBack));
+            if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,response.getMessage(),"updateCallBack()", JSON.toJSONString(request));
+            }else {
+                //记录获取token失败日志
+                syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,response.getErrmsg(),"updateCallBack()", JSON.toJSONString(request));
+            }
+        } catch (ApiException e) {
+            syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,e.getMessage(),"updateCallBack()", JSON.toJSONString(request));
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void deleteCallBack(DingtalkCallBack dingtalkCallBack) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_CALL_BACK);
+        OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();
+        request.setHttpMethod("GET");
+        try {
+            OapiCallBackDeleteCallBackResponse response = client.execute(request, getDingTalkToken());
+            if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getMessage(),"deleteCallBack()", JSON.toJSONString(request));
+            }else {
+                //记录获取token失败日志
+                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getErrmsg(),"deleteCallBack()", JSON.toJSONString(request));
+            }
+        } catch (ApiException e) {
+            syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,e.getMessage(),"deleteCallBack()", JSON.toJSONString(request));
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getCallBackFailedResult() {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CALL_BACK_FAILED_RESULT);
+        OapiCallBackGetCallBackFailedResultRequest request = new OapiCallBackGetCallBackFailedResultRequest();
+        request.setHttpMethod("GET");
+        try {
+            OapiCallBackGetCallBackFailedResultResponse response = client.execute(request, getDingTalkToken());
+            if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+            }else {
+                //记录获取token失败日志
+                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getErrmsg(),"getCallBackFailedResult()", JSON.toJSONString(request));
+            }
+        } catch (ApiException e) {
+            syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,e.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+            e.printStackTrace();
+        }
+    }
     /**
      * 获取token
      * @return

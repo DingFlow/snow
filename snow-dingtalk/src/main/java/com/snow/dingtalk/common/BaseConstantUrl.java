@@ -51,4 +51,18 @@ public class BaseConstantUrl {
      * 注册回调
      */
     public static final String REGISTER_CALL_BACK="https://oapi.dingtalk.com/call_back/register_call_back";
+    /**
+     * 更新回调
+     */
+    public static final String UPDATE_CALL_BACK = "https://oapi.dingtalk.com/call_back/update_call_back";
+
+    /**
+     * 更新回调
+     */
+    public static final String DELETE_CALL_BACK = "https://oapi.dingtalk.com/call_back/delete_call_back";
+    /**
+     * 获取回调失败
+     */
+    public static final String CALL_BACK_FAILED_RESULT = "https://oapi.dingtalk.com/call_back/get_call_back_failed_result";
+
 }

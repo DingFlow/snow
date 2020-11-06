@@ -45,7 +45,12 @@ public class DingtalkCallBack extends BaseEntity
     @Excel(name = "回调名称")
     private String callBackName;
 
+    /**
+     * 部门事件集合
+     */
     private List<String> eventNameList;
+
+    private Boolean flag=false;
 
     public void setId(Long id) 
     {

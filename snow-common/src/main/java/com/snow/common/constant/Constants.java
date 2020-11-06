@@ -108,4 +108,9 @@ public class Constants
      * 钉钉企业内部 AGENT_ID
      */
     public static final String AGENT_ID="agent.id";
+
+    /**
+     * 通讯录事件type_key
+     */
+    public static final String ADDRESS_BOOK="address_book";
 }

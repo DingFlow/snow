@@ -13,4 +13,21 @@ public interface CallBackService {
      * 注册事件
      */
     void registerCallBack(DingtalkCallBack dingtalkCallBack);
+
+    /**
+     * 更新事件
+     * @param dingtalkCallBack
+     */
+    void updateCallBack(DingtalkCallBack dingtalkCallBack);
+
+    /**
+     * 删除事件
+     * @param dingtalkCallBack
+     */
+    void deleteCallBack(DingtalkCallBack dingtalkCallBack);
+
+    /**
+     * 获取回调失败结果
+     */
+    void getCallBackFailedResult();
 }

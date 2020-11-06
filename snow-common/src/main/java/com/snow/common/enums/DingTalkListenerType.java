@@ -7,24 +7,40 @@ package com.snow.common.enums;
  * @date 2020/9/18 10:18
  */
 public enum  DingTalkListenerType {
-    DEPARTMENT_CREATE(1, "部门创建"),
-    DEPARTMENT_UPDATE(2, "部门更新"),
-    DEPARTMENT_DELETED(3, "部门删除"),
+    DEPARTMENT_CREATE(1, 2,"部门创建"),
 
-    USER_CREATED(4,"用户创建"),
+    DEPARTMENT_UPDATE(2, 2,"部门更新"),
 
-    CALL_BACK_REGISTER(10, "回调注册"),
+    DEPARTMENT_DELETED(3,2,"部门删除"),
+
+    USER_CREATED(5,2,"用户创建"),
+
+    CALL_BACK_REGISTER(20,10, "回调注册"),
+
+    CALL_BACK_UPDATE(21,10, "回调更新"),
+
+    CALL_BACK_DELETE(22,10, "回调删除"),
     ;
 
 
-
+    /**
+     * 一级code
+     */
     private final Integer code;
+    /**
+     * 二级code
+     */
+    private final Integer type;
+    /**
+     * 描述
+     */
     private final String info;
 
-    DingTalkListenerType(Integer code, String info)
+    DingTalkListenerType(Integer code, Integer type,String info)
     {
         this.code = code;
         this.info = info;
+        this.type=type;
     }
 
     public Integer getCode()
@@ -36,4 +52,9 @@ public enum  DingTalkListenerType {
     {
         return info;
     }
+
+    public Integer getType() {
+        return type;
+    }
+
 }
