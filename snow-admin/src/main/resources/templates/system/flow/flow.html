@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('财务支付宝流水列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>交易号：</label>
+                                <input type="text" name="tradeNo"/>
+                            </li>
+                            <li>
+                                <label>商家订单号：</label>
+                                <input type="text" name="orderNo"/>
+                            </li>
+                            <li class="select-time">
+                                <label>交易创建时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTradeCreateTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTradeCreateTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>交易支付时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginPayTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endPayTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>最近修改时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginLastModifyTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endLastModifyTime]"/>
+                            </li>
+                            <li>
+                                <label>交易来源地：</label>
+                                <input type="text" name="tradeSourcePlace"/>
+                            </li>
+                            <li>
+                                <label>交易类型：</label>
+                                <select name="tradeType" th:with="type=${@dict.getType('trade_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>交易对方：</label>
+                                <input type="text" name="counterparty"/>
+                            </li>
+                            <li>
+                                <label>交易金额：</label>
+                                <input type="text" name="tradePrice"/>
+                            </li>
+                            <li>
+                                <label>交易状态：</label>
+                                <select name="tradeStatus" th:with="type=${@dict.getType('trade_status_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>收支类型：</label>
+                                <select name="incomeExpenditureType" th:with="type=${@dict.getType('income_expenditure_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>服务费：</label>
+                                <input type="text" name="serviceCharge"/>
+                            </li>
+                            <li>
+                                <label>退款金额：</label>
+                                <input type="text" name="refundPrice"/>
+                            </li>
+                            <li>
+                                <label>资金状态：</label>
+                                <select name="capitalStatus" th:with="type=${@dict.getType('capital_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>所属人：</label>
+                                <input type="text" name="belongUserId"/>
+                            </li>
+                            <li>
+                                <label>交易主体账户：</label>
+                                <input type="text" name="tradeAccount"/>
+                            </li>
+                            <li>
+                                <label>交易真实姓名：</label>
+                                <input type="text" name="tradeRealName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:flow:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:flow:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:flow:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="system:flow:import">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:flow:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
+        var tradeTypeDatas = [[${@dict.getType('trade_type')}]];
+        var tradeStatusDatas = [[${@dict.getType('trade_status_type')}]];
+        var incomeExpenditureTypeDatas = [[${@dict.getType('income_expenditure_type')}]];
+        var capitalStatusDatas = [[${@dict.getType('capital_status')}]];
+        var prefix = ctx + "system/flow";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                importUrl: prefix + "/importData",
+                modalName: "财务支付宝流水",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'tradeNo',
+                    title: '交易号'
+                },
+                {
+                    field: 'orderNo',
+                    title: '商家订单号'
+                },
+                {
+                    field: 'tradeCreateTime',
+                    title: '交易创建时间'
+                },
+                {
+                    field: 'payTime',
+                    title: '交易支付时间'
+                },
+                {
+                    field: 'lastModifyTime',
+                    title: '最近修改时间'
+                },
+                {
+                    field: 'tradeSourcePlace',
+                    title: '交易来源地'
+                },
+                {
+                    field: 'tradeType',
+                    title: '交易类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(tradeTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'counterparty',
+                    title: '交易对方'
+                },
+                {
+                    field: 'tradePrice',
+                    title: '交易金额'
+                },
+                {
+                    field: 'tradeStatus',
+                    title: '交易状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(tradeStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'incomeExpenditureType',
+                    title: '收支类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(incomeExpenditureTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'serviceCharge',
+                    title: '服务费'
+                },
+                {
+                    field: 'refundPrice',
+                    title: '退款金额'
+                },
+                {
+                    field: 'capitalStatus',
+                    title: '资金状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(capitalStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
+                    field: 'belongUserId',
+                    title: '所属人'
+                },
+                {
+                    field: 'tradeAccount',
+                    title: '交易主体账户'
+                },
+                {
+                    field: 'tradeRealName',
+                    title: '交易真实姓名'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+                &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</html>

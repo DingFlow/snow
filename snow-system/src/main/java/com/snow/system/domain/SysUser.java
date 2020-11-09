@@ -95,6 +95,41 @@ public class SysUser extends BaseEntity
 
     /** 岗位组 */
     private Long[] postIds;
+    /**
+     * 	是否开启高管模式：
+     * true：开启。开启后，手机号码对所有员工隐藏。普通员工无法对其发DING、发起钉钉免费商务电话。高管之间不受影响。
+     * false：不开启。
+     */
+    private Boolean isSenior;
+
+    /**
+     * 	是否号码隐藏：
+     * true：隐藏隐藏手机号后，手机号在个人资料页隐藏，但仍可对其发DING、发起钉钉免费商务电话。
+     * false：不隐藏
+     */
+    private Boolean isHide;
+    /**
+     * 	员工工号，对应显示到OA后台和客户端个人资料的工号栏目。长度为0~64个字符。
+     */
+    private String jobnumber;
+
+    /**
+     * 	办公地点。长度为0~50个字符。
+     */
+    private String workPlace;
+
+    /**
+     * 分机号
+     */
+    private String tel;
+    /**
+     * 岗位信息
+     */
+    private String position;
+    /**
+     * 入职时间，时间戳
+     */
+    private Number hiredDate;
 
     public SysUser()
     {
@@ -334,6 +369,62 @@ public class SysUser extends BaseEntity
     public void setPostIds(Long[] postIds)
     {
         this.postIds = postIds;
+    }
+
+    public Boolean getSenior() {
+        return isSenior;
+    }
+
+    public void setSenior(Boolean senior) {
+        isSenior = senior;
+    }
+
+    public Boolean getHide() {
+        return isHide;
+    }
+
+    public void setHide(Boolean hide) {
+        isHide = hide;
+    }
+
+    public String getJobnumber() {
+        return jobnumber;
+    }
+
+    public void setJobnumber(String jobnumber) {
+        this.jobnumber = jobnumber;
+    }
+
+    public String getWorkPlace() {
+        return workPlace;
+    }
+
+    public void setWorkPlace(String workPlace) {
+        this.workPlace = workPlace;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public Number getHiredDate() {
+        return hiredDate;
+    }
+
+    public void setHiredDate(Number hiredDate) {
+        this.hiredDate = hiredDate;
     }
 
     @Override

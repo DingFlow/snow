@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.FinanceAlipayFlowMapper">
+    
+    <resultMap type="FinanceAlipayFlow" id="FinanceAlipayFlowResult">
+        <result property="id"    column="id"    />
+        <result property="tradeNo"    column="trade_no"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="tradeCreateTime"    column="trade_create_time"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="lastModifyTime"    column="last_modify_time"    />
+        <result property="tradeSourcePlace"    column="trade_source_place"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="counterparty"    column="counterparty"    />
+        <result property="tradePrice"    column="trade_price"    />
+        <result property="tradeStatus"    column="trade_status"    />
+        <result property="incomeExpenditureType"    column="income_expenditure_type"    />
+        <result property="serviceCharge"    column="service_charge"    />
+        <result property="refundPrice"    column="refund_price"    />
+        <result property="capitalStatus"    column="capital_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="belongUserId"    column="belong_user_id"    />
+        <result property="tradeAccount"    column="trade_account"    />
+        <result property="tradeRealName"    column="trade_real_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="goodsName"    column="goods_name"    />
+
+    </resultMap>
+
+    <sql id="selectFinanceAlipayFlowVo">
+        select id, trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name from finance_alipay_flow
+    </sql>
+
+    <select id="selectFinanceAlipayFlowList" parameterType="FinanceAlipayFlow" resultMap="FinanceAlipayFlowResult">
+        <include refid="selectFinanceAlipayFlowVo"/>
+        <where>  
+            <if test="tradeNo != null  and tradeNo != ''"> and trade_no = #{tradeNo}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="tradeCreateTime != null "> and trade_create_time = #{tradeCreateTime}</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
+            <if test="lastModifyTime != null "> and last_modify_time = #{lastModifyTime}</if>
+            <if test="tradeSourcePlace != null  and tradeSourcePlace != ''"> and trade_source_place = #{tradeSourcePlace}</if>
+            <if test="tradeType != null "> and trade_type = #{tradeType}</if>
+            <if test="counterparty != null  and counterparty != ''"> and counterparty = #{counterparty}</if>
+            <if test="tradePrice != null "> and trade_price = #{tradePrice}</if>
+            <if test="tradeStatus != null "> and trade_status = #{tradeStatus}</if>
+            <if test="incomeExpenditureType != null "> and income_expenditure_type = #{incomeExpenditureType}</if>
+            <if test="serviceCharge != null "> and service_charge = #{serviceCharge}</if>
+            <if test="refundPrice != null "> and refund_price = #{refundPrice}</if>
+            <if test="capitalStatus != null "> and capital_status = #{capitalStatus}</if>
+            <if test="belongUserId != null "> and belong_user_id = #{belongUserId}</if>
+            <if test="tradeAccount != null  and tradeAccount != ''"> and trade_account = #{tradeAccount}</if>
+            <if test="tradeRealName != null  and tradeRealName != ''"> and trade_real_name like concat('%', #{tradeRealName}, '%')</if>
+            <if test="goodName != null  and goodName != ''"> and good_name like concat('%', #{goodName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFinanceAlipayFlowById" parameterType="Long" resultMap="FinanceAlipayFlowResult">
+        <include refid="selectFinanceAlipayFlowVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFinanceAlipayFlow" parameterType="FinanceAlipayFlow" useGeneratedKeys="true" keyProperty="id">
+        insert into finance_alipay_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tradeNo != null">trade_no,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="tradeCreateTime != null">trade_create_time,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="lastModifyTime != null">last_modify_time,</if>
+            <if test="tradeSourcePlace != null">trade_source_place,</if>
+            <if test="tradeType != null">trade_type,</if>
+            <if test="counterparty != null">counterparty,</if>
+            <if test="tradePrice != null">trade_price,</if>
+            <if test="tradeStatus != null">trade_status,</if>
+            <if test="incomeExpenditureType != null">income_expenditure_type,</if>
+            <if test="serviceCharge != null">service_charge,</if>
+            <if test="refundPrice != null">refund_price,</if>
+            <if test="capitalStatus != null">capital_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="belongUserId != null">belong_user_id,</if>
+            <if test="tradeAccount != null">trade_account,</if>
+            <if test="tradeRealName != null">trade_real_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="goodName != null">good_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tradeNo != null">#{tradeNo},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="tradeCreateTime != null">#{tradeCreateTime},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="lastModifyTime != null">#{lastModifyTime},</if>
+            <if test="tradeSourcePlace != null">#{tradeSourcePlace},</if>
+            <if test="tradeType != null">#{tradeType},</if>
+            <if test="counterparty != null">#{counterparty},</if>
+            <if test="tradePrice != null">#{tradePrice},</if>
+            <if test="tradeStatus != null">#{tradeStatus},</if>
+            <if test="incomeExpenditureType != null">#{incomeExpenditureType},</if>
+            <if test="serviceCharge != null">#{serviceCharge},</if>
+            <if test="refundPrice != null">#{refundPrice},</if>
+            <if test="capitalStatus != null">#{capitalStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="belongUserId != null">#{belongUserId},</if>
+            <if test="tradeAccount != null">#{tradeAccount},</if>
+            <if test="tradeRealName != null">#{tradeRealName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="goodName != null">#{goodName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFinanceAlipayFlow" parameterType="FinanceAlipayFlow">
+        update finance_alipay_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tradeNo != null">trade_no = #{tradeNo},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="tradeCreateTime != null">trade_create_time = #{tradeCreateTime},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="lastModifyTime != null">last_modify_time = #{lastModifyTime},</if>
+            <if test="tradeSourcePlace != null">trade_source_place = #{tradeSourcePlace},</if>
+            <if test="tradeType != null">trade_type = #{tradeType},</if>
+            <if test="counterparty != null">counterparty = #{counterparty},</if>
+            <if test="tradePrice != null">trade_price = #{tradePrice},</if>
+            <if test="tradeStatus != null">trade_status = #{tradeStatus},</if>
+            <if test="incomeExpenditureType != null">income_expenditure_type = #{incomeExpenditureType},</if>
+            <if test="serviceCharge != null">service_charge = #{serviceCharge},</if>
+            <if test="refundPrice != null">refund_price = #{refundPrice},</if>
+            <if test="capitalStatus != null">capital_status = #{capitalStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="tradeAccount != null">trade_account = #{tradeAccount},</if>
+            <if test="tradeRealName != null">trade_real_name = #{tradeRealName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="goodName != null">good_name = #{goodName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFinanceAlipayFlowById" parameterType="Long">
+        delete from finance_alipay_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteFinanceAlipayFlowByIds" parameterType="String">
+        delete from finance_alipay_flow where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

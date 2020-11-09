@@ -11,7 +11,7 @@ public class BaseConstantUrl {
     /**
      * 创建用户
      */
-    public static final String USER_CREATE="https://oapi.dingtalk.com/user/create";
+    public static final String USER_CREATE= "https://oapi.dingtalk.com/topapi/v2/user/create";
     /**
      * 获取token url
      */
@@ -64,5 +64,8 @@ public class BaseConstantUrl {
      * 获取回调失败
      */
     public static final String CALL_BACK_FAILED_RESULT = "https://oapi.dingtalk.com/call_back/get_call_back_failed_result";
+
+
+
 
 }
