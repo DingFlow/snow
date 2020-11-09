@@ -2,8 +2,6 @@ package com.snow.system.domain;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.snow.common.core.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -55,7 +53,7 @@ public class FinanceAlipayFlow extends BaseEntity
 
     /** 商品名称 */
     @ExcelProperty(index = 9)
-    private String goodName;
+    private String goodsName;
     /** 交易金额 */
     @ExcelProperty(index = 10)
     private BigDecimal tradePrice;
@@ -253,37 +251,11 @@ public class FinanceAlipayFlow extends BaseEntity
         this.tradeRealName = tradeRealName;
     }
 
-    public String getGoodName() {
-        return goodName;
+    public String getGoodsName() {
+        return goodsName;
     }
 
-    public void setGoodName(String goodName) {
-        this.goodName = goodName;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("tradeNo", getTradeNo())
-            .append("orderNo", getOrderNo())
-            .append("tradeCreateTime", getTradeCreateTime())
-            .append("payTime", getPayTime())
-            .append("lastModifyTime", getLastModifyTime())
-            .append("tradeSourcePlace", getTradeSourcePlace())
-            .append("tradeType", getTradeType())
-            .append("counterparty", getCounterparty())
-            .append("tradePrice", getTradePrice())
-            .append("tradeStatus", getTradeStatus())
-            .append("incomeExpenditureType", getIncomeExpenditureType())
-            .append("serviceCharge", getServiceCharge())
-            .append("refundPrice", getRefundPrice())
-            .append("capitalStatus", getCapitalStatus())
-            .append("remark", getRemark())
-            .append("belongUserId", getBelongUserId())
-            .append("tradeAccount", getTradeAccount())
-            .append("createTime", getCreateTime())
-            .append("createBy", getCreateBy())
-            .toString();
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 }

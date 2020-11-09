@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="belongUserId != null "> and belong_user_id = #{belongUserId}</if>
             <if test="tradeAccount != null  and tradeAccount != ''"> and trade_account = #{tradeAccount}</if>
             <if test="tradeRealName != null  and tradeRealName != ''"> and trade_real_name like concat('%', #{tradeRealName}, '%')</if>
-            <if test="goodName != null  and goodName != ''"> and good_name like concat('%', #{goodName}, '%')</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
         </where>
     </select>
     
@@ -86,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tradeRealName != null">trade_real_name,</if>
             <if test="createTime != null">create_time,</if>
             <if test="createBy != null">create_by,</if>
-            <if test="goodName != null">good_name,</if>
+            <if test="goodsName != null">goods_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tradeNo != null">#{tradeNo},</if>
@@ -109,7 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tradeRealName != null">#{tradeRealName},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="createBy != null">#{createBy},</if>
-            <if test="goodName != null">#{goodName},</if>
+            <if test="goodsName != null">#{goodsName},</if>
          </trim>
     </insert>
 
@@ -136,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tradeRealName != null">trade_real_name = #{tradeRealName},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="goodName != null">good_name = #{goodName},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
         </trim>
         where id = #{id}
     </update>

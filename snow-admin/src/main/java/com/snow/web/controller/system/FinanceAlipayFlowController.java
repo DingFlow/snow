@@ -9,6 +9,7 @@ import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,6 +43,8 @@ public class FinanceAlipayFlowController extends BaseController
 
     @Autowired
     private IFinanceAlipayFlowService financeAlipayFlowService;
+
+
 
     @RequiresPermissions("system:flow:view")
     @GetMapping()
@@ -142,11 +145,13 @@ public class FinanceAlipayFlowController extends BaseController
     {
 
         String operName = ShiroUtils.getSysUser().getLoginName();
-        ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceAlipayFlowImport.class, new FinanceAlipayFlowListener()).build();
-        ReadSheet readSheet = EasyExcel.readSheet(5).build();
+        Long userId = ShiroUtils.getSysUser().getUserId();
+        FinanceAlipayFlowListener financeAlipayFlowListener = new FinanceAlipayFlowListener(financeAlipayFlowService, operName, "459816669@qq.com","金启明",userId);
+        ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceAlipayFlowImport.class, financeAlipayFlowListener).build();
+        ReadSheet readSheet = EasyExcel.readSheet(0).build();
         excelReader.read(readSheet);
         // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
         excelReader.finish();
-        return AjaxResult.success("");
+        return AjaxResult.success("导入成功");
     }
 }
