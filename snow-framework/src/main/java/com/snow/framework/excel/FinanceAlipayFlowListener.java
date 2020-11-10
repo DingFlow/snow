@@ -2,6 +2,8 @@ package com.snow.framework.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.snow.common.json.JSON;
+import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
@@ -16,8 +18,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author qimingjin
@@ -88,61 +92,74 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     }
 
     public void saveData(){
-        list.forEach(t->{
-            FinanceAlipayFlow financeAlipayFlow=new FinanceAlipayFlow();
-            BeanUtils.copyProperties(t,financeAlipayFlow);
-            String capitalStatus = t.getCapitalStatus();
-            if(StringUtils.isEmpty(capitalStatus)){
-                financeAlipayFlow.setCapitalStatus(0);
+
+        List<FinanceAlipayFlow> financeAlipayFlowList = list.stream().map(t -> {
+            FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
+            BeanUtils.copyProperties(t, financeAlipayFlow);
+            String payTime = t.getPayTime();
+            String tradeCreateTime = t.getTradeCreateTime();
+            String lastModifyTime = t.getLastModifyTime();
+            if (!StringUtils.isEmpty(payTime)) {
+                Date date = DateUtils.parseDate(payTime);
+                financeAlipayFlow.setPayTime(date);
             }
-            else if(capitalStatus.equals("已支出")){
+            if (!StringUtils.isEmpty(tradeCreateTime)) {
+                Date date = DateUtils.parseDate(tradeCreateTime);
+                financeAlipayFlow.setTradeCreateTime(date);
+            }
+            if (!StringUtils.isEmpty(lastModifyTime)) {
+                Date date = DateUtils.parseDate(lastModifyTime);
+                financeAlipayFlow.setLastModifyTime(date);
+            }
+            String capitalStatus = t.getCapitalStatus();
+            if (StringUtils.isEmpty(capitalStatus)) {
+                financeAlipayFlow.setCapitalStatus(0);
+            } else if (capitalStatus.equals("已支出")) {
                 financeAlipayFlow.setCapitalStatus(1);
-            }else if(capitalStatus.equals("已收入")){
+            } else if (capitalStatus.equals("已收入")) {
                 financeAlipayFlow.setCapitalStatus(2);
-            }else if(capitalStatus.equals("资金转移")){
+            } else if (capitalStatus.equals("资金转移")) {
                 financeAlipayFlow.setCapitalStatus(3);
-            }else {
+            } else {
                 financeAlipayFlow.setCapitalStatus(10);
             }
 
             String incomeExpenditureType = t.getIncomeExpenditureType();
-            if(StringUtils.isEmpty(incomeExpenditureType)){
+            if (StringUtils.isEmpty(incomeExpenditureType)) {
                 financeAlipayFlow.setIncomeExpenditureType(0);
-            }
-            else if(incomeExpenditureType.equals("收入")){
+            } else if (incomeExpenditureType.equals("收入")) {
                 financeAlipayFlow.setIncomeExpenditureType(2);
-            }else if(incomeExpenditureType.equals("支出")){
+            } else if (incomeExpenditureType.equals("支出")) {
                 financeAlipayFlow.setIncomeExpenditureType(1);
             }
             String tradeStatus = t.getTradeStatus();
-            if(StringUtils.isEmpty(tradeStatus)){
+            if (StringUtils.isEmpty(tradeStatus)) {
                 financeAlipayFlow.setTradeStatus(null);
-            }
-            else if(tradeStatus.equals("交易成功")){
+            } else if (tradeStatus.equals("交易成功")) {
                 financeAlipayFlow.setTradeStatus(1);
-            }else if(tradeStatus.equals("交易关闭")){
+            } else if (tradeStatus.equals("交易关闭")) {
                 financeAlipayFlow.setTradeStatus(2);
-            }else if(tradeStatus.equals("还款成功")){
+            } else if (tradeStatus.equals("还款成功")) {
                 financeAlipayFlow.setTradeStatus(3);
-            }else if(tradeStatus.equals("退款成功")){
+            } else if (tradeStatus.equals("退款成功")) {
                 financeAlipayFlow.setTradeStatus(4);
             }
             String tradeType = t.getTradeType();
-            if(StringUtils.isEmpty(tradeType)){
+            if (StringUtils.isEmpty(tradeType)) {
                 financeAlipayFlow.setTradeType(null);
-            }
-            else if(tradeType.equals("即时到账交易")){
+            } else if (tradeType.equals("即时到账交易")) {
                 financeAlipayFlow.setTradeType(1);
-            }else if(tradeType.equals("支付宝担保交易")){
+            } else if (tradeType.equals("支付宝担保交易")) {
                 financeAlipayFlow.setTradeType(2);
             }
             financeAlipayFlow.setCreateBy(operName);
             financeAlipayFlow.setBelongUserId(belongUserId);
             financeAlipayFlow.setTradeRealName(tradeRealName);
             financeAlipayFlow.setTradeAccount(tradeAccount);
-
-            financeAlipayFlowService.insertFinanceAlipayFlow(financeAlipayFlow);
-        });
+            log.info("转化后的对象:financeAlipayFlow{}", com.alibaba.fastjson.JSON.toJSONString(financeAlipayFlow));
+            return financeAlipayFlow;
+        }).collect(Collectors.toList());
+        financeAlipayFlowService.insertBatchFinanceAlipayFlow(financeAlipayFlowList);
 
     }
 

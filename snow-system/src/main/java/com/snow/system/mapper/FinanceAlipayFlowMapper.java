@@ -2,6 +2,7 @@ package com.snow.system.mapper;
 
 import java.util.List;
 import com.snow.system.domain.FinanceAlipayFlow;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 财务支付宝流水Mapper接口
@@ -34,6 +35,13 @@ public interface FinanceAlipayFlowMapper
      * @return 结果
      */
     public int insertFinanceAlipayFlow(FinanceAlipayFlow financeAlipayFlow);
+
+    /**
+     * 批量新增财务支付宝流水
+     * @param financeAlipayFlowList
+     * @return
+     */
+    public int insertBatchFinanceAlipayFlow(@Param("financeAlipayFlowList") List financeAlipayFlowList);
 
     /**
      * 修改财务支付宝流水

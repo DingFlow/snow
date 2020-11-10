@@ -112,7 +112,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="goodsName != null">#{goodsName},</if>
          </trim>
     </insert>
-
+    <insert id="insertBatchFinanceAlipayFlow" parameterType="java.util.List">
+        insert into finance_alipay_flow (trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name) values
+        <foreach collection="financeAlipayFlowList" item="item"  separator="," close=";">
+            (
+            #{item.tradeNo}, #{item.orderNo}, #{item.tradeCreateTime}, #{item.payTime}, #{item.lastModifyTime}, #{item.tradeSourcePlace}, #{item.tradeType}
+            ,#{item.counterparty}, #{item.tradePrice}, #{item.tradeStatus}, #{item.incomeExpenditureType}, #{item.serviceCharge}, #{item.refundPrice}, #{item.capitalStatus},#{item.remark}, #{item.belongUserId}, #{item.tradeAccount}, #{item.tradeRealName}, now(), #{item.createBy}, #{item.goodsName}
+            )
+        </foreach>
+    </insert>
     <update id="updateFinanceAlipayFlow" parameterType="FinanceAlipayFlow">
         update finance_alipay_flow
         <trim prefix="SET" suffixOverrides=",">

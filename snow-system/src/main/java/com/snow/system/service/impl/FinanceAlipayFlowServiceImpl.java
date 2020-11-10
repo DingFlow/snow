@@ -58,6 +58,11 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
         return financeAlipayFlowMapper.insertFinanceAlipayFlow(financeAlipayFlow);
     }
 
+    @Override
+    public int insertBatchFinanceAlipayFlow(List<FinanceAlipayFlow> financeAlipayFlowList) {
+        return financeAlipayFlowMapper.insertBatchFinanceAlipayFlow(financeAlipayFlowList);
+    }
+
     /**
      * 修改财务支付宝流水
      * 

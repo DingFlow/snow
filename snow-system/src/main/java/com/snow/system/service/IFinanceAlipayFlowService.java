@@ -34,6 +34,13 @@ public interface IFinanceAlipayFlowService
      * @return 结果
      */
     public int insertFinanceAlipayFlow(FinanceAlipayFlow financeAlipayFlow);
+    /**
+     * 批量新增财务支付宝流水
+     * @param financeAlipayFlowList
+     * @return
+     */
+    public int insertBatchFinanceAlipayFlow(List<FinanceAlipayFlow> financeAlipayFlowList);
+
 
     /**
      * 修改财务支付宝流水
