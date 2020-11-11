@@ -383,7 +383,7 @@ var table = {
                  var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
                  layer.open({
                      type: 1,
-                     area: ['500px', '530px'],
+                     area: ['550px', '500px'],
                      fix: false,
                      //不固定
                      maxmin: true,

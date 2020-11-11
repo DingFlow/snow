@@ -141,12 +141,10 @@ public class FinanceAlipayFlowController extends BaseController
     @RequiresPermissions("system:flow:import")
     @PostMapping("/importData")
     @ResponseBody
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    public AjaxResult importData(MultipartFile file, String tradeRealName,String tradeAccount,String billType) throws Exception
     {
-
-        String operName = ShiroUtils.getSysUser().getLoginName();
-        Long userId = ShiroUtils.getSysUser().getUserId();
-        FinanceAlipayFlowListener financeAlipayFlowListener = new FinanceAlipayFlowListener(financeAlipayFlowService, operName, "459816669@qq.com","金启明",userId);
+        SysUser sysUser = ShiroUtils.getSysUser();
+        FinanceAlipayFlowListener financeAlipayFlowListener = new FinanceAlipayFlowListener(financeAlipayFlowService, sysUser, tradeAccount,tradeRealName,Integer.parseInt(billType));
         ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceAlipayFlowImport.class, financeAlipayFlowListener).build();
         ReadSheet readSheet = EasyExcel.readSheet(0).build();
         excelReader.read(readSheet);

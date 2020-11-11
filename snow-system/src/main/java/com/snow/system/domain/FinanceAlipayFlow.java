@@ -2,6 +2,7 @@ package com.snow.system.domain;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.snow.common.core.domain.BaseEntity;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
  * @author snow
  * @date 2020-11-09
  */
+@Data
 public class FinanceAlipayFlow extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -88,174 +90,8 @@ public class FinanceAlipayFlow extends BaseEntity
 
     /** 交易真实姓名 */
     private String tradeRealName;
+    /**账单类型**/
+    private Integer billType;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setTradeNo(String tradeNo) 
-    {
-        this.tradeNo = tradeNo;
-    }
-
-    public String getTradeNo() 
-    {
-        return tradeNo;
-    }
-    public void setOrderNo(String orderNo) 
-    {
-        this.orderNo = orderNo;
-    }
-
-    public String getOrderNo() 
-    {
-        return orderNo;
-    }
-    public void setTradeCreateTime(Date tradeCreateTime) 
-    {
-        this.tradeCreateTime = tradeCreateTime;
-    }
-
-    public Date getTradeCreateTime() 
-    {
-        return tradeCreateTime;
-    }
-    public void setPayTime(Date payTime) 
-    {
-        this.payTime = payTime;
-    }
-
-    public Date getPayTime() 
-    {
-        return payTime;
-    }
-    public void setLastModifyTime(Date lastModifyTime) 
-    {
-        this.lastModifyTime = lastModifyTime;
-    }
-
-    public Date getLastModifyTime() 
-    {
-        return lastModifyTime;
-    }
-    public void setTradeSourcePlace(String tradeSourcePlace) 
-    {
-        this.tradeSourcePlace = tradeSourcePlace;
-    }
-
-    public String getTradeSourcePlace() 
-    {
-        return tradeSourcePlace;
-    }
-    public void setTradeType(Integer tradeType) 
-    {
-        this.tradeType = tradeType;
-    }
-
-    public Integer getTradeType() 
-    {
-        return tradeType;
-    }
-    public void setCounterparty(String counterparty) 
-    {
-        this.counterparty = counterparty;
-    }
-
-    public String getCounterparty() 
-    {
-        return counterparty;
-    }
-    public void setTradePrice(BigDecimal tradePrice) 
-    {
-        this.tradePrice = tradePrice;
-    }
-
-    public BigDecimal getTradePrice() 
-    {
-        return tradePrice;
-    }
-    public void setTradeStatus(Integer tradeStatus) 
-    {
-        this.tradeStatus = tradeStatus;
-    }
-
-    public Integer getTradeStatus() 
-    {
-        return tradeStatus;
-    }
-    public void setIncomeExpenditureType(Integer incomeExpenditureType) 
-    {
-        this.incomeExpenditureType = incomeExpenditureType;
-    }
-
-    public Integer getIncomeExpenditureType() 
-    {
-        return incomeExpenditureType;
-    }
-    public void setServiceCharge(BigDecimal serviceCharge) 
-    {
-        this.serviceCharge = serviceCharge;
-    }
-
-    public BigDecimal getServiceCharge() 
-    {
-        return serviceCharge;
-    }
-    public void setRefundPrice(BigDecimal refundPrice) 
-    {
-        this.refundPrice = refundPrice;
-    }
-
-    public BigDecimal getRefundPrice() 
-    {
-        return refundPrice;
-    }
-    public void setCapitalStatus(Integer capitalStatus) 
-    {
-        this.capitalStatus = capitalStatus;
-    }
-
-    public Integer getCapitalStatus() 
-    {
-        return capitalStatus;
-    }
-    public void setBelongUserId(Long belongUserId) 
-    {
-        this.belongUserId = belongUserId;
-    }
-
-    public Long getBelongUserId() 
-    {
-        return belongUserId;
-    }
-    public void setTradeAccount(String tradeAccount) 
-    {
-        this.tradeAccount = tradeAccount;
-    }
-
-    public String getTradeAccount() 
-    {
-        return tradeAccount;
-    }
-
-    public String getTradeRealName() {
-        return tradeRealName;
-    }
-
-    public void setTradeRealName(String tradeRealName) {
-        this.tradeRealName = tradeRealName;
-    }
-
-    public String getGoodsName() {
-        return goodsName;
-    }
-
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
-    }
 }

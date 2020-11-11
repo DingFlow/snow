@@ -7,6 +7,7 @@ import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
+import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
@@ -43,7 +44,7 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     /**
      * 导入人
      */
-    private String operName;
+    private SysUser sysUser;
 
     /** 交易主体账户 */
 
@@ -54,20 +55,20 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     private String tradeRealName;
 
     /**
-     * 导入人
+     * 账单类型
      */
-    private long belongUserId;
+    private Integer billType;
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
      *
      * @param financeAlipayFlowService
      */
-    public FinanceAlipayFlowListener(IFinanceAlipayFlowService financeAlipayFlowService,String operName,String tradeAccount,String tradeRealName,long belongUserId) {
+    public FinanceAlipayFlowListener(IFinanceAlipayFlowService financeAlipayFlowService, SysUser sysUser, String tradeAccount, String tradeRealName, Integer billType) {
         this.financeAlipayFlowService = financeAlipayFlowService;
-        this.operName=operName;
+        this.sysUser=sysUser;
         this.tradeAccount=tradeAccount;
         this.tradeRealName=tradeRealName;
-        this.belongUserId=belongUserId;
+        this.billType=billType;
     }
     //创建list集合封装最终的数据
     List<FinanceAlipayFlowImport> list = new ArrayList<>();
@@ -135,13 +136,13 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             String tradeStatus = t.getTradeStatus();
             if (StringUtils.isEmpty(tradeStatus)) {
                 financeAlipayFlow.setTradeStatus(null);
-            } else if (tradeStatus.equals("交易成功")) {
+            } else if (tradeStatus.equals("交易成功")||tradeStatus.equals("已存入零钱")||tradeStatus.equals("支付成功")) {
                 financeAlipayFlow.setTradeStatus(1);
             } else if (tradeStatus.equals("交易关闭")) {
                 financeAlipayFlow.setTradeStatus(2);
             } else if (tradeStatus.equals("还款成功")) {
                 financeAlipayFlow.setTradeStatus(3);
-            } else if (tradeStatus.equals("退款成功")) {
+            } else if (tradeStatus.equals("退款成功")||tradeStatus.contains("退款")) {
                 financeAlipayFlow.setTradeStatus(4);
             }
             String tradeType = t.getTradeType();
@@ -151,11 +152,32 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
                 financeAlipayFlow.setTradeType(1);
             } else if (tradeType.equals("支付宝担保交易")) {
                 financeAlipayFlow.setTradeType(2);
+            }else if (tradeType.equals("商户消费")) {
+                financeAlipayFlow.setTradeType(3);
             }
-            financeAlipayFlow.setCreateBy(operName);
-            financeAlipayFlow.setBelongUserId(belongUserId);
+            else if (tradeType.equals("转账")) {
+                financeAlipayFlow.setTradeType(4);
+            }
+            else if (tradeType.equals("微信红包")) {
+                financeAlipayFlow.setTradeType(5);
+            }
+            else if (tradeType.equals("微信红包（群红包）")) {
+                financeAlipayFlow.setTradeType(6);
+            }
+            else if (tradeType.equals("微信红包（单发）")) {
+                financeAlipayFlow.setTradeType(7);
+            }else if(tradeType.equals("微信红包-退款")){
+                financeAlipayFlow.setTradeType(8);
+            }else if(tradeType.equals("扫二维码付款")){
+                financeAlipayFlow.setTradeType(9);
+            }else if(tradeType.equals("二维码收款")){
+                financeAlipayFlow.setTradeType(10);
+            }
+            financeAlipayFlow.setCreateBy(sysUser.getUserName());
+            financeAlipayFlow.setBelongUserId(sysUser.getUserId());
             financeAlipayFlow.setTradeRealName(tradeRealName);
             financeAlipayFlow.setTradeAccount(tradeAccount);
+            financeAlipayFlow.setBillType(billType);
             log.info("转化后的对象:financeAlipayFlow{}", com.alibaba.fastjson.JSON.toJSONString(financeAlipayFlow));
             return financeAlipayFlow;
         }).collect(Collectors.toList());
