@@ -1,5 +1,6 @@
 package com.snow.dingtalk.service;
 
+import com.dingtalk.api.response.OapiV2UserCreateResponse;
 import com.snow.system.domain.SysUser;
 
 /**
@@ -17,6 +18,12 @@ public interface UserService  {
      * @param
      * @return
      */
-    String create(SysUser sysUser);
+    OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser);
+
+    /**
+     * 删除用户
+     * @param ids
+     */
+    void deleteUser(String ids);
 
 }

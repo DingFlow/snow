@@ -13,6 +13,10 @@ public class BaseConstantUrl {
      */
     public static final String USER_CREATE= "https://oapi.dingtalk.com/topapi/v2/user/create";
     /**
+     * 删除用户
+     */
+    public static final String USER_DELETE=  "https://oapi.dingtalk.com/topapi/v2/user/delete";
+    /**
      * 获取token url
      */
     public static final String GET_TOKEN_URL="https://oapi.dingtalk.com/gettoken";

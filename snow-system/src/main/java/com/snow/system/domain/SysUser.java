@@ -129,7 +129,11 @@ public class SysUser extends BaseEntity
     /**
      * 入职时间，时间戳
      */
-    private Number hiredDate;
+    private Long hiredDate;
+    /**
+     * 组织邮箱
+     */
+    private String orgEmail;
 
     public SysUser()
     {
@@ -419,12 +423,20 @@ public class SysUser extends BaseEntity
         this.position = position;
     }
 
-    public Number getHiredDate() {
+    public Long getHiredDate() {
         return hiredDate;
     }
 
-    public void setHiredDate(Number hiredDate) {
+    public void setHiredDate(Long hiredDate) {
         this.hiredDate = hiredDate;
+    }
+
+    public String getOrgEmail() {
+        return orgEmail;
+    }
+
+    public void setOrgEmail(String orgEmail) {
+        this.orgEmail = orgEmail;
     }
 
     @Override

@@ -25,10 +25,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"     column="update_by"    />
 		<result property="updateTime"   column="update_time"  />
 		<result property="remark"       column="remark"       />
+		<result property="isSenior"       column="is_senior"       />
+		<result property="jobnumber"       column="job_number"       />
+		<result property="workPlace"       column="work_place"       />
+		<result property="tel"       column="tel"       />
+		<result property="hiredDate"       column="hired_date"       />
+		<result property="orgEmail"       column="org_email"       />
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
-	
+
 	<resultMap id="deptResult" type="SysDept">
 		<id     property="deptId"   column="dept_id"     />
 		<result property="parentId" column="parent_id"   />
@@ -179,6 +185,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="loginDate != null">login_date = #{loginDate},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
  			<if test="remark != null">remark = #{remark},</if>
+			<if test="isSenior != null">is_senior = #{isSenior},</if>
+			<if test="jobnumber != null">job_number = #{jobnumber},</if>
+			<if test="workPlace != null">work_place = #{workPlace},</if>
+			<if test="tel != null">tel = #{tel},</if>
+			<if test="hiredDate != null">hired_date = #{hiredDate},</if>
+			<if test="orgEmail != null">org_email = #{orgEmail},</if>
+
  			update_time = sysdate()
  		</set>
  		where user_id = #{userId}
@@ -200,6 +213,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			<if test="remark != null and remark != ''">remark,</if>
+		<if test="isSenior != null">is_senior,</if>
+		<if test="jobnumber != null">job_number,</if>
+		<if test="workPlace != null">work_place ,</if>
+		<if test="tel != null">tel ,</if>
+		<if test="hiredDate != null">hired_date,</if>
+		<if test="orgEmail != null">org_email,</if>
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
@@ -216,6 +235,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="isSenior != null ">#{isSenior},</if>
+		<if test="jobnumber != null and jobnumber !=''"> #{jobnumber},</if>
+		<if test="workPlace != null and workPlace !=''">#{workPlace},</if>
+		<if test="tel != null and tel!=''">#{tel},</if>
+		<if test="hiredDate != null and hiredDate !='' ">#{hiredDate},</if>
+		<if test="orgEmail != null and orgEmail !=''"> #{orgEmail},</if>
  			sysdate()
  		)
 	</insert>

@@ -13,7 +13,9 @@ public enum  DingTalkListenerType {
 
     DEPARTMENT_DELETED(3,2,"部门删除"),
 
-    USER_CREATED(5,2,"用户创建"),
+    USER_CREATED(5,1,"用户创建"),
+
+    USER_DELETE(6,1,"用户删除"),
 
     CALL_BACK_REGISTER(20,10, "回调注册"),
 

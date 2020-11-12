@@ -190,6 +190,9 @@ public class SysUserServiceImpl implements ISysUserService
         {
             checkUserAllowed(new SysUser(userId));
         }
+        //同步用户数据
+        SyncEvent syncEvent = new SyncEvent(ids, DingTalkListenerType.USER_DELETE);
+        applicationContext.publishEvent(syncEvent);
         return userMapper.deleteUserByIds(userIds);
     }
 

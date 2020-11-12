@@ -20,10 +20,10 @@ public class SyncDingTalkInfoFactory  {
         DingTalkListenerType dingTalkEnum = (DingTalkListenerType) syncEvent.getT();
         Integer type = dingTalkEnum.getType();
         if(type.equals(DingTalkListenerType.DEPARTMENT_CREATE.getType())){
-            return  new DepartmentCreateEventService();
+            return  new DepartmentEventService();
         }
         else if(type.equals(DingTalkListenerType.USER_CREATED.getType())){
-            return new UserCreateEventService();
+            return new UserEventService();
         }
         else if(type.equals(DingTalkListenerType.CALL_BACK_REGISTER.getType())){
             return new CallBackService();

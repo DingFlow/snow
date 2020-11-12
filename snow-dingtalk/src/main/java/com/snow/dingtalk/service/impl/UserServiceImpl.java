@@ -1,14 +1,23 @@
 package com.snow.dingtalk.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiV2UserCreateRequest;
+import com.dingtalk.api.request.OapiV2UserDeleteRequest;
 import com.dingtalk.api.response.OapiV2UserCreateResponse;
+import com.dingtalk.api.response.OapiV2UserDeleteResponse;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.service.UserService;
+import com.snow.system.domain.SysPost;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.impl.SysDeptServiceImpl;
+import com.snow.system.service.impl.SysPostServiceImpl;
 import com.taobao.api.ApiException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,46 +30,80 @@ import java.util.List;
  * @date 2020/11/9 10:51
  */
 @Service
+@Slf4j
 public class UserServiceImpl  extends BaseService implements UserService {
 
+    private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
+
     @Override
-    public String create(SysUser sysUser) {
+    public OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_CREATE);
         OapiV2UserCreateRequest req = new OapiV2UserCreateRequest();
         req.setUserid(String.valueOf(sysUser.getUserId()));
         req.setName(sysUser.getUserName());
         req.setMobile(sysUser.getPhonenumber());
         req.setHideMobile(false);
-        //req.setTelephone(sysUser.getPhonenumber());
+        req.setTelephone(sysUser.getPhonenumber());
         req.setJobNumber(sysUser.getJobnumber());
-        req.setTitle("技术总监");
-        req.setEmail("test@xxx.com");
-        req.setOrgEmail("test@xxx.com");
-        req.setWorkPlace("未来park");
-        req.setRemark("备注备注");
-        req.setDeptIdList("\"2,3,4\"");
+        req.setTitle(sysUser.getPosition());
+        req.setEmail(sysUser.getEmail());
+        req.setOrgEmail(sysUser.getOrgEmail());
+        req.setWorkPlace(sysUser.getWorkPlace());
+        req.setRemark(sysUser.getRemark());
+        //部门list
+        req.setDeptIdList(JSON.toJSONString(sysUser.getDept().getDeptId()));
         List<OapiV2UserCreateRequest.DeptOrder> list2 = new ArrayList<>();
-        OapiV2UserCreateRequest.DeptOrder obj3 = new OapiV2UserCreateRequest.DeptOrder();
-        list2.add(obj3);
-        obj3.setDeptId(2L);
-        obj3.setOrder(1L);
-        req.setDeptOrderList(list2);
-        List<OapiV2UserCreateRequest.DeptTitle> list5 = new ArrayList<>();
-        OapiV2UserCreateRequest.DeptTitle obj6 = new OapiV2UserCreateRequest.DeptTitle();
-        list5.add(obj6);
-        obj6.setDeptId(2L);
-        obj6.setTitle("资深产品经理");
-        req.setDeptTitleList(list5);
-        req.setExtension("{\"爱好\":\"旅游\",\"年龄\":\"24\"}");
+        //员工在对应的部门中的职位
+        List<OapiV2UserCreateRequest.DeptTitle> deptTitleList = new ArrayList<>();
+        Long[] postIds = sysUser.getPostIds();
+        if(StringUtils.isNotNull(postIds)){
+            for(Long postId:postIds){
+                SysPost sysPost = sysPostService.selectPostById(postId);
+                OapiV2UserCreateRequest.DeptTitle deptTitle = new OapiV2UserCreateRequest.DeptTitle();
+                deptTitle.setDeptId(sysUser.getDeptId());
+                deptTitle.setTitle(sysPost.getPostName());
+                deptTitleList.add(deptTitle);
+            }
+        }
+
+        //req.setExtension("{\"爱好\":\"旅游\",\"年龄\":\"24\"}");
         req.setSeniorMode(false);
-        req.setHiredDate(1597573616828L);
-        OapiV2UserCreateResponse rsp = null;
+        req.setHiredDate(sysUser.getHiredDate());
+        OapiV2UserCreateResponse response = null;
         try {
-            rsp = client.execute(req, getDingTalkToken());
+            response = client.execute(req, getDingTalkToken());
+            if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,response.getMessage(),"createUser",JSON.toJSONString(req));
+                OapiV2UserCreateResponse.UserCreateResponse result = response.getResult();
+                return result;
+            }else {
+                syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,response.getErrmsg(),"createUser",JSON.toJSONString(req));
+            }
         } catch (ApiException e) {
+            syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,e.getMessage(),"createUser",JSON.toJSONString(req));
             e.printStackTrace();
         }
-        System.out.println(rsp.getBody());
         return null;
+    }
+
+    @Override
+    public void deleteUser(String ids) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_DELETE);
+        OapiV2UserDeleteRequest req = new OapiV2UserDeleteRequest();
+        req.setUserid(ids);
+        OapiV2UserDeleteResponse response = null;
+        try {
+            response = client.execute(req, getDingTalkToken());
+            if(response.getErrcode()==0){
+                syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,response.getMessage(),"deleteUser",JSON.toJSONString(req));
+                String requestId = response.getRequestId();
+                log.info("dingTalk删除用户返回：{}",requestId);
+            }else {
+                syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,response.getErrmsg(),"deleteUser",JSON.toJSONString(req));
+            }
+        } catch (ApiException e) {
+            syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,e.getMessage(),"deleteUser",JSON.toJSONString(req));
+            e.printStackTrace();
+        }
     }
 }
