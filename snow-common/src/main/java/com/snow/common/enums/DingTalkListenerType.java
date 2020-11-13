@@ -13,15 +13,15 @@ public enum  DingTalkListenerType {
 
     DEPARTMENT_DELETED(3,2,"部门删除"),
 
-    USER_CREATED(5,1,"用户创建"),
+    USER_CREATE(1,1,"用户创建"),
 
-    USER_DELETE(6,1,"用户删除"),
+    USER_DELETE(3,1,"用户删除"),
 
-    CALL_BACK_REGISTER(20,10, "回调注册"),
+    CALL_BACK_REGISTER(1,10, "回调注册"),
 
-    CALL_BACK_UPDATE(21,10, "回调更新"),
+    CALL_BACK_UPDATE(2,10, "回调更新"),
 
-    CALL_BACK_DELETE(22,10, "回调删除"),
+    CALL_BACK_DELETE(3,10, "回调删除"),
 
     CALL_BACK_FAILED_RESULT(23,10, "获取回调失败结果"),
     ;

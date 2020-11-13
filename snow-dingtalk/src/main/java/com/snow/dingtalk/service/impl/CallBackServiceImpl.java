@@ -7,13 +7,19 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
+import com.snow.common.annotation.DingTalkSyncLog;
 import com.snow.common.constant.Constants;
+import com.snow.common.enums.DingTalkBusinessType;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkSyncType;
+import com.snow.common.exception.DingTalkSyncException;
 import com.snow.common.utils.StringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.service.CallBackService;
 import com.snow.system.domain.DingtalkCallBack;
 import com.taobao.api.ApiException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +32,12 @@ import java.util.List;
  * @date 2020/11/3 11:19
  */
 @Service
+@Slf4j
 public class CallBackServiceImpl extends BaseService implements CallBackService {
 
-    public static final String TOKEN="call_back_dingtalk_token";
 
     @Override
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_REGISTER,dingTalkUrl=BaseConstantUrl.REGISTER_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void registerCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.REGISTER_CALL_BACK);
         OapiCallBackRegisterCallBackRequest request = new OapiCallBackRegisterCallBackRequest();
@@ -40,20 +47,18 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
         request.setCallBackTag(dingtalkCallBack.getEventNameList());
         try {
             OapiCallBackRegisterCallBackResponse response = client.execute(request,getDingTalkToken());
-            if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.REGISTER_CALL_BACK,response.getMessage(),"registerCallBack()", JSON.toJSONString(request));
-            }else {
-                //记录获取token失败日志
-                syncDingTalkErrorOperLog(BaseConstantUrl.REGISTER_CALL_BACK,response.getErrmsg(),"registerCallBack()", JSON.toJSONString(request));
+            if(response.getErrcode()!=0){
+                throw new DingTalkSyncException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.REGISTER_CALL_BACK,e.getMessage(),"registerCallBack()", JSON.toJSONString(request));
-            e.printStackTrace();
+            log.error("注册钉钉回调registerCallBack异常：{}",e.getMessage());
+            throw new DingTalkSyncException(JSON.toJSONString(request),e.getErrMsg());
         }
     }
 
     @Override
-    public void updateCallBack(DingtalkCallBack dingtalkCallBack) {
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_UPDATE,dingTalkUrl=BaseConstantUrl.UPDATE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    public Boolean updateCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.UPDATE_CALL_BACK);
         OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
         request.setUrl(dingtalkCallBack.getUrl());
@@ -63,33 +68,30 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
         try {
             OapiCallBackUpdateCallBackResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,response.getMessage(),"updateCallBack()", JSON.toJSONString(request));
+                return response.isSuccess();
             }else {
-                //记录获取token失败日志
-                syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,response.getErrmsg(),"updateCallBack()", JSON.toJSONString(request));
+                throw new DingTalkSyncException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.UPDATE_CALL_BACK,e.getMessage(),"updateCallBack()", JSON.toJSONString(request));
-            e.printStackTrace();
+            log.error("更新钉钉回调updateCallBack异常：{}",e.getMessage());
+            throw new DingTalkSyncException(JSON.toJSONString(request),e.getErrMsg());
         }
     }
 
     @Override
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void deleteCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_CALL_BACK);
         OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();
         request.setHttpMethod("GET");
         try {
             OapiCallBackDeleteCallBackResponse response = client.execute(request, getDingTalkToken());
-            if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getMessage(),"deleteCallBack()", JSON.toJSONString(request));
-            }else {
-                //记录获取token失败日志
-                syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,response.getErrmsg(),"deleteCallBack()", JSON.toJSONString(request));
+            if(response.getErrcode()!=0){
+                throw new DingTalkSyncException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.DELETE_CALL_BACK,e.getMessage(),"deleteCallBack()", JSON.toJSONString(request));
-            e.printStackTrace();
+            log.error("删除钉钉回调deleteCallBack异常：{}",e.getMessage());
+            throw new DingTalkSyncException(JSON.toJSONString(request),e.getErrMsg());
         }
     }
 
@@ -102,7 +104,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
             OapiCallBackGetCallBackFailedResultResponse response = client.execute(request, getDingTalkToken());
             if(response.getErrcode()==0){
                 List<OapiCallBackGetCallBackFailedResultResponse.Failed> failedList = response.getFailedList();
-                syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
+                syncDingTalkSuccessOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
                 return failedList;
             }else {
                 //记录获取token失败日志
@@ -113,41 +115,6 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
             e.printStackTrace();
         }
         return null;
-    }
-    /**
-     * 获取token
-     * @return
-     */
-    @Deprecated
-    public String getCallBackDingTalkToken(DingtalkCallBack dingtalkCallBack){
-        //创建缓存，缓存默认是7100S
-        TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
-        if(StringUtils.isEmpty(timedCache.get(TOKEN))){
-            DefaultDingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_TOKEN_URL);
-            OapiGettokenRequest request = new OapiGettokenRequest();
-            request.setAppkey(dingtalkCallBack.getAppKey());
-            request.setAppsecret(dingtalkCallBack.getAppSecret());
-            request.setHttpMethod(Constants.GET);
-            try {
-                OapiGettokenResponse response = client.execute(request);
-                if(response.getErrcode()==0){
-                    timedCache.put(TOKEN,response.getAccessToken());
-                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getMessage(),"getCallBackDingTalkToken()", JSON.toJSONString(request));
-                    return response.getAccessToken();
-                }else {
-                    //记录获取token失败日志
-                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getErrmsg(),"getCallBackDingTalkToken()", JSON.toJSONString(request));
-                    return null;
-                }
-            } catch (ApiException e) {
-                syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,e.getMessage(),"getCallBackDingTalkToken()",JSON.toJSONString(request));
-                e.printStackTrace();
-            }
-            return null;
-        }else {
-            return timedCache.get(TOKEN);
-        }
-
     }
 }
 

@@ -6,13 +6,20 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.constant.Constants;
+import com.snow.common.enums.BusinessStatus;
 import com.snow.common.enums.BusinessType;
+import com.snow.common.enums.DingTalkSyncType;
+import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysDingtalkSyncLog;
 import com.snow.system.domain.SysOperLog;
+import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.ISysOperLogService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
+import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import com.snow.system.service.impl.SysOperLogServiceImpl;
 import com.taobao.api.ApiException;
 
@@ -32,6 +39,7 @@ public class BaseService {
 
     private SysOperLogServiceImpl iSysOperLogService=SpringUtils.getBean("sysOperLogServiceImpl");
 
+    private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService=SpringUtils.getBean("sysDingtalkSyncLogServiceImpl");
     /**
      * 获取token
      * @return
@@ -49,7 +57,7 @@ public class BaseService {
                 OapiGettokenResponse response = client.execute(request);
                 if(response.getErrcode()==0){
                     timedCache.put(TOKEN,response.getAccessToken());
-                    syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getMessage(),"getDingTalkToken()", com.alibaba.fastjson.JSON.toJSONString(request));
+                    syncDingTalkSuccessOperLog(BaseConstantUrl.GET_TOKEN_URL,response.getMessage(),"getDingTalkToken()", com.alibaba.fastjson.JSON.toJSONString(request));
                     return response.getAccessToken();
                 }else {
                     //记录获取token失败日志
@@ -107,5 +115,4 @@ public class BaseService {
         sysOperLog.setStatus(0);
         iSysOperLogService.insertOperlog(sysOperLog);
     }
-
 }

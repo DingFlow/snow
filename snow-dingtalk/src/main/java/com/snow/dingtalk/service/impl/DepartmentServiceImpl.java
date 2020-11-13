@@ -7,6 +7,10 @@ import com.dingtalk.api.request.OapiDepartmentCreateRequest;
 import com.dingtalk.api.request.OapiDepartmentListRequest;
 import com.dingtalk.api.response.OapiDepartmentCreateResponse;
 import com.dingtalk.api.response.OapiDepartmentListResponse;
+import com.snow.common.annotation.DingTalkSyncLog;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkSyncType;
+import com.snow.common.exception.DingTalkSyncException;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
@@ -15,6 +19,7 @@ import com.snow.dingtalk.service.DepartmentService;
 import com.snow.system.service.impl.SysDeptServiceImpl;
 import com.taobao.api.ApiException;
 import com.taobao.api.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +31,13 @@ import java.util.List;
  * @create: 2020-10-31 12:59
  **/
 @Service(value = "departmentServiceImpl")
+@Slf4j
 public class DepartmentServiceImpl extends BaseService implements DepartmentService  {
 
     private SysDeptServiceImpl sysDeptServiceImpl=SpringUtils.getBean("sysDeptServiceImpl");
 
     @Override
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.DEPARTMENT_CREATE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_CREATE)
     public Long createDepartment(DepartmentCreateRequest departmentDTO){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DEPARTMENT_CREATE);
         OapiDepartmentCreateRequest request = new OapiDepartmentCreateRequest();
@@ -43,16 +50,15 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         try {
             OapiDepartmentCreateResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,response.getMessage(),"createDepartment",JSON.toJSONString(request));
                 return response.getId();
             }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,response.getErrmsg(),"createDepartment",JSON.toJSONString(request));
+                throw new DingTalkSyncException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_CREATE,e.getMessage(),"createDepartment",JSON.toJSONString(request));
             e.printStackTrace();
+            log.error("钉钉创建部门createDepartment异常：{}",e.getMessage());
+            throw new DingTalkSyncException(JSON.toJSONString(request),e.getErrMsg());
         }
-        return null;
     }
 
 
@@ -66,7 +72,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         try {
             OapiDepartmentListResponse response = client.execute(request, getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_LIST,response.getMessage(),"getDingTalkDepartmentList",JSON.toJSONString(request));
+                syncDingTalkSuccessOperLog(BaseConstantUrl.DEPARTMENT_LIST,response.getMessage(),"getDingTalkDepartmentList",JSON.toJSONString(request));
                 return response.getDepartment();
             }else {
                 syncDingTalkErrorOperLog(BaseConstantUrl.DEPARTMENT_LIST,response.getErrmsg(),"getDingTalkDepartmentList",JSON.toJSONString(request));
@@ -79,9 +85,4 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     }
 
 
-    public void sycnDepartmentData(){
-        List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = getDingTalkDepartmentList();
-
-
-    }
 }

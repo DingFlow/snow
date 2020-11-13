@@ -21,7 +21,7 @@ public interface CallBackService {
      * 更新事件
      * @param dingtalkCallBack
      */
-    void updateCallBack(DingtalkCallBack dingtalkCallBack);
+    Boolean updateCallBack(DingtalkCallBack dingtalkCallBack);
 
     /**
      * 删除事件

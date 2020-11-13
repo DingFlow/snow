@@ -22,7 +22,7 @@ public class SyncDingTalkInfoFactory  {
         if(type.equals(DingTalkListenerType.DEPARTMENT_CREATE.getType())){
             return  new DepartmentEventService();
         }
-        else if(type.equals(DingTalkListenerType.USER_CREATED.getType())){
+        else if(type.equals(DingTalkListenerType.USER_CREATE.getType())){
             return new UserEventService();
         }
         else if(type.equals(DingTalkListenerType.CALL_BACK_REGISTER.getType())){

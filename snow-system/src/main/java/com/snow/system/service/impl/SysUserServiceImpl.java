@@ -213,7 +213,7 @@ public class SysUserServiceImpl implements ISysUserService
         // 新增用户与角色管理
         insertUserRole(user.getUserId(), user.getRoleIds());
         //同步用户数据
-        SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATED);
+        SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
         applicationContext.publishEvent(syncEvent);
         return rows;
     }

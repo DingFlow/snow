@@ -25,7 +25,7 @@ public class UserEventService implements ISyncDingTalkInfo {
         log.info("调用钉钉用户回调传入的原始参数:{}"+JSON.toJSONString(syncEvent));
         DingTalkListenerType eventType =(DingTalkListenerType) syncEvent.getT();
         Integer code = eventType.getCode();
-        if(code.equals(DingTalkListenerType.USER_CREATED.getCode())){
+        if(code.equals(DingTalkListenerType.USER_CREATE.getCode())){
             userService.createUser((SysUser) syncEvent.getSource());
         }
         else if( code.equals(DingTalkListenerType.USER_DELETE.getCode())){

@@ -7,6 +7,9 @@ import com.dingtalk.api.request.OapiV2UserCreateRequest;
 import com.dingtalk.api.request.OapiV2UserDeleteRequest;
 import com.dingtalk.api.response.OapiV2UserCreateResponse;
 import com.dingtalk.api.response.OapiV2UserDeleteResponse;
+import com.snow.common.annotation.DingTalkSyncLog;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.exception.DingTalkSyncException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -36,6 +39,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
     private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
 
     @Override
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
     public OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_CREATE);
         OapiV2UserCreateRequest req = new OapiV2UserCreateRequest();
@@ -73,20 +77,19 @@ public class UserServiceImpl  extends BaseService implements UserService {
         try {
             response = client.execute(req, getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,response.getMessage(),"createUser",JSON.toJSONString(req));
                 OapiV2UserCreateResponse.UserCreateResponse result = response.getResult();
                 return result;
             }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,response.getErrmsg(),"createUser",JSON.toJSONString(req));
+                throw new DingTalkSyncException(JSON.toJSONString(req),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.USER_CREATE,e.getMessage(),"createUser",JSON.toJSONString(req));
-            e.printStackTrace();
+            log.error("钉钉createUser异常：{}",e.getErrMsg());
+            throw new DingTalkSyncException(JSON.toJSONString(req),e.getErrMsg());
         }
-        return null;
     }
 
     @Override
+    @DingTalkSyncLog(dingTalkListenerType = DingTalkListenerType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
     public void deleteUser(String ids) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_DELETE);
         OapiV2UserDeleteRequest req = new OapiV2UserDeleteRequest();
@@ -95,15 +98,15 @@ public class UserServiceImpl  extends BaseService implements UserService {
         try {
             response = client.execute(req, getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,response.getMessage(),"deleteUser",JSON.toJSONString(req));
                 String requestId = response.getRequestId();
                 log.info("dingTalk删除用户返回：{}",requestId);
             }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,response.getErrmsg(),"deleteUser",JSON.toJSONString(req));
+                throw new DingTalkSyncException(JSON.toJSONString(req),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.USER_DELETE,e.getMessage(),"deleteUser",JSON.toJSONString(req));
+            log.error("钉钉deleteUser异常：{}",e.getErrMsg());
             e.printStackTrace();
+            throw new DingTalkSyncException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
 }
