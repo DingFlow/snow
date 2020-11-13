@@ -123,4 +123,12 @@ public class SysDingtalkSyncLogController extends BaseController
     {
         return toAjax(sysDingtalkSyncLogService.deleteSysDingtalkSyncLogByIds(ids));
     }
+
+    @RequiresPermissions("system:log:detail")
+    @GetMapping("/detail/{operId}")
+    public String detail(@PathVariable("operId") Long operId, ModelMap mmap)
+    {
+        mmap.put("operLog", sysDingtalkSyncLogService.selectSysDingtalkSyncLogById(operId));
+        return prefix + "/detail";
+    }
 }
