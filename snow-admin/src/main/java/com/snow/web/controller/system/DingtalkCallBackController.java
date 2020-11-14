@@ -37,8 +37,6 @@ public class DingtalkCallBackController extends BaseController
 
     @Autowired
     private IDingtalkCallBackService dingtalkCallBackService;
-    @Autowired
-    private CallBackServiceImpl callBackServiceImpl;
 
     @RequiresPermissions("system:back:view")
     @GetMapping()
@@ -132,12 +130,5 @@ public class DingtalkCallBackController extends BaseController
         return toAjax(dingtalkCallBackService.deleteDingtalkCallBackByIds(ids));
     }
 
-    @RequiresPermissions("system:back:detail")
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Long operId, ModelMap mmap)
-    {
-        List<OapiCallBackGetCallBackFailedResultResponse.Failed> callBackFailedResult = callBackServiceImpl.getCallBackFailedResult();
-        mmap.put("operLog", callBackFailedResult);
-        return prefix + "/detail";
-    }
+
 }

@@ -29,45 +29,10 @@
                                 </select>
                             </li>
                             <li>
-                                <label>方法名称：</label>
-                                <input type="text" name="method"/>
-                            </li>
-                            <li>
-                                <label>请求方式：</label>
-                                <input type="text" name="requestMethod"/>
-                            </li>
-                            <li>
                                 <label>操作类别：</label>
-                                <select name="operatorType">
+                                <select name="businessType" th:with="type=${@dict.getType('dingtalk_sync_type')}">
                                     <option value="">所有</option>
-                                    <option value="-1">代码生成请选择字典属性</option>
-                                </select>
-                            </li>
-                            <li>
-                                <label>操作人员：</label>
-                                <input type="text" name="operName"/>
-                            </li>
-                            <li>
-                                <label>部门名称：</label>
-                                <input type="text" name="deptName"/>
-                            </li>
-                            <li>
-                                <label>请求URL：</label>
-                                <input type="text" name="operUrl"/>
-                            </li>
-                            <li>
-                                <label>主机地址：</label>
-                                <input type="text" name="operIp"/>
-                            </li>
-                            <li>
-                                <label>操作地点：</label>
-                                <input type="text" name="operLocation"/>
-                            </li>
-                            <li>
-                                <label>操作状态：</label>
-                                <select name="status">
-                                    <option value="">所有</option>
-                                    <option value="-1">代码生成请选择字典属性</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li class="select-time">
@@ -86,12 +51,6 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:log:add">
-                    <i class="fa fa-plus"></i> 添加
-                </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:log:edit">
-                    <i class="fa fa-edit"></i> 修改
-                </a>
                 <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:log:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
@@ -107,6 +66,7 @@
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:log:edit')}]];
+        var detailFlag=[[${@permission.hasPermi('system:log:detail')}]];
         var removeFlag = [[${@permission.hasPermi('system:log:remove')}]];
         var moduleTypeDatas = [[${@dict.getType('dingtalk_module_type')}]];
         var businessTypeDatas = [[${@dict.getType('dingtalk_oper_type')}]];
@@ -150,10 +110,6 @@
                        return $.table.selectDictLabel(businessTypeDatas, value);
                     }
                 },
-              /*  {
-                    field: 'method',
-                    title: '方法名称'
-                },*/
                 {
                     field: 'requestMethod',
                     title: '请求方式'
@@ -173,10 +129,6 @@
                     field: 'deptName',
                     title: '部门名称'
                 },
-              /*  {
-                    field: 'operUrl',
-                    title: '请求URL'
-                },*/
                 {
                     field: 'operIp',
                     title: '主机地址'
@@ -185,18 +137,7 @@
                     field: 'operLocation',
                     title: '操作地点'
                 },
-               /* {
-                    field: 'operSourceParam',
-                    title: '请求原参数'
-                },
-                {
-                    field: 'operDingtalkParam',
-                    title: '请求钉钉参数'
-                },
-                {
-                    field: 'jsonResult',
-                    title: '返回参数'
-                },*/
+
                 {
                     field: 'status',
                     title: '操作状态',
@@ -209,10 +150,6 @@
                         }
                     }
                 },
-               /* {
-                    field: 'errorMsg',
-                    title: '错误消息'
-                },*/
                 {
                     field: 'operTime',
                     title: '操作时间'
@@ -222,8 +159,13 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.logId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.logId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.status==1){
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.logId + '\')"><i class="fa fa-edit"></i>手工同步</a> ');
+                        }
+
+
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.logId + '\')"><i class="fa fa-remove"></i>删除</a> ');
+
                         actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.logId + '\')"><i class="fa fa-search"></i>详细</a>');
                         return actions.join('');
                     }

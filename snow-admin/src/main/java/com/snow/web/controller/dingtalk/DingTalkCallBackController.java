@@ -4,11 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.oapi.lib.aes.DingTalkEncryptor;
 import com.snow.dingtalk.common.EventNameEnum;
+import com.snow.system.domain.DingtalkCallBack;
+import com.snow.system.service.impl.DingtalkCallBackServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -16,9 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description:
  * @date 2020/11/3 17:11
  */
-@RestController("/dingTalk")
+@RestController
 @Slf4j
-public class DingTalkCallBack {
+@RequestMapping("/dingTalk")
+public class DingTalkCallBackController {
+
+    @Autowired
+    private DingtalkCallBackServiceImpl dingtalkCallBackService;
 
     /**
      * 钉钉回调
@@ -35,10 +43,18 @@ public class DingTalkCallBack {
             @RequestParam(value = "nonce") String nonce,
             @RequestBody(required = false) JSONObject body
     ) {
+        DingtalkCallBack dingtalkCallBack=new DingtalkCallBack();
+        dingtalkCallBack.setFlag(true);
+        List<DingtalkCallBack> dingtalkCallBacks = dingtalkCallBackService.selectDingtalkCallBackList(dingtalkCallBack);
+        if(!CollectionUtils.isEmpty(dingtalkCallBacks)){
+            dingtalkCallBack=dingtalkCallBacks.get(0);
+        }else {
+            return "fail";
+        }
         String params = "signature:" + signature + " timestamp:" + timestamp + " nonce:" + nonce + " body:" + body;
         try {
             log.info("begin callback:" + params);
-            DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor("","","");
+            DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor(dingtalkCallBack.getToken(),dingtalkCallBack.getAesKey(),dingtalkCallBack.getCorpId());
 
             // 从post请求的body中获取回调信息的加密数据进行解密处理
             String encrypt = body.getString("encrypt");
