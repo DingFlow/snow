@@ -1,6 +1,7 @@
 package com.snow.dingtalk.service;
 
 import com.dingtalk.api.response.OapiDepartmentListResponse;
+import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
 import com.snow.dingtalk.model.DepartmentCreateRequest;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,12 @@ public interface DepartmentService {
      * @return
      */
     Long createDepartment(DepartmentCreateRequest departmentDTO);
+
+    /**
+     * 根据ID获取钉钉部门详情
+     * @param id
+     */
+    OapiV2DepartmentGetResponse.DeptGetResponse getDepartmentDetail(long id);
 
     /**
      * 获取部门详情

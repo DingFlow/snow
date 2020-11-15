@@ -5,8 +5,10 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiDepartmentCreateRequest;
 import com.dingtalk.api.request.OapiDepartmentListRequest;
+import com.dingtalk.api.request.OapiV2DepartmentGetRequest;
 import com.dingtalk.api.response.OapiDepartmentCreateResponse;
 import com.dingtalk.api.response.OapiDepartmentListResponse;
+import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
 import com.snow.common.annotation.DingTalkSyncLog;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.DingTalkSyncType;
@@ -59,6 +61,26 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
             log.error("钉钉创建部门createDepartment异常：{}",e.getMessage());
             throw new DingTalkSyncException(JSON.toJSONString(request),e.getErrMsg());
         }
+    }
+
+    @Override
+    public OapiV2DepartmentGetResponse.DeptGetResponse getDepartmentDetail(long id) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_DEPARTMENT_BY_ID);
+        OapiV2DepartmentGetRequest req = new OapiV2DepartmentGetRequest();
+        req.setDeptId(id);
+        req.setLanguage("zh_CN");
+        OapiV2DepartmentGetResponse rsp = null;
+        try {
+            rsp = client.execute(req, getDingTalkToken());
+            if(rsp.getErrcode()==0){
+                return rsp.getResult();
+
+            }
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+        System.out.println(rsp.getBody());
+        return null;
     }
 
 

@@ -1,6 +1,8 @@
 package com.snow.system.domain;
 
 import javax.validation.constraints.*;
+
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.snow.common.core.domain.BaseEntity;
@@ -10,6 +12,7 @@ import com.snow.common.core.domain.BaseEntity;
  * 
  * @author snow
  */
+@Data
 public class SysDept extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -47,6 +50,7 @@ public class SysDept extends BaseEntity
     /** 父部门名称 */
     private String parentName;
 
+    private Boolean isSyncDingTalk=true;
     public Long getDeptId()
     {
         return deptId;

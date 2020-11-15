@@ -207,14 +207,16 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         SysDept info = deptMapper.selectDeptById(dept.getParentId());
         // 如果父节点不为"正常"状态,则不允许新增子节点
-        if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
-        {
+       // if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
+     /*   {
             throw new BusinessException("部门停用，不允许新增");
-        }
+        }*/
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
-        //同步钉钉数据
-        SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
-        applicationContext.publishEvent(syncEvent);
+        if(dept.getIsSyncDingTalk()){
+            //同步钉钉数据
+            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
+            applicationContext.publishEvent(syncEvent);
+        }
         return deptMapper.insertDept(dept);
     }
 

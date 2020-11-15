@@ -7,15 +7,15 @@ package com.snow.common.enums;
  * @date 2020/9/18 10:18
  */
 public enum  DingTalkListenerType {
-    DEPARTMENT_CREATE(1, 2,"部门创建"),
+    DEPARTMENT_CREATE(1, 2,"org_dept_create"),
 
-    DEPARTMENT_UPDATE(2, 2,"部门更新"),
+    DEPARTMENT_UPDATE(2, 2,"org_dept_modify"),
 
-    DEPARTMENT_DELETED(3,2,"部门删除"),
+    DEPARTMENT_DELETED(3,2,"org_dept_remove"),
 
-    USER_CREATE(1,1,"用户创建"),
+    USER_CREATE(1,1,"user_add_org"),
 
-    USER_DELETE(3,1,"用户删除"),
+    USER_DELETE(3,1,"user_leave_org"),
 
     CALL_BACK_REGISTER(1,10, "回调注册"),
 
