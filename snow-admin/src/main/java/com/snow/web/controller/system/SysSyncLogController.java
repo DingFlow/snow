@@ -27,7 +27,7 @@ import com.snow.common.core.page.TableDataInfo;
  */
 @Controller
 @RequestMapping("/system/log")
-public class SysDingtalkSyncLogController extends BaseController
+public class SysSyncLogController extends BaseController
 {
     private String prefix = "system/log";
 

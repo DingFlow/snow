@@ -23,10 +23,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="errorMsg"    column="error_msg"    />
         <result property="operTime"    column="oper_time"    />
+        <result property="logType"    column="log_type"    />
     </resultMap>
 
     <sql id="selectSysDingtalkSyncLogVo">
-        select log_id, title, module_type, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_source_param, oper_dingtalk_param, json_result, status, error_msg, oper_time from sys_dingtalk_sync_log
+        select log_id, title, module_type, log_type,business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_source_param, oper_dingtalk_param, json_result, status, error_msg, oper_time from sys_dingtalk_sync_log
     </sql>
 
     <select id="selectSysDingtalkSyncLogList" parameterType="SysDingtalkSyncLog" resultMap="SysDingtalkSyncLogResult">
@@ -45,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="operLocation != null  and operLocation != ''"> and oper_location = #{operLocation}</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="operTime != null "> and oper_time = #{operTime}</if>
+            <if test="logType != null "> and log_type = #{logType}</if>
         </where>
     </select>
     
@@ -73,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="errorMsg != null">error_msg,</if>
             <if test="operTime != null">oper_time,</if>
+            <if test="logType != null "> log_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">#{title},</if>
@@ -92,6 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="errorMsg != null">#{errorMsg},</if>
             <if test="operTime != null">#{operTime},</if>
+            <if test="logType != null ">  #{logType},</if>
          </trim>
     </insert>
 
@@ -115,6 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="errorMsg != null">error_msg = #{errorMsg},</if>
             <if test="operTime != null">oper_time = #{operTime},</if>
+            <if test="logType != null ">  log_type = #{logType},</if>
         </trim>
         where log_id = #{logId}
     </update>

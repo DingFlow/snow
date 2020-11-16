@@ -3,6 +3,7 @@ package com.snow.dingtalk.service;
 import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
 import com.snow.dingtalk.model.DepartmentCreateRequest;
+import com.snow.system.domain.SysDept;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,17 @@ public interface DepartmentService {
      * @return
      */
     Long createDepartment(DepartmentCreateRequest departmentDTO);
+
+    /**
+     * 更新部门
+     * @param sysDept
+     */
+    String updateDepartment(SysDept sysDept);
+    /**
+     * 删除部门
+     * @param
+     */
+    String deleteDepartment(Long id);
 
     /**
      * 根据ID获取钉钉部门详情

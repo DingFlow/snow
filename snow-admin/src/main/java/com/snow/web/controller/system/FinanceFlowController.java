@@ -10,6 +10,7 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.FinanceAlipayFlowMapper;
+import com.snow.system.mapper.SysUserMapper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,13 +38,12 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Controller
 @RequestMapping("/system/flow")
-public class FinanceAlipayFlowController extends BaseController
+public class FinanceFlowController extends BaseController
 {
     private String prefix = "system/flow";
 
     @Autowired
     private IFinanceAlipayFlowService financeAlipayFlowService;
-
 
 
     @RequiresPermissions("system:flow:view")

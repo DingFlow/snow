@@ -2,17 +2,13 @@ package com.snow.web.controller.dingtalk;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.oapi.lib.aes.DingTalkEncryptor;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.dingtalk.common.EventNameEnum;
-import com.snow.dingtalk.service.impl.DepartmentServiceImpl;
 import com.snow.dingtalk.sync.ISyncSysInfo;
 import com.snow.dingtalk.sync.SyncSysInfoFactory;
 import com.snow.system.domain.DingtalkCallBack;
-import com.snow.system.domain.SysDept;
 import com.snow.system.service.impl.DingtalkCallBackServiceImpl;
-import com.snow.system.service.impl.SysDeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -33,10 +29,6 @@ public class DingTalkCallBackController {
 
     @Autowired
     private DingtalkCallBackServiceImpl dingtalkCallBackService;
-    @Autowired
-    private DepartmentServiceImpl departmentService;
-    @Autowired
-    private SysDeptServiceImpl sysDeptService;
 
 
     /**
@@ -71,12 +63,9 @@ public class DingTalkCallBackController {
             String encrypt = body.getString("encrypt");
             String plainText = dingTalkEncryptor.getDecryptMsg(signature, timestamp.toString(), nonce, encrypt);
             JSONObject callBackContent = JSON.parseObject(plainText);
-
             // 根据回调事件类型做不同的业务处理
             String eventType = callBackContent.getString("EventType");
             SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
-
-
             if (DingTalkListenerType.DEPARTMENT_CREATE.getInfo().equals(eventType)) {
                 ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(DingTalkListenerType.DEPARTMENT_CREATE);
                 iSyncSysInfo.SyncSysInfo(DingTalkListenerType.DEPARTMENT_CREATE, callBackContent);
@@ -101,19 +90,4 @@ public class DingTalkCallBackController {
         }
     }
 
-    @GetMapping("/initDepartment")
-    public void initDepartment(){
-        List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();
-        dingTalkDepartmentList.stream().forEach(t->{
-            SysDept sysDept=new SysDept();
-            sysDept.setDeptId(t.getId());
-            sysDept.setDeptName(t.getName());
-            sysDept.setOrderNum(String.valueOf(t.getId()));
-            sysDept.setParentId(t.getParentid());
-            sysDept.setIsSyncDingTalk(false);
-            sysDeptService.insertDept(sysDept);
-        });
-
-
-    }
 }

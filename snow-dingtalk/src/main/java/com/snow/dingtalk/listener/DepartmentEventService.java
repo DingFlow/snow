@@ -35,9 +35,13 @@ public class DepartmentEventService implements ISyncDingTalkInfo {
                     .parentid(sysDept.getParentName())
                     .build();
             departmentService.createDepartment(departmentDTO);
+        }else if(code.equals(DingTalkListenerType.DEPARTMENT_UPDATE.getCode())){
+            SysDept sysDept=(SysDept)syncEvent.getSource();
+            departmentService.updateDepartment(sysDept);
         }
         else if( code.equals(DingTalkListenerType.DEPARTMENT_DELETED.getCode())){
-
+            Long id=(Long)syncEvent.getSource();
+            departmentService.deleteDepartment(id);
         }
 
     }

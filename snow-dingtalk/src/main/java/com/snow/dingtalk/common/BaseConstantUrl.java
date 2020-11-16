@@ -24,7 +24,14 @@ public class BaseConstantUrl {
      * 创建部门
      */
     public static final String DEPARTMENT_CREATE="https://oapi.dingtalk.com/department/create";
-
+    /**
+     * 更新部门
+     */
+    public static final String DEPARTMENT_UPDATE="https://oapi.dingtalk.com/topapi/v2/department/update";
+    /**
+     * 删除部门
+     */
+    public static final String DEPARTMENT_DELETE="https://oapi.dingtalk.com/topapi/v2/department/delete";
     /**
      * 根据ID获取部门信息
      */

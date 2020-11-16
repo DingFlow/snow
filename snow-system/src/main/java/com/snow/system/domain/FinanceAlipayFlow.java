@@ -80,10 +80,11 @@ public class FinanceAlipayFlow extends BaseEntity
     @ExcelProperty(index = 16)
     private Integer capitalStatus;
 
-    /** 所属人 */
+    /** 所属人ID */
 
     private Long belongUserId;
-
+    /** 所属人 */
+    private String belongUserName;
     /** 交易主体账户 */
 
     private String tradeAccount;

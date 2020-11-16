@@ -1,7 +1,13 @@
 package com.snow.system.service.impl;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 import com.snow.common.utils.DateUtils;
+import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.SysUserMapper;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.snow.system.mapper.FinanceAlipayFlowMapper;
@@ -20,6 +26,8 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
 {
     @Autowired
     private FinanceAlipayFlowMapper financeAlipayFlowMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询财务支付宝流水
@@ -42,7 +50,13 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
     @Override
     public List<FinanceAlipayFlow> selectFinanceAlipayFlowList(FinanceAlipayFlow financeAlipayFlow)
     {
-        return financeAlipayFlowMapper.selectFinanceAlipayFlowList(financeAlipayFlow);
+        List<FinanceAlipayFlow> financeAlipayFlowList = financeAlipayFlowMapper.selectFinanceAlipayFlowList(financeAlipayFlow);
+        financeAlipayFlowList.parallelStream().forEach(t->{
+            Long belongUserId = t.getBelongUserId();
+            SysUser sysUser = sysUserMapper.selectUserById(belongUserId);
+            t.setBelongUserName(sysUser.getUserName());
+        });
+        return financeAlipayFlowList;
     }
 
     /**

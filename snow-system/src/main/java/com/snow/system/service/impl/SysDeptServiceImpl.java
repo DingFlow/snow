@@ -193,7 +193,12 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int deleteDeptById(Long deptId)
     {
-        return deptMapper.deleteDeptById(deptId);
+        int i = deptMapper.deleteDeptById(deptId);
+        //同步钉钉数据
+        SyncEvent syncEvent = new SyncEvent(deptId, DingTalkListenerType.DEPARTMENT_DELETED);
+        applicationContext.publishEvent(syncEvent);
+
+        return i;
     }
 
     /**
@@ -207,10 +212,10 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         SysDept info = deptMapper.selectDeptById(dept.getParentId());
         // 如果父节点不为"正常"状态,则不允许新增子节点
-       // if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
-     /*   {
+        if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
+        {
             throw new BusinessException("部门停用，不允许新增");
-        }*/
+        }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         if(dept.getIsSyncDingTalk()){
             //同步钉钉数据
@@ -244,6 +249,11 @@ public class SysDeptServiceImpl implements ISysDeptService
         {
             // 如果该部门是启用状态，则启用该部门的所有上级部门
             updateParentDeptStatus(dept);
+        }
+        if(dept.getIsSyncDingTalk()){
+            //同步钉钉数据
+            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_UPDATE);
+            applicationContext.publishEvent(syncEvent);
         }
         return result;
     }

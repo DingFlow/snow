@@ -22,12 +22,20 @@
                                 </select>
                             </li>
                             <li>
+                                <label>日志类型：</label>
+                                <select name="logType" th:with="type=${@dict.getType('sync_log_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
                                 <label>业务类型：</label>
                                 <select name="businessType" th:with="type=${@dict.getType('dingtalk_oper_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
+
                             <li>
                                 <label>操作类别：</label>
                                 <select name="businessType" th:with="type=${@dict.getType('dingtalk_sync_type')}">
@@ -71,7 +79,7 @@
         var moduleTypeDatas = [[${@dict.getType('dingtalk_module_type')}]];
         var businessTypeDatas = [[${@dict.getType('dingtalk_oper_type')}]];
         var syncTypeDatas = [[${@dict.getType('dingtalk_sync_type')}]];
-
+        var syncLogTypeDatas = [[${@dict.getType('sync_log_type')}]];
         var prefix = ctx + "system/log";
 
         $(function() {
@@ -110,6 +118,14 @@
                        return $.table.selectDictLabel(businessTypeDatas, value);
                     }
                 },
+                 {
+                     field: 'logType',
+                     title: '日志类型',
+                     formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(syncLogTypeDatas, value);
+                      }
+                 },
+
                 {
                     field: 'requestMethod',
                     title: '请求方式'

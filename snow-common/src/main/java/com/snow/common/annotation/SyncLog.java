@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DingTalkSyncLog
+public @interface SyncLog
 {
 
     /**
@@ -33,6 +33,12 @@ public @interface DingTalkSyncLog
      * @return
      */
     public String dingTalkUrl() default"";
+
+    /**
+     * 同步日志类型
+     * @return
+     */
+    public SyncLogType syncLogTpye() default SyncLogType.SYNC_DINGTALK;
 
     /**
      * 是否保存请求的参数

@@ -1,8 +1,8 @@
 package com.snow.dingtalk.aspectj;
 
-import com.snow.common.annotation.DingTalkSyncLog;
+import com.snow.common.annotation.SyncLog;
 import com.snow.common.enums.BusinessStatus;
-import com.snow.common.exception.DingTalkSyncException;
+import com.snow.common.exception.SyncDataException;
 import com.snow.common.json.JSON;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * 操作日志记录处理
@@ -33,12 +32,12 @@ import java.util.Map;
  */
 @Aspect
 @Component
-public class DingTalkSyncLogAspect
+public class SyncLogAspect
 {
-    private static final Logger log = LoggerFactory.getLogger(DingTalkSyncLogAspect.class);
+    private static final Logger log = LoggerFactory.getLogger(SyncLogAspect.class);
 
     // 配置织入点
-    @Pointcut("@annotation(com.snow.common.annotation.DingTalkSyncLog)")
+    @Pointcut("@annotation(com.snow.common.annotation.SyncLog)")
     public void logPointCut()
     {
     }
@@ -71,7 +70,7 @@ public class DingTalkSyncLogAspect
         try
         {
             // 获得注解
-            DingTalkSyncLog controllerLog = getAnnotationLog(joinPoint);
+            SyncLog controllerLog = getAnnotationLog(joinPoint);
             if (controllerLog == null)
             {
                 return;
@@ -79,7 +78,6 @@ public class DingTalkSyncLogAspect
 
             // 获取当前的用户
             SysUser currentUser = ShiroUtils.getSysUser();
-            // *========数据库日志=========*//
             SysDingtalkSyncLog sysDingtalkSyncLog = new SysDingtalkSyncLog();
             if(StringUtils.isNotNull(currentUser)){
                 sysDingtalkSyncLog.setOperName(currentUser.getUserName());
@@ -105,9 +103,9 @@ public class DingTalkSyncLogAspect
             sysDingtalkSyncLog.setOperUrl(ServletUtils.getRequest().getRequestURI());
             if (e != null)
             {
-                if(e instanceof DingTalkSyncException){
+                if(e instanceof SyncDataException){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
-                    sysDingtalkSyncLog.setOperDingtalkParam(((DingTalkSyncException) e).getRequestParam());
+                    sysDingtalkSyncLog.setOperDingtalkParam(((SyncDataException) e).getRequestParam());
                     sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
                 }else if(e instanceof ApiException){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
@@ -147,13 +145,14 @@ public class DingTalkSyncLogAspect
      * @param sysDingtalkSyncLog 操作日志
      * @throws Exception
      */
-    public void getControllerMethodDescription(DingTalkSyncLog log,JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
+    public void getControllerMethodDescription(SyncLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
     {
         sysDingtalkSyncLog.setTitle(log.dingTalkListenerType().getInfo());
         sysDingtalkSyncLog.setModuleType(log.dingTalkListenerType().getType());
         sysDingtalkSyncLog.setBusinessType(log.dingTalkListenerType().getCode());
         // 设置操作人类别
         sysDingtalkSyncLog.setOperatorType(log.dingTalkSyncType().getCode());
+        sysDingtalkSyncLog.setLogType(log.syncLogTpye().getCode());
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData())
         {
@@ -178,7 +177,7 @@ public class DingTalkSyncLogAspect
     /**
      * 是否存在注解，如果存在就获取
      */
-    private DingTalkSyncLog getAnnotationLog(JoinPoint joinPoint) throws Exception
+    private SyncLog getAnnotationLog(JoinPoint joinPoint) throws Exception
     {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
@@ -186,7 +185,7 @@ public class DingTalkSyncLogAspect
 
         if (method != null)
         {
-            return method.getAnnotation(DingTalkSyncLog.class);
+            return method.getAnnotation(SyncLog.class);
         }
         return null;
     }

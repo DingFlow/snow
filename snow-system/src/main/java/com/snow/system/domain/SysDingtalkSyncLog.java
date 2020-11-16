@@ -95,6 +95,10 @@ public class SysDingtalkSyncLog extends BaseEntity
     private Date operTime;
 
     private DingTalkListenerType dingTalkListenerType;
+    /**
+     * 日志类型（1同步到钉钉，2同步到系统）
+     */
+    private Integer logType;
 
     public SysDingtalkSyncLog(DingTalkListenerType dingTalkListenerType, String method, String operUrl, Integer operatorType, String operSourceParam, String operDingtalkParam, String jsonResult){
         this.dingTalkListenerType=dingTalkListenerType;
