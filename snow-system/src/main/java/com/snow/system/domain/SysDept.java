@@ -50,7 +50,7 @@ public class SysDept extends BaseEntity
     /** 父部门名称 */
     private String parentName;
 
-    private Boolean isSyncDingTalk=true;
+
     public Long getDeptId()
     {
         return deptId;

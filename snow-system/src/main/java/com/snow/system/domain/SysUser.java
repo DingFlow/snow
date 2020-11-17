@@ -135,6 +135,7 @@ public class SysUser extends BaseEntity
      */
     private String orgEmail;
 
+
     public SysUser()
     {
 
