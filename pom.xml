@@ -202,9 +202,17 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!--钉钉模块-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-dingtalk</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+            <!--工作流模块-->
+            <dependency>
+                <groupId>com.snow</groupId>
+                <artifactId>snow-flowable</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
 
@@ -219,6 +227,7 @@
         <module>snow-generator</module>
         <module>snow-common</module>
         <module>snow-dingtalk</module>
+        <module>snow-flowable</module>
     </modules>
     <packaging>pom</packaging>
 
