@@ -3,6 +3,7 @@ package com.snow.web.controller.dingtalk;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.oapi.lib.aes.DingTalkEncryptor;
+import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.dingtalk.common.EventNameEnum;
 import com.snow.dingtalk.sync.ISyncSysInfo;
@@ -12,6 +13,7 @@ import com.snow.system.service.impl.DingtalkCallBackServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +33,10 @@ public class DingTalkCallBackController {
     private DingtalkCallBackServiceImpl dingtalkCallBackService;
 
 
+    private static final String EVENT_TYPE="EventType";
+
+    private static final String ENCRYPT="encrypt";
+
     /**
      * 钉钉回调
      * @param signature
@@ -49,45 +55,34 @@ public class DingTalkCallBackController {
         DingtalkCallBack dingtalkCallBack=new DingtalkCallBack();
         dingtalkCallBack.setFlag(true);
         List<DingtalkCallBack> dingtalkCallBacks = dingtalkCallBackService.selectDingtalkCallBackList(dingtalkCallBack);
-        if(!CollectionUtils.isEmpty(dingtalkCallBacks)){
-            dingtalkCallBack=dingtalkCallBacks.get(0);
-        }else {
-            return "fail";
+        if(CollectionUtils.isEmpty(dingtalkCallBacks)){
+            return Constants.CALL_BACK_FAIL_RETURN;
         }
-        String params = "signature:" + signature + " timestamp:" + timestamp + " nonce:" + nonce + " body:" + body;
+        dingtalkCallBack=dingtalkCallBacks.get(0);
         try {
-            log.info("begin callback:" + params);
+            log.info("begin callback------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body);
             DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor(dingtalkCallBack.getToken(),dingtalkCallBack.getAesKey(),dingtalkCallBack.getCorpId());
 
             // 从post请求的body中获取回调信息的加密数据进行解密处理
-            String encrypt = body.getString("encrypt");
+            String encrypt = body.getString(ENCRYPT);
             String plainText = dingTalkEncryptor.getDecryptMsg(signature, timestamp.toString(), nonce, encrypt);
             JSONObject callBackContent = JSON.parseObject(plainText);
             // 根据回调事件类型做不同的业务处理
-            String eventType = callBackContent.getString("EventType");
-            SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
-            if (DingTalkListenerType.DEPARTMENT_CREATE.getInfo().equals(eventType)) {
-                ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(DingTalkListenerType.DEPARTMENT_CREATE);
-                iSyncSysInfo.SyncSysInfo(DingTalkListenerType.DEPARTMENT_CREATE, callBackContent);
-                log.info("部门创建回调数据: " + callBackContent);
-            } else if (EventNameEnum.org_dept_modify.equals(eventType)) {
-                log.info("验证更新回调URL有效性: " + plainText);
-            } else if (EventNameEnum.org_dept_remove.equals(eventType)) {
-                // suite_ticket用于用签名形式生成accessToken(访问钉钉服务端的凭证)，需要保存到应用的db。
-                // 钉钉会定期向本callback url推送suite_ticket新值用以提升安全性。
-                // 应用在获取到新的时值时，保存db成功后，返回给钉钉success加密串（如本demo的return）
-                log.info("应用suite_ticket数据推送: " + plainText);
-            } else {
-                // 其他类型事件处理
+            String eventType = callBackContent.getString(EVENT_TYPE);
+            DingTalkListenerType type = DingTalkListenerType.getType(eventType);
+            if(StringUtils.isEmpty(type)){
+                return Constants.CALL_BACK_FAIL_RETURN;
             }
-
+            //调用工厂模式异步处理数据
+            SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
+            ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(type);
+            iSyncSysInfo.SyncSysInfo(type, callBackContent);
             // 返回success的加密信息表示回调处理成功
-            return dingTalkEncryptor.getEncryptedMap("success", timestamp, nonce);
+            return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
         } catch (Exception e) {
-            //失败的情况，应用的开发者应该通过告警感知，并干预修复
-            log.error("process callback fail." + params, e);
-            return "fail";
+            //todo 失败短信或者邮件通知，并记录下数据
+            log.error("process callback fail------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body, e);
+            return Constants.CALL_BACK_FAIL_RETURN;
         }
     }
-
 }

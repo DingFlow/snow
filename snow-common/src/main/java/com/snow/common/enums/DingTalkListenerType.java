@@ -61,4 +61,13 @@ public enum  DingTalkListenerType {
         return type;
     }
 
+    public static DingTalkListenerType getType(String info) {
+        for (DingTalkListenerType  dingTalkListenerType:DingTalkListenerType.values()){
+            if(dingTalkListenerType.getInfo().equals(info)){
+                return dingTalkListenerType;
+            }
+        }
+        return null;
+    }
+
 }

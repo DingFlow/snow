@@ -113,4 +113,12 @@ public class Constants
      * 通讯录事件type_key
      */
     public static final String ADDRESS_BOOK="address_book";
+    /**
+     * 钉钉回调成功返回
+     */
+    public static final String CALL_BACK_SUCCESS_RETURN="success";
+    /**
+     * 钉钉回调失败返回
+     */
+    public static final String CALL_BACK_FAIL_RETURN="fail";
 }
