@@ -140,3 +140,20 @@ flowable:
   async-executor-activate: false
   #  将databaseSchemaUpdate设置为true。当Flowable发现库与数据库表结构不一致时，会自动将数据库表结构升级至新版本。
   database-schema-update: true
+log4j:
+   rootLogger: ERROR, CA
+
+# ConsoleAppender
+   appender:
+      CA: org.apache.log4j.ConsoleAppender
+
+
+#custom
+   logger:
+      org:
+        flowable:
+            task:
+                service:
+                  impl:
+                      persistence:
+                        entity: DEBUG

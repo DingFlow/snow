@@ -1,5 +1,6 @@
 package com.snow.flowable.service.impl;
 
+import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.ClassDeploymentDTO;
 import com.snow.flowable.domain.DeploymentDTO;
 import com.snow.flowable.service.FlowablePublishService;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.DeploymentBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,12 +70,18 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
 
     @Override
     public Deployment createInputStreamDeployment(DeploymentDTO deploymentDTO, InputStream inputStream) {
-        Deployment deploy = repositoryService.createDeployment()
-                .tenantId(deploymentDTO.getTenantId())
-                .category(deploymentDTO.getCategory())
-                .name(deploymentDTO.getName())
-                .key(deploymentDTO.getKey())
-                .addInputStream(deploymentDTO.getResourceName(),inputStream)
+        DeploymentBuilder deploymentBuilder = repositoryService.createDeployment();
+        if(StringUtils.isNotNull(deploymentDTO.getTenantId())){
+            deploymentBuilder.tenantId(deploymentDTO.getTenantId());
+        }
+        if(StringUtils.isNotNull(deploymentDTO.getCategory())){
+            deploymentBuilder.category(deploymentDTO.getCategory());
+        }
+        if(StringUtils.isNotNull(deploymentDTO.getKey())){
+            deploymentBuilder.key(deploymentDTO.getKey());
+        }
+        Deployment deploy = deploymentBuilder.name(deploymentDTO.getName())
+                .addInputStream(deploymentDTO.getResourceName(), inputStream)
                 .deploy();
         return deploy;
     }

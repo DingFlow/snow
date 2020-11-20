@@ -26,10 +26,13 @@ public class DeploymentTests extends JunitTestApplication {
 
     @Test
     public void createClassDeployment() throws Exception{
-        InputStream in = new BufferedInputStream(new FileInputStream("D:\\请假流程.bpmn20.xml"));
+        InputStream in = new BufferedInputStream(new FileInputStream("D:\\ChromeCoreDownloads\\snow_leave.bpmn20.xml"));
         DeploymentDTO classDeploymentDTO=new DeploymentDTO();
-        classDeploymentDTO.setKey("snow_leave");
+     //   classDeploymentDTO.setKey("snow_leave");
         classDeploymentDTO.setName("请假流程");
+      //  classDeploymentDTO.setCategory("snow");
+        classDeploymentDTO.setResourceName("请假流程");
+       // classDeploymentDTO.setTenantId("snow");
        // classDeploymentDTO.setClassPathResource("D:\\flowable\\leave.bpmn20.xml");
         Deployment classDeployment = flowAblePublishService.createInputStreamDeployment(classDeploymentDTO,in);
         log.info("发布结果:{}",JSON.toJSONString(classDeployment));

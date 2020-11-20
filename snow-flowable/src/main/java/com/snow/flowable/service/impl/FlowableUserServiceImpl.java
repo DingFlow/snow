@@ -50,7 +50,7 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     @Override
     public void getFlowableUserList() {
         SysUser sysUser=new SysUser();
-        iSysUserService.selectAllocatedList(sysUser)
+        iSysUserService.selectAllocatedList(sysUser);
     }
 
     @Override

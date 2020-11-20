@@ -1,7 +1,10 @@
 package com.snow.flowable.service;
 
+import com.snow.flowable.domain.CompleteTaskDTO;
+import com.snow.flowable.domain.StartProcessDTO;
+import com.snow.flowable.domain.TaskBaseDTO;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.task.service.impl.persistence.entity.TaskEntity;
+import org.flowable.task.api.Task;
 
 import java.util.List;
 import java.util.Map;
@@ -15,27 +18,27 @@ import java.util.Map;
 public interface FlowableService {
     /**
      * 通过processDefinitionKey开始流程
-     * @param processDefinitionKey
+     * @param startProcessDTO
      * @return
      */
-     ProcessInstance startProcessInstanceByKey(String processDefinitionKey);
+    ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
-     ProcessInstance startProcessInstanceByKey(String processDefinitionKey, String businessKey);
 
-     ProcessInstance startProcessInstanceByKey(String processDefinitionKey, Map<String, Object> variables);
-
-     ProcessInstance startProcessInstanceByKey(String processDefinitionKey, String businessKey, Map<String, Object> variables);
-
-     ProcessInstance startProcessInstanceByKeyAndTenantId(String processDefinitionKey, String tenantId);
 
     /**
-     * 根据流程实例查询任务
-     * @param processInstanceId
+     * 根据任务ID获取代办
+     * @param taskId
      * @return
      */
-     List<TaskEntity> findTasksByProcessInstanceId(String processInstanceId);
+    Task getTask(String taskId);
 
-     TaskEntity getTask(String id);
+    /**
+     * 获取代办
+     * @param userId
+     * @param taskBaseDTO
+     * @return
+     */
+     List<Task> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
-     List<TaskEntity> findTasksByUserId(String userId);
+     void completeTask(CompleteTaskDTO completeTaskDTO);
 }
