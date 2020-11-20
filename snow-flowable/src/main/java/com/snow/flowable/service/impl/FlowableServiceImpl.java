@@ -1,6 +1,8 @@
 package com.snow.flowable.service.impl;
 
 import com.snow.flowable.service.FlowableService;
+import com.snow.system.domain.SysRole;
+import com.snow.system.service.ISysRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author qimingjin
@@ -28,6 +31,9 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private ISysRoleService roleService;
     
     @Override
     public ProcessInstance startProcessInstanceByKey(String processDefinitionKey) {
@@ -68,9 +74,10 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Override
     public List<TaskEntity> findTasksByUserId(String userId) {
+        List<SysRole> sysRoles = roleService.selectRolesByUserId(Long.parseLong(userId));
         List<Task> tasks = taskService.createTaskQuery()
                 .or().taskCandidateOrAssigned(userId)
-                .or().taskCandidateGroupIn(new ArrayList<>())
+                .or().taskCandidateGroupIn(sysRoles.stream().map(SysRole::getRoleKey).collect(Collectors.toList()))
                 .endOr()
                 .listPage(1, 10);
 

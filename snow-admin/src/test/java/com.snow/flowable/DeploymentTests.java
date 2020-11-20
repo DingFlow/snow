@@ -2,9 +2,8 @@ package com.snow.flowable;
 
 import com.alibaba.fastjson.JSON;
 import com.snow.JunitTestApplication;
-import com.snow.flowable.domain.ClassDeploymentDTO;
 import com.snow.flowable.domain.DeploymentDTO;
-import com.snow.flowable.service.impl.FlowAblePublishServiceImpl;
+import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.repository.Deployment;
 import org.junit.Test;
@@ -23,7 +22,7 @@ import java.io.InputStream;
 @Slf4j
 public class DeploymentTests extends JunitTestApplication {
     @Autowired
-    private FlowAblePublishServiceImpl flowAblePublishService;
+    private FlowablePublishServiceImpl flowAblePublishService;
 
     @Test
     public void createClassDeployment() throws Exception{
