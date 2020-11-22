@@ -85,7 +85,7 @@ var FlowableDefineDataCtrl = [ '$rootScope', '$scope', 'dialog', '$timeout', '$t
                 	$scope.definedDataItems.splice(index + 1, 0, temp);
                 }, 100);
 
-            }
+            }getUserList
         }
     };
     

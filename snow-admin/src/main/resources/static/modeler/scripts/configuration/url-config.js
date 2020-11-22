@@ -234,11 +234,13 @@ FLOWABLE.APP_URL = {
 
     getEditorUsersUrl: function () {
         //return FLOWABLE.CONFIG.contextRoot + '/app/rest/editor-users';
-        return FLOWABLE.CONFIG.contextRoot + '/flowableUser/getUserList';
+        return FLOWABLE.CONFIG.contextRoot + '/app/rest/getUserList';
     },
     /*用户组用户*/
     getEditorGroupsUrl: function () {
-        return FLOWABLE.CONFIG.contextRoot + '/app/rest/editor-groups';
+
+      //  return FLOWABLE.CONFIG.contextRoot + '/app/rest/editor-groups';
+        return FLOWABLE.CONFIG.contextRoot + '/app/rest/getUserGroupList'
     },
 
     getAboutInfoUrl: function () {

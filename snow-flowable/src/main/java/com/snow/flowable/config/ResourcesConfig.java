@@ -1,4 +1,4 @@
-package com.snow.framework.config;
+package com.snow.flowable.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,8 @@ public class ResourcesConfig implements WebMvcConfigurer
 
     @Autowired
     private RepeatSubmitInterceptor repeatSubmitInterceptor;
+    @Autowired
+    private CustomHandlerInterceptor customHandlerInterceptor;
 
     /**
      * 默认首页的设置，当输入域名是可以自动跳转到默认指定的网页
@@ -55,5 +57,8 @@ public class ResourcesConfig implements WebMvcConfigurer
     public void addInterceptors(InterceptorRegistry registry)
     {
         registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(customHandlerInterceptor)
+                //告知拦截器：/static/admin/** 与 /static/user/** 不需要拦截 （配置的是 路径）
+                .excludePathPatterns("/static/**");
     }
 }

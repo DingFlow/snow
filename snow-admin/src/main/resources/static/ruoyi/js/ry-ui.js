@@ -438,6 +438,62 @@ var table = {
                      }
                  });
             },
+            // 导入数据
+            importFlowDeployment:function(formId) {
+                table.set();
+                var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+                layer.open({
+                    type: 1,
+                    area: ['550px', '500px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: '导入' + table.options.modalName + '数据',
+                    content: $('#' + currentId).html(),
+                    btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
+                    // 弹层外区域关闭
+                    shadeClose: true,
+                    btn1: function(index, layero){
+                        var file = layero.find('#file').val();
+                        var name = layero.find('#name').val();
+                        if (file == '' || (!$.common.endWith(file, '.xml') && !$.common.endWith(file, '.zip'))){
+                            $.modal.msgWarning("请选择后缀为 “xml”或“zip”的文件。");
+                            return false;
+                        }
+                        if(name==''||name==null){
+                            $.modal.msgWarning("流程名称不能为空");
+                            return false;
+                        }
+                        var index = layer.load(2, {shade: false});
+                        $.modal.disable();
+                        var formData = new FormData(layero.find('form')[0]);
+                        $.ajax({
+                            url: table.options.importUrl,
+                            data: formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            type: 'POST',
+                            success: function (result) {
+                                if (result.code == web_status.SUCCESS) {
+                                    $.modal.closeAll();
+                                    $.modal.alertSuccess(result.msg);
+                                    $.table.refresh();
+                                } else if (result.code == web_status.WARNING) {
+                                    layer.close(index);
+                                    $.modal.enable();
+                                    $.modal.alertWarning(result.msg)
+                                } else {
+                                    layer.close(index);
+                                    $.modal.enable();
+                                    $.modal.alertError(result.msg);
+                                }
+                            }
+                        });
+                    }
+                });
+            },
     		// 下载模板
     		importTemplate: function() {
     			table.set();

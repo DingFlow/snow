@@ -1,5 +1,9 @@
 package com.snow.flowable.service;
 
+import org.flowable.ui.common.model.RemoteGroup;
+import org.flowable.ui.common.model.RemoteUser;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +19,7 @@ public interface FlowableUserService {
      */
     Map<String, Object> loginFlowable();
 
-    void getFlowableUserList();
+    List<RemoteUser> getFlowUserList(String name);
 
-    void getFlowableUserGroupList();
+    List<RemoteGroup> getFlowUserGroupList(String filter);
 }

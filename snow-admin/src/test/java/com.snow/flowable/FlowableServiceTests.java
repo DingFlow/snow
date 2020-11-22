@@ -3,6 +3,7 @@ package com.snow.flowable;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.snow.JunitTestApplication;
+import com.snow.flowable.domain.DeploymentQueryDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.service.FlowableService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,5 +35,13 @@ public class FlowableServiceTests extends JunitTestApplication {
         startProcessDTO.setVariables(map);
         ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
         log.info("发布结果:{}",JSON.toJSONString(processInstance));
+    }
+
+    @Test
+    public void getDeploymentList(){
+        DeploymentQueryDTO startProcessDTO=new DeploymentQueryDTO();
+
+        flowableService.getDeploymentList(startProcessDTO);
+
     }
 }

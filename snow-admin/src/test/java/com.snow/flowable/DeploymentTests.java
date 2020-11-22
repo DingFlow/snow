@@ -33,7 +33,7 @@ public class DeploymentTests extends JunitTestApplication {
       //  classDeploymentDTO.setCategory("snow");
         classDeploymentDTO.setResourceName("请假流程");
        // classDeploymentDTO.setTenantId("snow");
-       // classDeploymentDTO.setClassPathResource("D:\\flowable\\leave.bpmn20.xml");
+       // classDeploymentDTO.setClassPathResource("D:\\modeler\\leave.bpmn20.xml");
         Deployment classDeployment = flowAblePublishService.createInputStreamDeployment(classDeploymentDTO,in);
         log.info("发布结果:{}",JSON.toJSONString(classDeployment));
     }

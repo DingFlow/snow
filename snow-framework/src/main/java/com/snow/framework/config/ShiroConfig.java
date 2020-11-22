@@ -279,6 +279,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/ajax/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/ruoyi/**", "anon");
+        filterChainDefinitionMap.put("/modeler/**", "anon");
         filterChainDefinitionMap.put("/captcha/captchaImage**", "anon");
         filterChainDefinitionMap.put("/dingTalk/dingTalkCallBack", "anon");
         // 退出 logout地址，shiro去清除session

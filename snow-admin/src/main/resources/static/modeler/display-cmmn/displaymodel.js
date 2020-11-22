@@ -105,7 +105,7 @@ function _showTip(htmlNode, element)
             event: 'click mouseleave'
         },
         style: {
-            classes: 'ui-tooltip-flowable-cmmn'
+            classes: 'ui-tooltip-modeler-cmmn'
         }
     });
 }

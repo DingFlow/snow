@@ -111,6 +111,9 @@ public class BaseController
         rspData.setCode(0);
         rspData.setRows(list);
         rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setPageIndex(new PageInfo(list).getPageNum());
+        rspData.setPageSize(new PageInfo(list).getPageSize());
+
         return rspData;
     }
 

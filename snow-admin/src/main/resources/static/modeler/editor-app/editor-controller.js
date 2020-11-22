@@ -399,6 +399,7 @@ angular.module('flowableModeler')
 	    editorManager.setModelData(response);
 	    return response;
 	}).then(function (modelData) {
+	    console.log("======>"+JSON.stringify(modelData));
 	    if(modelData.data.model.stencilset.namespace == 'http://b3mn.org/stencilset/cmmn1.1#') {
 	       return $http.get(FLOWABLE.URL.getCmmnStencilSet());
 	    } else {

@@ -18,10 +18,9 @@
 var FLOWABLE = FLOWABLE || {};
 
 var pathname = window.location.pathname.replace(/^(\/[^\/]*)(\/.*)?$/, '$1').replace(/\/$/, '');
-
 FLOWABLE.CONFIG = {
 	'onPremise' : true,
-	'contextRoot' : pathname,
+	'contextRoot' : pathname.replace("/modeler",""),
 	'webContextRoot' : pathname,
 	'datesLocalization' : false
 };
