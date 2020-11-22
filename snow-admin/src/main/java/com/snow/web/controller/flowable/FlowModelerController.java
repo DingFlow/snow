@@ -12,6 +12,7 @@ import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.domain.DeploymentDTO;
 import com.snow.flowable.domain.DeploymentQueryDTO;
 import com.snow.flowable.domain.DeploymentVO;
+import com.snow.flowable.domain.TaskBaseDTO;
 import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
@@ -22,6 +23,7 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.repository.DeploymentQuery;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -84,17 +86,17 @@ public class FlowModelerController extends BaseController
     }
 
     /**
-     * 导出财务支付宝流水列表
+     * 获取我的待办
      */
-    @RequiresPermissions("system:flow:export")
-    @Log(title = "财务支付宝流水", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
+    @RequiresPermissions("modeler:flow:todoList")
+    @PostMapping("/findTasksByUserId")
     @ResponseBody
-    public AjaxResult export(FinanceAlipayFlow financeAlipayFlow)
+    public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
     {
-        List<FinanceAlipayFlow> list = financeAlipayFlowService.selectFinanceAlipayFlowList(financeAlipayFlow);
-        ExcelUtil<FinanceAlipayFlow> util = new ExcelUtil<FinanceAlipayFlow>(FinanceAlipayFlow.class);
-        return util.exportExcel(list, "flow");
+        startPage();
+        Long userId = ShiroUtils.getUserId();
+        List<Task> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
+        return getDataTable(taskList);
     }
 
     /**
@@ -108,7 +110,7 @@ public class FlowModelerController extends BaseController
     }
 
     /**
-     * 获取XML
+     * 获取流程图
      */
     @GetMapping("/getFlowPicture")
     public void getFlowPicture(String id,String resourceName,HttpServletResponse response)
@@ -141,15 +143,14 @@ public class FlowModelerController extends BaseController
     }
 
     /**
-     * 修改保存财务支付宝流水
+     * 获取流程图
      */
-    @RequiresPermissions("system:flow:edit")
-    @Log(title = "财务支付宝流水", businessType = BusinessType.UPDATE)
-    @PostMapping("/edit")
+    @RequiresPermissions("modeler:flow:getProcessDiagram")
+    @GetMapping("/getProcessDiagram")
     @ResponseBody
-    public AjaxResult editSave(FinanceAlipayFlow financeAlipayFlow)
+    public void getProcessDiagram(String processInstanceId,HttpServletResponse response)
     {
-        return toAjax(financeAlipayFlowService.updateFinanceAlipayFlow(financeAlipayFlow));
+        flowableService.getProcessDiagram(response,processInstanceId);
     }
 
     /**

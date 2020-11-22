@@ -1,6 +1,7 @@
 package com.snow.flowable.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.domain.*;
@@ -8,13 +9,21 @@ import com.snow.flowable.service.FlowableService;
 import com.snow.system.domain.SysRole;
 import com.snow.system.service.ISysRoleService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.EndEvent;
+import org.flowable.bpmn.model.FlowNode;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
+import org.flowable.engine.history.HistoricActivityInstance;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.service.impl.TaskQueryProperty;
+import org.flowable.ui.modeler.rest.app.AbstractModelBpmnResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +33,8 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.OutputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +62,11 @@ public class FlowableServiceImpl implements FlowableService {
     private RepositoryService repositoryService;
 
     @Autowired
-    private ManagementService managementService;
+    private HistoryService historyService;
+
+    @Autowired
+    private ProcessEngine processEngine;
+
 
     @Override
     public List<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
@@ -125,13 +136,12 @@ public class FlowableServiceImpl implements FlowableService {
         if (type.equals("xml")) {
             response.setHeader("Content-type", "text/xml;charset=UTF-8");
             InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
-            b = IoUtil.readInputStream(inputStream, "image inputStream name");
+            b = IoUtil.readInputStream(inputStream, resourceName);
         } else {
             response.setHeader("Content-Type", "image/png");
             InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
-            b = IoUtil.readInputStream(inputStream, "image inputStream name");
+            b = IoUtil.readInputStream(inputStream, resourceName);
         }
-
             response.getOutputStream().write(b);
         } catch (IOException e) {
             log.error("ApiFlowableModelResource-loadXmlByModelId:" + e);
@@ -142,10 +152,12 @@ public class FlowableServiceImpl implements FlowableService {
     @Override
     public ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO) {
         ProcessInstance processInstance=null;
-        if(!StringUtils.isEmpty(startProcessDTO.getStartUserId())){
-            identityService.setAuthenticatedUserId(startProcessDTO.getStartUserId());
+        String startUserId=startProcessDTO.getStartUserId();
+        if(!StringUtils.isEmpty(startUserId)){
+            identityService.setAuthenticatedUserId(startUserId);
         }
-        Map<String, Object> paramMap = startProcessDTO.getVariables();
+        Map<String, Object> paramMap =CollectionUtils.isEmpty(startProcessDTO.getVariables())?Maps.newHashMap():startProcessDTO.getVariables();
+        paramMap.put("startUserId",startUserId);
 
         if(!CollectionUtils.isEmpty(paramMap)){
             processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey(),paramMap);
@@ -176,7 +188,9 @@ public class FlowableServiceImpl implements FlowableService {
                 .taskCandidateOrAssigned(userId);
         if(!CollectionUtils.isEmpty(sysRoles)) {
             taskQuery.or()
-                    .taskCandidateGroupIn(sysRoles.stream().map(SysRole::getRoleKey).collect(Collectors.toList()));
+                    .taskCandidateGroupIn(sysRoles.stream().map(t->{
+                        return String.valueOf(t.getRoleId());
+                    }).collect(Collectors.toList()));
         }
         if(!StringUtils.isEmpty(taskBaseDTO.getProcessInstanceId())){
             taskQuery.processInstanceId(taskBaseDTO.getProcessInstanceId());
@@ -194,6 +208,7 @@ public class FlowableServiceImpl implements FlowableService {
                 .orderBy(TaskQueryProperty.CREATE_TIME)
                 .listPage(taskBaseDTO.getFirstResult(),taskBaseDTO.getMaxResults());
     }
+
 
     @Override
     public void completeTask(CompleteTaskDTO completeTaskDTO) {
@@ -221,5 +236,63 @@ public class FlowableServiceImpl implements FlowableService {
         }
         paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
         taskService.complete(task.getId(),paramMap,true);
+    }
+
+
+    @Override
+    public void getProcessDiagram(HttpServletResponse httpServletResponse, String processId) {
+
+        /**
+         * 获得当前活动的节点
+         */
+        String processDefinitionId = "";
+        if (this.isFinished(processId)) {// 如果流程已经结束，则得到结束节点
+            HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).singleResult();
+
+            processDefinitionId=pi.getProcessDefinitionId();
+        } else {// 如果流程没有结束，则取当前活动节点
+            // 根据流程实例ID获得当前处于活动状态的ActivityId合集
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+            processDefinitionId=pi.getProcessDefinitionId();
+        }
+        List<String> highLightedActivitis = new ArrayList<String>();
+
+        /**
+         * 获得活动的节点
+         */
+        List<HistoricActivityInstance> highLightedActivitList =  historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).orderByHistoricActivityInstanceStartTime().asc().list();
+
+        for(HistoricActivityInstance tempActivity : highLightedActivitList){
+            String activityId = tempActivity.getActivityId();
+            highLightedActivitis.add(activityId);
+        }
+
+        List<String> flows = new ArrayList<>();
+        //获取流程图
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
+
+        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
+        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "bmp", highLightedActivitis, flows, engconf.getActivityFontName(),
+                engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+        OutputStream out = null;
+        byte[] buf = new byte[1024];
+        int legth = 0;
+        try {
+            out = httpServletResponse.getOutputStream();
+            while ((legth = in.read(buf)) != -1) {
+                out.write(buf, 0, legth);
+            }
+        } catch (IOException e) {
+            log.error("操作异常",e);
+        } finally {
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    public boolean isFinished(String processInstanceId) {
+        return historyService.createHistoricProcessInstanceQuery().finished()
+                .processInstanceId(processInstanceId).count() > 0;
     }
 }

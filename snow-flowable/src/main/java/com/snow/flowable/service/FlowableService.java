@@ -36,7 +36,7 @@ public interface FlowableService {
      * @param type
      * @param response
      */
-    public void getDeploymentSource(String id, String resourceName, String type,HttpServletResponse response);
+     void getDeploymentSource(String id, String resourceName, String type,HttpServletResponse response);
 
     /**
      * 通过processDefinitionKey开始流程
@@ -62,5 +62,16 @@ public interface FlowableService {
      */
      List<Task> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
+    /**
+     * 完成任务
+     * @param completeTaskDTO
+     */
      void completeTask(CompleteTaskDTO completeTaskDTO);
+
+    /**
+     * 获取流程图
+     * @param httpServletResponse
+     * @param processId
+     */
+     void getProcessDiagram(HttpServletResponse httpServletResponse, String processId);
 }
