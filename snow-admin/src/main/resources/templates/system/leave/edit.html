@@ -25,7 +25,7 @@
                 <label class="col-sm-3 control-label">开始时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <input name="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
                 </div>
@@ -34,30 +34,9 @@
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <input name="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-3 control-label">流程状态：</label>
-                <div class="col-sm-8">
-                    <select name="processStatus" class="form-control m-b" th:with="type=${@dict.getType('process_status')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{processInstanceId}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">流程实例ID：</label>
-                <div class="col-sm-8">
-                    <input name="processInstanceId" th:field="*{processInstanceId}" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">申请人：</label>
-                <div class="col-sm-8">
-                    <input name="applyPerson" th:field="*{applyPerson}" class="form-control" type="text">
                 </div>
             </div>
             <div class="form-group">    

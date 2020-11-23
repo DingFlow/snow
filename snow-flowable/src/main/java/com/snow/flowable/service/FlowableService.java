@@ -1,6 +1,7 @@
 package com.snow.flowable.service;
 
 import com.snow.flowable.domain.*;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 
@@ -74,4 +75,20 @@ public interface FlowableService {
      * @param processId
      */
      void getProcessDiagram(HttpServletResponse httpServletResponse, String processId);
+
+    /**
+     * 获取流程实例
+     * @param id
+     * @return
+     */
+     ProcessInstance getProcessInstanceById(String id);
+
+    /**
+     * 获取历史流程实例
+     * @param id
+     * @return
+     */
+     HistoricProcessInstance getHistoricProcessInstanceById(String id);
+
+    Task getTaskProcessInstanceById(String id);
 }

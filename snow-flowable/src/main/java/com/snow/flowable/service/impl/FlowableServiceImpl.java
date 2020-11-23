@@ -7,7 +7,9 @@ import com.snow.common.exception.BusinessException;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.system.domain.SysRole;
+import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysRoleService;
+import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.flowable.bpmn.model.BpmnModel;
@@ -66,6 +68,9 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Autowired
     private ProcessEngine processEngine;
+
+    @Autowired
+    private SysUserServiceImpl sysUserService;
 
 
     @Override
@@ -225,7 +230,10 @@ public class FlowableServiceImpl implements FlowableService {
             taskVO.setOwner(t.getOwner());
             HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
             taskVO.setProcessDefinitionName(historicProcessInstance.getProcessDefinitionName());
-            taskVO.setStartUserId(historicProcessInstance.getStartUserId());
+            String startUserId = historicProcessInstance.getStartUserId();
+            SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
+            taskVO.setStartUserId(startUserId);
+            taskVO.setStartUserName(sysUser.getUserName());
             taskVO.setBusinessKey(historicProcessInstance.getBusinessKey());
             taskVO.setStartTime(historicProcessInstance.getStartTime());
             return taskVO;
@@ -242,7 +250,7 @@ public class FlowableServiceImpl implements FlowableService {
             log.info("完成任务时，该任务ID:%不存在",completeTaskDTO.getTaskId());
             throw new BusinessException(String.format("该任务ID:%不存在",completeTaskDTO.getTaskId()));
         }
-        if(StringUtils.isEmpty(completeTaskDTO.getComment())){
+        if(!StringUtils.isEmpty(completeTaskDTO.getComment())){
             taskService.addComment(task.getId(),task.getProcessInstanceId(),completeTaskDTO.getComment());
         }
         List<FileEntry> files = completeTaskDTO.getFiles();
@@ -252,7 +260,7 @@ public class FlowableServiceImpl implements FlowableService {
             );
         }
         runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
-        Map<String, Object> paramMap = completeTaskDTO.getParamMap();
+        Map<String, Object> paramMap = StringUtils.isEmpty(completeTaskDTO.getParamMap())?Maps.newHashMap():completeTaskDTO.getParamMap();
         if(!CollectionUtils.isEmpty(paramMap)){
             Set<Map.Entry<String, Object>> entries = paramMap.entrySet();
             entries.stream().forEach(t->
@@ -260,6 +268,7 @@ public class FlowableServiceImpl implements FlowableService {
             );
         }
         paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+        taskService.claim(task.getId(),completeTaskDTO.getUserId());
         taskService.complete(task.getId(),paramMap,true);
     }
 
@@ -321,14 +330,23 @@ public class FlowableServiceImpl implements FlowableService {
                 .processInstanceId(processInstanceId).count() > 0;
     }
 
+    @Override
     public ProcessInstance getProcessInstanceById(String id){
         return runtimeService.createProcessInstanceQuery()
                 .processInstanceId(id)
                 .singleResult();
     }
 
+    @Override
     public HistoricProcessInstance getHistoricProcessInstanceById(String id){
         return  historyService.createHistoricProcessInstanceQuery()
+                .processInstanceId(id)
+                .singleResult();
+    }
+
+    @Override
+    public Task getTaskProcessInstanceById(String id){
+        return taskService.createTaskQuery()
                 .processInstanceId(id)
                 .singleResult();
     }

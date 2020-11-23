@@ -3,14 +3,17 @@ package com.snow.web.controller.system;
 import java.util.List;
 
 import com.snow.common.constant.SequenceContants;
+import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.CompleteTaskDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysSequenceService;
+import com.snow.system.service.impl.SysOaLeaveServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,6 +52,7 @@ public class SysOaLeaveController extends BaseController
     private FlowableServiceImpl flowableService;
     @Autowired
     private ISysSequenceService sequenceService;
+
 
     @RequiresPermissions("system:leave:view")
     @GetMapping()
@@ -114,23 +118,29 @@ public class SysOaLeaveController extends BaseController
 
 
     /**
-     * 发起审批
+     * 完成任务
      */
-    @RequiresPermissions("system:leave:startLeaveProcess")
+    //@RequiresPermissions("system:leave:startLeaveProcess")
     @Log(title = "发起审批", businessType = BusinessType.INSERT)
-    @PostMapping("/startLeaveProcess")
+    @PostMapping("/finishTask")
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult startLeaveProcess(Integer id)
+    public AjaxResult startLeaveProcess(String businessKey)
 
     {
-        SysOaLeave sysOaLeave = sysOaLeaveService.selectSysOaLeaveById(id);
+        SysOaLeave sysOaLeave=new SysOaLeave();
+        sysOaLeave.setLeaveNo(businessKey);
+        List<SysOaLeave> sysOaLeaves = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
+        if(StringUtils.isEmpty(sysOaLeaves)){
+            return AjaxResult.error("该业务参数不存在");
+        }
         SysUser sysUser = ShiroUtils.getSysUser();
         CompleteTaskDTO CompleteTaskDTO=new CompleteTaskDTO();
         CompleteTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
         flowableService.completeTask(CompleteTaskDTO);
         sysOaLeave.setProcessStatus(1);
         sysOaLeave.setCreateBy(sysUser.getUserName());
+        sysOaLeave.setApplyPerson(String.valueOf(sysUser.getUserId()));
         int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
         return toAjax(i);
     }
@@ -162,9 +172,11 @@ public class SysOaLeaveController extends BaseController
         startProcessDTO.setProcessDefinitionKey("snow_oa_leave");
         startProcessDTO.setStartUserId(String.valueOf(sysUser.getUserId()));
         ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
-        CompleteTaskDTO CompleteTaskDTO=new CompleteTaskDTO();
-        CompleteTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        flowableService.completeTask(CompleteTaskDTO);
+        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        Task task= flowableService.getTaskProcessInstanceById(processInstance.getProcessInstanceId());
+        completeTaskDTO.setTaskId(task.getId());
+        flowableService.completeTask(completeTaskDTO);
         sysOaLeave.setProcessStatus(1);
         sysOaLeave.setCreateBy(sysUser.getUserName());
         BeanUtils.copyProperties(sysOaLeave,oldSysOaLeave);
