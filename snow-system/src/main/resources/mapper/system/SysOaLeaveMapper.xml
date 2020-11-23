@@ -20,15 +20,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="isDelete"    column="is_delete"    />
         <result property="fileUrl"    column="file_url"    />
+        <result property="leaveNo"    column="leave_no"    />
+
     </resultMap>
 
     <sql id="selectSysOaLeaveVo">
-        select id, name, reason, start_time, end_time, process_status, process_instance_id, create_by, create_time, update_time, update_by, apply_person, remark, is_delete, file_url from sys_oa_leave
+        select id, name,leave_no, reason, start_time, end_time, process_status, process_instance_id, create_by, create_time, update_time, update_by, apply_person, remark, is_delete, file_url from sys_oa_leave
     </sql>
 
     <select id="selectSysOaLeaveList" parameterType="SysOaLeave" resultMap="SysOaLeaveResult">
         <include refid="selectSysOaLeaveVo"/>
-        <where>  
+        <where>
+            <if test="leaveNo != null  and leaveNo != ''"> and leave_no like concat('%', #{leaveNo}, '%')</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
@@ -49,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sys_oa_leave
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">name,</if>
+            <if test="leaveNo != null  and leaveNo != ''"> leave_no,</if>
             <if test="reason != null">reason,</if>
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
@@ -65,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
+            <if test="leaveNo != null ">#{leaveNo},</if>
             <if test="reason != null">#{reason},</if>
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
@@ -85,6 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sys_oa_leave
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null">name = #{name},</if>
+            <if test="leaveNo != null ">leave_no=#{leaveNo},</if>
             <if test="reason != null">reason = #{reason},</if>
             <if test="startTime != null">start_time = #{startTime},</if>
             <if test="endTime != null">end_time = #{endTime},</if>

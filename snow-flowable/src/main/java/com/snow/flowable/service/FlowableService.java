@@ -60,7 +60,7 @@ public interface FlowableService {
      * @param taskBaseDTO
      * @return
      */
-     List<Task> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
+    List<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
     /**
      * 完成任务

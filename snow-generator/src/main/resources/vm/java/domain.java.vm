@@ -4,6 +4,10 @@ package ${packageName}.domain;
 import ${import};
 #end
 import com.snow.common.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.snow.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 #if($table.crud || $table.sub)
 #elseif($table.tree)
 #end
@@ -36,6 +40,7 @@ public class ${ClassName} extends ${Entity}
 #if($parentheseIndex != -1)
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
 #elseif($column.javaType == 'Date')
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "${comment}", width = 30, dateFormat = "yyyy-MM-dd")
 #else
     @Excel(name = "${comment}")

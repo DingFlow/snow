@@ -1,28 +1,17 @@
 package com.snow.web.controller.flowable;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelReader;
-import com.alibaba.excel.read.metadata.ReadSheet;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.flowable.domain.DeploymentDTO;
-import com.snow.flowable.domain.DeploymentQueryDTO;
-import com.snow.flowable.domain.DeploymentVO;
-import com.snow.flowable.domain.TaskBaseDTO;
+import com.snow.flowable.domain.*;
 import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
-import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
-import com.snow.system.domain.FinanceAlipayFlowImport;
-import com.snow.system.domain.SysUser;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.flowable.engine.repository.DeploymentQuery;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -95,7 +84,7 @@ public class FlowModelerController extends BaseController
     {
         startPage();
         Long userId = ShiroUtils.getUserId();
-        List<Task> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
+        List<TaskVO> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
         return getDataTable(taskList);
     }
 

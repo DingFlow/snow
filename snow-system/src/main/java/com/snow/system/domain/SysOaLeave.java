@@ -1,6 +1,8 @@
 package com.snow.system.domain;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,6 +31,7 @@ public class SysOaLeave extends BaseEntity
 
     /** 开始时间 */
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
 
     /** 结束时间 */
@@ -53,6 +56,9 @@ public class SysOaLeave extends BaseEntity
     /** 附件 */
     @Excel(name = "附件")
     private String fileUrl;
+    /** 请假单号 */
+    @Excel(name = "请假单号")
+    private String leaveNo;
 
     public void setId(Integer id) 
     {
@@ -143,6 +149,14 @@ public class SysOaLeave extends BaseEntity
     public String getFileUrl() 
     {
         return fileUrl;
+    }
+
+    public String getLeaveNo() {
+        return leaveNo;
+    }
+
+    public void setLeaveNo(String leaveNo) {
+        this.leaveNo = leaveNo;
     }
 
     @Override

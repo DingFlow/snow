@@ -3,6 +3,7 @@ package com.snow.flowable.config;
 import org.flowable.common.engine.impl.EngineDeployer;
 import org.flowable.engine.impl.rules.RulesDeployer;
 import org.flowable.spring.SpringProcessEngineConfiguration;
+import org.flowable.spring.boot.EngineConfigurationConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * @date 2020/11/18 19:16
  */
 @Configuration
-public class FlowableConfig {
+public class FlowableConfig{
 
 
     @Primary
@@ -35,6 +36,11 @@ public class FlowableConfig {
                 add(new RulesDeployer());
             }
         });
+        //设置流程图显示乱码
+        configuration.setActivityFontName("宋体");
+        configuration.setLabelFontName("宋体");
+        configuration.setAnnotationFontName("宋体");
         return configuration;
     }
+
 }

@@ -138,7 +138,9 @@ public class FlowableServiceImpl implements FlowableService {
             InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
             b = IoUtil.readInputStream(inputStream, resourceName);
         } else {
-            response.setHeader("Content-Type", "image/png");
+            //todo 输出的有乱码，暂时没有解决办法
+            response.setHeader("Content-Type", "image/png;charset=UTF-8");
+            response.setCharacterEncoding("utf-8");
             InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
             b = IoUtil.readInputStream(inputStream, resourceName);
         }
@@ -164,6 +166,8 @@ public class FlowableServiceImpl implements FlowableService {
         }else {
             processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey());
         }
+        //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
+        identityService.setAuthenticatedUserId(null);
         return processInstance;
     }
 
@@ -179,18 +183,19 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public List<Task> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
+    public List<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
         //根据用户ID获取角色
         List<SysRole> sysRoles = roleService.selectRolesByUserId(Long.parseLong(userId));
 
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .or()
                 .taskCandidateOrAssigned(userId);
+        //这个地方查询回去查询系统的用户组表，希望的是查询自己的用户表
         if(!CollectionUtils.isEmpty(sysRoles)) {
-            taskQuery.or()
-                    .taskCandidateGroupIn(sysRoles.stream().map(t->{
-                        return String.valueOf(t.getRoleId());
-                    }).collect(Collectors.toList()));
+            List<String> roleIds = sysRoles.stream().map(t -> {
+                return String.valueOf(t.getRoleId());
+            }).collect(Collectors.toList());
+            taskQuery.taskCandidateGroupIn(roleIds);
         }
         if(!StringUtils.isEmpty(taskBaseDTO.getProcessInstanceId())){
             taskQuery.processInstanceId(taskBaseDTO.getProcessInstanceId());
@@ -204,10 +209,30 @@ public class FlowableServiceImpl implements FlowableService {
         if(StringUtils.isEmpty(taskBaseDTO.getDefinitionKey())){
             taskQuery.processDefinitionKey(taskBaseDTO.getDefinitionKey());
         }
-        return taskQuery.endOr()
-                .orderBy(TaskQueryProperty.CREATE_TIME)
-                .listPage(taskBaseDTO.getFirstResult(),taskBaseDTO.getMaxResults());
+        List<Task> taskList = taskQuery.endOr()
+                .orderByTaskCreateTime()
+                .desc()
+                .listPage(taskBaseDTO.getFirstResult(), taskBaseDTO.getMaxResults());
+        List<TaskVO> taskVoList = taskList.stream().map(t -> {
+            TaskVO taskVO = new TaskVO();
+            taskVO.setTaskId(t.getId());
+            taskVO.setTaskName(t.getName());
+            taskVO.setProcessInstanceId(t.getProcessInstanceId());
+            taskVO.setCreateDate(t.getCreateTime());
+            taskVO.setFormKey(t.getFormKey());
+            taskVO.setParentTaskId(t.getParentTaskId());
+            taskVO.setAssignee(t.getAssignee());
+            taskVO.setOwner(t.getOwner());
+            HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
+            taskVO.setProcessDefinitionName(historicProcessInstance.getProcessDefinitionName());
+            taskVO.setStartUserId(historicProcessInstance.getStartUserId());
+            taskVO.setBusinessKey(historicProcessInstance.getBusinessKey());
+            taskVO.setStartTime(historicProcessInstance.getStartTime());
+            return taskVO;
+        }).collect(Collectors.toList());
+        return taskVoList;
     }
+
 
 
     @Override
@@ -294,5 +319,17 @@ public class FlowableServiceImpl implements FlowableService {
     public boolean isFinished(String processInstanceId) {
         return historyService.createHistoricProcessInstanceQuery().finished()
                 .processInstanceId(processInstanceId).count() > 0;
+    }
+
+    public ProcessInstance getProcessInstanceById(String id){
+        return runtimeService.createProcessInstanceQuery()
+                .processInstanceId(id)
+                .singleResult();
+    }
+
+    public HistoricProcessInstance getHistoricProcessInstanceById(String id){
+        return  historyService.createHistoricProcessInstanceQuery()
+                .processInstanceId(id)
+                .singleResult();
     }
 }

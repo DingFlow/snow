@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.snow.common.annotation.Log;
 import com.snow.common.enums.BusinessType;
+import org.springframework.stereotype.Controller;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.service.I${ClassName}Service;
 import com.snow.common.core.controller.BaseController;

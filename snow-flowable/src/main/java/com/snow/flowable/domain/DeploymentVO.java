@@ -1,6 +1,7 @@
 package com.snow.flowable.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.flowable.engine.repository.ProcessDefinition;
 
@@ -20,7 +21,7 @@ public class DeploymentVO implements Serializable {
 
    private String name;
 
-   @JSONField(format = "YYYY-MM-DD hh:mm:ss")
+   @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
    private Date deploymentTime;
 
    private String category;
