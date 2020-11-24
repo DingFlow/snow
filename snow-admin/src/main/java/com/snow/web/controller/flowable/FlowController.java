@@ -70,39 +70,6 @@ public class FlowController {
     }
 
     /**
-     * 完成任务
-     */
-    //@RequiresPermissions("system:leave:startLeaveProcess")
-    @Log(title = "完成审批", businessType = BusinessType.INSERT)
-    @PostMapping("/finishTask")
-    @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
-    public AjaxResult finishTask(FinishTaskDTO finishTaskDTO)
-
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-
-        List<FileEntry> files=Lists.newArrayList();
-        FileEntry fileEntry=new FileEntry();
-        fileEntry.setName("请假申请");
-        fileEntry.setUrl(finishTaskDTO.getSuggestionFileUrl());
-        files.add(fileEntry);
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
-        completeTaskDTO.setTaskId(finishTaskDTO.getTaskId());
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        completeTaskDTO.setFiles(files);
-        completeTaskDTO.setComment(finishTaskDTO.getSuggestion());
-        Integer checkStatus = finishTaskDTO.getCheckStatus();
-        if(checkStatus==0){
-            completeTaskDTO.setIsPass(true);
-        }else {
-            completeTaskDTO.setIsPass(false);
-        }
-        flowableService.completeTask(completeTaskDTO);
-        return AjaxResult.success();
-    }
-
-    /**
      * 获取所有节点
      * @param processInstanceId
      * @return
