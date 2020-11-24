@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -39,7 +40,9 @@ public class TaskVO implements Serializable {
     private String parentTaskId;
 
     private String tenantId;
-
+    /**
+     * 任务处理人
+     */
     private String Assignee;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -61,4 +64,32 @@ public class TaskVO implements Serializable {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
+
+    /**
+     * 任务完成时间
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date completeTime;
+
+    /**
+     * 处理任务时间
+     */
+    private String handleTaskTime;
+    /**
+     * 任务状态（0--待处理，1--已处理）
+     */
+    private Integer taskStatus=0;
+    /**
+     * 下个节点
+     */
+    private String nextTaskName;
+    /**
+     * 任务定义key
+     */
+    private String taskDefinitionKey;
+    /**
+     * 任务待处理人
+     */
+    private List<String> handleNameList;
 }
+

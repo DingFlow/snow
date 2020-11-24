@@ -9,6 +9,7 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.CompleteTaskDTO;
 import com.snow.flowable.domain.FileEntry;
 import com.snow.flowable.domain.FinishTaskDTO;
+import com.snow.flowable.domain.TaskVO;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaLeave;
@@ -100,5 +101,17 @@ public class FlowController {
         }
         flowableService.completeTask(completeTaskDTO);
         return AjaxResult.success();
+    }
+
+    /**
+     * 获取所有节点
+     * @param processInstanceId
+     * @return
+     */
+    @GetMapping("/getDynamicFlowNodeInfo")
+    @ResponseBody
+    public AjaxResult getDynamicFlowNodeInfo(String processInstanceId){
+        List<TaskVO> dynamicFlowNodeInfo = flowableService.getDynamicFlowNodeInfo(processInstanceId);
+        return AjaxResult.success(dynamicFlowNodeInfo);
     }
 }

@@ -1,6 +1,7 @@
 package com.snow.flowable.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
@@ -8,24 +9,29 @@ import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.SysUserMapper;
 import com.snow.system.service.ISysRoleService;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.bpmn.model.EndEvent;
-import org.flowable.bpmn.model.FlowNode;
+import org.flowable.bpmn.model.*;
+import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.engine.repository.*;
+import org.flowable.engine.impl.el.JuelExpression;
+import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.DeploymentQuery;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
-import org.flowable.task.service.impl.TaskQueryProperty;
-import org.flowable.ui.modeler.rest.app.AbstractModelBpmnResource;
+import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +39,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +50,9 @@ import java.util.stream.Collectors;
  * @author qimingjin
  * @Title:
  * @Description:
+ * 运行时流程人员表(act_ru_identitylink)
+ *
+ * 任务参与者数据表。主要存储当前节点参与者的信息。
  * @date 2020/11/19 17:27
  */
 @Slf4j
@@ -72,6 +82,12 @@ public class FlowableServiceImpl implements FlowableService {
     @Autowired
     private SysUserServiceImpl sysUserService;
 
+    @Autowired
+    private ExpressionServiceImpl expressionService;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
 
     @Override
     public List<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
@@ -91,19 +107,6 @@ public class FlowableServiceImpl implements FlowableService {
         }
         List<Deployment> deployments = deploymentQuery.orderByDeploymenTime().desc().
                 listPage(deploymentQueryDTO.getFirstResult(), deploymentQueryDTO.getMaxResults());
-        /*List<DeploymentVO> deploymentVOList = deployments.stream().map(deployment -> {
-            DeploymentVO deploymentVO = new DeploymentVO();
-            ModelQuery modelQuery = repositoryService.createModelQuery();
-            List<Model> modelList = modelQuery.deploymentId(deployment.getId()).list();
-            List<ModelVO> modelVoList = modelList.stream().map(model -> {
-                ModelVO modelVO = new ModelVO();
-                BeanUtils.copyProperties(model, modelVO);
-                return modelVO;
-            }).collect(Collectors.toList());
-            BeanUtils.copyProperties(deployment, deploymentVO);
-            deploymentVO.setModelVOList(modelVoList);
-            return deploymentVO;
-        }).collect(Collectors.toList());*/
         List<DeploymentVO> deploymentVOList = deployments.stream().map(t -> {
             DeploymentVO deploymentVO = new DeploymentVO();
             ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
@@ -281,27 +284,45 @@ public class FlowableServiceImpl implements FlowableService {
          */
         String processDefinitionId = "";
         if (this.isFinished(processId)) {// 如果流程已经结束，则得到结束节点
-            HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).singleResult();
+            HistoricProcessInstance pi = historyService.createHistoricProcessInstanceQuery().
+                    processInstanceId(processId)
+                    .singleResult();
 
             processDefinitionId=pi.getProcessDefinitionId();
         } else {// 如果流程没有结束，则取当前活动节点
             // 根据流程实例ID获得当前处于活动状态的ActivityId合集
-            ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery().
+                    processInstanceId(processId).
+                    singleResult();
             processDefinitionId=pi.getProcessDefinitionId();
         }
+        //活动节点
         List<String> highLightedActivitis = new ArrayList<String>();
-
+        //线节点
+        List<String> flows = new ArrayList<>();
         /**
-         * 获得活动的节点
+         * 获得所有的历史活动的节点对象
          */
-        List<HistoricActivityInstance> highLightedActivitList =  historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).orderByHistoricActivityInstanceStartTime().asc().list();
+        List<HistoricActivityInstance> highLightedActivitList =  historyService.createHistoricActivityInstanceQuery().
+                processInstanceId(processId).
+                orderByHistoricActivityInstanceStartTime().
+                asc().
+                list();
 
         for(HistoricActivityInstance tempActivity : highLightedActivitList){
-            String activityId = tempActivity.getActivityId();
-            highLightedActivitis.add(activityId);
+            String activityType = tempActivity.getActivityType();
+            if (activityType.equals("sequenceFlow") || activityType.equals("exclusiveGateway")) {
+                flows.add(tempActivity.getActivityId());
+            } else if (activityType.equals("startEvent")) {
+                String activityId = tempActivity.getActivityId();
+                highLightedActivitis.add(activityId);
+            }
         }
-
-        List<String> flows = new ArrayList<>();
+        //现在正处的节点
+        List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+        for (Task task : tasks) {
+            highLightedActivitis.add(task.getTaskDefinitionKey());
+        }
         //获取流程图
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
         ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
@@ -350,4 +371,220 @@ public class FlowableServiceImpl implements FlowableService {
                 .processInstanceId(id)
                 .singleResult();
     }
+
+    @Override
+    public List<HistoricTaskInstance> getHistoricTaskInstance(com.snow.flowable.domain.Task task){
+        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
+        if(!StringUtils.isEmpty(task.getProcessInstanceId())){
+            historicTaskInstanceQuery= historicTaskInstanceQuery.processInstanceId(task.getProcessInstanceId());
+        }
+        if(!StringUtils.isEmpty(task.getTaskDefinitionKey())){
+           historicTaskInstanceQuery.processInstanceId(task.getTaskDefinitionKey());
+        }
+        if(!StringUtils.isEmpty(task.getAssignee())){
+            historicTaskInstanceQuery.taskAssignee(task.getAssignee());
+        }
+        List<HistoricTaskInstance> list = historicTaskInstanceQuery.orderByTaskCreateTime().asc().list();
+
+        return list;
+    }
+
+    /**
+     * 思路就是我们取出节点的表达式，然后用我们流程实例的变量来给他翻译出来即可
+     * @param processInstanceId
+     */
+    @Override
+    public List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId) {
+        //获取历史变量表
+   /*     List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .list();*/
+        HistoricProcessInstance processInstance= getHistoricProcessInstanceById(processInstanceId);
+        List<TaskVO> hisTaskVOList=Lists.newArrayList();
+        com.snow.flowable.domain.Task task=new com.snow.flowable.domain.Task();
+        task.setProcessInstanceId(processInstanceId);
+        List<HistoricTaskInstance> historicTaskInstance = getHistoricTaskInstance(task);
+        if(!CollectionUtils.isEmpty(historicTaskInstance)){
+            hisTaskVOList = historicTaskInstance.stream().map(t -> {
+                TaskVO taskVO = new TaskVO();
+                taskVO.setTaskName(t.getName());
+                taskVO.setProcessInstanceId(t.getProcessInstanceId());
+                taskVO.setStartUserId(processInstance.getStartUserId());
+                taskVO.setStartUserName(getUserNameById(processInstance.getStartUserId()));
+                taskVO.setTaskDefinitionKey(t.getTaskDefinitionKey());
+                if (!StringUtils.isEmpty(t.getCreateTime())) {
+                    taskVO.setCreateDate(t.getCreateTime());
+                }
+                if (!StringUtils.isEmpty(t.getEndTime())) {
+                    taskVO.setCompleteTime(t.getEndTime());
+                }
+
+                if (!StringUtils.isEmpty(t.getAssignee())) {
+                    taskVO.setAssignee(getUserNameById(t.getAssignee()));
+                }else {
+
+                }
+                return taskVO;
+            }).collect(Collectors.toList());
+        }
+
+        List<TaskVO> futureTask = getFutureTask(processInstance);
+        for(int i=0;i<hisTaskVOList.size();i++){
+            for(int j=0;j<futureTask.size();j++){
+                if(hisTaskVOList.get(i).getTaskName().equals(futureTask.get(j).getTaskName())&&CollectionUtils.isEmpty(futureTask.get(j).getHandleNameList())){
+                    futureTask.remove(j);
+                }
+            }
+        }
+        hisTaskVOList.addAll(futureTask);
+        return hisTaskVOList;
+    }
+
+    /**
+     * 获取所有的任务节点
+     * @param processInstance
+     * @return
+     */
+    public List<TaskVO>  getFutureTask(HistoricProcessInstance processInstance){
+        String processInstanceId=processInstance.getId();
+        String startUserId=processInstance.getStartUserId();
+        List<TaskVO> taskVOList=Lists.newArrayList();
+
+        List<Process> processes = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId()).getProcesses();
+        if(!CollectionUtils.isEmpty(processes)){
+            processes.stream().forEach(process -> {
+                Collection<FlowElement> flowElements = process. getFlowElements();
+                for(FlowElement flowElement:flowElements){
+                    if(flowElement instanceof UserTask){
+                        List<String> handleNameList=Lists.newArrayList();
+                        UserTask userTask=(UserTask)flowElement;
+                        //固定人
+                        String assignee=userTask.getAssignee();
+                        List<String> candidateGroups = userTask.getCandidateGroups();
+                        List<String> candidateUsers = userTask.getCandidateUsers();
+                        if(!CollectionUtils.isEmpty(candidateUsers)){
+                            //获取的是多实例会签
+                            MultiInstanceLoopCharacteristics loopCharacteristics = userTask.getLoopCharacteristics();
+                            if(loopCharacteristics == null){
+                                String expressionValue=null;
+                                if(userTask.getId().equals("userTask0")){
+                                    expressionValue = processInstance.getStartUserId();
+                                    handleNameList.add(expressionValue);
+                                }else {
+                                    for (String candidateUser:candidateUsers){
+                                        if(com.snow.common.utils.StringUtils.isNumeric(candidateUser)){
+                                            SysUser sysUser = sysUserService.selectUserById(Long.parseLong(candidateUser));
+                                            handleNameList.add(sysUser.getUserName());
+                                        }else {
+                                            //获取表达式的值
+                                            //  expressionValue =(String) expressionService.getValue(processInstanceId,candidateUser);
+                                            //先这样写
+                                            handleNameList.add(candidateUser);
+                                        }
+
+                                    }
+                                }
+                                TaskVO.TaskVOBuilder taskVOBuilder = TaskVO.builder().taskName(userTask.getName()).
+                                        handleNameList(handleNameList).
+                                        taskDefinitionKey(userTask.getId()).
+                                        startUserId(processInstance.getStartUserId());
+
+                                if(com.snow.common.utils.StringUtils.isNumeric(startUserId)){
+                                    taskVOBuilder.startUserName(getUserNameById(startUserId));
+                                }else {
+                                    taskVOBuilder.startUserName(startUserId);
+                                }
+                                TaskVO taskVO = taskVOBuilder.build();
+                                taskVOList.add(taskVO);
+                            }
+                            //todo 多实例会签出来
+                            else {
+                                String inputDataItem = loopCharacteristics.getInputDataItem();
+                                List<String> values = (List)expressionService.getValue(processInstanceId, inputDataItem);
+                                System.out.println(JSON.toJSON(values));
+                            }
+                        }
+                        if(!CollectionUtils.isEmpty(candidateGroups)){
+                            //获取的是多实例会签
+                            MultiInstanceLoopCharacteristics loopCharacteristics = userTask.getLoopCharacteristics();
+                            if(loopCharacteristics == null){
+                                String expressionValue=null;
+                                if(userTask.getId().equals("userTask0")){
+                                    expressionValue = processInstance.getStartUserId();
+                                    handleNameList.add(expressionValue);
+                                }else {
+                                    for (String candidateGroup:candidateGroups){
+                                        if(com.snow.common.utils.StringUtils.isNumeric(candidateGroup)){
+                                            List<SysUser> sysUsers = sysUserMapper.selectUserListByRoleId(candidateGroup);
+                                            if(!CollectionUtils.isEmpty(sysUsers)){
+                                                List<String> collect = sysUsers.stream().map(SysUser::getUserName).collect(Collectors.toList());
+                                                handleNameList.addAll(collect);
+                                            }
+                                        }else {
+                                            //获取表达式的值
+                                            expressionValue =(String) expressionService.getValue(processInstanceId,candidateGroup);
+                                            //先这样写
+                                            handleNameList.add(candidateGroup);
+                                        }
+                                    }
+                                    TaskVO.TaskVOBuilder taskVOBuilder = TaskVO.builder().taskName(userTask.getName()).
+                                            handleNameList(handleNameList).
+                                            taskDefinitionKey(userTask.getId()).
+                                            startUserId(processInstance.getStartUserId());
+
+                                    if(com.snow.common.utils.StringUtils.isNumeric(startUserId)){
+                                        taskVOBuilder.startUserName(getUserNameById(startUserId));
+                                    }else {
+                                        taskVOBuilder.startUserName(startUserId);
+                                    }
+                                    TaskVO taskVO = taskVOBuilder.build();
+                                    taskVOList.add(taskVO);
+                                }
+                            }
+                            //todo 多实例会签出来
+                            else {
+                                String inputDataItem = loopCharacteristics.getInputDataItem();
+                                List<String> values = (List)expressionService.getValue(processInstanceId, inputDataItem);
+                                System.out.println(JSON.toJSON(values));
+                            }
+                        }
+                        if(!StringUtils.isEmpty(userTask.getAssignee())){
+                            MultiInstanceLoopCharacteristics loopCharacteristics = userTask.getLoopCharacteristics();
+                            if(loopCharacteristics == null){
+                                String expressionValue=null;
+                                if(userTask.getName().equals("")){
+                                    expressionValue = processInstance.getStartUserId();
+                                }else {
+                                    //获取表达式的值
+                                    expressionValue =(String) expressionService.getValue(processInstanceId, userTask.getAssignee());
+                                    handleNameList.add(expressionValue);
+                                }
+                            }else {
+                                String inputDataItem = loopCharacteristics.getInputDataItem();
+                                List<String> values = (List)expressionService.getValue(processInstanceId, inputDataItem);
+                                System.out.println(JSON.toJSON(values));
+                            }
+                            TaskVO.TaskVOBuilder taskVOBuilder = TaskVO.builder().taskName(userTask.getName()).
+                                    handleNameList(handleNameList).
+                                    taskDefinitionKey(userTask.getId()).
+                                    startUserId(processInstance.getStartUserId());
+
+                            if(com.snow.common.utils.StringUtils.isNumeric(startUserId)){
+                                taskVOBuilder.startUserName(getUserNameById(startUserId));
+                            }else {
+                                taskVOBuilder.startUserName(startUserId);
+                            }
+                            TaskVO taskVO = taskVOBuilder.build();
+                            taskVOList.add(taskVO);
+                        }
+                    }
+                }
+            });
+        }
+        return taskVOList;
+    }
+
+   public String getUserNameById(String id){
+       return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
+   }
 }

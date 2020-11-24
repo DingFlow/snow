@@ -27,6 +27,13 @@ public interface SysUserMapper
     public List<SysUser> selectAllocatedList(SysUser user);
 
     /**
+     *
+     * @param roleId
+     * @return
+     */
+    public List<SysUser> selectUserListByRoleId(String roleId);
+
+    /**
      * 根据条件分页查询未分配用户角色列表
      * 
      * @param user 用户信息

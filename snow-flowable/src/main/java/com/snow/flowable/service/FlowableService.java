@@ -4,6 +4,7 @@ import com.snow.flowable.domain.*;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -90,5 +91,23 @@ public interface FlowableService {
      */
      HistoricProcessInstance getHistoricProcessInstanceById(String id);
 
-    Task getTaskProcessInstanceById(String id);
+    /**
+     * 根据流程实例ID查询任务
+     * @param id
+     * @return
+     */
+     Task getTaskProcessInstanceById(String id);
+
+    /**
+     * 获取历史任务
+     * @param task
+     * @return
+     */
+    List<HistoricTaskInstance> getHistoricTaskInstance(com.snow.flowable.domain.Task task);
+
+    /**
+     * 动态获取流程节点审批信息
+     * @param processInstanceId
+     */
+    List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId);
 }

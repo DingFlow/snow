@@ -18,51 +18,42 @@ import java.util.Map;
 public class Task implements Serializable {
    private String id;
 
-    String getName;
+    String name;
 
-    String getDescription;
+    String description;
 
-    int getPriority;
+    int priority;
 
-    String getOwner;
+    String owner;
 
-    String getAssignee;
+    String assignee;
 
-    String getProcessInstanceId;
+    String processInstanceId;
 
-    String getExecutionId;
+    String executionId;
 
-    String getTaskDefinitionId;
+    String taskDefinitionId;
 
-    String getProcessDefinitionId;
+    String processDefinitionId;
 
-    String getScopeId;
+    String scopeId;
 
-    String getSubScopeId;
 
-    String getScopeType;
 
-    String getScopeDefinitionId;
+    Date createTime;
 
-    Date getCreateTime;
+    String taskDefinitionKey;
 
-    String getTaskDefinitionKey;
+    Date dueDate;
 
-    Date getDueDate;
+    String category;
 
-    String getCategory;
+    String parentTaskId;
 
-    String getParentTaskId;
+    String tenantId;
 
-    String getTenantId;
+    String formKey;
 
-    String getFormKey;
 
-    Map<String, Object> getTaskLocalVariables;
-
-    Map<String, Object> getProcessVariables;
-
-    List<? extends IdentityLinkInfo> getIdentityLinks;
-
-    Date getClaimTime;
+    Date claimTime;
 }
