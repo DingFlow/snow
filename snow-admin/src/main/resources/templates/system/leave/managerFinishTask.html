@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<th:block th:include="include :: header('完成任务')" />
+	<th:block th:include="include :: header('主管审批')" />
 	<th:block th:include="include :: jsonview-css" />
 	<th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
@@ -13,11 +13,16 @@
 			<div class="col-sm-offset-0 col-sm-10">
 				<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
 				<button type="button" class="btn btn-sm btn-danger" onclick="submitHandler()"><i class="fa fa-remove"></i>驳 回</button>&nbsp;
-				<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
 			</div>
 		</div>
+		<br/>
 		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
 		<h4 class="form-header h4">请假信息</h4>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">单号：</label>
+			<div class="form-control-static" th:text="${sysOaLeave.leaveNo}">
+			</div>
+		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">标题：</label>
 			<div class="form-control-static" th:text="${sysOaLeave.name}">
@@ -68,8 +73,9 @@
     <script th:inline="javascript">
 	    $(function() {
 	    	var reason = [[${sysOaLeave.reason}]];
+	    	console.log(reason);
 	    	if ($.common.isNotEmpty(reason) && reason.length < 2000) {
-	    		$("#reason").JSONView(reason);
+                $("#reason").text(reason);
 	    	} else {
 	    		$("#reason").text(reason);
 	    	}
@@ -96,7 +102,7 @@
             if ($.validate.form()) {
                 var data = $("#signupForm").serializeArray();
                 data.push({"name": "checkStatus", "value": 0});
-                $.operate.saveTab("/flow/finishTask", data);
+                $.operate.saveTab("/system/leave/managerFinishTask", data);
             }
         }
     </script>

@@ -14,7 +14,7 @@
                                 <label>请假名称：</label>
                                 <input type="text" name="name"/>
                             </li>
-                            <li class="select-time">
+                          <!--  <li class="select-time">
                                 <label>开始时间：</label>
                                 <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginStartTime]"/>
                                 <span>-</span>
@@ -25,18 +25,18 @@
                                 <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginEndTime]"/>
                                 <span>-</span>
                                 <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endEndTime]"/>
-                            </li>
+                            </li>-->
                             <li>
-                                <label>流程实例ID：</label>
+                                <label>流程状态：</label>
                                 <select name="processStatus" th:with="type=${@dict.getType('process_status')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
-                            <li>
+                           <!-- <li>
                                 <label>流程实例ID：</label>
                                 <input type="text" name="processInstanceId"/>
-                            </li>
+                            </li>-->
                             <li>
                                 <label>申请人：</label>
                                 <input type="text" name="applyPerson"/>
@@ -92,14 +92,15 @@
                     title: 'id',
                     visible: false
                 },
+                    {
+                        field: 'leaveNo',
+                        title: '单号'
+                    },
                 {
                     field: 'name',
                     title: '请假名称'
                 },
-                {
-                    field: 'reason',
-                    title: '请假理由'
-                },
+          /*
                 {
                     field: 'startTime',
                     title: '开始时间'
@@ -107,7 +108,7 @@
                 {
                     field: 'endTime',
                     title: '结束时间'
-                },
+                },*/
                 {
                     field: 'processStatus',
                     title: '流程状态',
@@ -115,29 +116,19 @@
                         return $.table.selectDictLabel(processStatusDatas, value);
                     }
                 },
-                    {
-                        field: 'processInstanceId',
-                        title: '流程实例ID'
-
-                    },
                 {
                     field: 'applyPerson',
                     title: '申请人'
                 },
-                {
-                    field: 'remark',
-                    title: '备注'
-                },
-                {
-                    field: 'fileUrl',
-                    title: '附件'
-                },
+
                 {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起申请</a> ');
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起申请</a> ');
+                        }
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }

@@ -1,10 +1,15 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.CompleteTaskDTO;
+import com.snow.flowable.domain.FileEntry;
+import com.snow.flowable.domain.FinishTaskDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
@@ -121,7 +126,7 @@ public class SysOaLeaveController extends BaseController
      * 完成任务
      */
     //@RequiresPermissions("system:leave:startLeaveProcess")
-    @Log(title = "发起审批", businessType = BusinessType.INSERT)
+    @Log(title = "完成任务", businessType = BusinessType.OTHER)
     @PostMapping("/finishTask")
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
@@ -179,6 +184,7 @@ public class SysOaLeaveController extends BaseController
         flowableService.completeTask(completeTaskDTO);
         sysOaLeave.setProcessStatus(1);
         sysOaLeave.setCreateBy(sysUser.getUserName());
+        sysOaLeave.setApplyPerson(sysUser.getUserName());
         BeanUtils.copyProperties(sysOaLeave,oldSysOaLeave);
         sysOaLeave.setProcessInstanceId(processInstance.getProcessInstanceId());
         return toAjax(sysOaLeaveService.updateSysOaLeave(sysOaLeave));
@@ -194,5 +200,37 @@ public class SysOaLeaveController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(sysOaLeaveService.deleteSysOaLeaveByIds(ids));
+    }
+
+    @Log(title = "主管完成审批", businessType = BusinessType.OTHER)
+    @PostMapping("/managerFinishTask")
+    @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult managerFinishTask(FinishTaskDTO finishTaskDTO)
+
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+
+        List<FileEntry> files=Lists.newArrayList();
+        FileEntry fileEntry=new FileEntry();
+        fileEntry.setName("请假申请");
+        fileEntry.setUrl(finishTaskDTO.getSuggestionFileUrl());
+        files.add(fileEntry);
+        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+        completeTaskDTO.setTaskId(finishTaskDTO.getTaskId());
+        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        completeTaskDTO.setFiles(files);
+        completeTaskDTO.setComment(finishTaskDTO.getSuggestion());
+        Integer checkStatus = finishTaskDTO.getCheckStatus();
+        Map<String,Object> paramMap=Maps.newHashMap();
+        paramMap.put("hr",2);
+        completeTaskDTO.setParamMap(paramMap);
+        if(checkStatus==0){
+            completeTaskDTO.setIsPass(true);
+        }else {
+            completeTaskDTO.setIsPass(false);
+        }
+        flowableService.completeTask(completeTaskDTO);
+        return AjaxResult.success();
     }
 }

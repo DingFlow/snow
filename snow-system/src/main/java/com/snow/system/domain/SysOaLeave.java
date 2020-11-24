@@ -36,6 +36,7 @@ public class SysOaLeave extends BaseEntity
 
     /** 结束时间 */
     @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 流程状态（0--待审批，1-审批中，2--审批通过，3--已驳回） */

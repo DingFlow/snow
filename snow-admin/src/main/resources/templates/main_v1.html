@@ -96,6 +96,28 @@
 
          </div>
       </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>我的已办</h5>
+                        <div class="pull-right">
+                            <div class="btn-group">
+                                时间
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="bootstrap-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -107,11 +129,6 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
-        var tradeTypeDatas = [[${@dict.getType('trade_type')}]];
-        var tradeStatusDatas = [[${@dict.getType('trade_status_type')}]];
-        var incomeExpenditureTypeDatas = [[${@dict.getType('income_expenditure_type')}]];
-        var capitalStatusDatas = [[${@dict.getType('capital_status')}]];
-        var billTypeDatas = [[${@dict.getType('bill_type')}]];
         var prefix = ctx + "modeler";
         var prefixFlow = ctx + "flow";
         $(function() {

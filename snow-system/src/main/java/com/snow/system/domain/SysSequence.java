@@ -25,6 +25,8 @@ public class SysSequence extends BaseEntity
     /** 步幅 */
     @Excel(name = "步幅")
     private Long increment;
+    @Excel(name = "描述")
+    private String described;
 
     public void setName(String name) 
     {
@@ -52,6 +54,14 @@ public class SysSequence extends BaseEntity
     public Long getIncrement() 
     {
         return increment;
+    }
+
+    public String getDescribed() {
+        return described;
+    }
+
+    public void setDescribed(String described) {
+        this.described = described;
     }
 
     @Override

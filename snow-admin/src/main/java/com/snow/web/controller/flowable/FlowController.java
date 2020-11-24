@@ -65,9 +65,8 @@ public class FlowController {
             }
             mmap.put("sysOaLeave", sysOaLeaves.get(0));
             mmap.put("taskId", taskId);
-            return "system/leave/finishTask";
         }
-        return "";
+        return task.getFormKey();
     }
 
     /**

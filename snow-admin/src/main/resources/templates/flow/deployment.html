@@ -48,9 +48,6 @@
                 <a class="btn btn-info" onclick="$.table.importFlowDeployment()" shiro:hasPermission="modeler:flow:import">
                     <i class="fa fa-upload"></i> 发布流程
                 </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:flow:export">
-                    <i class="fa fa-download"></i> 导出
-                </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -62,10 +59,6 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
-        var tradeTypeDatas = [[${@dict.getType('trade_type')}]];
-        var tradeStatusDatas = [[${@dict.getType('trade_status_type')}]];
-        var incomeExpenditureTypeDatas = [[${@dict.getType('income_expenditure_type')}]];
-        var capitalStatusDatas = [[${@dict.getType('capital_status')}]];
         var flowCategoryDatas = [[${@dict.getType('flow_category')}]];
         var prefix = ctx + "modeler";
         $(function() {

@@ -53,7 +53,7 @@ public class FlowModelerController extends BaseController
 
         return redirect("/modeler/index.html");
     }
-    @RequiresPermissions("modeler:flow:view")
+    @RequiresPermissions("modeler:deployment:view")
     @GetMapping()
     public String deploymentView()
     {
@@ -63,7 +63,7 @@ public class FlowModelerController extends BaseController
     /**
      * 查询发布实例列表
      */
-    @RequiresPermissions("modeler:flow:list")
+    @RequiresPermissions("modeler:deployment:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(DeploymentQueryDTO deploymentQuery)
@@ -92,6 +92,7 @@ public class FlowModelerController extends BaseController
      * 获取XML
      */
     @GetMapping("/getXml")
+    @RequiresPermissions("modeler:deployment:getXml")
     public void getXml(String id,String resourceName,HttpServletResponse response)
     {
 
@@ -102,6 +103,7 @@ public class FlowModelerController extends BaseController
      * 获取流程图
      */
     @GetMapping("/getFlowPicture")
+    @RequiresPermissions("modeler:deployment:getFlowPicture")
     public void getFlowPicture(String id,String resourceName,HttpServletResponse response)
     {
 
@@ -145,7 +147,7 @@ public class FlowModelerController extends BaseController
     /**
      * 删除发布
      */
-    @RequiresPermissions("modeler:flow:remove")
+    @RequiresPermissions("modeler:deployment:remove")
     @Log(title = "删除发布", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
@@ -157,7 +159,7 @@ public class FlowModelerController extends BaseController
 
 
     @Log(title = "发布流程", businessType = BusinessType.IMPORT)
-    @RequiresPermissions("modeler:flow:import")
+    @RequiresPermissions("modeler:deployment:deployment")
     @PostMapping("/importData")
     @ResponseBody
     public AjaxResult importData(MultipartFile file, String name,String key,String category) throws Exception

@@ -8,36 +8,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="name"    column="name"    />
         <result property="currentValue"    column="current_value"    />
         <result property="increment"    column="increment"    />
+        <result property="described"    column="described"    />
+
     </resultMap>
 
     <sql id="selectSysSequenceVo">
-        select name, current_value, increment from sys_sequence
+        select name,described, current_value, increment from sys_sequence
     </sql>
 
     <select id="selectSysSequenceList" parameterType="SysSequence" resultMap="SysSequenceResult">
         <include refid="selectSysSequenceVo"/>
-        <where>  
+        <where>
             <if test="currentValue != null "> and current_value = #{currentValue}</if>
             <if test="increment != null "> and increment = #{increment}</if>
         </where>
     </select>
-    
+
     <select id="selectSysSequenceById" parameterType="String" resultMap="SysSequenceResult">
         <include refid="selectSysSequenceVo"/>
         where name = #{name}
     </select>
-        
+
     <insert id="insertSysSequence" parameterType="SysSequence">
         insert into sys_sequence
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">name,</if>
             <if test="currentValue != null">current_value,</if>
             <if test="increment != null">increment,</if>
+            <if test="described != null">described,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
             <if test="currentValue != null">#{currentValue},</if>
             <if test="increment != null">#{increment},</if>
+            <if test="described != null">#{described},</if>
          </trim>
     </insert>
 
@@ -46,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="currentValue != null">current_value = #{currentValue},</if>
             <if test="increment != null">increment = #{increment},</if>
+            <if test="described != null">described = #{described},</if>
         </trim>
         where name = #{name}
     </update>
