@@ -149,13 +149,6 @@ flowable:
             password: test
 
 log4j:
-   rootLogger: ERROR, CA
-
-# ConsoleAppender
-   appender:
-      CA: org.apache.log4j.ConsoleAppender
-
-
 #custom
    logger:
       org:

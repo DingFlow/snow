@@ -472,8 +472,8 @@ public class FlowableServiceImpl implements FlowableService {
                 orderByProcessInstanceStartTime().
                 desc().
                 listPage(processInstanceDTO.getFirstResult(), processInstanceDTO.getMaxResults());
-        List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicProcessInstances, ProcessInstanceVO.class);
-        return processInstanceVOS;
+        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicProcessInstances, ProcessInstanceVO.class);
+        return ProcessInstanceVO.warpList(historicProcessInstances);
     }
 
     /**
