@@ -19,6 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class FinishTaskDTO implements Serializable {
 
+
     private String taskId;
 
     private String suggestion;
@@ -28,4 +29,8 @@ public class FinishTaskDTO implements Serializable {
      * 0通过，1--驳回
      */
     private Integer checkStatus;
+    /**
+     * 业务参数
+     */
+    private String businessKey;
 }

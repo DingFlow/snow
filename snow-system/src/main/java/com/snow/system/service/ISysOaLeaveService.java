@@ -44,6 +44,13 @@ public interface ISysOaLeaveService
     public int updateSysOaLeave(SysOaLeave sysOaLeave);
 
     /**
+     * 根据单号修改请假单
+     * @param sysOaLeave
+     * @return
+     */
+    public int updateSysOaLeaveByLeaveNo(SysOaLeave sysOaLeave);
+
+    /**
      * 批量删除请假单
      * 
      * @param ids 需要删除的数据ID

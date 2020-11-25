@@ -2,14 +2,13 @@ package com.snow.web.controller.flowable;
 
 import com.google.common.collect.Lists;
 import com.snow.common.annotation.Log;
+import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.StringUtils;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.FileEntry;
-import com.snow.flowable.domain.FinishTaskDTO;
-import com.snow.flowable.domain.TaskVO;
+import com.snow.flowable.domain.*;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaLeave;
@@ -17,6 +16,7 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaLeaveService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ import java.util.List;
  **/
 @Controller
 @RequestMapping("/flow")
-public class FlowController {
+public class FlowController extends BaseController {
     private String prefix = "flow";
 
     @Autowired
@@ -46,7 +46,7 @@ public class FlowController {
 
 
     /**
-     * 跳转流程编译器
+     * 跳转完成任务界面
      * @return
      */
     //@RequiresPermissions("modeler:flow:view")
@@ -112,5 +112,20 @@ public class FlowController {
     public AjaxResult getDynamicFlowNodeInfo(String processInstanceId){
         List<TaskVO> dynamicFlowNodeInfo = flowableService.getDynamicFlowNodeInfo(processInstanceId);
         return AjaxResult.success(dynamicFlowNodeInfo);
+    }
+
+    /**
+     * 获取我的流程实例
+     * @param processInstanceDTO
+     * @return
+     */
+    @PostMapping("/getMyHistoricProcessInstance")
+    @ResponseBody
+    public TableDataInfo getMyHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO){
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        processInstanceDTO.setStartedUserId(String.valueOf(sysUser.getUserId()));
+        List<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
+        return getDataTable(historicProcessInstance);
     }
 }

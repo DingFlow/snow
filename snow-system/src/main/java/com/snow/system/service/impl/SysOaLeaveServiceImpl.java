@@ -71,6 +71,12 @@ public class SysOaLeaveServiceImpl implements ISysOaLeaveService
         return sysOaLeaveMapper.updateSysOaLeave(sysOaLeave);
     }
 
+    @Override
+    public int updateSysOaLeaveByLeaveNo(SysOaLeave sysOaLeave) {
+        sysOaLeave.setUpdateTime(DateUtils.getNowDate());
+        return sysOaLeaveMapper.updateSysOaLeaveByLeaveNo(sysOaLeave);
+    }
+
     /**
      * 删除请假单对象
      * 

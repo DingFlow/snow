@@ -16,10 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
+import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.impl.el.JuelExpression;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentQuery;
@@ -35,6 +37,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -247,19 +250,22 @@ public class FlowableServiceImpl implements FlowableService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void completeTask(CompleteTaskDTO completeTaskDTO) {
         Task task = this.getTask(completeTaskDTO.getTaskId());
         if(StringUtils.isEmpty(task)){
             log.info("完成任务时，该任务ID:%不存在",completeTaskDTO.getTaskId());
             throw new BusinessException(String.format("该任务ID:%不存在",completeTaskDTO.getTaskId()));
         }
+        ////设置审批人，若不设置则数据表userid字段为null
+        Authentication.setAuthenticatedUserId(completeTaskDTO.getUserId());
         if(!StringUtils.isEmpty(completeTaskDTO.getComment())){
             taskService.addComment(task.getId(),task.getProcessInstanceId(),completeTaskDTO.getComment());
         }
         List<FileEntry> files = completeTaskDTO.getFiles();
         if(!CollectionUtils.isEmpty(files)){
             files.stream().forEach(t->
-                taskService.createAttachment("",task.getId(),task.getProcessInstanceId(),t.getKey(),t.getName(),t.getUrl())
+                taskService.createAttachment("url",task.getId(),task.getProcessInstanceId(),t.getKey(),t.getName(),t.getUrl())
             );
         }
         runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
@@ -271,7 +277,7 @@ public class FlowableServiceImpl implements FlowableService {
             );
         }
         paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
-        taskService.claim(task.getId(),completeTaskDTO.getUserId());
+      //  taskService.claim(task.getId(),completeTaskDTO.getUserId());//claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。
         taskService.complete(task.getId(),paramMap,true);
     }
 
@@ -438,6 +444,36 @@ public class FlowableServiceImpl implements FlowableService {
         }
         hisTaskVOList.addAll(futureTask);
         return hisTaskVOList;
+    }
+
+    @Override
+    public List<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO) {
+        HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
+        if(!StringUtils.isEmpty(processInstanceDTO.getBusinessKey())){
+            historicProcessInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey());
+        }
+        if(!StringUtils.isEmpty(processInstanceDTO.getProcessDefinitionKey())){
+            historicProcessInstanceQuery.processDefinitionKey(processInstanceDTO.getProcessDefinitionKey());
+        }
+        if(!StringUtils.isEmpty(processInstanceDTO.getStartedBefore())){
+            historicProcessInstanceQuery.startedAfter(processInstanceDTO.getStartedBefore());
+        }
+        if(!StringUtils.isEmpty(processInstanceDTO.getStartedAfter())){
+            historicProcessInstanceQuery.startedAfter(processInstanceDTO.getStartedAfter());
+        }
+        if(!StringUtils.isEmpty(processInstanceDTO.getFinishedBefore())){
+            historicProcessInstanceQuery.finishedBefore(processInstanceDTO.getFinishedBefore());
+        }
+        if(!StringUtils.isEmpty(processInstanceDTO.getFinishedAfter())){
+            historicProcessInstanceQuery.finishedAfter(processInstanceDTO.getFinishedAfter());
+        }
+
+        List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.
+                orderByProcessInstanceStartTime().
+                desc().
+                listPage(processInstanceDTO.getFirstResult(), processInstanceDTO.getMaxResults());
+        List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicProcessInstances, ProcessInstanceVO.class);
+        return processInstanceVOS;
     }
 
     /**
