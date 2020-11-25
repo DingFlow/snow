@@ -44,6 +44,13 @@ public interface SysOaLeaveMapper
     public int updateSysOaLeave(SysOaLeave sysOaLeave);
 
     /**
+     * 根据单号修改请假单
+     * @param sysOaLeave
+     * @return
+     */
+    public int updateSysOaLeaveByLeaveNo(SysOaLeave sysOaLeave);
+
+    /**
      * 删除请假单
      * 
      * @param id 请假单ID

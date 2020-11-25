@@ -47,8 +47,6 @@ public interface FlowableService {
      */
     ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
-
-
     /**
      * 根据任务ID获取代办
      * @param taskId
@@ -110,4 +108,11 @@ public interface FlowableService {
      * @param processInstanceId
      */
     List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId);
+
+    /**
+     * 查询历史流程实例
+     * @param processInstanceDTO
+     * @return
+     */
+    List<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO);
 }

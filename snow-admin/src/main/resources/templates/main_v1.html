@@ -88,7 +88,7 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-12 select-table table-striped">
-                                <table id="bootstrap-table"></table>
+                                <table id="bootstrap-table1"></table>
                             </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
             <div class="col-sm-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>我的已办</h5>
+                        <h5>我发起的流程</h5>
                         <div class="pull-right">
                             <div class="btn-group">
                                 时间
@@ -133,6 +133,7 @@
         var prefixFlow = ctx + "flow";
         $(function() {
             var options = {
+                id: "bootstrap-table1",
                 url: prefix + "/findTasksByUserId",
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
@@ -140,6 +141,76 @@
                 exportUrl: prefix + "/export",
                 importUrl: prefix + "/importData",
                 importTemplateUrl: prefix + "/importTemplate",
+                modalName: "我的待办",
+                columns: [{
+                    checkbox: false
+                },
+                    {
+                        field: 'processDefinitionName',
+                        title: '流程名称'
+                    },
+                    {
+                        field: 'businessKey',
+                        title: '单号'
+
+                    },
+                    {
+                        field: 'processDefinitionKey',
+                        title: '流程key'
+
+                    },
+
+                    {
+                        field: 'name',
+                        title: '任务名称'
+                    },
+
+                    {
+                        field: 'startUserName',
+                        title: '流程发起人'
+                    },
+                    {
+                        field: 'startTime',
+                        title: '流程创建时间'
+                    },
+                    {
+                        field: 'endTime',
+                        title: '流程结束时间'
+                    },
+
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="cancelTask(\'' + row.businessKey + '\',\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.processInstanceId + '\')"><i class="fa fa-eye"></i>获取流程图</a>');
+                            return actions.join('');
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function cancelTask(businessKey,taskId) {
+            console.log(JSON.stringify(taskId));
+            var preViewUrl=prefixFlow+'/toFinishTask?businessKey='+businessKey+'&taskId='+taskId;
+            $.modal.openTab("审批", preViewUrl);
+        }
+        function getProcessDiagram(processInstanceId) {
+
+            var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
+            $.modal.openTab("流程图", preViewUrl);
+        }
+    </script>
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
+        var prefix = ctx + "modeler";
+        var prefixFlow = ctx + "flow";
+        $(function() {
+            var options = {
+                url: prefixFlow + "/getMyHistoricProcessInstance",
                 modalName: "我的待办",
                 columns: [{
                     checkbox: false

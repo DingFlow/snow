@@ -107,7 +107,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
-
+    <update id="updateSysOaLeaveByLeaveNo" parameterType="SysOaLeave">
+        update sys_oa_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="processInstanceId != null">process_instance_id = #{processInstanceId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="applyPerson != null">apply_person = #{applyPerson},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where leave_no = #{leaveNo}
+    </update>
     <delete id="deleteSysOaLeaveById" parameterType="Integer">
         delete from sys_oa_leave where id = #{id}
     </delete>
