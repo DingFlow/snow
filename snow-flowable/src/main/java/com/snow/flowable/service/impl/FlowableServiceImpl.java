@@ -1,5 +1,7 @@
 package com.snow.flowable.service.impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -512,13 +514,31 @@ public class FlowableServiceImpl implements FlowableService {
         List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
                 desc().
                 listPage(historicTaskInstanceDTO.getPageNum(), historicTaskInstanceDTO.getPageSize());
-     //   List<HistoricTaskInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicTaskInstances, HistoricTaskInstanceVO.class);
+
+
+        List<HistoricTaskInstanceVO> historicTaskInstanceVOS = historicTaskInstances.stream().map(t -> {
+            HistoricTaskInstanceVO historicTaskInstanceVO = new HistoricTaskInstanceVO();
+            BeanUtils.copyProperties(t, historicTaskInstanceVO);
+            if (!StringUtils.isEmpty(t.getAssignee())) {
+                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getAssignee()));
+                historicTaskInstanceVO.setAssignee(sysUser.getUserName());
+            }
+            String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.MS));
+            historicTaskInstanceVO.setSpendTime(spendTime);
+            HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
+            historicTaskInstanceVO.setProcessName(historicProcessInstance.getProcessDefinitionName());
+            historicTaskInstanceVO.setBusinessKey(historicProcessInstance.getBusinessKey());
+            return historicTaskInstanceVO;
+
+        }).collect(Collectors.toList());
+
         PageModel<HistoricTaskInstanceVO> pageModel = new PageModel<> ();
         pageModel.setTotalCount((int)count);
-        pageModel.setPagedRecords(HistoricTaskInstanceVO.warpList(historicTaskInstances));
+        pageModel.setPagedRecords(historicTaskInstanceVOS);
         return pageModel;
     }
 
+    
     /**
      * 获取所有的任务节点
      * @param processInstance

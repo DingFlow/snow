@@ -1,5 +1,6 @@
 package com.snow.flowable.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import lombok.Data;
@@ -22,16 +23,29 @@ import java.util.stream.Collectors;
 public class HistoricTaskInstanceVO implements Serializable {
     public String executionId;
     public String processInstanceId;
-    public String processDefinitionId;
+    /**
+     *流程名称
+     */
+    public String processName;
+
+    public String businessKey;
     public String taskDefinitionId;
     public String scopeId;
     public String subScopeId;
     public String scopeType;
     public String scopeDefinitionId;
     public String propagatedStageInstanceId;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date createTime;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date endTime;
-    public Long durationInMillis;
+    /**
+     * 用时
+     */
+    public String spendTime;
+
     public String deleteReason;
     public String name;
     public String localizedName;
@@ -43,6 +57,10 @@ public class HistoricTaskInstanceVO implements Serializable {
      * 用户ID
      */
     public String assignee;
+
+
+
+    public String assigneeName;
     public String taskDefinitionKey;
     public String formKey;
     public int priority;

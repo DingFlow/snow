@@ -88,7 +88,7 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                           <!-- <div class="col-sm-12 search-collapse">
+                          <div class="col-sm-12 search-collapse">
                                 <form id="formId">
                                     <div class="select-list">
                                         <ul>
@@ -107,9 +107,9 @@
                                         </ul>
                                     </div>
                                 </form>
-                            </div>-->
+                            </div>
                             <div class="col-sm-12 select-table table-striped">
-                                <table id="bootstrap-table1"></table>
+                                <table id="bootstrap-table"></table>
                             </div>
                     </div>
                 </div>
@@ -117,49 +117,6 @@
 
          </div>
       </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>我发起的流程</h5>
-                        <div class="pull-right">
-                            <div class="btn-group">
-                                时间
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                            <div class="row">
-                                <div class="col-sm-12 search-collapse">
-                                    <form id="formIds">
-                                        <div class="select-list">
-                                            <ul>
-                                                <li>
-                                                    <label>节点名称：</label>
-                                                    <input type="text" name="taskName"/>
-                                                </li>
-                                                <li>
-                                                    <label>单号：</label>
-                                                    <input type="text" name="businessKey"/>
-                                                </li>
-                                                <li>
-                                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div class="col-sm-12 select-table table-striped">
-                                    <table id="bootstrap-table"></table>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-
-            </div>
-        </div>
     </div>
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -175,7 +132,7 @@
         var prefixFlow = ctx + "flow";
         $(function() {
             var options = {
-                id: "bootstrap-table1",
+                id: "bootstrap-table",
                 formId:"formIds",
                 url: prefix + "/findTasksByUserId",
                 createUrl: prefix + "/add",
@@ -256,94 +213,6 @@
 
             var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
             $.modal.openTab("流程图", preViewUrl);
-        }
-    </script>
-    <script th:inline="javascript">
-        var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
-
-        var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
-        var prefix = ctx + "modeler";
-        var prefixFlow = ctx + "flow";
-        $(function() {
-            var options = {
-                url: prefixFlow + "/getMyHistoricProcessInstance",
-                modalName: "我的待办",
-                striped: true,      //是否显示行间隔色
-                showToggle: false,
-                loadingFontSize:20,
-                showRefresh: false,                   // 是否显示刷新按钮
-                showColumns: false,                   // 是否显示隐藏某列下拉框
-                showToggle: false,
-                showSearch: false,                     // 是否显示检索信息
-               // rowStyle:rowStyle,//通过自定义函数设置行样式
-                columns: [
-                    {
-                        title: '序号',
-                        formatter: function (value, row, index) {
-                            return index+1;
-                        }
-                    },
-                    {
-                        field: 'processDefinitionName',
-                        title: '流程名称'
-                    },
-
-                    {
-                        field: 'businessKey',
-                        title: '单号'
-
-                    },
-                    {
-                        field: 'startUserId',
-                        title: '流程发起人',
-                        formatter: function(value, row, index) {
-                           var data= $.common.getDataById('/system/user/getUserInfoById',value);
-                           return data.userName;
-                        }
-                    },
-                    {
-                        field: 'isFinished',
-                        title: '流程状态',
-                        formatter: function(value, row, index) {
-                            return $.table.selectDictLabel(processInstanceStatusDatas, value);
-                        }
-                    },
-
-                    {
-                        field: 'startTime',
-                        title: '流程创建时间'
-                    },
-                    {
-                        field: 'endTime',
-                        title: '流程结束时间'
-                    },
-
-                    {
-                        title: '操作',
-                        align: 'center',
-                        formatter: function(value, row, index) {
-                            var actions = [];
-                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>流程图</a>');
-                            return actions.join('');
-                        }
-                    }]
-            };
-            $.table.init(options);
-        });
-
-        function getProcessDiagram(processInstanceId) {
-
-            var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
-            $.modal.openTab("流程图", preViewUrl);
-        }
-        function rowStyle(row, index) {
-            var classes = [ 'success', 'info', 'warning', 'danger'];
-            if (index % 2 === 0 && index / 2 < classes.length) {
-                return {
-                    classes: classes[index / 2]
-                };
-            }
-            return {};
         }
     </script>
 </body>
