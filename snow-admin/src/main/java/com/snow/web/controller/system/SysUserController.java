@@ -288,4 +288,13 @@ public class SysUserController extends BaseController
         userService.checkUserAllowed(user);
         return toAjax(userService.changeStatus(user));
     }
+
+
+    @PostMapping("/getUserInfoById")
+    @ResponseBody
+    public AjaxResult getUserInfoById(Long id)
+    {
+        SysUser sysUser = userService.selectUserById(id);
+        return AjaxResult.success(sysUser);
+    }
 }

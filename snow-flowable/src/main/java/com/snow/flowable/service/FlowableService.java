@@ -1,5 +1,6 @@
 package com.snow.flowable.service;
 
+import com.snow.common.core.page.PageModel;
 import com.snow.flowable.domain.*;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -8,7 +9,6 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author qimingjin
@@ -55,12 +55,12 @@ public interface FlowableService {
     Task getTask(String taskId);
 
     /**
-     * 获取代办
+     * 获取代办 分页获取
      * @param userId
      * @param taskBaseDTO
      * @return
      */
-    List<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
+    PageModel<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
     /**
      * 完成任务
@@ -110,9 +110,18 @@ public interface FlowableService {
     List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId);
 
     /**
-     * 查询历史流程实例
+     * 查询历史流程实例(分页)
+     * 可查询我发起的流程
      * @param processInstanceDTO
      * @return
      */
-    List<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO);
+    PageModel<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO);
+
+    /**
+     * 查询历史任务实例(分页)
+     * 可查询我经办的
+     * @param historicTaskInstanceDTO
+     * @return
+     */
+    PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO);
 }

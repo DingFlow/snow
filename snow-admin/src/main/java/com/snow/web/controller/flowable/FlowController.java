@@ -2,6 +2,7 @@ package com.snow.web.controller.flowable;
 
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.StringUtils;
@@ -86,10 +87,9 @@ public class FlowController extends BaseController {
     @PostMapping("/getMyHistoricProcessInstance")
     @ResponseBody
     public TableDataInfo getMyHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO){
-        startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         processInstanceDTO.setStartedUserId(String.valueOf(sysUser.getUserId()));
-        List<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
-        return getDataTable(historicProcessInstance);
+        PageModel<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
+        return getFlowDataTable(historicProcessInstance);
     }
 }

@@ -1699,6 +1699,21 @@ var table = {
             isMobile: function () {
                 return navigator.userAgent.match(/(Android|iPhone|SymbianOS|Windows Phone|iPad|iPod)/i);
             },
+            getDataById: function(url,id) {
+                $.ajaxSettings.async = false;
+                var resultData='';
+                $.post(url, {"id":id}, function(result) {
+                    if (result.code == web_status.SUCCESS) {
+                        console.log(result)
+                        resultData=result.data;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                });
+                return resultData;
+            },
         }
     });
 })(jQuery);

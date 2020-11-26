@@ -77,6 +77,8 @@ public class SysOaLeaveController extends BaseController
     public TableDataInfo list(SysOaLeave sysOaLeave)
     {
         startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaLeave.setCreateBy(sysUser.getUserName());
         List<SysOaLeave> list = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
         return getDataTable(list);
     }

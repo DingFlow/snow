@@ -191,7 +191,7 @@
                 showColumns: false,                   // 是否显示隐藏某列下拉框
                 showToggle: false,
                 showSearch: false,                     // 是否显示检索信息
-                rowStyle:rowStyle,//通过自定义函数设置行样式
+              //  rowStyle:rowStyle,//通过自定义函数设置行样式
                 modalName: "我的待办",
                 columns: [{
                     title: '序号',
@@ -260,6 +260,8 @@
     </script>
     <script th:inline="javascript">
         var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
+
+        var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
         var prefix = ctx + "modeler";
         var prefixFlow = ctx + "flow";
         $(function() {
@@ -273,7 +275,7 @@
                 showColumns: false,                   // 是否显示隐藏某列下拉框
                 showToggle: false,
                 showSearch: false,                     // 是否显示检索信息
-                rowStyle:rowStyle,//通过自定义函数设置行样式
+               // rowStyle:rowStyle,//通过自定义函数设置行样式
                 columns: [
                     {
                         title: '序号',
@@ -293,11 +295,18 @@
                     },
                     {
                         field: 'startUserId',
-                        title: '流程发起人'
+                        title: '流程发起人',
+                        formatter: function(value, row, index) {
+                           var data= $.common.getDataById('/system/user/getUserInfoById',value);
+                           return data.userName;
+                        }
                     },
                     {
                         field: 'isFinished',
-                        title: '流程状态'
+                        title: '流程状态',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(processInstanceStatusDatas, value);
+                        }
                     },
 
                     {

@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2020/11/20 13:43
  */
 @Data
-public class TaskBaseDTO implements Serializable {
+public class TaskBaseDTO extends FlowBaseDTO implements Serializable {
 
     private String processInstanceId;
 
@@ -20,13 +20,6 @@ public class TaskBaseDTO implements Serializable {
     private String taskId;
 
     private String businessKey;
-    /**
-     * 初始页
-     */
-    private int firstResult=0;
-    /**
-     * 每页数
-     */
-    private int maxResults=10;
+
 
 }

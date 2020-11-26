@@ -3,6 +3,7 @@ package com.snow.web.controller.flowable;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.flowable.domain.*;
@@ -82,10 +83,9 @@ public class FlowModelerController extends BaseController
     @ResponseBody
     public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
     {
-        startPage();
         Long userId = ShiroUtils.getUserId();
-        List<TaskVO> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
-        return getDataTable(taskList);
+        PageModel<TaskVO> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
+        return getFlowDataTable(taskList);
     }
 
     /**

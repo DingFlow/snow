@@ -3,6 +3,7 @@ package com.snow.flowable.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.domain.*;
@@ -22,7 +23,6 @@ import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
-import org.flowable.engine.impl.el.JuelExpression;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentQuery;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -33,7 +33,6 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
-import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -194,7 +192,7 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public List<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
+    public PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
         //根据用户ID获取角色
         List<SysRole> sysRoles = roleService.selectRolesByUserId(Long.parseLong(userId));
 
@@ -220,10 +218,15 @@ public class FlowableServiceImpl implements FlowableService {
         if(StringUtils.isEmpty(taskBaseDTO.getDefinitionKey())){
             taskQuery.processDefinitionKey(taskBaseDTO.getDefinitionKey());
         }
+        long count = taskQuery
+                .orderByTaskCreateTime()
+                .desc()
+                .count();
         List<Task> taskList = taskQuery.endOr()
                 .orderByTaskCreateTime()
                 .desc()
-                .listPage(taskBaseDTO.getFirstResult(), taskBaseDTO.getMaxResults());
+                .listPage(taskBaseDTO.getPageNum(), taskBaseDTO.getPageSize());
+
         List<TaskVO> taskVoList = taskList.stream().map(t -> {
             TaskVO taskVO = new TaskVO();
             taskVO.setTaskId(t.getId());
@@ -244,7 +247,10 @@ public class FlowableServiceImpl implements FlowableService {
             taskVO.setStartTime(historicProcessInstance.getStartTime());
             return taskVO;
         }).collect(Collectors.toList());
-        return taskVoList;
+        PageModel<TaskVO> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(taskVoList);
+        return pageModel;
     }
 
 
@@ -447,7 +453,7 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public List<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO) {
+    public PageModel<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO) {
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
         if(!StringUtils.isEmpty(processInstanceDTO.getBusinessKey())){
             historicProcessInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey());
@@ -467,13 +473,50 @@ public class FlowableServiceImpl implements FlowableService {
         if(!StringUtils.isEmpty(processInstanceDTO.getFinishedAfter())){
             historicProcessInstanceQuery.finishedAfter(processInstanceDTO.getFinishedAfter());
         }
-
+        if(!StringUtils.isEmpty(processInstanceDTO.getStartedUserId())){
+            historicProcessInstanceQuery.startedBy(processInstanceDTO.getStartedUserId());
+        }
+        long count = historicProcessInstanceQuery.
+                orderByProcessInstanceStartTime().
+                desc().
+                count();
         List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.
                 orderByProcessInstanceStartTime().
                 desc().
-                listPage(processInstanceDTO.getFirstResult(), processInstanceDTO.getMaxResults());
-        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicProcessInstances, ProcessInstanceVO.class);
-        return ProcessInstanceVO.warpList(historicProcessInstances);
+                listPage(processInstanceDTO.getPageNum(), processInstanceDTO.getPageSize());
+        PageModel<ProcessInstanceVO> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(ProcessInstanceVO.warpList(historicProcessInstances));
+        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(pageInfo.getList(), ProcessInstanceVO.class);
+        return pageModel;
+    }
+
+    @Override
+    public PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO) {
+        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
+        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessDefinitionName())){
+            historicTaskInstanceQuery.processDefinitionName(historicTaskInstanceDTO.getProcessDefinitionName());
+        }
+        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getUserId())){
+            historicTaskInstanceQuery.taskAssignee(historicTaskInstanceDTO.getUserId());
+        }
+        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKey())){
+            historicTaskInstanceQuery.processInstanceBusinessKey(historicTaskInstanceDTO.getBusinessKey());
+        }
+        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKeyLike())){
+            historicTaskInstanceQuery.processInstanceBusinessKeyLike(historicTaskInstanceDTO.getBusinessKeyLike());
+        }
+        long count = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
+                desc().
+                count();
+        List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
+                desc().
+                listPage(historicTaskInstanceDTO.getPageNum(), historicTaskInstanceDTO.getPageSize());
+     //   List<HistoricTaskInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(historicTaskInstances, HistoricTaskInstanceVO.class);
+        PageModel<HistoricTaskInstanceVO> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(HistoricTaskInstanceVO.warpList(historicTaskInstances));
+        return pageModel;
     }
 
     /**

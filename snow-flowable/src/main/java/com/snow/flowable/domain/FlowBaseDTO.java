@@ -18,6 +18,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class FlowBaseDTO implements Serializable {
+    /** 当前记录起始索引 */
+    private Integer pageNum;
+
+    /** 每页显示记录数 */
+    private Integer pageSize;
+
     /**
      * 初始页
      */
@@ -26,4 +32,21 @@ public class FlowBaseDTO implements Serializable {
      * 每页数
      */
     private int maxResults=10;
+
+
+    public Integer getPageNum() {
+        return (this.pageNum - 1) * this.pageSize;
+    }
+
+
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+
 }
