@@ -19,6 +19,8 @@ public class SysRole extends BaseEntity
     /** 角色ID */
     @Excel(name = "角色序号", cellType = ColumnType.NUMERIC)
     private Long roleId;
+    @Excel(name = "父角色", cellType = ColumnType.NUMERIC)
+    private Long parentId;
 
     /** 角色名称 */
     @Excel(name = "角色名称")
@@ -175,6 +177,14 @@ public class SysRole extends BaseEntity
     public void setDeptIds(Long[] deptIds)
     {
         this.deptIds = deptIds;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     @Override

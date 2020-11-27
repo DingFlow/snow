@@ -50,10 +50,14 @@
 		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:role:export">
 		            <i class="fa fa-download"></i> 导出
 		        </a>
+				<a class="btn btn-info" id="expandAllBtn">
+					<i class="fa fa-exchange"></i> 展开/折叠
+				</a>
 	        </div>
 	        
 	        <div class="col-sm-12 select-table table-striped">
 			    <table id="bootstrap-table"></table>
+				<table id="bootstrap-tree-table"></table>
 			</div>
 		</div>
 	</div>
@@ -66,6 +70,9 @@
 
 		$(function() {
 		    var options = {
+                code: "roleId",
+                parentCode: "parentId",
+                uniqueId: "roleId",
 		        url: prefix + "/list",
 		        createUrl: prefix + "/add",
 		        updateUrl: prefix + "/edit/{id}",
@@ -123,7 +130,7 @@
 		            }
 		        }]
 		    };
-		    $.table.init(options);
+		    $.treeTable.init(options);
 		});
 		
 		/* 角色管理-分配数据权限 */
