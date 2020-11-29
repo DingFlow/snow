@@ -60,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
+		order by r.parent_id, r.role_sort
 	</select>
 
 	<select id="selectRolesByUserId" parameterType="Long" resultMap="SysRoleResult">
@@ -76,7 +77,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectRoleVo"/>
 		 where r.role_name=#{roleName}
 	</select>
-	
+	<select id="selectRoleAll" resultMap="SysRoleResult">
+		<include refid="selectRoleVo"/>
+		order by r.parent_id, r.role_sort
+	</select>
+
 	<select id="checkRoleKeyUnique" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
 		 where r.role_key=#{roleKey}

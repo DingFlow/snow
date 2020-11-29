@@ -25,10 +25,7 @@ import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
-import org.flowable.engine.repository.Deployment;
-import org.flowable.engine.repository.DeploymentQuery;
-import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.repository.ProcessDefinitionQuery;
+import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
@@ -91,6 +88,41 @@ public class FlowableServiceImpl implements FlowableService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+
+    @Override
+    public PageModel<Model> getModelList(ModelDTO modelDTO) {
+        ModelQuery modelQuery = repositoryService.createModelQuery();
+        if(!StringUtils.isEmpty(modelDTO.getNameLike())){
+            modelQuery.modelNameLike(modelDTO.getNameLike());
+        }
+        if(!StringUtils.isEmpty(modelDTO.getDeploymentId())){
+            modelQuery.modelNameLike(modelDTO.getDeploymentId());
+        }
+        if(!StringUtils.isEmpty(modelDTO.getCategoryLike())){
+            modelQuery.modelCategoryLike(modelDTO.getCategoryLike());
+        }
+        if(!StringUtils.isEmpty(modelDTO.getVersion())){
+            modelQuery.modelVersion(modelDTO.getVersion());
+        }
+        long count = modelQuery.orderByCreateTime().desc()
+                .count();
+        List<Model> modelList = modelQuery.orderByCreateTime().desc()
+                .listPage(modelDTO.getPageNum(), modelDTO.getPageSize());
+        List<ModelVO> modelVOVOList = modelList.stream().map(t -> {
+            ModelVO modelVO = new ModelVO();
+
+
+
+            BeanUtils.copyProperties(t,modelVO);
+
+            return modelVO;
+        }).collect(Collectors.toList());
+
+        PageModel<Model> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(modelList);
+        return null;
+    }
 
     @Override
     public List<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {

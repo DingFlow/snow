@@ -13,6 +13,7 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.repository.Model;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,6 +55,26 @@ public class FlowModelerController extends BaseController
 
         return redirect("/modeler/index.html");
     }
+
+    @RequiresPermissions("modeler:model:view")
+    @GetMapping("/model")
+    public String modelView()
+    {
+        return prefix + "/model";
+    }
+
+    /**
+     * 查询发布实例列表
+     */
+    @RequiresPermissions("modeler:model:list")
+    @PostMapping("/model/list")
+    @ResponseBody
+    public TableDataInfo list(ModelDTO modelDTO)
+    {
+        PageModel<Model> modelList = flowableService.getModelList(modelDTO);
+        return getFlowDataTable(modelList);
+    }
+
     @RequiresPermissions("modeler:deployment:view")
     @GetMapping()
     public String deploymentView()

@@ -29,7 +29,7 @@
 								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
 							</li>
 							<li>
-								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.treeTable.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
 							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
 							</li>
 						</ul>
@@ -56,7 +56,7 @@
 	        </div>
 	        
 	        <div class="col-sm-12 select-table table-striped">
-			    <table id="bootstrap-table"></table>
+			    <!--<table id="bootstrap-table"></table>-->
 				<table id="bootstrap-tree-table"></table>
 			</div>
 		</div>
@@ -72,7 +72,9 @@
 		    var options = {
                 code: "roleId",
                 parentCode: "parentId",
-                uniqueId: "roleId",
+                uniqueId: "roleName",
+                expandAll: false,
+                expandFirst: false,
 		        url: prefix + "/list",
 		        createUrl: prefix + "/add",
 		        updateUrl: prefix + "/edit/{id}",
@@ -80,17 +82,14 @@
 		        exportUrl: prefix + "/export",
 		        sortName: "roleSort",
 		        modalName: "角色",
-		        columns: [{
-		            checkbox: true
-		        },
-		        {
-		            field: 'roleId',
-		            title: '角色编号'
-		        },
+		        columns: [
+                    {
+                        field: 'selectItem',
+                        radio: true
+                    },
 		        {
 		            field: 'roleName',
-		            title: '角色名称',
-		            sortable: true
+		            title: '角色名称'
 		        },
 		        {
 		            field: 'roleKey',

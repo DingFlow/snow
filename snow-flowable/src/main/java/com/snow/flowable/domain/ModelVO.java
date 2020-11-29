@@ -1,6 +1,7 @@
 package com.snow.flowable.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,9 +23,10 @@ public class ModelVO implements Serializable {
 
    private  String category;
 
-   @JSONField(format = "YYYY-MM-DD hh:mm:ss")
+   @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
    private Date createTime;
 
+   @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
    private Date lastUpdateTime;
 
    private Integer version;

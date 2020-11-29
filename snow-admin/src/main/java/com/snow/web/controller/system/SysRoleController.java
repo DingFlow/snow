@@ -1,6 +1,9 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+
+import com.snow.common.core.domain.Ztree;
+import com.snow.common.utils.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,11 +55,11 @@ public class SysRoleController extends BaseController
     @RequiresPermissions("system:role:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(SysRole role)
+    public List<SysRole> list(SysRole role)
     {
         startPage();
         List<SysRole> list = roleService.selectRoleList(role);
-        return getDataTable(list);
+        return list;
     }
 
     @Log(title = "角色管理", businessType = BusinessType.EXPORT)
@@ -300,5 +303,30 @@ public class SysRoleController extends BaseController
     public AjaxResult selectAuthUserAll(Long roleId, String userIds)
     {
         return toAjax(roleService.insertAuthUsers(roleId, userIds));
+    }
+
+
+    /**
+     * 选择角色信息树
+     */
+    @GetMapping(value = { "/selectRoleTree/{roleId}"})
+    public String selectRoleTree(@PathVariable(value = "roleId", required = false) Long roleId, ModelMap mmap)
+    {
+        if (StringUtils.isNotNull(roleId))
+        {
+            mmap.put("sysRole", roleService.selectRoleById(roleId));
+        }
+        return prefix + "/tree";
+    }
+
+    /**
+     * 加载角色信息树列表
+     */
+    @GetMapping("/treeData")
+    @ResponseBody
+    public List<Ztree> treeData()
+    {
+        List<Ztree> ztrees = roleService.selectSysRoleTree();
+        return ztrees;
     }
 }

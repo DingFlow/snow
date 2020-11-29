@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.snow.system.domain.SysRoleMenu;
-import com.snow.system.domain.SysUserRole;
+import com.snow.common.core.domain.Ztree;
+import com.snow.system.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +17,6 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.system.domain.SysRole;
-import com.snow.system.domain.SysRoleDept;
 import com.snow.system.mapper.SysRoleDeptMapper;
 import com.snow.system.mapper.SysRoleMapper;
 import com.snow.system.mapper.SysRoleMenuMapper;
@@ -379,5 +377,28 @@ public class SysRoleServiceImpl implements ISysRoleService
             list.add(ur);
         }
         return userRoleMapper.batchUserRole(list);
+    }
+
+
+    /**
+     * 查询角色信息树列表
+     *
+     * @return 所有角色信息信息
+     */
+    @Override
+    public List<Ztree> selectSysRoleTree()
+    {
+        List<SysRole> sysRoleList = roleMapper.selectRoleList(new SysRole());
+        List<Ztree> ztrees = new ArrayList<Ztree>();
+        for (SysRole sysRole : sysRoleList)
+        {
+            Ztree ztree = new Ztree();
+            ztree.setId(sysRole.getRoleId());
+            ztree.setpId(sysRole.getParentId());
+            ztree.setName(sysRole.getRoleName());
+            ztree.setTitle(sysRole.getRoleName());
+            ztrees.add(ztree);
+        }
+        return ztrees;
     }
 }
