@@ -49,4 +49,11 @@ public interface FlowablePublishService {
      * @return
      */
     Deployment createBytesDeployment(DeploymentDTO deploymentDTO,byte[] bytes );
+
+    /**
+     * 根据modelId发布
+     * @param id
+     * @return
+     */
+    Deployment createBytesDeploymentByModelId(String id);
 }

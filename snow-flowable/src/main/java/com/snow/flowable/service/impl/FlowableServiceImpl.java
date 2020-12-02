@@ -125,8 +125,8 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public List<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
-        
+    public PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
+
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentNameLike())){
             deploymentQuery.deploymentKeyLike(deploymentQueryDTO.getDeploymentNameLike());
@@ -140,28 +140,20 @@ public class FlowableServiceImpl implements FlowableService {
         if(!StringUtils.isEmpty(deploymentQueryDTO.getProcessDefinitionKeyLike())){
             deploymentQuery.processDefinitionKeyLike(deploymentQueryDTO.getProcessDefinitionKeyLike());
         }
+        long count = deploymentQuery.orderByDeploymenTime().desc().
+                count();
         List<Deployment> deployments = deploymentQuery.orderByDeploymenTime().desc().
-                listPage(deploymentQueryDTO.getFirstResult(), deploymentQueryDTO.getMaxResults());
-        List<DeploymentVO> deploymentVOList = deployments.stream().map(t -> {
+                listPage(deploymentQueryDTO.getPageNum(), deploymentQueryDTO.getPageSize());
+        List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
             DeploymentVO deploymentVO = new DeploymentVO();
-            ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
-            processDefinitionQuery.deploymentId(t.getId());
-            if (!StringUtils.isEmpty(deploymentQueryDTO.getStartUserId())) {
-                processDefinitionQuery.startableByUser(deploymentQueryDTO.getStartUserId());
-            }
-            List<ProcessDefinition> processDefinitionList = processDefinitionQuery.active().list();
-            List<ProcessDefinitionVO> processDefinitionVOList = processDefinitionList.stream().map(processDefinition -> {
-                ProcessDefinitionVO processDefinitionVO = new ProcessDefinitionVO();
-                BeanUtils.copyProperties(processDefinition, processDefinitionVO);
-                return processDefinitionVO;
-            }).collect(Collectors.toList());
-            BeanUtils.copyProperties(t,deploymentVO);
-            deploymentVO.setProcessDefinitionVO(processDefinitionVOList.get(0));
-            deploymentVO.setProcessDefinitionVOList(processDefinitionVOList);
+            BeanUtils.copyProperties(t, deploymentVO);
             return deploymentVO;
         }).collect(Collectors.toList());
 
-        return deploymentVOList;
+        PageModel<DeploymentVO> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(deploymentVoList);
+        return pageModel;
     }
 
     @Override
@@ -175,25 +167,37 @@ public class FlowableServiceImpl implements FlowableService {
     @Override
     public void getDeploymentSource(String id, String resourceName, String type,HttpServletResponse response) {
         try {
-        byte[] b = null;
-        if (type.equals("xml")) {
-            response.setHeader("Content-type", "text/xml;charset=UTF-8");
-            InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
-            b = IoUtil.readInputStream(inputStream, resourceName);
-        } else {
-            //todo 输出的有乱码，暂时没有解决办法
-            response.setHeader("Content-Type", "image/png;charset=UTF-8");
-            response.setCharacterEncoding("utf-8");
-            InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
-            b = IoUtil.readInputStream(inputStream, resourceName);
-        }
+            byte[] b = null;
+            if(StringUtils.isEmpty(resourceName)){
+                List<String> deploymentResourceNames = repositoryService.getDeploymentResourceNames(id);
+                if(type.equals("xml")){
+                    String xmlType=".xml";
+                    String bpmnType=".bpmn";
+                    resourceName = deploymentResourceNames.stream().filter(p -> (p.endsWith(xmlType) || p.endsWith(bpmnType))).findFirst().orElse(null);
+                }else {
+                    String pngType=".png";
+                    resourceName = deploymentResourceNames.stream().filter(p -> p.endsWith(pngType)).findFirst().orElse(null);
+                }
+            }
+            if (type.equals("xml")) {
+                response.setHeader("Content-type", "text/xml;charset=UTF-8");
+                InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
+                b = IoUtil.readInputStream(inputStream, resourceName);
+            } else if(type.equals("png")){
+                response.setHeader("Content-Type", "image/png;charset=UTF-8");
+                response.setCharacterEncoding("utf-8");
+                InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
+                b = IoUtil.readInputStream(inputStream, resourceName);
+            }
             response.getOutputStream().write(b);
+
         } catch (IOException e) {
             log.error("ApiFlowableModelResource-loadXmlByModelId:" + e);
             e.printStackTrace();
         }
 
     }
+
     @Override
     public ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO) {
         ProcessInstance processInstance=null;

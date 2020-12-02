@@ -4,15 +4,23 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.ClassDeploymentDTO;
 import com.snow.flowable.domain.DeploymentDTO;
 import com.snow.flowable.service.FlowablePublishService;
+import com.snow.system.domain.ActDeModel;
+import com.snow.system.mapper.ActDeModelMapper;
+import com.snow.system.service.IActDeModelService;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentBuilder;
+import org.flowable.ui.modeler.domain.Model;
+import org.flowable.ui.modeler.service.ModelServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -38,6 +46,11 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Autowired
     private RepositoryService repositoryService;
 
+    @Autowired
+    private IActDeModelService iActDeModelService;
+
+    @Autowired
+    private ModelServiceImpl modelService;
 
     /**
      * class部署
@@ -102,7 +115,6 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Override
     public Deployment createBytesDeployment(DeploymentDTO deploymentDTO, byte[] bytes) {
         Deployment deploy = repositoryService.createDeployment()
-                .tenantId(deploymentDTO.getTenantId())
                 .category(deploymentDTO.getCategory())
                 .name(deploymentDTO.getName())
                 .key(deploymentDTO.getKey())
@@ -111,5 +123,23 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
         return deploy;
     }
 
+    @Override
+    public Deployment createBytesDeploymentByModelId(String id) {
+        Model model = modelService.getModel(id);
+        BpmnModel bpmnModel = modelService.getBpmnModel(model);
+        if(StringUtils.isNull(model)){
+            return null;
+        }
+        byte[] bpmnXML = modelService.getBpmnXML(model);
+        InputStream inputStream = new ByteArrayInputStream(bpmnXML);
+        DeploymentDTO deployModel = new DeploymentDTO();
+        deployModel.setCategory("system_flow");
+        deployModel.setName(model.getName());
+        deployModel.setKey(model.getKey());
+        //这个地方必须加.bpmn或者.bpmn20.xml后缀，不然数据不会生成act_re_procdef这个表的数据
+        deployModel.setResourceName(model.getName()+".bpmn20.xml");
+        Deployment deploy = createInputStreamDeployment(deployModel,inputStream);
+        return deploy;
+    }
 
 }

@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * 财务支付宝流水Controller
+ * Controller
  * 
  * @author snow
  * @date 2020-11-09
@@ -90,10 +90,8 @@ public class FlowModelerController extends BaseController
     @ResponseBody
     public TableDataInfo list(DeploymentQueryDTO deploymentQuery)
     {
-
-        startPage();
-        List<DeploymentVO> deploymentList = flowableService.getDeploymentList(deploymentQuery);
-        return getDataTable(deploymentList);
+        PageModel<DeploymentVO> deploymentList = flowableService.getDeploymentList(deploymentQuery);
+        return getFlowDataTable(deploymentList);
     }
 
     /**

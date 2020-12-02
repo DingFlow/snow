@@ -26,11 +26,11 @@ public interface FlowableService {
     PageModel<Model> getModelList(ModelDTO modelDTO);
 
     /**
-     * 查询发布列表
+     * 查询发布列表(分页)
      * @param deploymentQueryDTO
      * @return
      */
-    List<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO);
+    PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO);
 
     /**
      * 删除发布

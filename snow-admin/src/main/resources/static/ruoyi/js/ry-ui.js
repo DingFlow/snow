@@ -1098,6 +1098,41 @@ var table = {
             	}
                 return url;
             },
+
+            // 弹出层全屏
+            parentDetail: function ( id, width, height) {
+                var url = $.operate.detailUrl(id);
+                var title='设计器';
+                //如果是移动端，就使用自适应大小弹窗
+                if ($.common.isMobile()) {
+                    width = 'auto';
+                    height = 'auto';
+                }
+                if ($.common.isEmpty(title)) {
+                    title = false;
+                }
+                if ($.common.isEmpty(url)) {
+                    url = "/404.html";
+                }
+                if ($.common.isEmpty(width)) {
+                    width = 800;
+                }
+                if ($.common.isEmpty(height)) {
+                    height = ($(window).height() - 50);
+                }
+                var index = parent.layer.open({
+                    type: 2,
+                    area: [width + 'px', height + 'px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: '流程设计器',
+                    content: url
+
+                });
+                layer.full(index);
+            },
             // 删除信息
             remove: function(id) {
             	table.set();
@@ -1125,6 +1160,20 @@ var table = {
         			var data = { "ids": rows.join() };
         			$.operate.submit(url, "post", "json", data);
         		});
+            },
+            // 删除信息
+            deployment: function(id) {
+                table.set();
+                $.modal.confirm("确定发布该条" + table.options.modalName + "信息吗？", function() {
+                    var url = $.common.isEmpty(id) ? table.options.deploymentUrl : table.options.deploymentUrl.replace("{id}", id);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        $.operate.get(url);
+                    } else {
+                        var data = { "id": id };
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                });
+
             },
             // 清空信息
             clean: function() {

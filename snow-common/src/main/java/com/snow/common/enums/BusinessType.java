@@ -57,6 +57,10 @@ public enum BusinessType
      */
     CLEAN,
     /**
+     * 发布
+     */
+    DEPLOYMENT,
+    /**
      * 钉钉
      */
     DING_TALK,

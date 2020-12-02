@@ -3,11 +3,13 @@ package com.snow.flowable.domain;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.flowable.common.engine.api.repository.EngineResource;
 import org.flowable.engine.repository.ProcessDefinition;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: snow
@@ -18,28 +20,28 @@ import java.util.List;
 @Data
 public class DeploymentVO implements Serializable {
    private String id;
-
+   /**
+    * 发布名称
+    */
    private String name;
-
+   /**
+    * 发布时间
+    */
    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
    private Date deploymentTime;
-
+   /**
+    * 分类
+    */
    private String category;
 
-   private String key;
+   /**
+    * 租户Id
+    */
+   protected String tenantId;
+   /**
+    * 父节点
+    */
+   protected String parentDeploymentId;
 
-   private String derivedFrom;
-
-   private String derivedFromRoot;
-
-   private String tenantId;
-
-   private String engineVersion;
-
-   private ProcessDefinitionVO processDefinitionVO;
-
-   private List<ProcessDefinitionVO> processDefinitionVOList;
-
-   private List<ModelVO> modelVOList;
 
 }

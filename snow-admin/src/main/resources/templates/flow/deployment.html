@@ -92,28 +92,28 @@
                         }
                     },
 
-                {
+          /*      {
                     field: 'processDefinitionVO',
                     title: '流程定义key',
                     formatter: function(value, row, index) {
                         return value.key;
                     }
-                },
-                    {
+                },*/
+                   /* {
                         field: 'processDefinitionVO',
                         title: '版本号',
                         formatter: function(value, row, index) {
                             return value.version;
                         }
-                    },
+                    },*/
 
-                    {
+                /*    {
                         field: 'processDefinitionVO',
                         title: '文件名',
                         formatter: function(value, row, index) {
                             return value.resourceName;
                         }
-                    },
+                    },*/
                 {
                     field: 'deploymentTime',
                     title: '流程发布时间'
@@ -128,14 +128,12 @@
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
-                        console.log(JSON.stringify(row.processDefinitionVO));
-                        var processDefinition= row.processDefinitionVO;
-                       // var getFlowPicture=prefix+'/getFlowPicture?id='+processDefinition.deploymentId+'&resourceName='+processDefinition.diagramResourceName;
-                        var getXmlUrl=prefix+'/getXml?id='+processDefinition.deploymentId+'&resourceName='+processDefinition.resourceName;
+
+                        var getXmlUrl=prefix+'/getXml?id='+row.id+'&resourceName=';
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="previewXml(\'' + processDefinition.deploymentId + '\',\''+processDefinition.diagramResourceName+'\');"><i class="fa fa-edit"></i>流程图</a> ');
+                        /*   actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="previewXml(\'' + processDefinition.deploymentId + '\',\''+processDefinition.diagramResourceName+'\');"><i class="fa fa-edit"></i>流程图</a> ');*/
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="previewXml(\'' + row.id+ '\',);"><i class="fa fa-edit"></i>流程图</a> ');
                         actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="'+getXmlUrl+'" target="_blank"><i class="fa fa-eye"></i>XML</a> ');
-                       /* actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="'+getFlowPicture+'" target="_blank" ><i class="fa fa-etsy" ></i>流程图</a> ');*/
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
@@ -148,9 +146,9 @@
          * 预览XML
          * @param tableId
          */
-        function previewXml(deploymentId,resourceName) {
+        function previewXml(deploymentId) {
             console.log(JSON.stringify(deploymentId));
-            var preViewUrl=prefix+'/getFlowPicture?id='+deploymentId+'&resourceName='+resourceName;
+            var preViewUrl=prefix+'/getFlowPicture?id='+deploymentId+'&resourceName=';
             $.modal.openTab("预览流程图", preViewUrl);
         }
     </script>
