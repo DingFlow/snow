@@ -4,9 +4,6 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.ClassDeploymentDTO;
 import com.snow.flowable.domain.DeploymentDTO;
 import com.snow.flowable.service.FlowablePublishService;
-import com.snow.system.domain.ActDeModel;
-import com.snow.system.mapper.ActDeModelMapper;
-import com.snow.system.service.IActDeModelService;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
@@ -17,10 +14,9 @@ import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.service.ModelServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Optional;
+
 import java.util.zip.ZipInputStream;
 
 /**
@@ -46,8 +42,6 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Autowired
     private RepositoryService repositoryService;
 
-    @Autowired
-    private IActDeModelService iActDeModelService;
 
     @Autowired
     private ModelServiceImpl modelService;
@@ -126,7 +120,7 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Override
     public Deployment createBytesDeploymentByModelId(String id) {
         Model model = modelService.getModel(id);
-        BpmnModel bpmnModel = modelService.getBpmnModel(model);
+       // BpmnModel bpmnModel = modelService.getBpmnModel(model);
         if(StringUtils.isNull(model)){
             return null;
         }

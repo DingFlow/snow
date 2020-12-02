@@ -14,15 +14,8 @@
                             <ul>
                                 <li>
                                     <label>name：</label>
-                                    <input type="text" name="name"/>
+                                    <input type="text" name="deploymentNameLike"/>
                                 </li>
-                                <li>
-                                    <label>key：</label>
-                                    <input type="text" name="key"/>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="row">
 
                             <li>
                                 <label>流程分类：</label>
@@ -91,29 +84,6 @@
                             return $.table.selectDictLabel(flowCategoryDatas, value);
                         }
                     },
-
-          /*      {
-                    field: 'processDefinitionVO',
-                    title: '流程定义key',
-                    formatter: function(value, row, index) {
-                        return value.key;
-                    }
-                },*/
-                   /* {
-                        field: 'processDefinitionVO',
-                        title: '版本号',
-                        formatter: function(value, row, index) {
-                            return value.version;
-                        }
-                    },*/
-
-                /*    {
-                        field: 'processDefinitionVO',
-                        title: '文件名',
-                        formatter: function(value, row, index) {
-                            return value.resourceName;
-                        }
-                    },*/
                 {
                     field: 'deploymentTime',
                     title: '流程发布时间'

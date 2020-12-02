@@ -3,10 +3,14 @@ package com.snow.web.controller.flowable;
 import java.util.List;
 
 import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
+import com.snow.flowable.service.impl.FlowableServiceImpl;
+import com.snow.framework.util.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.ui.modeler.domain.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +43,9 @@ public class ActDeModelController extends BaseController
 
     @Autowired
     private FlowablePublishServiceImpl flowablePublishServiceImpl;
+
+    @Autowired
+    private FlowableServiceImpl flowableService;
 
     @RequiresPermissions("system:model:view")
     @GetMapping()
@@ -92,7 +99,22 @@ public class ActDeModelController extends BaseController
     @ResponseBody
     public AjaxResult addSave(ActDeModel actDeModel)
     {
-        return toAjax(actDeModelService.insertActDeModel(actDeModel));
+        Long userId = ShiroUtils.getUserId();
+        ActDeModel actDeModelName=new ActDeModel();
+        actDeModelName.setName(actDeModel.getName());
+        List<ActDeModel> actDeModels = actDeModelService.selectActDeModelList(actDeModelName);
+        if(!CollectionUtils.isEmpty(actDeModels)){
+            return AjaxResult.error("该模型名称已存在");
+        }
+        ActDeModel actDeModelKey=new ActDeModel();
+        actDeModelKey.setModelKey(actDeModel.getModelKey());
+        List<ActDeModel> actDeModelKeyList = actDeModelService.selectActDeModelList(actDeModelKey);
+        if(!CollectionUtils.isEmpty(actDeModelKeyList)){
+            return AjaxResult.error("该模型key已存在");
+        }
+        actDeModel.setCreatedBy(String.valueOf(userId));
+        flowableService.saveModel(actDeModel);
+        return toAjax(1);
     }
 
     /**
@@ -126,8 +148,10 @@ public class ActDeModelController extends BaseController
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids)
+
     {
-        return toAjax(actDeModelService.deleteActDeModelByIds(ids));
+        flowableService.deleteModel(ids);
+        return toAjax(1);
     }
 
 

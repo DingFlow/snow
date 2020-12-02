@@ -63,17 +63,7 @@ public class FlowModelerController extends BaseController
         return prefix + "/model";
     }
 
-    /**
-     * 查询发布实例列表
-     */
-    @RequiresPermissions("modeler:model:list")
-    @PostMapping("/model/list")
-    @ResponseBody
-    public TableDataInfo list(ModelDTO modelDTO)
-    {
-        PageModel<Model> modelList = flowableService.getModelList(modelDTO);
-        return getFlowDataTable(modelList);
-    }
+
 
     @RequiresPermissions("modeler:deployment:view")
     @GetMapping()
@@ -129,28 +119,6 @@ public class FlowModelerController extends BaseController
         flowableService.getDeploymentSource(id,resourceName,"png",response);
     }
 
-    /**
-     * 新增保存财务支付宝流水
-     */
-    @RequiresPermissions("system:flow:add")
-    @Log(title = "财务支付宝流水", businessType = BusinessType.INSERT)
-    @PostMapping("/add")
-    @ResponseBody
-    public AjaxResult addSave(FinanceAlipayFlow financeAlipayFlow)
-    {
-        return toAjax(financeAlipayFlowService.insertFinanceAlipayFlow(financeAlipayFlow));
-    }
-
-    /**
-     * 修改财务支付宝流水
-     */
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap)
-    {
-        FinanceAlipayFlow financeAlipayFlow = financeAlipayFlowService.selectFinanceAlipayFlowById(id);
-        mmap.put("financeAlipayFlow", financeAlipayFlow);
-        return prefix + "/edit";
-    }
 
     /**
      * 获取流程图

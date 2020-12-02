@@ -10,6 +10,7 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
+import com.snow.system.domain.ActDeModel;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.SysUserMapper;
@@ -27,11 +28,15 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.idm.api.User;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.flowable.ui.modeler.repository.ModelRepository;
+import org.flowable.ui.modeler.service.ModelServiceImpl;
+import org.flowable.ui.modeler.serviceapi.ModelService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,40 +93,44 @@ public class FlowableServiceImpl implements FlowableService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private ModelServiceImpl modelService;
+
+
+
+    public static final String MODEL_EDITOR_JSON="{\n" +
+            "    \"resourceId\":\"canvas\",\n" +
+            "    \"stencil\":{\n" +
+            "        \"id\":\"BPMNDiagram\"\n" +
+            "    },\n" +
+            "    \"stencilset\":{\n" +
+            "        \"namespace\":\"http://b3mn.org/stencilset/bpmn2.0#\",\n" +
+            "        \"url\":\"../editor/stencilsets/bpmn2.0/bpmn2.0.json\"\n" +
+            "    }" +
+            "}";
+    @Override
+    public void saveModel(ActDeModel actDeModel) {
+        org.flowable.ui.modeler.domain.Model model=new org.flowable.ui.modeler.domain.Model();
+        model.setName(actDeModel.getName());
+        model.setComment(actDeModel.getModelComment());
+        model.setDescription(actDeModel.getDescription());
+        model.setCreated(new Date());
+        model.setCreatedBy(actDeModel.getCreatedBy());
+        model.setKey(actDeModel.getModelKey());
+        model.setModelType(actDeModel.getModelType().intValue());
+        model.setVersion(1);
+        model.setModelEditorJson(MODEL_EDITOR_JSON);
+        modelService.saveModel(model);
+    }
 
     @Override
-    public PageModel<Model> getModelList(ModelDTO modelDTO) {
-        ModelQuery modelQuery = repositoryService.createModelQuery();
-        if(!StringUtils.isEmpty(modelDTO.getNameLike())){
-            modelQuery.modelNameLike(modelDTO.getNameLike());
-        }
-        if(!StringUtils.isEmpty(modelDTO.getDeploymentId())){
-            modelQuery.modelNameLike(modelDTO.getDeploymentId());
-        }
-        if(!StringUtils.isEmpty(modelDTO.getCategoryLike())){
-            modelQuery.modelCategoryLike(modelDTO.getCategoryLike());
-        }
-        if(!StringUtils.isEmpty(modelDTO.getVersion())){
-            modelQuery.modelVersion(modelDTO.getVersion());
-        }
-        long count = modelQuery.orderByCreateTime().desc()
-                .count();
-        List<Model> modelList = modelQuery.orderByCreateTime().desc()
-                .listPage(modelDTO.getPageNum(), modelDTO.getPageSize());
-        List<ModelVO> modelVOVOList = modelList.stream().map(t -> {
-            ModelVO modelVO = new ModelVO();
+    public void deleteModel(String modelId) {
+        List<String> idList = Arrays.asList(Convert.toStrArray(modelId));
+        idList.forEach(t->{
+            //删除会保留一份历史记录
+            modelService.deleteModel(t);
+        });
 
-
-
-            BeanUtils.copyProperties(t,modelVO);
-
-            return modelVO;
-        }).collect(Collectors.toList());
-
-        PageModel<Model> pageModel = new PageModel<> ();
-        pageModel.setTotalCount((int)count);
-        pageModel.setPagedRecords(modelList);
-        return null;
     }
 
     @Override
@@ -129,7 +138,10 @@ public class FlowableServiceImpl implements FlowableService {
 
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentNameLike())){
-            deploymentQuery.deploymentKeyLike(deploymentQueryDTO.getDeploymentNameLike());
+            deploymentQuery.deploymentNameLike(deploymentQueryDTO.getDeploymentNameLike());
+        }
+        if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentCategory())){
+            deploymentQuery.deploymentCategory(deploymentQueryDTO.getDeploymentCategory());
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentId())){
             deploymentQuery.deploymentId(deploymentQueryDTO.getDeploymentId());

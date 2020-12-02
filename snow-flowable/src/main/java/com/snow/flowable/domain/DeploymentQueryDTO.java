@@ -21,5 +21,8 @@ public class DeploymentQueryDTO extends FlowBaseDTO implements Serializable {
 
     private String processDefinitionKeyLike;
 
-    private String startUserId;
+    /**
+     * 发布分类
+     */
+    private String deploymentCategory;
 }

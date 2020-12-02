@@ -34,17 +34,19 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:model:add">
-                    <i class="fa fa-plus"></i> 添加
+                <a class="btn btn-primary"  href="/modeler/index" target="_blank" shiro:hasPermission="modeler:flow:view">
+                    <i class="fa fa-desktop"></i> 设计流程
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:model:edit">
-                    <i class="fa fa-edit"></i> 修改
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:model:add">
+                    <i class="fa fa-plus"></i> 添加模型
                 </a>
                 <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:model:remove">
-                    <i class="fa fa-remove"></i> 删除
+                    <i class="fa fa-remove"></i> 删除模型
                 </a>
+
+
                 <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:model:export">
-                    <i class="fa fa-download"></i> 导出
+                    <i class="fa fa-download"></i> 导出数据
                 </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
@@ -53,9 +55,12 @@
         </div>
     </div>
     <th:block th:include="include :: footer" />
+
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:model:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:model:remove')}]];
+        var flowModelTypes = [[${@dict.getType('flow_model_type')}]];
+
         var prefix = ctx + "system/model";
 
         $(function() {
@@ -88,15 +93,19 @@
                     field: 'modelKey',
                     title: '模型key'
                 },
-                {
-                    field: 'description',
-                    title: '描述'
-                },
+                 {
+                     field: 'modelType',
+                     title: '模型类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(flowModelTypes, value);
+                        }
+                    },
 
                 {
                     field: 'created',
                     title: '创建时间'
                 },
+
 
                 {
                     field: 'lastUpdated',
@@ -104,10 +113,7 @@
                 },
 
 
-              /*  {
-                    field: 'modelType',
-                    title: 'null'
-                },*/
+
                 {
                     title: '操作',
                     align: 'center',

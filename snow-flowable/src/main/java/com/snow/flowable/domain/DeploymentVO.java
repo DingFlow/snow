@@ -29,6 +29,11 @@ public class DeploymentVO implements Serializable {
     */
    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
    private Date deploymentTime;
+
+   /**
+    * 发布key
+    */
+   private String key;
    /**
     * 分类
     */
@@ -37,11 +42,14 @@ public class DeploymentVO implements Serializable {
    /**
     * 租户Id
     */
-   protected String tenantId;
+   private String tenantId;
    /**
     * 父节点
     */
-   protected String parentDeploymentId;
-
+   private String parentDeploymentId;
+   /**
+    * 版本
+    */
+   private String engineVersion;
 
 }

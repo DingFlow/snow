@@ -2,6 +2,7 @@ package com.snow.flowable.service;
 
 import com.snow.common.core.page.PageModel;
 import com.snow.flowable.domain.*;
+import com.snow.system.domain.ActDeModel;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -18,13 +19,18 @@ import java.util.List;
  * @date 2020/11/19 17:27
  */
 public interface FlowableService {
-    /**
-     * 获取model列表
-     * @param modelDTO
-     * @return
-     */
-    PageModel<Model> getModelList(ModelDTO modelDTO);
 
+    /**
+     *  保存model
+     * @param actDeModel
+     */
+    void saveModel(ActDeModel actDeModel);
+
+    /**
+     * 删除model
+     * @param modelId
+     */
+    void deleteModel(String modelId);
     /**
      * 查询发布列表(分页)
      * @param deploymentQueryDTO
