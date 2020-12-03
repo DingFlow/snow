@@ -3,6 +3,8 @@ package com.snow.flowable.service.impl;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.core.page.PageModel;
@@ -96,20 +98,23 @@ public class FlowableServiceImpl implements FlowableService {
     @Autowired
     private ModelServiceImpl modelService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
-
-    public static final String MODEL_EDITOR_JSON="{\n" +
-            "    \"resourceId\":\"canvas\",\n" +
-            "    \"stencil\":{\n" +
-            "        \"id\":\"BPMNDiagram\"\n" +
-            "    },\n" +
-            "    \"stencilset\":{\n" +
-            "        \"namespace\":\"http://b3mn.org/stencilset/bpmn2.0#\",\n" +
-            "        \"url\":\"../editor/stencilsets/bpmn2.0/bpmn2.0.json\"\n" +
-            "    }" +
-            "}";
     @Override
     public void saveModel(ActDeModel actDeModel) {
+        // 构建ModelEditorSource
+        ObjectNode editorNode = objectMapper.createObjectNode();
+        editorNode.put("id", "canvas");
+        editorNode.put("resourceId", "canvas");
+        ObjectNode stencilNode = objectMapper.createObjectNode();
+        stencilNode.put("id","BPMNDiagram");
+        editorNode.set("stencil",stencilNode);
+        ObjectNode stencilSetNode = objectMapper.createObjectNode();
+        stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
+        stencilSetNode.put("url","../editor/stencilsets/bpmn2.0/bpmn2.0.json");
+        editorNode.set("stencilset", stencilSetNode);
+
         org.flowable.ui.modeler.domain.Model model=new org.flowable.ui.modeler.domain.Model();
         model.setName(actDeModel.getName());
         model.setComment(actDeModel.getModelComment());
@@ -119,7 +124,7 @@ public class FlowableServiceImpl implements FlowableService {
         model.setKey(actDeModel.getModelKey());
         model.setModelType(actDeModel.getModelType().intValue());
         model.setVersion(1);
-        model.setModelEditorJson(MODEL_EDITOR_JSON);
+        model.setModelEditorJson(editorNode.toString());
         modelService.saveModel(model);
     }
 
