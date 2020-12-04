@@ -1,30 +1,26 @@
 package com.snow.web.controller.flowable;
 
-import java.util.List;
-
+import com.snow.common.annotation.Log;
+import com.snow.common.core.controller.BaseController;
+import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
+import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.flowable.engine.repository.Deployment;
-import org.flowable.ui.modeler.domain.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import org.springframework.stereotype.Controller;
 import com.snow.system.domain.ActDeModel;
 import com.snow.system.service.IActDeModelService;
-import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.common.core.page.TableDataInfo;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.repository.Deployment;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 设计器modelController
@@ -166,5 +162,25 @@ public class ActDeModelController extends BaseController
             return AjaxResult.error("modelId不存在");
         }
         return AjaxResult.success("发布成功");
+    }
+
+
+    /**
+     * 导出model的xml文件
+     */
+    @Log(title = "导出流程XML", businessType = BusinessType.EXPORT)
+    @RequiresPermissions("system:model:exportXml")
+    @GetMapping(value = "/exportXml/{modelId}")
+    public void exportXml(@PathVariable("modelId") String modelId, HttpServletResponse response) {
+        flowableService.exportModelXml(modelId,response);
+    }
+
+    /**
+     * 展示model的xml文件
+     */
+    @RequiresPermissions("system:model:showXml")
+    @GetMapping(value = "/showXml/{modelId}")
+    public void showXml(@PathVariable("modelId") String modelId, HttpServletResponse response) {
+        flowableService.showModelXml(modelId,response);
     }
 }

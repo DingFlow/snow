@@ -3,6 +3,7 @@ package com.snow.flowable.service.impl;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
@@ -20,10 +21,12 @@ import com.snow.system.service.ISysRoleService;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.common.engine.impl.util.IoUtil;
+import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -36,6 +39,7 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.repository.ModelRepository;
 import org.flowable.ui.modeler.service.ModelServiceImpl;
 import org.flowable.ui.modeler.serviceapi.ModelService;
@@ -47,6 +51,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -138,6 +143,44 @@ public class FlowableServiceImpl implements FlowableService {
 
     }
 
+    @Override
+    public void exportModelXml(String modelId, HttpServletResponse response) {
+        try {
+            Model modelData = modelService.getModel(modelId);
+            BpmnModel bpmnModel = modelService.getBpmnModel(modelData);
+            // 流程非空判断
+            if (!CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
+                byte[] bpmnXML = modelService.getBpmnXML(modelData);
+                ByteArrayInputStream in = new ByteArrayInputStream(bpmnXML);
+                String filename = bpmnModel.getMainProcess().getId() + ".bpmn";
+                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                IOUtils.copy(in, response.getOutputStream());
+                response.flushBuffer();
+            }else {
+                log.warn("导出model的xml文件失败,流程为null：modelId={}", modelId);
+            }
+        } catch (Exception e) {
+            log.error("导出model的xml文件失败：modelId={}", modelId, e);
+        }
+    }
+
+    @Override
+    public void showModelXml(String modelId, HttpServletResponse response) {
+        try {
+            Model modelData = modelService.getModel(modelId);
+            BpmnModel bpmnModel = modelService.getBpmnModel(modelData);
+            // 流程非空判断
+            if (!CollectionUtils.isEmpty(bpmnModel.getProcesses())) {
+                byte[] bpmnXML = modelService.getBpmnXML(modelData);
+                response.setHeader("Content-type", "text/xml;charset=UTF-8");
+                response.getOutputStream().write(bpmnXML);
+            }else {
+                log.warn("获取model的xml文件失败,流程为null：modelId={}", modelId);
+            }
+        } catch (Exception e) {
+            log.error("获取model的xml文件失败：modelId={}", modelId, e);
+        }
+    }
     @Override
     public PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
 

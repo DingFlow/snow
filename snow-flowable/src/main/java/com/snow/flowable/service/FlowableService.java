@@ -9,6 +9,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -31,6 +32,20 @@ public interface FlowableService {
      * @param modelId
      */
     void deleteModel(String modelId);
+
+    /**
+     * 导出XML
+     * @param modelId
+     * @param response
+     */
+    void exportModelXml(String modelId, HttpServletResponse response);
+
+    /**
+     * 展示XML
+     * @param modelId
+     * @param response
+     */
+    void showModelXml(String modelId, HttpServletResponse response);
     /**
      * 查询发布列表(分页)
      * @param deploymentQueryDTO
