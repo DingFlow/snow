@@ -2,8 +2,6 @@ package com.snow.flowable.listener.leave;
 
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.task.service.delegate.DelegateTask;
-
-import org.flowable.variable.api.persistence.entity.VariableInstance;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

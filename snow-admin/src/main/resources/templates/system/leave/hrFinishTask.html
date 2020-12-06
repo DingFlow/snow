@@ -105,6 +105,13 @@
                 $.operate.saveTab("/system/leave/hrFinishTask", data);
             }
         }
+        function submitHandler() {
+            if ($.validate.form()) {
+                var data = $("#signupForm").serializeArray();
+                data.push({"name": "checkStatus", "value": 1});
+                $.operate.saveTab("/system/leave/hrFinishTask", data);
+            }
+        }
     </script>
 </body>
 </html>
