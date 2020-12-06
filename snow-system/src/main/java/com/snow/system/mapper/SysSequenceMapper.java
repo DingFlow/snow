@@ -51,6 +51,12 @@ public interface SysSequenceMapper
     public int getNextSequence(String name);
 
     /**
+     * 更新下个序列值
+     * @param name
+     * @return
+     */
+    public int updateNextSequence(String name);
+    /**
      * 删除系统序列设置
      * 
      * @param name 系统序列设置ID

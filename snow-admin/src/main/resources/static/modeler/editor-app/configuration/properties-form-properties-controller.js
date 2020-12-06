@@ -136,8 +136,8 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 delete $scope.selectedProperty.datePattern;
             }
 
-            // Check enum. If enum, show list of options
-            if ($scope.selectedProperty.type === 'enum') {
+            // Check enums. If enums, show list of options
+            if ($scope.selectedProperty.type === 'enums') {
                 $scope.selectedProperty.enumValues = [ {id: 'value1', name: 'Value 1'}, {id: 'value2', name: 'Value 2'}];
                 $scope.enumValues.length = 0;
                 for (var i = 0; i < $scope.selectedProperty.enumValues.length; i++) {

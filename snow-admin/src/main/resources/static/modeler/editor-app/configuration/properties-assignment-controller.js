@@ -368,22 +368,22 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
         $scope.popup.assignmentObject.idm.assignee = undefined;
     };
     
-    // Click handler for + button after enum value
+    // Click handler for + button after enums value
     $scope.addCandidateUserValue = function(index) {
         $scope.popup.assignmentObject.static.candidateUsers.splice(index + 1, 0, {value: ''});
     };
 
-    // Click handler for - button after enum value
+    // Click handler for - button after enums value
     $scope.removeCandidateUserValue = function(index) {
         $scope.popup.assignmentObject.static.candidateUsers.splice(index, 1);
     };
 
-    // Click handler for + button after enum value
+    // Click handler for + button after enums value
     $scope.addCandidateGroupValue = function(index) {
         $scope.popup.assignmentObject.static.candidateGroups.splice(index + 1, 0, {value: ''});
     };
 
-    // Click handler for - button after enum value
+    // Click handler for - button after enums value
     $scope.removeCandidateGroupValue = function(index) {
         $scope.popup.assignmentObject.static.candidateGroups.splice(index, 1);
     };

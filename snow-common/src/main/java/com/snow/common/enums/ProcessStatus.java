@@ -1,7 +1,7 @@
 package com.snow.common.enums;
 
 /**
- * 操作状态
+ * 业务流程状态
  * 
  * @author snow
  */

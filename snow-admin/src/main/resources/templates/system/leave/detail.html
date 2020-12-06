@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<th:block th:include="include :: header('主管审批')" />
+	<th:block th:include="include :: header('人事审批')" />
 	<th:block th:include="include :: jsonview-css" />
 	<th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
@@ -9,18 +9,19 @@
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
 
 	<form class="form-horizontal m-t" id="signupForm">
-		<div class="row">
+		<!--<div class="row">
 			<div class="col-sm-offset-0 col-sm-10">
 				<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
 				<button type="button" class="btn btn-sm btn-danger" onclick="submitHandler()"><i class="fa fa-remove"></i>驳 回</button>&nbsp;
 			</div>
 		</div>
-		<br/>
+		<br/>-->
 		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  name="businessKey" th:value="${sysOaLeave.leaveNo}"/>
 		<h4 class="form-header h4">请假信息</h4>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">单号：</label>
-			<div class="form-control-static" th:text="${sysOaLeave.leaveNo}">
+			<div class="form-control-static"  th:text="${sysOaLeave.leaveNo}">
 			</div>
 		</div>
 		<div class="form-group">
@@ -43,27 +44,52 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label class="col-sm-3 control-label">请假时长：</label>
+			<div class="form-control-static" th:text="${sysOaLeave.leaveTime}">
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-3 control-label">申请人：</label>
 			<div class="form-control-static" th:text="${sysOaLeave.applyPerson}">
 			</div>
 		</div>
-		<h4 class="form-header h4">填写信息</h4>
-		<div class="form-group">
-			<label class="col-sm-3 control-label">主管审批意见：</label>
-			<div class="col-sm-8">
-				<textarea name="suggestion" class="form-control" required></textarea>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label">审批附件：</label>
-			<div class="col-sm-8">
-				<input type="hidden" name="suggestionFileUrl" >
-				<div class="file-loading">
-					<input class="form-control file-upload" id="suggestionFileUrl" name="file" type="file">
+
+		<div class="ibox float-e-margins">
+			<h4 class="form-header h4">审批信息</h4>
+			<div id="ibox-content">
+				<div id="vertical-timeline" class="vertical-container light-timeline light-dark">
+
+					<div class="vertical-timeline-block" th:each="task,iterStat : ${historicTaskInstanceList}">
+						<div class="vertical-timeline-icon navy-bg">
+							<i class="fa fa-tasks"></i>
+						</div>
+
+						<div class="vertical-timeline-content">
+
+							<h2 th:text="${task.name }"></h2>
+							    <p th:if="${task.isPass} ne ''">
+							       <label  >审批结果：</label>
+									<span  style="color: red"  th:if="${#strings.trim(task.isPass)} eq 'false'">驳回</span>
+									<span   style="color: blue"  th:if="${#strings.trim(task.isPass)} eq 'true'">通过</span>
+								</p>
+
+							    <p><label>操作人：</label> <span th:text="${task.assigneeName}"></span></p>
+								<p><label>任务历时：</label> <span th:text="${task.spendTime}"></span></p>
+							    <div th:each="comment:${task.commentList}">
+									<p th:if="${comment.fullMessage} ne ''">
+								    <label>审批意见：</label> <span th:text="${comment.fullMessage}"></span>
+									</p>
+							   </div>
+							<span class="vertical-date">
+                                <label>时间：</label> <small th:text="${#dates.format(task.createTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+								<label>~</label> <small th:text="${#dates.format(task.endTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                           </span>
+
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-
 
 	</form>
     </div>
@@ -102,17 +128,9 @@
             if ($.validate.form()) {
                 var data = $("#signupForm").serializeArray();
                 data.push({"name": "checkStatus", "value": 0});
-                $.operate.saveTab("/system/leave/managerFinishTask", data);
+                $.operate.saveTab("/system/leave/hrFinishTask", data);
             }
         }
-        function submitHandler() {
-            if ($.validate.form()) {
-                var data = $("#signupForm").serializeArray();
-                data.push({"name": "checkStatus", "value": 1});
-                $.operate.saveTab("/system/leave/managerFinishTask", data);
-            }
-        }
-
     </script>
 </body>
 </html>

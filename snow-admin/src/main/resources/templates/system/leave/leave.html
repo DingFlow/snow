@@ -33,14 +33,6 @@
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
-                           <!-- <li>
-                                <label>流程实例ID：</label>
-                                <input type="text" name="processInstanceId"/>
-                            </li>-->
-                            <li>
-                                <label>申请人：</label>
-                                <input type="text" name="applyPerson"/>
-                            </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
@@ -52,14 +44,11 @@
 
             <div class="btn-group-sm" id="toolbar" role="group">
                 <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:leave:add">
-                    <i class="fa fa-plus"></i> 添加
+                    <i class="fa fa-plus"></i> 添加申请单
                 </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:leave:edit">
+               <!-- <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:leave:edit">
                     <i class="fa fa-edit"></i> 修改
-                </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:leave:remove">
-                    <i class="fa fa-remove"></i> 删除
-                </a>
+                </a>-->
                 <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:leave:export">
                     <i class="fa fa-download"></i> 导出
                 </a>
@@ -83,6 +72,7 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
+                detailUrl:prefix + "/detail/{id}",
                 modalName: "请假单",
                 columns: [{
                     checkbox: true
@@ -129,8 +119,14 @@
                         if(row.processStatus==0) {
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起申请</a> ');
                         }
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.processStatus!=0) {
+                            actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search-plus"></i>详情</a> ');
+                        }
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        }
                         return actions.join('');
+
                     }
                 }]
             };

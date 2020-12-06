@@ -126,10 +126,10 @@ public interface FlowableService {
 
     /**
      * 获取历史任务
-     * @param task
+     * @param
      * @return
      */
-    List<HistoricTaskInstance> getHistoricTaskInstance(com.snow.flowable.domain.Task task);
+    List<HistoricTaskInstanceVO> getHistoricTaskInstanceNoPage(HistoricTaskInstanceDTO historicTaskInstanceDTO);
 
     /**
      * 动态获取流程节点审批信息

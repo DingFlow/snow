@@ -1,16 +1,17 @@
 package com.snow.flowable.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import lombok.Data;
-import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.task.Attachment;
+import org.flowable.engine.task.Comment;
+import org.flowable.identitylink.api.IdentityLinkInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
-import org.flowable.task.service.TaskServiceConfiguration;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,60 +22,135 @@ import java.util.stream.Collectors;
  */
 @Data
 public class HistoricTaskInstanceVO implements Serializable {
-    public String executionId;
-    public String processInstanceId;
+    /**
+     * 历史任务id
+     */
+    private String id;
+
+    /**
+     * 流程执行ID
+     */
+    private String executionId;
+
+    /**
+     * 流程实例id
+     */
+    private String processInstanceId;
+
     /**
      *流程名称
      */
-    public String processName;
+    private String processName;
 
-    public String businessKey;
-    public String taskDefinitionId;
-    public String scopeId;
-    public String subScopeId;
-    public String scopeType;
-    public String scopeDefinitionId;
-    public String propagatedStageInstanceId;
+    /**
+     *业务参数
+     */
+    private String businessKey;
 
+    /**
+     * 任务定义ID
+     */
+    private String taskDefinitionId;
+
+    /**
+     * 创建时间
+     */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    public Date createTime;
+    private Date createTime;
 
+    /**
+     * 完成时间
+     */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    public Date endTime;
+    private Date endTime;
     /**
      * 用时
      */
-    public String spendTime;
-
-    public String deleteReason;
-    public String name;
-    public String localizedName;
-    public String parentTaskId;
-    public String description;
-    public String localizedDescription;
-    public String owner;
+    private String spendTime;
+    /**
+     * 任务名称
+     */
+    private String name;
     /**
      * 用户ID
      */
-    public String assignee;
+    private String assignee;
+
+
+    /**
+     * 用户名称
+     */
+    private String assigneeName;
+
+    /**
+     * 任务描述
+     */
+    private String description;
+
+    private String category;
+
+    private String isPass;
+
+    /**
+     * 评论
+     */
+    private List<Comment> commentList;
+
+    /**
+     *附件
+     */
+    private  List<Attachment> attachmentList;
+
+    /**
+     * 任务变量
+     */
+    private Map<String, Object> taskLocalVariables;
+
+
+    private String formKey;
+
+    /**
+     * 流程变量
+     */
+    private Map<String, Object> processVariables;
+
+    private List<? extends IdentityLinkInfo> identityLinks;
+/*    private String scopeId;
+    private String subScopeId;
+    private String scopeType;
+    private String scopeDefinitionId;
+    private String propagatedStageInstanceId;*/
 
 
 
-    public String assigneeName;
-    public String taskDefinitionKey;
-    public String formKey;
-    public int priority;
-    public Date dueDate;
-    public Date claimTime;
-    public String category;
-    public String tenantId = TaskServiceConfiguration.NO_TENANT_ID;
-    public Date lastUpdateTime;
+    private String deleteReason;
+
+    private String localizedName;
+    private String parentTaskId;
+
+    private String localizedDescription;
+    private String owner;
+
+
+    private String taskDefinitionKey;
+
+
+
+    private int priority;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dueDate;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date claimTime;
+
 
     public static List<HistoricTaskInstanceVO> warpList(List<HistoricTaskInstance> historicTaskInstanceList){
         return historicTaskInstanceList.stream().map(t->{
             HistoricTaskInstanceVO historicTaskInstanceVO=new HistoricTaskInstanceVO();
             BeanUtils.copyProperties(t,historicTaskInstanceVO);
+            historicTaskInstanceVO.setTaskLocalVariables(t.getTaskLocalVariables());
 
+            historicTaskInstanceVO.setProcessVariables(t.getProcessVariables());
+            historicTaskInstanceVO.setIdentityLinks(t.getIdentityLinks());
             return historicTaskInstanceVO;
         }).collect(Collectors.toList());
     }

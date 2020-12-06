@@ -1,18 +1,22 @@
 package com.snow.web.controller.system;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ClassUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.enums.ProcessStatus;
+import com.snow.common.json.JSON;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.FlowConstants;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.FileEntry;
-import com.snow.flowable.domain.FinishTaskDTO;
-import com.snow.flowable.domain.StartProcessDTO;
+import com.snow.flowable.domain.*;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
@@ -21,6 +25,7 @@ import com.snow.system.service.impl.SysOaLeaveServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -107,7 +112,7 @@ public class SysOaLeaveController extends BaseController
     }
 
     /**
-     * 新增保存请假单
+     * 1.填写请假单 可修改
      */
     @RequiresPermissions("system:leave:add")
     @Log(title = "请假单", businessType = BusinessType.INSERT)
@@ -117,7 +122,15 @@ public class SysOaLeaveController extends BaseController
     public AjaxResult addSave(SysOaLeave sysOaLeave)
 
     {
+
         SysUser sysUser = ShiroUtils.getSysUser();
+        Date endTime = sysOaLeave.getEndTime();
+        Date startTime = sysOaLeave.getStartTime();
+        int compare = DateUtil.compare(startTime, endTime);
+        if(compare==1||compare==0){
+            return AjaxResult.error("请假结束时间必须大于开始时间");
+        }
+        //生成请假单
         String leaveNo = sequenceService.getNewSequenceNo(SequenceContants.OA_LEAVE_SEQUENCE);
         sysOaLeave.setCreateBy(sysUser.getUserName());
         sysOaLeave.setLeaveNo(leaveNo);
@@ -134,6 +147,8 @@ public class SysOaLeaveController extends BaseController
     public String edit(@PathVariable("id") Integer id, ModelMap mmap)
     {
         SysOaLeave sysOaLeave = sysOaLeaveService.selectSysOaLeaveById(id);
+        String spendTime = DateUtil.formatBetween(sysOaLeave.getStartTime(), sysOaLeave.getEndTime(), BetweenFormater.Level.SECOND);
+        sysOaLeave.setLeaveTime(spendTime);
         mmap.put("sysOaLeave", sysOaLeave);
         return prefix + "/edit";
     }
@@ -154,18 +169,39 @@ public class SysOaLeaveController extends BaseController
         startProcessDTO.setBusinessKey(oldSysOaLeave.getLeaveNo());
         startProcessDTO.setProcessDefinitionKey(FlowConstants.SNOW_OA_LEAVE);
         startProcessDTO.setStartUserId(String.valueOf(sysUser.getUserId()));
+        Map<String, Object> map = BeanUtil.beanToMap(sysOaLeave);
+        startProcessDTO.setVariables(map);
         ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
         completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
         Task task= flowableService.getTaskProcessInstanceById(processInstance.getProcessInstanceId());
         completeTaskDTO.setTaskId(task.getId());
         flowableService.completeTask(completeTaskDTO);
-        sysOaLeave.setProcessStatus(ProcessStatus.CHECKING.ordinal());
         sysOaLeave.setCreateBy(sysUser.getUserName());
         sysOaLeave.setApplyPerson(sysUser.getUserName());
         BeanUtils.copyProperties(sysOaLeave,oldSysOaLeave);
         sysOaLeave.setProcessInstanceId(processInstance.getProcessInstanceId());
         return toAjax(sysOaLeaveService.updateSysOaLeave(sysOaLeave));
+    }
+
+    /**
+     * 请假单详情
+     */
+    @RequiresPermissions("system:leave:detail")
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        SysOaLeave sysOaLeave = sysOaLeaveService.selectSysOaLeaveById(id);
+        HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
+        historicTaskInstanceDTO.setBusinessKey(sysOaLeave.getLeaveNo());
+        historicTaskInstanceDTO.setProcessInstanceId(sysOaLeave.getProcessInstanceId());
+        historicTaskInstanceDTO.setProcessStatus(1);
+        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        String spendTime = DateUtil.formatBetween(sysOaLeave.getStartTime(), sysOaLeave.getEndTime(), BetweenFormater.Level.SECOND);
+        sysOaLeave.setLeaveTime(spendTime);
+        mmap.put("sysOaLeave", sysOaLeave);
+        mmap.put("historicTaskInstanceList", historicTaskInstanceList);
+        return prefix + "/detail";
     }
 
     /**

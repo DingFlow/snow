@@ -1,10 +1,10 @@
 package com.snow.flowable.domain;
 
+import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import lombok.Data;
 
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -19,83 +19,92 @@ public class HistoricTaskInstanceDTO  extends FlowBaseDTO implements Serializabl
     /**
      * 用户ID
      */
-    public String userId;
-    public String taskDefinitionId;
-    public String processDefinitionId;
-    public String processDefinitionKey;
-    public String processDefinitionKeyLike;
-    public String processDefinitionName;
-    public String processDefinitionNameLike;
+    private String userId;
+    
+    private String taskDefinitionId;
+    
+    private String processDefinitionId;
+    
+    private String processDefinitionKey;
+    
+    private String processDefinitionKeyLike;
+    
+    private String processDefinitionName;
+    
+    private String processDefinitionNameLike;
 
-    public String deploymentId;
-    public Collection<String> deploymentIds;
-    public String cmmnDeploymentId;
+    private String deploymentId;
 
-    public String processInstanceId;
+
+
+    private String processInstanceId;
    
-    public String BusinessKey;
-    public String BusinessKeyLike;
+    private String BusinessKey;
+    
+    private String BusinessKeyLike;
 
-    public String executionId;
-    public String scopeId;
-    public String subScopeId;
-    public String scopeType;
-    public String scopeDefinitionId;
-    public String propagatedStageInstanceId;
-    public String processInstanceIdWithChildren;
-    public String caseInstanceIdWithChildren;
-    public String caseDefinitionKey;
-    public String caseDefinitionKeyLike;
-    public String caseDefinitionKeyLikeIgnoreCase;
-    public String taskId;
-    public String taskName;
-    public String taskNameLike;
-    public String taskNameLikeIgnoreCase;
-    public String taskParentTaskId;
-    public String taskDescription;
-    public String taskDescriptionLike;
-    public String taskDescriptionLikeIgnoreCase;
-    public String taskDeleteReason;
-    public String taskDeleteReasonLike;
-    public String taskOwner;
-    public String taskOwnerLike;
-    public String taskOwnerLikeIgnoreCase;
-    public String taskAssignee;
-    public String taskAssigneeLike;
-    public String taskAssigneeLikeIgnoreCase;
-    public String taskDefinitionKey;
-    public String taskDefinitionKeyLike;
+    private String executionId;
+    
+    
+    private String taskId;
+    
+    private String taskName;
+    
+    private String taskNameLike;
+    
+    private String taskNameLikeIgnoreCase;
+    
+    private String taskParentTaskId;
+    
+    private String taskDescription;
+    
+    private String taskDescriptionLike;
+    
+    private String taskDescriptionLikeIgnoreCase;
 
-    public String candidateUser;
-    public String candidateGroup;
+    
+    private String taskOwner;
+    
+    private String taskOwnerLike;
+    
+    private String taskOwnerLikeIgnoreCase;
+    
+    private String taskAssignee;
+    
+    private String taskAssigneeLike;
+    
+    private String taskAssigneeLikeIgnoreCase;
+    
+    private String taskDefinitionKey;
+    
+    private String taskDefinitionKeyLike;
 
-    public String involvedUser;
-    public boolean ignoreAssigneeValue;
-    public Integer taskPriority;
-    public Integer taskMinPriority;
-    public Integer taskMaxPriority;
-    public boolean finished;
-    public boolean unfinished;
+    private String candidateUser;
+    
+    private String candidateGroup;
+
+    private String involvedUser;
+    
+ 
+ 
+
     /**
      * 流程状态（0--进行中，1-结束）
      */
-    public Integer processStatus;
+    private Integer processStatus;
 
-    public Date dueDate;
-    public Date dueAfter;
-    public Date dueBefore;
-    public boolean withoutDueDate;
-    public Date creationDate;
-    public Date creationAfterDate;
-    public Date creationBeforeDate;
-    public Date completedDate;
-    public Date completedAfterDate;
-    public Date completedBeforeDate;
-    public String category;
-    public boolean withFormKey;
-    public String formKey;
-    public String tenantId;
-    public String tenantIdLike;
-    public Integer taskVariablesLimit;
+    private Date dueDate;
+    
+ 
+
+    private String category;
+
+    private String formKey;
+    
+    private String tenantId;
+    
+    private String tenantIdLike;
+    
+    private Integer taskVariablesLimit;
 
 }

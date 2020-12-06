@@ -74,12 +74,8 @@
 
                      },
                      {
-                         field: 'startUserId',
-                         title: '流程发起人',
-                         formatter: function(value, row, index) {
-                             var data= $.common.getDataById('/system/user/getUserInfoById',value);
-                             return data.userName;
-                         }
+                         field: 'startUserName',
+                         title: '流程发起人'
                      },
                      {
                          field: 'isFinished',
@@ -88,7 +84,10 @@
                              return $.table.selectDictLabel(processInstanceStatusDatas, value);
                          }
                      },
-
+                     {
+                         field: 'processSpendTime',
+                         title: '流程用时'
+                     },
                      {
                          field: 'startTime',
                          title: '流程创建时间'

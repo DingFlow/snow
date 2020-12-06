@@ -17,4 +17,15 @@ public class FlowConstants {
 
 
     /**************************************************************************************/
+
+    /**
+     *流程通过变量名称
+     */
+    public static final String IS_PASS="isPass";
+
+    /**
+     *comment类型---意见
+     */
+
+    public static final String OPINION="OPINION";
 }

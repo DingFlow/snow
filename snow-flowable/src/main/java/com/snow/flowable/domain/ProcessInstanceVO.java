@@ -15,6 +15,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,14 +65,26 @@ public class ProcessInstanceVO  implements Serializable {
     public Date endTime;
 
     public String endActivityId;
-
+    /**
+     * 流程发起人ID
+     */
     public String startUserId;
 
+    /**
+     * 流程发起人
+     */
+    public String startUserName;
+
     public String startActivityId;
+
     /**
      * 删除理由
      */
     public String deleteReason;
+    /**
+     * 流程用时
+     */
+    public String processSpendTime;
     /**
      * 父流程ID
      */
@@ -96,7 +109,7 @@ public class ProcessInstanceVO  implements Serializable {
      */
     public Integer isFinished;
 
-
+    Map<String, Object> processVariables;
 
     public String processDefinitionCategory;
 
@@ -109,6 +122,8 @@ public class ProcessInstanceVO  implements Serializable {
             }else {
                 processInstanceVO.setIsFinished(1);
             }
+           Map<String, Object> processVariables = t.getProcessVariables();
+           processInstanceVO.setProcessVariables(processVariables);
            return processInstanceVO;
         }).collect(Collectors.toList());
     }

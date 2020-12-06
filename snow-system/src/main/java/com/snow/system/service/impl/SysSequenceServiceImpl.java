@@ -108,6 +108,7 @@ public class SysSequenceServiceImpl implements ISysSequenceService
         if(StringUtils.isNull(sysSequence)){
             throw new BusinessException("该序列名称不存在");
         }
+        sysSequenceMapper.updateNextSequence(name);
         int nextSequence = sysSequenceMapper.getNextSequence(name);
         String date = DateUtil.format(new Date(), "yyyyMMdd");
         StringBuilder sequenceNo=new StringBuilder(name);

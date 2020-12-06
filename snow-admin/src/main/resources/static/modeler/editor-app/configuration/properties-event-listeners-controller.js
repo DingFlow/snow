@@ -110,12 +110,12 @@ angular.module('flowableModeler').controller('FlowableEventListenersPopupCtrl',
         });
 
 
-        // Click handler for + button after enum value
+        // Click handler for + button after enums value
         $scope.addEventValue = function (index) {
             $scope.selectedListener.events.splice(index + 1, 0, {event: ''});
         };
 
-        // Click handler for - button after enum value
+        // Click handler for - button after enums value
         $scope.removeEventValue = function (index) {
             $scope.selectedListener.events.splice(index, 1);
             $scope.listenerDetailsChanged();
