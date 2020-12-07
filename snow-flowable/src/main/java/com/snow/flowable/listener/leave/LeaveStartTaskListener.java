@@ -5,12 +5,13 @@ import com.snow.flowable.listener.AbstractTaskListener;
 import com.snow.system.domain.SysOaLeave;
 import com.snow.system.service.ISysOaLeaveService;
 import lombok.extern.slf4j.Slf4j;
-import org.flowable.engine.delegate.TaskListener;
-import org.flowable.task.service.delegate.DelegateTask;
+import org.flowable.task.service.TaskService;
+import org.flowable.task.service.impl.TaskServiceImpl;
+import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import javax.annotation.Resource;
 
 /**
  * @program: snow
@@ -25,6 +26,7 @@ public class LeaveStartTaskListener extends AbstractTaskListener {
     @Autowired
     private ISysOaLeaveService sysOaLeaveService;
 
+
     @Override
     protected void processTask() {
         SysOaLeave sysOaLeave=new SysOaLeave();
@@ -35,6 +37,8 @@ public class LeaveStartTaskListener extends AbstractTaskListener {
             sysOaLeave.setProcessStatus(ProcessStatus.CANCEL.ordinal());
         }else {
             sysOaLeave.setProcessStatus(ProcessStatus.CHECKING.ordinal());
+            String id = getDelegateTask().getId();
+            log.info("获取到的taskID:{}",id);
         }
         sysOaLeaveService.updateSysOaLeaveByLeaveNo(sysOaLeave);
     }

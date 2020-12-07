@@ -270,16 +270,12 @@ public class SysOaLeaveController extends BaseController
         Integer checkStatus = finishTaskDTO.getCheckStatus();
         if(checkStatus==0){
             completeTaskDTO.setIsPass(true);
-            sysOaLeave.setProcessStatus(ProcessStatus.PASS.ordinal());
         }else {
             completeTaskDTO.setIsPass(false);
-            sysOaLeave.setProcessStatus(ProcessStatus.REJECT.ordinal());
         }
         completeTaskDTO.setComment(finishTaskDTO.getSuggestion());
         flowableService.completeTask(completeTaskDTO);
-        sysOaLeave.setUpdateBy(sysUser.getUserName());
-        int i = sysOaLeaveService.updateSysOaLeaveByLeaveNo(sysOaLeave);
-        return toAjax(i);
+        return AjaxResult.success();
     }
 
     /**
@@ -291,7 +287,6 @@ public class SysOaLeaveController extends BaseController
     public AjaxResult reStartTask(LeaveFinishTaskDTO sysOaLeave)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-
         sysOaLeave.setApplyPerson(sysUser.getUserName());
         int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
         SysOaLeave newSysOaLeave = sysOaLeaveService.selectSysOaLeaveById(sysOaLeave.getId());

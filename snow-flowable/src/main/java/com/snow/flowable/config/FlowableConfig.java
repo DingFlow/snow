@@ -1,5 +1,8 @@
 package com.snow.flowable.config;
 
+import com.google.common.collect.Lists;
+import com.snow.flowable.listener.AbstractEventListener;
+import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.EngineDeployer;
 import org.flowable.engine.impl.rules.RulesDeployer;
 import org.flowable.spring.SpringProcessEngineConfiguration;
@@ -11,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -36,6 +40,10 @@ public class FlowableConfig{
                 add(new RulesDeployer());
             }
         });
+        //注入全局监听器
+        List<FlowableEventListener> flowableEventListenerList=Lists.newArrayList();
+        flowableEventListenerList.add(new AbstractEventListener());
+        configuration.setEventListeners(flowableEventListenerList);
         //设置流程图显示乱码
         configuration.setActivityFontName("宋体");
         configuration.setLabelFontName("宋体");
