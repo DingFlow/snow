@@ -76,6 +76,13 @@ public interface FlowableService {
     ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
     /**
+     * APP开启流程
+     * @param appForm
+     * @return
+     */
+    ProcessInstance startProcessInstanceByAppForm(AppForm appForm);
+
+    /**
      * 根据任务ID获取代办
      * @param taskId
      * @return

@@ -4,28 +4,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ClassUtil;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.enums.ProcessStatus;
-import com.snow.common.json.JSON;
 import com.snow.common.utils.StringUtils;
-import com.snow.flowable.common.FlowConstants;
+import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
+import com.snow.flowable.domain.leave.LeaveFinishTaskDTO;
+import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysSequenceService;
-import com.snow.system.service.impl.SysOaLeaveServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
-import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -163,25 +161,26 @@ public class SysOaLeaveController extends BaseController
     public AjaxResult editSave(SysOaLeave sysOaLeave)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        SysOaLeave oldSysOaLeave = sysOaLeaveService.selectSysOaLeaveById(sysOaLeave.getId());
+
+        sysOaLeave.setApplyPerson(sysUser.getUserName());
+        int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
+        SysOaLeave newSysOaLeave = sysOaLeaveService.selectSysOaLeaveById(sysOaLeave.getId());
         //发起审批
-        StartProcessDTO startProcessDTO=new StartProcessDTO();
-        startProcessDTO.setBusinessKey(oldSysOaLeave.getLeaveNo());
-        startProcessDTO.setProcessDefinitionKey(FlowConstants.SNOW_OA_LEAVE);
-        startProcessDTO.setStartUserId(String.valueOf(sysUser.getUserId()));
-        Map<String, Object> map = BeanUtil.beanToMap(sysOaLeave);
-        startProcessDTO.setVariables(map);
-        ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
+        SysOaLeaveForm sysOaLeaveForm=new SysOaLeaveForm();
+        BeanUtils.copyProperties(sysOaLeave,sysOaLeaveForm);
+        sysOaLeaveForm.setBusinessKey(newSysOaLeave.getLeaveNo());
+        sysOaLeaveForm.setStartUserId(String.valueOf(sysUser.getUserId()));
+        sysOaLeaveForm.setClassInfoJson(com.alibaba.fastjson.JSON.toJSONString(newSysOaLeave));
+        sysOaLeaveForm.setClassPackName(SysOaLeaveForm.class.getCanonicalName());
+        ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaLeaveForm);
+        //提交
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
         completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
         Task task= flowableService.getTaskProcessInstanceById(processInstance.getProcessInstanceId());
         completeTaskDTO.setTaskId(task.getId());
+        completeTaskDTO.setIsPass(true);
         flowableService.completeTask(completeTaskDTO);
-        sysOaLeave.setCreateBy(sysUser.getUserName());
-        sysOaLeave.setApplyPerson(sysUser.getUserName());
-        BeanUtils.copyProperties(sysOaLeave,oldSysOaLeave);
-        sysOaLeave.setProcessInstanceId(processInstance.getProcessInstanceId());
-        return toAjax(sysOaLeaveService.updateSysOaLeave(sysOaLeave));
+        return toAjax(i);
     }
 
     /**
@@ -280,6 +279,38 @@ public class SysOaLeaveController extends BaseController
         flowableService.completeTask(completeTaskDTO);
         sysOaLeave.setUpdateBy(sysUser.getUserName());
         int i = sysOaLeaveService.updateSysOaLeaveByLeaveNo(sysOaLeave);
+        return toAjax(i);
+    }
+
+    /**
+     * 重新发起申请
+     */
+    @Log(title = "重新发起申请", businessType = BusinessType.UPDATE)
+    @PostMapping("/reStartTask")
+    @ResponseBody
+    public AjaxResult reStartTask(LeaveFinishTaskDTO sysOaLeave)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+
+        sysOaLeave.setApplyPerson(sysUser.getUserName());
+        int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
+        SysOaLeave newSysOaLeave = sysOaLeaveService.selectSysOaLeaveById(sysOaLeave.getId());
+        String leaveString= JSON.toJSONString(newSysOaLeave);
+        //提交
+        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        completeTaskDTO.setTaskId(sysOaLeave.getTaskId());
+        completeTaskDTO.setComment(sysOaLeave.getSuggestion());
+        Integer checkStatus = sysOaLeave.getCheckStatus();
+        if(checkStatus==0){
+            completeTaskDTO.setIsPass(true);
+        }else {
+            completeTaskDTO.setIsPass(false);
+        }
+        Map<String, Object> map=Maps.newHashMap();
+        map.put(FlowConstants.BUS_VAR,leaveString);
+        completeTaskDTO.setParamMap(map);
+        flowableService.completeTask(completeTaskDTO);
         return toAjax(i);
     }
 }

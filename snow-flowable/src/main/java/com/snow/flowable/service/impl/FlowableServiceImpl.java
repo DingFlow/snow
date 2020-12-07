@@ -1,10 +1,10 @@
 package com.snow.flowable.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
-import com.snow.flowable.common.FlowConstants;
+import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import com.snow.flowable.service.FlowableService;
@@ -24,12 +24,10 @@ import com.snow.system.service.ISysRoleService;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.common.engine.impl.util.IoUtil;
-import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -38,16 +36,13 @@ import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Attachment;
 import org.flowable.engine.task.Comment;
-import org.flowable.idm.api.User;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.ui.modeler.domain.Model;
-import org.flowable.ui.modeler.repository.ModelRepository;
 import org.flowable.ui.modeler.service.ModelServiceImpl;
-import org.flowable.ui.modeler.serviceapi.ModelService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -272,7 +267,7 @@ public class FlowableServiceImpl implements FlowableService {
             identityService.setAuthenticatedUserId(startUserId);
         }
         Map<String, Object> paramMap =CollectionUtils.isEmpty(startProcessDTO.getVariables())?Maps.newHashMap():startProcessDTO.getVariables();
-        paramMap.put("startUserId",startUserId);
+        paramMap.put(FlowConstants.START_USER_ID,startUserId);
 
         if(!CollectionUtils.isEmpty(paramMap)){
             processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey(),paramMap);
@@ -284,7 +279,19 @@ public class FlowableServiceImpl implements FlowableService {
         return processInstance;
     }
 
+    @Override
+    public ProcessInstance startProcessInstanceByAppForm(AppForm appForm) {
+        String startUserId=appForm.getStartUserId();
+        //业务参数转成map
+        Map<String, Object> paramMap = BeanUtil.beanToMap(appForm);
+        identityService.setAuthenticatedUserId(startUserId);
+        paramMap.put(FlowConstants.BUS_VAR,appForm.getClassInfoJson());
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(appForm.getFlowDef().getCode(),appForm.getBusinessKey(),paramMap);
 
+        //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
+        identityService.setAuthenticatedUserId(null);
+        return processInstance;
+    }
 
 
     @Override
@@ -389,6 +396,7 @@ public class FlowableServiceImpl implements FlowableService {
             );
         }
         paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+
         //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
         taskService.claim(task.getId(),completeTaskDTO.getUserId());
         taskService.complete(task.getId(),paramMap,true);

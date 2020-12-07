@@ -23,5 +23,9 @@ public enum ProcessStatus
     /**
      * 审批驳回
      */
-    REJECT
+    REJECT,
+    /**
+     * 取消
+     */
+    CANCEL
 }

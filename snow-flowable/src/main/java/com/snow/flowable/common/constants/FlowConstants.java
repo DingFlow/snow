@@ -1,4 +1,4 @@
-package com.snow.flowable.common;
+package com.snow.flowable.common.constants;
 
 /**
  * @author qimingjin
@@ -28,4 +28,17 @@ public class FlowConstants {
      */
 
     public static final String OPINION="OPINION";
+    /**
+     * 业务参数常量
+     */
+    public static final String BUS_VAR="bus_var";
+    /**
+     * 当前类的包名
+     */
+    public static final String CLASS_PACK_NAME="classPackName";
+
+    /**
+     * 流程开始用户标识
+     */
+    public static final String START_USER_ID="startUserId";
 }
