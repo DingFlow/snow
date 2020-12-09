@@ -135,6 +135,10 @@ public class SysUser extends BaseEntity
      */
     private String orgEmail;
 
+    /**
+     * 钉钉用户ID
+     */
+    private String dingUserId;
 
     public SysUser()
     {
@@ -145,7 +149,12 @@ public class SysUser extends BaseEntity
     {
         this.userId = userId;
     }
-
+    public SysUser(Long userId,String userName,String dingUserId)
+    {
+        this.userId = userId;
+        this.userName=userName;
+        this.dingUserId=dingUserId;
+    }
     public Long getUserId()
     {
         return userId;
@@ -438,6 +447,14 @@ public class SysUser extends BaseEntity
 
     public void setOrgEmail(String orgEmail) {
         this.orgEmail = orgEmail;
+    }
+
+    public String getDingUserId() {
+        return dingUserId;
+    }
+
+    public void setDingUserId(String dingUserId) {
+        this.dingUserId = dingUserId;
     }
 
     @Override

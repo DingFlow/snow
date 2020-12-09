@@ -82,6 +82,10 @@ public class SysOaLeaveController extends BaseController
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         sysOaLeave.setCreateBy(sysUser.getUserName());
+        //管理员权限判断
+        if(!ShiroUtils.getSysUser().isAdmin()){
+            sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
+        }
         List<SysOaLeave> list = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
         return getDataTable(list);
     }
@@ -130,7 +134,7 @@ public class SysOaLeaveController extends BaseController
         }
         //生成请假单
         String leaveNo = sequenceService.getNewSequenceNo(SequenceContants.OA_LEAVE_SEQUENCE);
-        sysOaLeave.setCreateBy(sysUser.getUserName());
+        sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
         sysOaLeave.setLeaveNo(leaveNo);
         int i = sysOaLeaveService.insertSysOaLeave(sysOaLeave);
         return toAjax(i);

@@ -21,7 +21,7 @@ public class WorkRecodeService implements ISyncDingTalkInfo {
     private WorkRecodeServiceImpl workRecodeService=SpringUtils.getBean(WorkRecodeServiceImpl.class);
     @Override
     public void syncDingTalkInfoEvent(SyncEvent syncEvent) {
-        log.info("调用工作通知传入的原始参数:{}"+JSON.toJSONString(syncEvent));
+        log.info("调用工作通知传入的原始参数:{}",JSON.toJSONString(syncEvent));
         DingTalkListenerType eventType =(DingTalkListenerType) syncEvent.getT();
         Integer code = eventType.getCode();
         if(code.equals(DingTalkListenerType.WORK_RECODE_CREATE.getCode())){

@@ -38,7 +38,6 @@ public class WorkRecodeServiceImpl extends BaseService {
      * @param workrecordAddRequest
      * @return
      */
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.WORK_RECODE_CREATE,dingTalkUrl=BaseConstantUrl.WORK_RECORD_CREATE)
     public String create(WorkrecordAddRequest workrecordAddRequest){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.WORK_RECORD_CREATE);
         OapiWorkrecordAddRequest req = new OapiWorkrecordAddRequest();

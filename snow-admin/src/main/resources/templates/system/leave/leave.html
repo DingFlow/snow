@@ -90,18 +90,11 @@
                     field: 'name',
                     title: '请假名称'
                 },
-          /*
-                {
-                    field: 'startTime',
-                    title: '开始时间'
-                },
-                {
-                    field: 'endTime',
-                    title: '结束时间'
-                },*/
+
+
                 {
                     field: 'processStatus',
-                    title: '流程状态',
+                    title: '审批状态',
                     formatter: function(value, row, index) {
                         return $.table.selectDictLabel(processStatusDatas, value);
                     }
@@ -110,7 +103,10 @@
                     field: 'applyPerson',
                     title: '申请人'
                 },
-
+                    {
+                        field: 'createTime',
+                        title: '创建时间'
+                    },
                 {
                     title: '操作',
                     align: 'center',
