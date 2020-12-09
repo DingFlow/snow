@@ -28,6 +28,9 @@ public class SyncDingTalkInfoFactory  {
         else if(type.equals(DingTalkListenerType.CALL_BACK_REGISTER.getType())){
             return new CallBackService();
         }
+        else if(type.equals(DingTalkListenerType.WORK_RECODE_CREATE.getType())){
+            return new WorkRecodeService();
+        }
 
 
         else {

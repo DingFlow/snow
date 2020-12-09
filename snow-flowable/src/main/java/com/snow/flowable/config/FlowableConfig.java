@@ -36,6 +36,8 @@ public class FlowableConfig {
         configuration.setTransactionManager(transactionManager);
         configuration.setDatabaseSchemaUpdate("false");
         configuration.setAsyncExecutorActivate(true);
+        //修改id生成器
+        configuration.setIdGenerator(new FlowIdGenerator());
         configuration.setCustomPostDeployers(new ArrayList<EngineDeployer>(){
             private static final long serialVersionUID = 4041439225480991716L;
             {

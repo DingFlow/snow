@@ -28,15 +28,15 @@ public class LeaveEndListener extends AbstractExecutionListener<SysOaLeaveForm> 
         SysOaLeaveForm appForms = getAppForms();
         log.info("获取到的表单数据：{}",JSON.toJSONString(appForms));
         Boolean isPass = getVariable(FlowConstants.IS_PASS);
+        String businessKey= getBusinessKey();
+        SysOaLeave sysOaLeave=new SysOaLeave();
+        sysOaLeave.setLeaveNo(businessKey);
         if(isPass){
-            String businessKey= getBusinessKey();
-            SysOaLeave sysOaLeave=new SysOaLeave();
             sysOaLeave.setProcessStatus(ProcessStatus.PASS.ordinal());
-            sysOaLeave.setLeaveNo(businessKey);
-            sysOaLeaveService.updateSysOaLeaveByLeaveNo(sysOaLeave);
         }else {
-            log.info("上个节点的审批结果：{}",isPass);
+            log.info("说明是重新申请取消的节点，上个节点的审批结果：{}",isPass);
+            sysOaLeave.setProcessStatus(ProcessStatus.CANCEL.ordinal());
         }
-
+        sysOaLeaveService.updateSysOaLeaveByLeaveNo(sysOaLeave);
     }
 }

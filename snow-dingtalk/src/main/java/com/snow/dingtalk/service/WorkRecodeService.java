@@ -26,61 +26,21 @@ import org.springframework.stereotype.Service;
  * @date 2020/9/21 14:28
  */
 @Service
-public class WorkRecodeService extends BaseService {
-    @Autowired
-    private ISysConfigService isysConfigService;
+public interface WorkRecodeService  {
 
     /**
      * 创建工作待办
      * @param workrecordAddRequest
      * @return
      */
-    public String create(WorkrecordAddRequest workrecordAddRequest){
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.WORK_RECORD_CREATE);
-        OapiWorkrecordAddRequest req = new OapiWorkrecordAddRequest();
-        BeanUtils.copyProperties(workrecordAddRequest,req);
-        OapiWorkrecordAddResponse rsp = null;
-        try {
-            rsp = client.execute(req, getDingTalkToken());
-            if (rsp.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_CREATE,rsp.getMessage(),"WorkRecordAddRequest",JSON.toJSONString(req));
-                return rsp.getRecordId();
-            }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_CREATE,rsp.getErrmsg(),"WorkRecordAddRequest",JSON.toJSONString(req));
-            }
-        } catch (ApiException e) {
-            e.printStackTrace();
-            syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_CREATE,e.getMessage(),"WorkRecordAddRequest",JSON.toJSONString(req));
-        }
-        return null;
-    }
+     String create(WorkrecordAddRequest workrecordAddRequest);
 
     /**
      * 根据用户ID获取待办
      * @param workrecordGetbyuseridRequest
      * @return
      */
-    public OapiWorkrecordGetbyuseridResponse.PageResult getWorkRecordByUserId(WorkrecordGetbyuseridRequest workrecordGetbyuseridRequest){
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_WORK_RECORD_USER_ID_);
-        OapiWorkrecordGetbyuseridRequest req = new OapiWorkrecordGetbyuseridRequest();
-        req.setUserid(workrecordGetbyuseridRequest.getUserid());
-        req.setOffset(workrecordGetbyuseridRequest.getOffset());
-        req.setLimit(workrecordGetbyuseridRequest.getLimit());
-        req.setStatus(workrecordGetbyuseridRequest.getStatus());
-        try {
-            OapiWorkrecordGetbyuseridResponse rsp = client.execute(req, getDingTalkToken());
-            if(rsp.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.GET_WORK_RECORD_USER_ID_,rsp.getMessage(),"WorkrecordGetbyuseridRequest",JSON.toJSONString(req));
-                return rsp.getRecords();
-            }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.GET_WORK_RECORD_USER_ID_,rsp.getErrmsg(),"WorkrecordGetbyuseridRequest",JSON.toJSONString(req));
-            }
-        } catch (ApiException e) {
-            e.printStackTrace();
-            syncDingTalkErrorOperLog(BaseConstantUrl.GET_WORK_RECORD_USER_ID_,e.getMessage(),"WorkrecordGetbyuseridRequest",JSON.toJSONString(req));
-        }
-        return null;
-    }
+     OapiWorkrecordGetbyuseridResponse.PageResult getWorkRecordByUserId(WorkrecordGetbyuseridRequest workrecordGetbyuseridRequest);
 
     /**
      * 更新待办
@@ -88,24 +48,5 @@ public class WorkRecodeService extends BaseService {
      * @param recordId
      * @return
      */
-    public Boolean update(String userId,String recordId){
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.WORK_RECORD_UPDATE);
-        OapiWorkrecordUpdateRequest req = new OapiWorkrecordUpdateRequest();
-        req.setUserid(userId);
-        req.setRecordId(recordId);
-        OapiWorkrecordUpdateResponse rsp = null;
-        try {
-            rsp = client.execute(req, getDingTalkToken());
-            if(rsp.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_UPDATE,rsp.getMessage(),"WorkrecordUpdateRequest",JSON.toJSONString(req));
-                return rsp.getResult();
-            }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_UPDATE,rsp.getErrmsg(),"WorkrecordUpdateRequest",JSON.toJSONString(req));
-            }
-        } catch (ApiException e) {
-            e.printStackTrace();
-            syncDingTalkErrorOperLog(BaseConstantUrl.WORK_RECORD_UPDATE,e.getMessage(),"WorkrecordUpdateRequest",JSON.toJSONString(req));
-        }
-        return false;
-    }
+     Boolean update(String userId,String recordId);
 }

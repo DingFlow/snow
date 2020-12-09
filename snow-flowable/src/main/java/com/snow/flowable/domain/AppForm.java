@@ -2,11 +2,9 @@ package com.snow.flowable.domain;
 
 import com.snow.flowable.common.enums.FlowDefEnum;
 import lombok.Data;
-import org.json.JSONObject;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @program: snow
@@ -25,6 +23,23 @@ public abstract class AppForm implements Serializable {
 
 
     /**
+     * 业务参数
+     */
+    @NotBlank(message = "业务参数不能为空")
+    private String businessKey;
+
+    /**
+     * 业务数据json
+     */
+    private String busVarJson;
+    /**
+     * 当前类的包名称
+     */
+    @NotBlank(message = "当前类的包名称不能为空")
+    private String classPackName;
+
+
+    /**
      * 流程申请单需实现此方法,返回申请单对应的流程定义.
      * 一个流程对应一个申请单.(暂时)
      *
@@ -32,19 +47,4 @@ public abstract class AppForm implements Serializable {
      */
     public abstract FlowDefEnum getFlowDef();
 
-    /**
-     * 业务参数
-     */
-    @NotBlank(message = "业务参数不能为空")
-    private String businessKey;
-
-    /**
-     * 业务数据JSOn
-     */
-    private String classInfoJson;
-    /**
-     * 当前类的包名称
-     */
-    @NotBlank(message = "当前类的包名称不能为空")
-    private String classPackName;
 }

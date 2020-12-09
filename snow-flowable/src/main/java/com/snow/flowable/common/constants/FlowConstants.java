@@ -31,7 +31,7 @@ public class FlowConstants {
     /**
      * 业务参数常量
      */
-    public static final String BUS_VAR="bus_var";
+    public static final String BUS_VAR="bus_var_json";
     /**
      * 当前类的包名
      */

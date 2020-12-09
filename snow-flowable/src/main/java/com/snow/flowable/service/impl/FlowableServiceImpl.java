@@ -284,8 +284,9 @@ public class FlowableServiceImpl implements FlowableService {
         String startUserId=appForm.getStartUserId();
         //业务参数转成map
         Map<String, Object> paramMap = BeanUtil.beanToMap(appForm);
+        paramMap.remove("busVarJson");
         identityService.setAuthenticatedUserId(startUserId);
-        paramMap.put(FlowConstants.BUS_VAR,appForm.getClassInfoJson());
+        paramMap.put(FlowConstants.BUS_VAR,appForm.getBusVarJson());
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(appForm.getFlowDef().getCode(),appForm.getBusinessKey(),paramMap);
 
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。

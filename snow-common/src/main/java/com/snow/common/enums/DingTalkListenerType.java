@@ -24,6 +24,8 @@ public enum  DingTalkListenerType {
     CALL_BACK_DELETE(3,10, "回调删除"),
 
     CALL_BACK_FAILED_RESULT(23,10, "获取回调失败结果"),
+
+    WORK_RECODE_CREATE(1,20, "创建待办"),
     ;
 
 

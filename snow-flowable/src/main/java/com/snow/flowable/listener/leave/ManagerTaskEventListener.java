@@ -10,6 +10,7 @@ import com.snow.system.domain.SysOaLeave;
 import com.snow.system.service.impl.SysOaLeaveServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
@@ -43,9 +44,10 @@ public class ManagerTaskEventListener extends AbstractEventListener {
     }
 
     @Override
-    protected void process() {
+    protected void process(FlowableEngineEvent flowableEngineEvent) {
 
     }
+
 
 
     @Override

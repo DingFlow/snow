@@ -9,6 +9,7 @@ import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.event.*;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.impl.util.CommandContextUtil;
+import org.flowable.task.service.delegate.DelegateTask;
 import org.flowable.variable.api.event.FlowableVariableEvent;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,6 @@ import java.util.Set;
 @Slf4j
 @Service
 public  abstract class AbstractEventListener extends AbstractFlowableEventListener {
-
     /**
      * 需要监听的类型集合
      */
@@ -81,6 +81,7 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
      * 监听的流程集合
      */
     protected Set<FlowDefEnum> flowDefEnums;
+
 
     public AbstractEventListener() {}
 
@@ -258,16 +259,17 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
                 //在流程中存在的才监听
                 if(flowDefEnum.getCode().equals(key)){
                     initEngineEventType(flowableEngineEvent);
-                    execute();
+                    //会监听多次
+                    execute(flowableEngineEvent);
                 }
             }
         }
 
     }
 
-    protected void execute() {
+    protected void execute(FlowableEngineEvent flowableEngineEvent) {
         try {
-            process();
+            process(flowableEngineEvent);
         } catch (RuntimeException e) {
             log.error("执行监听异常", e);
             throw e;
@@ -277,7 +279,7 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
     /**
      * 抽象需要执行的程序类
      */
-    protected abstract void process();
+    protected abstract void process(FlowableEngineEvent flowableEngineEvent);
 
 
 
@@ -408,6 +410,21 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
             CommandContext commandContext = CommandContextUtil.getCommandContext();
             if (commandContext != null) {
                 return CommandContextUtil.getProcessDefinitionEntityManager(commandContext).findById(processDefinitionId);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取流程执行信息
+     * @param executionId
+     * @return
+     */
+    protected DelegateExecution getExecutionById(String executionId) {
+        if (executionId != null) {
+            CommandContext commandContext = CommandContextUtil.getCommandContext();
+            if (commandContext != null) {
+                return CommandContextUtil.getExecutionEntityManager(commandContext).findById(executionId);
             }
         }
         return null;

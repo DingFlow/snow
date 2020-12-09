@@ -170,7 +170,7 @@ public class SysOaLeaveController extends BaseController
         BeanUtils.copyProperties(sysOaLeave,sysOaLeaveForm);
         sysOaLeaveForm.setBusinessKey(newSysOaLeave.getLeaveNo());
         sysOaLeaveForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        sysOaLeaveForm.setClassInfoJson(com.alibaba.fastjson.JSON.toJSONString(newSysOaLeave));
+        sysOaLeaveForm.setBusVarJson(com.alibaba.fastjson.JSON.toJSONString(newSysOaLeave));
         sysOaLeaveForm.setClassPackName(SysOaLeaveForm.class.getCanonicalName());
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaLeaveForm);
         //提交
