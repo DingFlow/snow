@@ -128,7 +128,7 @@ public class FlowModelerController extends BaseController
     @ResponseBody
     public void getProcessDiagram(String processInstanceId,HttpServletResponse response)
     {
-        flowableService.getProcessDiagram(response,processInstanceId);
+        flowableService.getFlowableProcessImage(processInstanceId,response);
     }
 
     /**

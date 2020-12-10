@@ -13,6 +13,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import com.snow.flowable.service.FlowableService;
@@ -32,6 +33,8 @@ import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
+import org.flowable.engine.impl.RepositoryServiceImpl;
+import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Attachment;
@@ -52,11 +55,14 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -876,7 +882,142 @@ public class FlowableServiceImpl implements FlowableService {
         return taskVOList;
     }
 
-   public String getUserNameById(String id){
+    public String getUserNameById(String id){
        return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
    }
+
+    /**
+     * 获取流程图像，已执行节点和流程线高亮显示
+     */
+    @Override
+    public void getFlowableProcessImage(String processInstanceId, HttpServletResponse response) {
+        log.info("[开始]-获取流程图图像");
+        try {
+            //  获取历史流程实例
+            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+                    .processInstanceId(processInstanceId).singleResult();
+
+            if (historicProcessInstance == null) {
+                throw new BusinessException("获取流程实例ID[" + processInstanceId + "]对应的历史流程实例失败！");
+            }
+            else {
+                // 获取流程定义
+                ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
+                        .getDeployedProcessDefinition(historicProcessInstance.getProcessDefinitionId());
+
+                // 获取流程历史中已执行节点，并按照节点在流程中执行先后顺序排序
+                List<HistoricActivityInstance> historicActivityInstanceList = historyService.createHistoricActivityInstanceQuery()
+                        .processInstanceId(processInstanceId).orderByHistoricActivityInstanceId().asc().list();
+
+                // 已执行的节点ID集合
+                List<String> executedActivityIdList = new ArrayList<String>();
+                int index = 1;
+                for (HistoricActivityInstance activityInstance : historicActivityInstanceList) {
+                    executedActivityIdList.add(activityInstance.getActivityId());
+                    //logger.info("第[" + index + "]个已执行节点=" + activityInstance.getActivityId() + " : " +activityInstance.getActivityName());
+                    index++;
+                }
+
+                BpmnModel bpmnModel = repositoryService.getBpmnModel(historicProcessInstance.getProcessDefinitionId());
+
+                // 已执行的线集合
+                List<String> flowIds = Lists.newArrayList();
+                // 获取流程走过的线 (getHighLightedFlows是下面的方法)
+                flowIds = getHighLightedFlows(bpmnModel,processDefinition, historicActivityInstanceList);
+
+                Set<String> currIds = runtimeService.createExecutionQuery().processInstanceId(processInstanceId).list()
+                        .stream().map(e->e.getActivityId()).collect(Collectors.toSet());
+
+                ICustomProcessDiagramGenerator diagramGenerator = (ICustomProcessDiagramGenerator) processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
+                InputStream imageStream = diagramGenerator.generateDiagram(bpmnModel, "png", executedActivityIdList,
+                        flowIds, "宋体", "宋体", "宋体", null, 1.0,
+                        new Color[] { FlowConstants.COLOR_NORMAL, FlowConstants.COLOR_CURRENT }, currIds);
+
+                response.setContentType("image/png");
+                OutputStream os = response.getOutputStream();
+                int bytesRead = 0;
+                byte[] buffer = new byte[8192];
+                while ((bytesRead = imageStream.read(buffer, 0, 8192)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
+                os.close();
+                imageStream.close();
+            }
+            log.info("[完成]-获取流程图图像");
+        } catch (Exception e) {
+            log.error("【异常】-获取流程图失败！" + e.getMessage());
+            throw new BusinessException("获取流程图失败！" + e.getMessage());
+        }
+    }
+
+    private List<String> getHighLightedFlows(BpmnModel bpmnModel,ProcessDefinitionEntity processDefinitionEntity,List<HistoricActivityInstance> historicActivityInstances) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //24小时制
+        List<String> highFlows = new ArrayList<String>();// 用以保存高亮的线flowId
+        for (int i = 0; i < historicActivityInstances.size() - 1; i++) {
+            // 对历史流程节点进行遍历
+            // 得到节点定义的详细信息
+            FlowNode activityImpl=null;
+            FlowElement flowElement1 = bpmnModel.getFlowElement(historicActivityInstances.get(i).getActivityId());
+            if(flowElement1 instanceof FlowNode){
+                 activityImpl = (FlowNode)bpmnModel.getMainProcess().getFlowElement(historicActivityInstances.get(i).getActivityId());
+            }
+            // 用以保存后续开始时间相同的节点
+            List<FlowNode> sameStartTimeNodes = Lists.newArrayList();
+            FlowNode sameActivityImpl1 = null;
+
+            HistoricActivityInstance activityImpl_ = historicActivityInstances.get(i);// 第一个节点
+            HistoricActivityInstance activityImp2_ ;
+
+            for(int k = i + 1 ; k <= historicActivityInstances.size() - 1; k++) {
+                activityImp2_ = historicActivityInstances.get(k);// 后续第1个节点
+                //都是usertask，且主节点与后续节点的开始时间相同，说明不是真实的后继节点
+                if ( activityImpl_.getActivityType().equals("userTask") && activityImp2_.getActivityType().equals("userTask") &&
+                        df.format(activityImpl_.getStartTime()).equals(df.format(activityImp2_.getStartTime()))   )
+                {
+
+                }
+                else {
+                    FlowElement flowElement = bpmnModel.getFlowElement(historicActivityInstances.get(k).getActivityId());
+                    if(flowElement instanceof FlowNode){
+                        sameActivityImpl1 = (FlowNode)bpmnModel.getMainProcess().getFlowElement(historicActivityInstances.get(k).getActivityId());//找到紧跟在后面的一个节点
+                        break;
+                    }
+                }
+
+            }
+            sameStartTimeNodes.add(sameActivityImpl1); // 将后面第一个节点放在时间相同节点的集合里
+            for (int j = i + 1; j < historicActivityInstances.size() - 1; j++) {
+                HistoricActivityInstance activityImpl1 = historicActivityInstances.get(j);// 后续第一个节点
+                HistoricActivityInstance activityImpl2 = historicActivityInstances.get(j + 1);// 后续第二个节点
+
+                if (df.format(activityImpl1.getStartTime()).equals(df.format(activityImpl2.getStartTime()))  )
+                {// 如果第一个节点和第二个节点开始时间相同保存
+                    FlowElement flowElement = bpmnModel.getFlowElement(activityImpl2.getActivityId());
+                    if(flowElement instanceof FlowNode){
+                        FlowNode sameActivityImpl2 = (FlowNode)bpmnModel.getMainProcess().getFlowElement(activityImpl2.getActivityId());
+                        sameStartTimeNodes.add(sameActivityImpl2);
+                    }
+                }
+                else
+                {// 有不相同跳出循环
+                    break;
+                }
+            }
+            if(!StringUtils.isEmpty(activityImpl)){
+                List<SequenceFlow> pvmTransitions = activityImpl.getOutgoingFlows() ; // 取出节点的所有出去的线
+
+                for (SequenceFlow pvmTransition : pvmTransitions)
+                {// 对所有的线进行遍历
+                    FlowElement flowElement = bpmnModel.getFlowElement(pvmTransition.getTargetRef());
+                    if(flowElement instanceof FlowNode){
+                        FlowNode pvmActivityImpl = (FlowNode)bpmnModel.getMainProcess().getFlowElement( pvmTransition.getTargetRef());// 如果取出的线的目标节点存在时间相同的节点里，保存该线的id，进行高亮显示
+                        if (sameStartTimeNodes.contains(pvmActivityImpl)) {
+                            highFlows.add(pvmTransition.getId());
+                        }
+                    }
+                }
+            }
+        }
+        return highFlows;
+    }
 }

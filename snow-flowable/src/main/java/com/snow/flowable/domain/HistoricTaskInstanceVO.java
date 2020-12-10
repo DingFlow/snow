@@ -114,7 +114,7 @@ public class HistoricTaskInstanceVO implements Serializable {
      */
     private Map<String, Object> processVariables;
 
-    private List<? extends IdentityLinkInfo> identityLinks;
+
 /*    private String scopeId;
     private String subScopeId;
     private String scopeType;
@@ -150,7 +150,6 @@ public class HistoricTaskInstanceVO implements Serializable {
             historicTaskInstanceVO.setTaskLocalVariables(t.getTaskLocalVariables());
 
             historicTaskInstanceVO.setProcessVariables(t.getProcessVariables());
-            historicTaskInstanceVO.setIdentityLinks(t.getIdentityLinks());
             return historicTaskInstanceVO;
         }).collect(Collectors.toList());
     }

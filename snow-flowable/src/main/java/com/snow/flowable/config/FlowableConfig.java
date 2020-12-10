@@ -7,6 +7,7 @@ import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.EngineDeployer;
 import org.flowable.engine.impl.rules.RulesDeployer;
 import org.flowable.spring.SpringProcessEngineConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,8 @@ import java.util.Map;
 @Configuration
 @Slf4j
 public class FlowableConfig {
-
+    @Autowired
+    private ICustomProcessDiagramGenerator customProcessDiagramGenerator;
 
     @Primary
     @Bean(name = "processEngineConfiguration")
@@ -36,6 +38,7 @@ public class FlowableConfig {
         configuration.setTransactionManager(transactionManager);
         configuration.setDatabaseSchemaUpdate("false");
         configuration.setAsyncExecutorActivate(true);
+        configuration.setProcessDiagramGenerator(customProcessDiagramGenerator);
         //修改id生成器
         configuration.setIdGenerator(new FlowIdGenerator());
         configuration.setCustomPostDeployers(new ArrayList<EngineDeployer>(){

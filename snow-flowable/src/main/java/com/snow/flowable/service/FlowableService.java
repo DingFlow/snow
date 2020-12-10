@@ -159,4 +159,9 @@ public interface FlowableService {
      * @return
      */
     PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO);
+
+    /**
+     * 获取流程图像，已执行节点和流程线高亮显示
+     */
+    void getFlowableProcessImage(String processInstanceId, HttpServletResponse response);
 }
