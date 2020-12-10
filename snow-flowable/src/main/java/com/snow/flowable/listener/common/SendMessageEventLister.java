@@ -13,6 +13,7 @@ import com.snow.flowable.service.FlowableService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.SysUserMapper;
+import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
@@ -29,10 +30,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -58,13 +56,6 @@ public class SendMessageEventLister extends AbstractEventListener {
                         FlowDefEnum.SNOW_OA_LEAVE
                 )));
     }
-
-    @Override
-    protected void process(FlowableEngineEvent flowableEngineEvent) {
-        DelegateExecution execution = getExecution(flowableEngineEvent);
-        log.info("process========>{}",JSON.toJSONString(execution));
-    }
-
 
 
     @Override
@@ -119,7 +110,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
     /**
      * 组装参数
-     * @param userId
+     * @param userId  需要发送通知的人
      * @param event
      * @return
      */
@@ -129,36 +120,58 @@ public class SendMessageEventLister extends AbstractEventListener {
         TaskEntity entity = (TaskEntity)event.getEntity();
         ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
         WorkrecordAddRequest workrecordAddRequest=new WorkrecordAddRequest();
-        workrecordAddRequest.setUserid(userId);
-        workrecordAddRequest.setBizId(processInstance.getBusinessKey());
+        SysUser userInfo = getUserInfo(userId);
+        workrecordAddRequest.setUserid(userInfo.getDingUserId());
+       // workrecordAddRequest.setBizId(processInstance.getBusinessKey());
         workrecordAddRequest.setUrl(entity.getFormKey());
         workrecordAddRequest.setPcUrl(entity.getFormKey());
         workrecordAddRequest.setSourceName("DING-FLOW");
         workrecordAddRequest.setPcOpenType(2L);
-        workrecordAddRequest.setTitle(entity.getName());
+        workrecordAddRequest.setTitle(processDefinition.getName());
         workrecordAddRequest.setCreateTime(entity.getCreateTime().getTime());
         List<WorkrecordAddRequest.FormItemVo> formItemList=Lists.newArrayList();
         WorkrecordAddRequest.FormItemVo formItemVo = new WorkrecordAddRequest.FormItemVo();
-        formItemVo.setTitle("流程名称:");
-        formItemVo.setContent(processDefinition.getName());
+        formItemVo.setTitle("请假单号");
+        formItemVo.setContent(processInstance.getBusinessKey());
         formItemList.add(formItemVo);
+        WorkrecordAddRequest.FormItemVo formItemVo3 = new WorkrecordAddRequest.FormItemVo();
+        formItemVo3.setTitle("审批节点");
+        formItemVo3.setContent(entity.getName());
+        formItemList.add(formItemVo3);
         WorkrecordAddRequest.FormItemVo formItemVo1 = new WorkrecordAddRequest.FormItemVo();
-        formItemVo1.setTitle("创建时间:");
+        formItemVo1.setTitle("创建时间");
         formItemVo1.setContent(DateUtil.format(entity.getCreateTime(),"yyyy-MM-dd HH:mm:ss"));
         formItemList.add(formItemVo1);
         WorkrecordAddRequest.FormItemVo formItemVo2 = new WorkrecordAddRequest.FormItemVo();
-        formItemVo2.setTitle("发起人:");
-        formItemVo2.setContent(processInstance.getStartUserId());
+        formItemVo2.setTitle("发起人");
+        formItemVo2.setContent(getUserInfo(processInstance.getStartUserId()).getUserName());
         formItemList.add(formItemVo2);
         workrecordAddRequest.setFormItemList(formItemList);
         return workrecordAddRequest;
     }
 
+    /**
+     * 获取流程定义信息
+     * @param processDefinitionId
+     * @return
+     */
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
         RepositoryService repositoryService = (RepositoryService)SpringContextUtil.getBean(RepositoryService.class);
         return repositoryService.createProcessDefinitionQuery()
                 .processDefinitionId(processDefinitionId)
                 .singleResult();
+    }
+
+    /**
+     * 获取用户信息
+     * @param userId
+     * @return
+     */
+    protected SysUser getUserInfo(String userId) {
+        SysUserServiceImpl sysUserService = (SysUserServiceImpl)SpringContextUtil.getBean(SysUserServiceImpl.class);
+        return Optional.ofNullable(sysUserService.selectUserById(Long.parseLong(userId))).orElse(
+                new SysUser(1L,"System","manager4480")
+        );
     }
 
 

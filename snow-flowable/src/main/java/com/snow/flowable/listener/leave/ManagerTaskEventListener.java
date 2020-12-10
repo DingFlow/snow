@@ -43,11 +43,6 @@ public class ManagerTaskEventListener extends AbstractEventListener {
                 )));
     }
 
-    @Override
-    protected void process(FlowableEngineEvent flowableEngineEvent) {
-
-    }
-
 
 
     @Override
@@ -63,9 +58,9 @@ public class ManagerTaskEventListener extends AbstractEventListener {
 
     @Override
     protected void taskCompleted(FlowableEngineEntityEvent event) {
-        SysOaLeaveServiceImpl sysOaLeaveService = (SysOaLeaveServiceImpl)SpringContextUtil.getBean(SysOaLeaveServiceImpl.class);
         //任务完成做一些业务处理
         log.info("ManagerTaskEventListener----taskCompleted任务完成监听：{}",JSON.toJSONString(event));
+        SysOaLeaveServiceImpl sysOaLeaveService = (SysOaLeaveServiceImpl)SpringContextUtil.getBean(SysOaLeaveServiceImpl.class);
         TaskEntity entity = (TaskEntity)event.getEntity();
         DelegateExecution execution = getExecution(event);
         SysOaLeave sysOaLeave=new SysOaLeave();

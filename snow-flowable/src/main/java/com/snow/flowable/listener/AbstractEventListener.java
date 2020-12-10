@@ -259,27 +259,11 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
                 //在流程中存在的才监听
                 if(flowDefEnum.getCode().equals(key)){
                     initEngineEventType(flowableEngineEvent);
-                    //会监听多次
-                    execute(flowableEngineEvent);
                 }
             }
         }
 
     }
-
-    protected void execute(FlowableEngineEvent flowableEngineEvent) {
-        try {
-            process(flowableEngineEvent);
-        } catch (RuntimeException e) {
-            log.error("执行监听异常", e);
-            throw e;
-        }
-    }
-
-    /**
-     * 抽象需要执行的程序类
-     */
-    protected abstract void process(FlowableEngineEvent flowableEngineEvent);
 
 
 

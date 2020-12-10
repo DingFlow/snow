@@ -54,7 +54,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
         req.setWorkPlace(sysUser.getWorkPlace());
         req.setRemark(sysUser.getRemark());
         //部门list
-        req.setDeptIdList(JSON.toJSONString(sysUser.getDept().getDeptId()));
+        req.setDeptIdList(JSON.toJSONString(sysUser.getDeptId()));
         List<OapiV2UserCreateRequest.DeptOrder> list2 = new ArrayList<>();
         //员工在对应的部门中的职位
         List<OapiV2UserCreateRequest.DeptTitle> deptTitleList = new ArrayList<>();
