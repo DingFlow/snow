@@ -125,12 +125,10 @@ public class FlowModelerController extends BaseController
      */
     @RequiresPermissions("modeler:flow:getProcessDiagram")
     @GetMapping("/getProcessDiagram")
-    @ResponseBody
-    public void getProcessDiagram(String processInstanceId,HttpServletResponse response)
+    public void getProcessDiagram(String processInstanceId,HttpServletResponse response,ModelMap modelMap)
     {
-        flowableService.getFlowableProcessImage(processInstanceId,response);
+        flowableService.getFlowableProcessImage(processInstanceId, response);
     }
-
     /**
      * 删除发布
      */

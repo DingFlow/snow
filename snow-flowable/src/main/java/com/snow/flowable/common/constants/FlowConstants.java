@@ -35,6 +35,15 @@ public class FlowConstants {
      */
     public static final String BUS_VAR="bus_var_json";
     /**
+     * 表单数据
+     */
+    public static final String APP_FORM="appForm";
+
+    /**
+     * 跳转数据详情页
+     */
+    public static final String BUS_VAR_URL="busVarUrl";
+    /**
      * 当前类的包名
      */
     public static final String CLASS_PACK_NAME="classPackName";

@@ -11,4 +11,14 @@ import com.snow.flowable.domain.AppForm;
 public interface AppFormService {
     <A extends AppForm> A  getAppFrom(String classInfoJson,String className);
     <A extends AppForm> A getAppFrom(String classInfoJson,Class<A> className);
+
+    /**
+     * 从流程中获取表单数据
+     * @param processInstanceId
+     * @param <A>
+     * @return
+     */
+    <A extends AppForm> A getAppFromBySerializable(String processInstanceId);
+
+    <A extends AppForm> A getAppFrom(String processInstanceId);
 }

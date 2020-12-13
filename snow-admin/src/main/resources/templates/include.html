@@ -41,6 +41,10 @@
 	<script th:inline="javascript"> var ctx = [[@{/}]]; </script>
 </div>
 
+<!--图片显示JS-->
+<div th:fragment="jquery-ajax-blob-arraybuffer">
+	<script th:href="@{/ruoyi/js/jquery-ajax-blob-arraybuffer.js}" ></script>
+</div>
 <!-- ztree树插件 -->
 <div th:fragment="ztree-css">
     <link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>

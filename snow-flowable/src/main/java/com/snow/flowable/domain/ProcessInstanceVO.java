@@ -1,6 +1,8 @@
 package com.snow.flowable.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.common.utils.spring.SpringUtils;
@@ -35,83 +37,92 @@ public class ProcessInstanceVO  implements Serializable {
     /**
      * 流程定义ID
      */
-    public String processDefinitionId;
+    private String processDefinitionId;
     /**
      * 流程定义名称
      */
-    public String processDefinitionName;
+    private String processDefinitionName;
     /**
      * 流程定义key
      */
-    public String processDefinitionKey;
+    private String processDefinitionKey;
 
     /**
      * 流程版本号
      */
-    public Integer processDefinitionVersion;
+    private Integer processDefinitionVersion;
     /**
      * 发布ID
      */
-    public String deploymentId;
+    private String deploymentId;
     /**
      * 开始时间
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    public Date startTime;
+    private Date startTime;
     /**
      * 结束时间
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    public Date endTime;
+    private Date endTime;
 
-    public String endActivityId;
+    private String endActivityId;
     /**
      * 流程发起人ID
      */
-    public String startUserId;
+    private String startUserId;
 
     /**
      * 流程发起人
      */
-    public String startUserName;
+    private String startUserName;
 
-    public String startActivityId;
+    private String startActivityId;
 
     /**
      * 删除理由
      */
-    public String deleteReason;
+    private String deleteReason;
     /**
      * 流程用时
      */
-    public String processSpendTime;
+    private String processSpendTime;
     /**
      * 父流程ID
      */
-    public String superProcessInstanceId;
+    private String superProcessInstanceId;
 
-    public String tenantId;
-
-
-    public String description;
-
-    public String callbackId;
-
-    public String callbackType;
+    private String tenantId;
 
 
+    private String description;
+
+    private String callbackId;
+
+    private String callbackType;
+
+    /**
+     * 表单详情URL
+     */
+    private String fromDetailUrl;
     /**
      * 业务参数
      */
-    public String businessKey;
+    private String businessKey;
     /**
      * 是否结束(0--进行中，1--结束)
      */
-    public Integer isFinished;
+    private Integer isFinished;
 
-    Map<String, Object> processVariables;
+    /**
+     * 业务流程参数
+     */
+    @JsonIgnoreProperties
+    private AppForm appForm;
 
-    public String processDefinitionCategory;
+    private Map<String, Object> processVariables;
+
+    private String processDefinitionCategory;
 
     public static List<ProcessInstanceVO> warpList(List<HistoricProcessInstance> historicProcessInstanceList){
        return historicProcessInstanceList.stream().map(t->{

@@ -1,17 +1,22 @@
 package com.snow.web.controller.flowable;
 
+import com.alibaba.fastjson.JSON;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.StringUtils;
+import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.*;
+import com.snow.flowable.domain.leave.SysOaLeaveForm;
+import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaLeave;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaLeaveService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
@@ -33,6 +38,7 @@ import java.util.List;
  **/
 @Controller
 @RequestMapping("/flow")
+@Slf4j
 public class FlowController extends BaseController {
     private String prefix = "flow";
 
@@ -40,6 +46,8 @@ public class FlowController extends BaseController {
     private ISysOaLeaveService sysOaLeaveService;
     @Autowired
     private FlowableServiceImpl flowableService;
+    @Autowired
+    private AppFormService appFormService;
 
 
     /**
@@ -97,7 +105,29 @@ public class FlowController extends BaseController {
         SysUser sysUser = ShiroUtils.getSysUser();
         processInstanceDTO.setStartedUserId(String.valueOf(sysUser.getUserId()));
         PageModel<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
+        log.info(JSON.toJSONString(historicProcessInstance.getPagedRecords()));
         return getFlowDataTable(historicProcessInstance);
+    }
+
+
+
+    /**
+     * 跳转我发起的流程详情
+     */
+    @GetMapping("/myStartProcessDetail")
+    @RequiresPermissions("system:flow:myStartProcessDetail")
+    public String myStartProcessDetail(String processInstanceId,ModelMap modelMap)
+    {
+        //已审批的
+        HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
+        historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
+        //historicTaskInstanceDTO.setProcessStatus(1);
+        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        AppForm appFrom = appFormService.getAppFromBySerializable(processInstanceId);
+        modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
+        modelMap.put("processInstanceId",processInstanceId);
+        modelMap.put("busVarUrl",appFrom.getBusVarUrl());
+        return prefix +"/myStartProcessDetail";
     }
 
     @RequiresPermissions("flow:process:getMyTakePartInProcess")

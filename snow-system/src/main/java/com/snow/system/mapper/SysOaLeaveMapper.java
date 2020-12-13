@@ -20,6 +20,12 @@ public interface SysOaLeaveMapper
     public SysOaLeave selectSysOaLeaveById(Integer id);
 
     /**
+     * 查询请求单
+     * @param leaveNo
+     * @return
+     */
+    public SysOaLeave selectSysOaLeaveByLeaveNo(String leaveNo);
+    /**
      * 查询请假单列表
      * 
      * @param sysOaLeave 请假单

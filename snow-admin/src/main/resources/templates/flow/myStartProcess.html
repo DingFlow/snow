@@ -41,6 +41,8 @@
      <script th:inline="javascript">
          var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
 
+         var detailFlag = [[${@permission.hasPermi('system:flow:myStartProcessDetail')}]];
+
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
          var prefix = ctx + "modeler";
          var prefixFlow = ctx + "flow";
@@ -55,7 +57,6 @@
                  showColumns: false,                   // 是否显示隐藏某列下拉框
                  showToggle: false,
                  showSearch: false,                     // 是否显示检索信息
-                 // rowStyle:rowStyle,//通过自定义函数设置行样式
                  columns: [
                      {
                          title: '序号',
@@ -70,8 +71,11 @@
 
                      {
                          field: 'businessKey',
-                         title: '单号'
-
+                         title: '单号',
+                         formatter: function(value, row, index) {
+                             var fromDetailUrl= row.fromDetailUrl;
+                             return '<a class="success" href="' + fromDetailUrl+ '" >'+value+'</a> ';
+                         }
                      },
                      {
                          field: 'startUserName',
@@ -102,7 +106,7 @@
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
-                             actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>流程图</a>');
+                             actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
                              return actions.join('');
                          }
                      }]
@@ -111,19 +115,10 @@
          });
 
          function getProcessDiagram(processInstanceId) {
+             var preViewUrl=prefixFlow+'/myStartProcessDetail?processInstanceId='+processInstanceId;
+             $.modal.openTab("详情", preViewUrl);
+         }
 
-             var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
-             $.modal.openTab("流程图", preViewUrl);
-         }
-         function rowStyle(row, index) {
-             var classes = [ 'success', 'info', 'warning', 'danger'];
-             if (index % 2 === 0 && index / 2 < classes.length) {
-                 return {
-                     classes: classes[index / 2]
-                 };
-             }
-             return {};
-         }
      </script>
 </body>
 </html>

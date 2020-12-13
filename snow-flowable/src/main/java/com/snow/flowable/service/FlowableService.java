@@ -3,6 +3,7 @@ package com.snow.flowable.service;
 import com.snow.common.core.page.PageModel;
 import com.snow.flowable.domain.*;
 import com.snow.system.domain.ActDeModel;
+import com.snow.system.domain.SysUser;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -12,6 +13,7 @@ import org.flowable.task.api.history.HistoricTaskInstance;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author qimingjin
@@ -98,6 +100,20 @@ public interface FlowableService {
     PageModel<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
     /**
+     * 根据任务ID获取关联待办人活着待办组的人
+     * @param taskId
+     * @return
+     */
+    Set<SysUser> getIdentityLinksForTask(String taskId,String type);
+
+    /**
+     * 获取历史的
+     * @param taskId
+     * @return
+     */
+    Set<SysUser>  getHistoricIdentityLinksForTask(String taskId);
+
+    /**
      * 完成任务
      * @param completeTaskDTO
      */
@@ -108,6 +124,7 @@ public interface FlowableService {
      * @param httpServletResponse
      * @param processId
      */
+     @Deprecated
      void getProcessDiagram(HttpServletResponse httpServletResponse, String processId);
 
     /**

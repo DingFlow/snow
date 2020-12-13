@@ -34,6 +34,16 @@ public class SysOaLeaveServiceImpl implements ISysOaLeaveService
     }
 
     /**
+     *
+     * @param leaveNo
+     * @return
+     */
+    @Override
+    public SysOaLeave selectSysOaLeaveByLeaveNo(String leaveNo) {
+        return sysOaLeaveMapper.selectSysOaLeaveByLeaveNo(leaveNo);
+    }
+
+    /**
      * 查询请假单列表
      * 
      * @param sysOaLeave 请假单
