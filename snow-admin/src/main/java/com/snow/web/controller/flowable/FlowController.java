@@ -138,7 +138,7 @@ public class FlowController extends BaseController {
         return prefix+"/myTakePartInProcess";
     }
     /**
-     * 获取我的流程实例
+     * 获取我办结的任务列表
      * @param historicTaskInstanceDTO
      * @return
      */

@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
+import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
@@ -594,13 +595,14 @@ public class FlowableServiceImpl implements FlowableService {
         }
 
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessStatus())){
-            Integer processStatus= historicTaskInstanceDTO.getProcessStatus();
-            if(processStatus==FlowFinishedStatusEnum.FLOW_ING.getCode()){
+            WorkRecordStatus workRecordStatus=historicTaskInstanceDTO.getProcessStatus();
+            if( workRecordStatus.equals(WorkRecordStatus.NO_FINISHED)){
                 historicTaskInstanceQuery.unfinished();
-            }else if(processStatus==FlowFinishedStatusEnum.FLOW_FINISHED.getCode()){
+            }else if(workRecordStatus.equals(WorkRecordStatus.FINISHED)){
                 historicTaskInstanceQuery.finished();
             }
         }
+
         historicTaskInstanceQuery.includeTaskLocalVariables().includeProcessVariables().includeIdentityLinks();
         List<HistoricTaskInstance> list = historicTaskInstanceQuery.orderByTaskCreateTime().asc().list();
         List<HistoricTaskInstanceVO> historicTaskInstanceVOS = HistoricTaskInstanceVO.warpList(list);
@@ -768,18 +770,42 @@ public class FlowableServiceImpl implements FlowableService {
     @Override
     public PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO) {
         HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
+
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessDefinitionName())){
             historicTaskInstanceQuery.processDefinitionName(historicTaskInstanceDTO.getProcessDefinitionName());
         }
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getUserId())){
-            historicTaskInstanceQuery.taskAssignee(historicTaskInstanceDTO.getUserId());
+        //只能判断null,不能判断""
+        Optional.ofNullable(historicTaskInstanceDTO.getUserId()).ifPresent(
+                userId-> {
+                    if(!StringUtils.isEmpty(historicTaskInstanceQuery.taskAssignee(userId))){
+                      historicTaskInstanceQuery.taskAssignee(userId);
+                    }
+                }
+        );
+        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKeyLike())){
+            historicTaskInstanceQuery.processInstanceBusinessKeyLike(historicTaskInstanceDTO.getBusinessKeyLike());
         }
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKey())){
             historicTaskInstanceQuery.processInstanceBusinessKey(historicTaskInstanceDTO.getBusinessKey());
         }
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKeyLike())){
-            historicTaskInstanceQuery.processInstanceBusinessKeyLike(historicTaskInstanceDTO.getBusinessKeyLike());
-        }
+        Optional.ofNullable(historicTaskInstanceDTO.getTaskStatus()).ifPresent(m->{
+            if(m.equals(WorkRecordStatus.NO_FINISHED)){
+                historicTaskInstanceQuery.unfinished();
+            }
+            if(m.equals(WorkRecordStatus.FINISHED)){
+                historicTaskInstanceQuery.finished();
+            }
+        });
+
+        Optional.ofNullable(historicTaskInstanceDTO.getProcessStatus()).ifPresent(m->{
+            if(m.equals(WorkRecordStatus.NO_FINISHED)){
+                historicTaskInstanceQuery.processUnfinished();
+            }
+            if(m.equals(WorkRecordStatus.FINISHED)){
+                historicTaskInstanceQuery.processFinished();
+            }
+        });
+        historicTaskInstanceQuery.includeIdentityLinks().includeProcessVariables().includeTaskLocalVariables();
         long count = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
                 desc().
                 count();
@@ -795,8 +821,18 @@ public class FlowableServiceImpl implements FlowableService {
                 SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getAssignee()));
                 historicTaskInstanceVO.setAssignee(sysUser.getUserName());
             }
+            Map<String, Object> processVariables = t.getProcessVariables();
+            String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
+            if(!StringUtils.isEmpty(url)){
+                historicTaskInstanceVO.setFromDetailUrl(url+"?processInstanceId="+t.getProcessInstanceId());
+            }
+            AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
+            historicTaskInstanceVO.setAppForm(appForm);
+            historicTaskInstanceVO.setCompleteTime(t.getEndTime());
             String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
             historicTaskInstanceVO.setHandleTaskTime(spendTime);
+            historicTaskInstanceVO.setTaskId(t.getId());
+            historicTaskInstanceVO.setTaskName(t.getName());
             HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
             historicTaskInstanceVO.setProcessName(historicProcessInstance.getProcessDefinitionName());
             historicTaskInstanceVO.setBusinessKey(historicProcessInstance.getBusinessKey());

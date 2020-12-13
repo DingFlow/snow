@@ -94,7 +94,10 @@ public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
     private String owner;
 
 
+    private String fromDetailUrl;
 
+
+    private AppForm appForm;
 
 
     private int priority;

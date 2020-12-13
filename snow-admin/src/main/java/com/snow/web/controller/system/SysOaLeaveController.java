@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.constant.SequenceContants;
+import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.*;
@@ -197,7 +198,7 @@ public class SysOaLeaveController extends BaseController
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setBusinessKey(sysOaLeave.getLeaveNo());
         historicTaskInstanceDTO.setProcessInstanceId(sysOaLeave.getProcessInstanceId());
-        historicTaskInstanceDTO.setProcessStatus(1);
+        historicTaskInstanceDTO.setProcessStatus(WorkRecordStatus.FINISHED);
         List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
         String spendTime = DateUtil.formatBetween(sysOaLeave.getStartTime(), sysOaLeave.getEndTime(), BetweenFormater.Level.SECOND);
         sysOaLeave.setLeaveTime(spendTime);
