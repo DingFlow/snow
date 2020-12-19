@@ -2,6 +2,7 @@ package com.snow.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysUserPost;
@@ -72,6 +73,11 @@ public class SysUserServiceImpl implements ISysUserService
     public List<SysUser> selectUserList(SysUser user)
     {
         return userMapper.selectUserList(user);
+    }
+
+    @Override
+    public List<SysUser> selectUserListByRoleIds(List<Long> roleIds) {
+        return userMapper.selectUserListByRoleIds(roleIds);
     }
 
     /**
@@ -295,7 +301,7 @@ public class SysUserServiceImpl implements ISysUserService
     /**
      * 新增用户角色信息
      * 
-     * @param user 用户对象
+     * @param userId 用户对象
      */
     public void insertUserRole(Long userId, Long[] roleIds)
     {

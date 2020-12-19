@@ -58,6 +58,7 @@ public class SysRoleController extends BaseController
     public List<SysRole> list(SysRole role)
     {
         startPage();
+        role.setRoleType(UserConstants.SYSTEM_ROLE_TYPE);
         List<SysRole> list = roleService.selectRoleList(role);
         return list;
     }

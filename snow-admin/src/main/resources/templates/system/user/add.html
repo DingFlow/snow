@@ -57,11 +57,11 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label is-required">工号：</label>
+                        <label class="col-sm-4 control-label">工号：</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <input id="jobnumber" name="jobnumber" placeholder="请输入工号" class="form-control" type="text"  required>
-                                <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                                <input id="jobnumber" name="jobnumber" th:value="${jobNumber}"  class="form-control" type="text" readonly>
+                                <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         <div class="col-sm-8">
                             <div class="input-group">
                                 <input id="workPlace" name="workPlace" class="form-control" type="text" maxlength="20" placeholder="请输入工作地点" required>
-                                <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                                <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
                             </div>
                         </div>
                     </div>
@@ -84,8 +84,8 @@
                         <label class="col-sm-4 control-label is-required">入职时间：</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <input id="hiredDate" name="hiredDate" placeholder="请输入入职时间" class="form-control" type="text"  required>
-                                <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                                <input id="hiredDate" name="hiredDate"  type="text" class="form-control"  placeholder="yyyy-MM-dd">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
                     </div>
@@ -195,6 +195,15 @@
 	<th:block th:include="include :: footer" />
 	<th:block th:include="include :: select2-js" />
 	<script>
+
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+
+            laydate.render({
+                elem: '#hiredDate',
+                type: 'date'
+            });
+        });
 	    var prefix = ctx + "system/user";
 	
         $("#form-user-add").validate({
@@ -274,9 +283,12 @@
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	var roleIds = $.form.selectCheckeds("role");
 	        	var postIds = $.form.selectSelects("post");
+	        	var hiredDate=$("#hiredDate").val();
+	        	var date= new Date(hiredDate);
 	        	data.push({"name": "status", "value": status});
 	        	data.push({"name": "roleIds", "value": roleIds});
 	        	data.push({"name": "postIds", "value": postIds});
+                data.push({"name": "hiredDate", "value": date.getTime()});
 	        	$.operate.saveTab(prefix + "/add", data);
 	        }
 	    }

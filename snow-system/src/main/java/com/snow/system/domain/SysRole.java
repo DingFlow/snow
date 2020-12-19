@@ -57,6 +57,17 @@ public class SysRole extends BaseEntity
     /** 部门组（数据权限） */
     private Long[] deptIds;
 
+
+    public Integer getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Integer roleType) {
+        this.roleType = roleType;
+    }
+
+    private Integer roleType;
+
     /** 子菜单 */
     private List<SysRole> children = new ArrayList<>();
 

@@ -7,6 +7,7 @@ import com.snow.flowable.domain.DeploymentQueryDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.domain.TaskVO;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.TaskService;
@@ -35,6 +36,9 @@ public class FlowableServiceTests extends JunitTestApplication {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private FlowableUserServiceImpl flowableUserService;
+
     @Test
     public void startProcessInstanceByKey(){
         StartProcessDTO startProcessDTO=new StartProcessDTO();
@@ -50,9 +54,10 @@ public class FlowableServiceTests extends JunitTestApplication {
 
     @Test
     public void getDeploymentList(){
-        DeploymentQueryDTO startProcessDTO=new DeploymentQueryDTO();
+        flowableUserService.getUserByFlowGroupId(108L);
+        //DeploymentQueryDTO startProcessDTO=new DeploymentQueryDTO();
 
-        flowableService.getDeploymentList(startProcessDTO);
+    //    flowableService.getDeploymentList(startProcessDTO);
 
     }
     @Test
