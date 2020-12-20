@@ -32,7 +32,8 @@ public class FlowableUserServiceImpl implements FlowableUserService {
 
     //存放所有子几点
     private static Set<Long> childFlowGroup= new HashSet<>();
-    
+    //存放所有的父节点
+    private static Set<Long> parentFlowGroup= new HashSet<>();
     @Autowired
     private ISysUserService iSysUserService;
     @Autowired
@@ -127,8 +128,9 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     }
 
     @Override
-    public List<SysRole> getFlowGroupByUserId(String userId) {
-        return null;
+    public List<SysRole> getFlowGroupByUserId(Long userId) {
+        List<SysRole> sysRoles = sysRoleService.selectRolesByUserId(userId);
+        return sysRoles;
     }
 
  
@@ -149,11 +151,31 @@ public class FlowableUserServiceImpl implements FlowableUserService {
             for(FlowGroupDO flowGroupDO: sysRoleList){
                 // 不为空则递归
                 getAllSonSysRoleList(flowGroupDO.getRoleId());
-
             }
         }
         return childFlowGroup;
     }
 
+    /**
+     * 获取某个子节点下面的所有父节点
+     * @param roleId
+     * @return
+     */
+    public  Set<Long> getAllParentSysRoleList(Long roleId){
+        SysRole sysRole = sysRoleService.selectRoleById(roleId);
+        if(StringUtils.isNotNull(sysRole)){
+            FlowGroupDO flowGroupDO=new FlowGroupDO();
+            flowGroupDO.setRoleId(sysRole.getParentId());
+            flowGroupDO.setRoleType(UserConstants.FLOW_ROLE_TYPE);
+            List<FlowGroupDO> sysRoleList = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
+            Set<Long> collect = sysRoleList.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toSet());
+            parentFlowGroup.addAll(collect);
+            for(Long id: collect){
+                // 不为空则递归
+                getAllParentSysRoleList(id);
+            }
+        }
+        return parentFlowGroup;
+    }
 
 }

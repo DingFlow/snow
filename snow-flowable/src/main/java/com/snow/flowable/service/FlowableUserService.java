@@ -49,5 +49,5 @@ public interface FlowableUserService {
      * @param userId
      * @return
      */
-    List<SysRole> getFlowGroupByUserId(String userId);
+    List<SysRole> getFlowGroupByUserId(Long userId);
 }

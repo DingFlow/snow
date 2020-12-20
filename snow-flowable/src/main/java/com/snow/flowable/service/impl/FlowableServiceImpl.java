@@ -18,6 +18,7 @@ import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableUserService;
 import com.snow.system.domain.ActDeModel;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
@@ -116,6 +117,9 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Resource
+    private FlowableUserService flowableUserService;
 
     @Override
     public void saveModel(ActDeModel actDeModel) {
@@ -387,7 +391,7 @@ public class FlowableServiceImpl implements FlowableService {
             )
                     .forEach(identityLink -> {
                         String groupId = identityLink.getGroupId();
-                        List<SysUser> sysUsers = sysUserMapper.selectUserListByRoleId(groupId);
+                        List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
                         userList.addAll(sysUsers);
                     });
             identityLinksForTask.stream().filter(identityLink ->
@@ -419,7 +423,7 @@ public class FlowableServiceImpl implements FlowableService {
                     &&identityLink.getType().equals("candidate"))
                     .forEach(identityLink -> {
                         String groupId = identityLink.getGroupId();
-                        List<SysUser> sysUsers = sysUserMapper.selectUserListByRoleId(groupId);
+                        List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
                         userList.addAll(sysUsers);
                     });
             historicIdentityLinksForTask.stream().filter(identityLink -> !StringUtils.isEmpty(identityLink.getUserId())
@@ -922,7 +926,7 @@ public class FlowableServiceImpl implements FlowableService {
                                 }else {
                                     for (String candidateGroup:candidateGroups){
                                         if(com.snow.common.utils.StringUtils.isNumeric(candidateGroup)){
-                                            List<SysUser> sysUsers = sysUserMapper.selectUserListByRoleId(candidateGroup);
+                                            List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(candidateGroup));
                                             if(!CollectionUtils.isEmpty(sysUsers)){
                                                 List<String> collect = sysUsers.stream().map(SysUser::getUserName).collect(Collectors.toList());
                                                 handleNameList.addAll(collect);
@@ -1061,6 +1065,13 @@ public class FlowableServiceImpl implements FlowableService {
         }
     }
 
+    /**
+     * 获取高亮的线
+     * @param bpmnModel
+     * @param processDefinitionEntity
+     * @param historicActivityInstances
+     * @return
+     */
     private List<String> getHighLightedFlows(BpmnModel bpmnModel,ProcessDefinitionEntity processDefinitionEntity,List<HistoricActivityInstance> historicActivityInstances) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //24小时制
         List<String> highFlows = new ArrayList<String>();// 用以保存高亮的线flowId

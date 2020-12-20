@@ -115,7 +115,7 @@ public class SysUserController extends BaseController
 
         String jobNumber = sysSequenceService.getNewSequenceNo("SNOW");
         mmap.put("jobNumber",jobNumber);
-        mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()&&r.getRoleType()==UserConstants.SYSTEM_ROLE_TYPE).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostAll());
         return prefix + "/add";
     }
