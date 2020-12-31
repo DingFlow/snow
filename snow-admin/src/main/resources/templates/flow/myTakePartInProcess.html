@@ -60,13 +60,17 @@
                          title: '流程名称'
                      },
                      {
-                         field: 'name',
+                         field: 'taskName',
                          title: '任务名称'
                      },
 
                      {
                          field: 'businessKey',
-                         title: '单号'
+                         title: '单号',
+                         formatter: function(value, row, index) {
+                             var fromDetailUrl= row.fromDetailUrl;
+                             return '<a class="success" href="' + fromDetailUrl+ '" target="_blank">'+value+'</a> ';
+                         }
 
                      },
                      {
@@ -75,11 +79,11 @@
                      },
 
                      {
-                         field: 'endTime',
+                         field: 'completeTime',
                          title: '完成时间'
                      },
                      {
-                         field: 'spendTime',
+                         field: 'handleTaskTime',
                          title: '任务耗时'
                      },
 

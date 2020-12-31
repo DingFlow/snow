@@ -21,56 +21,30 @@ import java.util.stream.Collectors;
  * @date 2020/11/26 16:41
  */
 @Data
-public class HistoricTaskInstanceVO implements Serializable {
-    /**
-     * 历史任务id
-     */
-    private String id;
+public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
+
 
     /**
      * 流程执行ID
      */
     private String executionId;
 
-    /**
-     * 流程实例id
-     */
-    private String processInstanceId;
+
 
     /**
      *流程名称
      */
     private String processName;
 
-    /**
-     *业务参数
-     */
-    private String businessKey;
+
 
     /**
      * 任务定义ID
      */
     private String taskDefinitionId;
 
-    /**
-     * 创建时间
-     */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
 
-    /**
-     * 完成时间
-     */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
-    /**
-     * 用时
-     */
-    private String spendTime;
-    /**
-     * 任务名称
-     */
-    private String name;
+
     /**
      * 用户ID
      */
@@ -82,13 +56,10 @@ public class HistoricTaskInstanceVO implements Serializable {
      */
     private String assigneeName;
 
+
     /**
-     * 任务描述
+     * 是否通过驳回
      */
-    private String description;
-
-    private String category;
-
     private String isPass;
 
     /**
@@ -102,12 +73,11 @@ public class HistoricTaskInstanceVO implements Serializable {
     private  List<Attachment> attachmentList;
 
     /**
-     * 任务变量
+     * 任务节点变量
      */
     private Map<String, Object> taskLocalVariables;
 
 
-    private String formKey;
 
     /**
      * 流程变量
@@ -115,30 +85,26 @@ public class HistoricTaskInstanceVO implements Serializable {
     private Map<String, Object> processVariables;
 
 
-/*    private String scopeId;
-    private String subScopeId;
-    private String scopeType;
-    private String scopeDefinitionId;
-    private String propagatedStageInstanceId;*/
-
 
 
     private String deleteReason;
 
-    private String localizedName;
-    private String parentTaskId;
 
-    private String localizedDescription;
+
     private String owner;
 
 
-    private String taskDefinitionKey;
+    private String fromDetailUrl;
 
+
+    private AppForm appForm;
 
 
     private int priority;
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date dueDate;
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date claimTime;
 
@@ -148,7 +114,11 @@ public class HistoricTaskInstanceVO implements Serializable {
             HistoricTaskInstanceVO historicTaskInstanceVO=new HistoricTaskInstanceVO();
             BeanUtils.copyProperties(t,historicTaskInstanceVO);
             historicTaskInstanceVO.setTaskLocalVariables(t.getTaskLocalVariables());
-
+            historicTaskInstanceVO.setTaskId(t.getId());
+            historicTaskInstanceVO.setTaskName(t.getName());
+            //老的createTime底层换成了time getCreateTime
+            historicTaskInstanceVO.setStartTime(t.getTime());
+            historicTaskInstanceVO.setCompleteTime(t.getEndTime());
             historicTaskInstanceVO.setProcessVariables(t.getProcessVariables());
             return historicTaskInstanceVO;
         }).collect(Collectors.toList());

@@ -1,6 +1,7 @@
 package com.snow.flowable.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.snow.system.domain.SysUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author qimingjin
@@ -27,37 +29,79 @@ import java.util.List;
 @NoArgsConstructor
 public class TaskVO implements Serializable {
 
+    /**
+     * 任务ID
+     */
     private String taskId;
 
+    /**
+     * 任务名称
+     */
     private String taskName;
 
+    /**
+     * 流程定义名称
+     */
     private String processDefinitionName;
 
+    /**
+     * 任务描述
+     */
     private String description;
 
+    /**
+     * 委托人
+     */
     private String owner;
 
+    /**
+     * 父任务ID
+     */
     private String parentTaskId;
 
+    /**
+     * 租户ID
+     */
     private String tenantId;
     /**
      * 任务处理人
      */
     private String Assignee;
 
+    /**
+     * 任务创建时间
+     */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
+    /**
+     * 分类
+     */
     private String category;
 
+    /**
+     * fromKey
+     */
     private String formKey;
 
+    /**
+     * 流程实例id
+     */
     private String processInstanceId;
 
+    /**
+     * 流程发起人id
+     */
     private String startUserId;
 
+    /**
+     * 发起人名称
+     */
     private String startUserName;
 
+    /**
+     * 业务主键
+     */
     private String businessKey;
     /**
      * 任务发起时间
@@ -90,6 +134,6 @@ public class TaskVO implements Serializable {
     /**
      * 任务待处理人
      */
-    private List<String> handleNameList;
+    private List<String> handleUserList;
 }
 

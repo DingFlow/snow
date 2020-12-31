@@ -1,10 +1,13 @@
 package com.snow.flowable.service.impl;
 
 import com.google.common.collect.Lists;
+import com.snow.common.constant.UserConstants;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.service.FlowableUserService;
+import com.snow.system.domain.FlowGroupDO;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.IFlowGroupDOService;
 import com.snow.system.service.ISysRoleService;
 import com.snow.system.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +15,9 @@ import org.flowable.ui.common.model.RemoteGroup;
 import org.flowable.ui.common.model.RemoteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,10 +30,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FlowableUserServiceImpl implements FlowableUserService {
 
+    //存放所有子几点
+    private static Set<Long> childFlowGroup= new HashSet<>();
+    //存放所有的父节点
+    private static Set<Long> parentFlowGroup= new HashSet<>();
     @Autowired
     private ISysUserService iSysUserService;
     @Autowired
     private ISysRoleService sysRoleService;
+
+    @Autowired
+    private IFlowGroupDOService flowGroupDOService;
 
     @Override
     public Map<String, Object> loginFlowable() {
@@ -69,7 +77,7 @@ public class FlowableUserServiceImpl implements FlowableUserService {
             remoteUser.setEmail(t.getEmail());
             remoteUser.setDisplayName(t.getUserName());
             remoteUser.setFullName(t.getUserName());
-            remoteUser.setFirstName(t.getUserName());
+           // remoteUser.setFirstName(t.getUserName());
             remoteUser.setLastName(t.getUserName());
 
             List<SysRole> roles = t.getRoles();
@@ -93,6 +101,7 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     public List<RemoteGroup> getFlowUserGroupList(String filter) {
         SysRole sysRole=new SysRole();
         sysRole.setRoleName(filter);
+        sysRole.setRoleType(UserConstants.FLOW_ROLE_TYPE);
         List<SysRole> sysRoles = sysRoleService.selectRoleList(sysRole);
         List<RemoteGroup> remoteGroupList=Lists.newArrayList();
         if(!StringUtils.isEmpty(sysRoles)) {
@@ -105,6 +114,68 @@ public class FlowableUserServiceImpl implements FlowableUserService {
             }).collect(Collectors.toList());
         }
         return remoteGroupList;
+    }
+
+    @Override
+    public List<SysUser> getUserByFlowGroupId(Long groupId) {
+        FlowGroupDO flowGroupDO = flowGroupDOService.selectFlowGroupDOById(groupId);
+        //先获取所有的子组Id
+        Set<Long> allSonSysRoleList = getAllSonSysRoleList(groupId);
+        allSonSysRoleList.add(flowGroupDO.getRoleId());
+        //根据角色获取所有用户
+        List<SysUser> userList = iSysUserService.selectUserListByRoleIds( new ArrayList<>(allSonSysRoleList));
+        return userList;
+    }
+
+    @Override
+    public List<SysRole> getFlowGroupByUserId(Long userId) {
+        List<SysRole> sysRoles = sysRoleService.selectRolesByUserId(userId);
+        return sysRoles;
+    }
+
+ 
+
+    /**
+     * 获取某个父节点下面的所有子节点
+     * @param parentId
+     * @return
+     */
+    public  Set<Long> getAllSonSysRoleList(Long parentId){
+        FlowGroupDO sysRole=new FlowGroupDO();
+        sysRole.setParentId(parentId);
+        sysRole.setRoleType(UserConstants.FLOW_ROLE_TYPE);
+        List<FlowGroupDO> sysRoleList = flowGroupDOService.selectFlowGroupDOList(sysRole);
+        if(!CollectionUtils.isEmpty(sysRoleList)){
+            Set<Long> collect = sysRoleList.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toSet());
+            childFlowGroup.addAll(collect);
+            for(FlowGroupDO flowGroupDO: sysRoleList){
+                // 不为空则递归
+                getAllSonSysRoleList(flowGroupDO.getRoleId());
+            }
+        }
+        return childFlowGroup;
+    }
+
+    /**
+     * 获取某个子节点下面的所有父节点
+     * @param roleId
+     * @return
+     */
+    public  Set<Long> getAllParentSysRoleList(Long roleId){
+        SysRole sysRole = sysRoleService.selectRoleById(roleId);
+        if(StringUtils.isNotNull(sysRole)){
+            FlowGroupDO flowGroupDO=new FlowGroupDO();
+            flowGroupDO.setRoleId(sysRole.getParentId());
+            flowGroupDO.setRoleType(UserConstants.FLOW_ROLE_TYPE);
+            List<FlowGroupDO> sysRoleList = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
+            Set<Long> collect = sysRoleList.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toSet());
+            parentFlowGroup.addAll(collect);
+            for(Long id: collect){
+                // 不为空则递归
+                getAllParentSysRoleList(id);
+            }
+        }
+        return parentFlowGroup;
     }
 
 }

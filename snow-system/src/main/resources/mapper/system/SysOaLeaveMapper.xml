@@ -47,6 +47,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysOaLeaveVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectSysOaLeaveByLeaveNo" parameterType="String" resultMap="SysOaLeaveResult">
+        <include refid="selectSysOaLeaveVo"/>
+        where leave_no = #{leaveNo}
+    </select>
         
     <insert id="insertSysOaLeave" parameterType="SysOaLeave" useGeneratedKeys="true" keyProperty="id">
         insert into sys_oa_leave

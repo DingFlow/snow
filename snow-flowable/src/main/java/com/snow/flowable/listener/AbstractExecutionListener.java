@@ -27,8 +27,6 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
     private ThreadLocal<T> appFormLocal = new ThreadLocal<>();
 
     private ThreadLocal<DelegateExecution> delegateExecutionLocal=new ThreadLocal();
-    @Autowired
-    private FlowableService flowableService;
 
     @Autowired
     private SysUserServiceImpl sysUserService;
@@ -129,11 +127,9 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
      * @return
      */
     public  T getAppForms(){
-        String busVar = getVariable(FlowConstants.BUS_VAR);
-        String classPackName = getVariable(FlowConstants.CLASS_PACK_NAME);
         T t = appFormLocal.get();
         if(t==null){
-            appFormLocal.set(appFormService.getAppFrom(busVar,classPackName));
+            appFormLocal.set(appFormService.getAppFrom(getProcessInstanceId()));
             t=appFormLocal.get();
         }
         return t;

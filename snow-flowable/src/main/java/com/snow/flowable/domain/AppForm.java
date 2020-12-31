@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Data
 public abstract class AppForm implements Serializable {
 
+    private static final long serialVersionUID = -4544643731565791031L;
     /**
      * 流程发起人
      */
@@ -28,6 +29,7 @@ public abstract class AppForm implements Serializable {
     @NotBlank(message = "业务参数不能为空")
     private String businessKey;
 
+
     /**
      * 业务数据json
      */
@@ -38,6 +40,10 @@ public abstract class AppForm implements Serializable {
     @NotBlank(message = "当前类的包名称不能为空")
     private String classPackName;
 
+    /**
+     * 业务参数URL
+     */
+    private String busVarUrl;
 
     /**
      * 流程申请单需实现此方法,返回申请单对应的流程定义.

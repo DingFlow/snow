@@ -1,5 +1,6 @@
 package com.snow.flowable.domain;
 
+import com.snow.common.enums.WorkRecordStatus;
 import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import lombok.Data;
 
@@ -91,11 +92,16 @@ public class HistoricTaskInstanceDTO  extends FlowBaseDTO implements Serializabl
     /**
      * 流程状态（0--进行中，1-结束）
      */
-    private Integer processStatus;
+    private WorkRecordStatus processStatus;
+
+    /**
+     * 任务状态（0--进行中，1--结束）
+     */
+    private WorkRecordStatus taskStatus;
 
     private Date dueDate;
     
- 
+
 
     private String category;
 

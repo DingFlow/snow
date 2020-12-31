@@ -10,13 +10,13 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.constant.SequenceContants;
-import com.snow.common.enums.ProcessStatus;
+import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.constants.FlowConstants;
-import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.domain.leave.LeaveFinishTaskDTO;
 import com.snow.flowable.domain.leave.SysOaLeaveForm;
+import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
@@ -29,11 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.snow.common.annotation.Log;
 import com.snow.common.enums.BusinessType;
 import com.snow.system.domain.SysOaLeave;
@@ -62,6 +58,9 @@ public class SysOaLeaveController extends BaseController
     private FlowableServiceImpl flowableService;
     @Autowired
     private ISysSequenceService sequenceService;
+
+    @Autowired
+    private AppFormService appFormService;
 
 
     @RequiresPermissions("system:leave:view")
@@ -174,8 +173,9 @@ public class SysOaLeaveController extends BaseController
         BeanUtils.copyProperties(sysOaLeave,sysOaLeaveForm);
         sysOaLeaveForm.setBusinessKey(newSysOaLeave.getLeaveNo());
         sysOaLeaveForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        sysOaLeaveForm.setBusVarJson(com.alibaba.fastjson.JSON.toJSONString(newSysOaLeave));
+        sysOaLeaveForm.setBusVarJson(com.alibaba.fastjson.JSON.toJSONString(sysOaLeaveForm));
         sysOaLeaveForm.setClassPackName(SysOaLeaveForm.class.getCanonicalName());
+        sysOaLeaveForm.setBusVarUrl("/system/leave/leaveDetail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaLeaveForm);
         //提交
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
@@ -198,7 +198,7 @@ public class SysOaLeaveController extends BaseController
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setBusinessKey(sysOaLeave.getLeaveNo());
         historicTaskInstanceDTO.setProcessInstanceId(sysOaLeave.getProcessInstanceId());
-        historicTaskInstanceDTO.setProcessStatus(1);
+        historicTaskInstanceDTO.setProcessStatus(WorkRecordStatus.FINISHED);
         List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
         String spendTime = DateUtil.formatBetween(sysOaLeave.getStartTime(), sysOaLeave.getEndTime(), BetweenFormater.Level.SECOND);
         sysOaLeave.setLeaveTime(spendTime);
@@ -207,6 +207,16 @@ public class SysOaLeaveController extends BaseController
         return prefix + "/detail";
     }
 
+    /**
+     * 请假单详情
+     */
+    @GetMapping("/leaveDetail")
+    public String leaveDetail(@RequestParam("processInstanceId") String processInstanceId, ModelMap mmap)
+    {
+        SysOaLeaveForm appFrom = appFormService.getAppFromBySerializable(processInstanceId);
+        mmap.put("sysOaLeave", appFrom);
+        return prefix + "/leaveDetail";
+    }
     /**
      * 删除请假单
      */

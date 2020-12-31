@@ -1,6 +1,8 @@
 package com.snow.system.service;
 
 import java.util.List;
+import java.util.Set;
+
 import com.snow.system.domain.SysUser;
 import com.snow.system.domain.SysUserRole;
 
@@ -18,6 +20,13 @@ public interface ISysUserService
      * @return 用户信息集合信息
      */
     public List<SysUser> selectUserList(SysUser user);
+
+    /**
+     *
+     * @param roleIds
+     * @return
+     */
+    public List<SysUser>  selectUserListByRoleIds(List<Long> roleIds);
 
     /**
      * 根据条件分页查询已分配用户角色列表
