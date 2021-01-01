@@ -92,6 +92,10 @@ public class Constants
      */
     public static final String RESOURCE_PREFIX = "/profile";
 
+    /**
+     * 系统用户授权缓存
+     */
+    public static final String SYS_AUTH_CACHE = "sys-authCache";
 
     public static final String POST="POST";
 
