@@ -102,6 +102,7 @@ public class SysRoleController extends BaseController
         }
         role.setCreateBy(ShiroUtils.getLoginName());
         ShiroUtils.clearCachedAuthorizationInfo();
+        role.setParentId(0L);
         return toAjax(roleService.insertRole(role));
 
     }
