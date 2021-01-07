@@ -1,7 +1,9 @@
 package com.snow.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
+
+import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,15 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
     public int insertPurchaseOrderMain(PurchaseOrderMain purchaseOrderMain)
     {
         purchaseOrderMain.setCreateTime(DateUtils.getNowDate());
+        List<PurchaseOrderItem> purchaseOrderItemList = purchaseOrderMain.getPurchaseOrderItemList();
+        if(purchaseOrderItemList==null||purchaseOrderItemList.size()==0){
+            throw new BusinessException("采购单明细不能为空");
+        }
+        //计算总价格
+        BigDecimal priceTotal = purchaseOrderItemList.stream().map(PurchaseOrderItem::getTotalPrice).reduce(BigDecimal::add).get();
+        BigDecimal goodsQuantityTotal = purchaseOrderItemList.stream().map(PurchaseOrderItem::getGoodsQuantity).reduce(BigDecimal::add).get();
+        purchaseOrderMain.setTotalPrice(priceTotal);
+        purchaseOrderMain.setTotalQuantity(goodsQuantityTotal);
         int rows = purchaseOrderMainMapper.insertPurchaseOrderMain(purchaseOrderMain);
         insertPurchaseOrderItem(purchaseOrderMain);
         return rows;
@@ -109,7 +120,7 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
     }
 
     /**
-     * 新增${subTable.functionName}信息
+     * 新增信息
      * 
      * @param purchaseOrderMain 采购单主表对象
      */
@@ -122,7 +133,12 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
             List<PurchaseOrderItem> list = new ArrayList<>();
             for (PurchaseOrderItem purchaseOrderItem : purchaseOrderItemList)
             {
+                BigDecimal goodsPrice= Optional.ofNullable(purchaseOrderItem.getGoodsPrice()).orElse(new BigDecimal(0));
+                BigDecimal goodsQuantity=Optional.ofNullable(purchaseOrderItem.getGoodsQuantity()).orElse(new BigDecimal(0));
+                purchaseOrderItem.setTotalPrice(goodsPrice.multiply(goodsQuantity));
                 purchaseOrderItem.setPurchaseOrderNo(orderNo);
+                purchaseOrderItem.setCreateTime(DateUtils.getNowDate());
+                purchaseOrderItem.setCreateBy(purchaseOrderMain.getCreateBy());
                 list.add(purchaseOrderItem);
             }
             if (list.size() > 0)

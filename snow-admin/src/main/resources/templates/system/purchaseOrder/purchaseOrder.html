@@ -19,10 +19,10 @@
                                 <input type="text" name="title"/>
                             </li>
                             <li>
-                                <label>供应商名称：</label>
+                                <label>供应商：</label>
                                 <input type="text" name="supplierName"/>
                             </li>
-                            <li class="select-time">
+                        <!--    <li class="select-time">
                                 <label>订货日期：</label>
                                 <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginOrderTime]"/>
                                 <span>-</span>
@@ -33,7 +33,7 @@
                                 <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginDeliveryDate]"/>
                                 <span>-</span>
                                 <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endDeliveryDate]"/>
-                            </li>
+                            </li>-->
                             <li>
                                 <label>审批状态：</label>
                                 <select name="processStatus" th:with="type=${@dict.getType('process_status')}">
@@ -92,9 +92,14 @@
                     title: 'id',
                     visible: false
                 },
+
                 {
                     field: 'orderNo',
                     title: '订单号'
+                },
+                {
+                    field: 'title',
+                    title: '采购标题'
                 },
                 {
                     field: 'totalQuantity',
@@ -104,10 +109,7 @@
                     field: 'totalPrice',
                     title: '采购总金额'
                 },
-                {
-                    field: 'title',
-                    title: '采购标题'
-                },
+
                 {
                     field: 'supplierName',
                     title: '供应商名称'

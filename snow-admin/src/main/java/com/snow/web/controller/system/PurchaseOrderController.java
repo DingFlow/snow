@@ -41,7 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Controller
 @RequestMapping("/system/purchaseOrder")
-public class PurchaseOrderMainController extends BaseController
+public class PurchaseOrderController extends BaseController
 {
     private String prefix = "system/purchaseOrder";
 
@@ -131,7 +131,6 @@ public class PurchaseOrderMainController extends BaseController
             excelReader.finish();
             
         }
-
         List<PurchaseOrderImport> list = purchaseOrderListener.list;
         return AjaxResult.success(list);
     }
@@ -155,6 +154,8 @@ public class PurchaseOrderMainController extends BaseController
     @ResponseBody
     public AjaxResult editSave(PurchaseOrderMain purchaseOrderMain)
     {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        purchaseOrderMain.setUpdateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(purchaseOrderMainService.updatePurchaseOrderMain(purchaseOrderMain));
     }
 

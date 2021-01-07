@@ -15,7 +15,7 @@
                     <input name="orderNo" th:field="*{orderNo}" class="form-control" type="text">
                 </div>
             </div>
-            <div class="form-group">    
+           <!-- <div class="form-group">
                 <label class="col-sm-3 control-label">总数量：</label>
                 <div class="col-sm-8">
                     <input name="totalQuantity" th:field="*{totalQuantity}" class="form-control" type="text">
@@ -26,7 +26,7 @@
                 <div class="col-sm-8">
                     <input name="totalPrice" th:field="*{totalPrice}" class="form-control" type="text">
                 </div>
-            </div>
+            </div>-->
             <div class="form-group">    
                 <label class="col-sm-3 control-label">采购标题：</label>
                 <div class="col-sm-8">
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label">供应商名称：</label>
+                <label class="col-sm-3 control-label">供应商：</label>
                 <div class="col-sm-8">
                     <input name="supplierName" th:field="*{supplierName}" class="form-control" type="text">
                 </div>
@@ -57,26 +57,18 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">审批状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('process_status')}">
-                        <input type="radio" th:id="${'processStatus_' + dict.dictCode}" name="processStatus" th:value="${dict.dictValue}" th:field="*{processStatus}">
-                        <label th:for="${'processStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
+
             <div class="form-group">    
                 <label class="col-sm-3 control-label">采购人：</label>
                 <div class="col-sm-8">
                     <input name="belongUser" th:field="*{belongUser}" class="form-control" type="text">
                 </div>
             </div>
-            <h4 class="form-header h4">${subTable.functionName}信息</h4>
+            <h4 class="form-header h4">采购单明细信息</h4>
             <div class="row">
                 <div class="col-sm-12">
-                    <button type="button" class="btn btn-white btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
-                    <button type="button" class="btn btn-white btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
                     <div class="col-sm-12 select-table table-striped">
                         <table id="bootstrap-table"></table>
                     </div>
@@ -118,6 +110,7 @@
                 showRefresh: false,
                 showToggle: false,
                 showColumns: false,
+                sidePagination: "client",
                 columns: [{
                     checkbox: true
                 },
@@ -130,6 +123,15 @@
                     	return columnIndex + $.table.serialNumber(index);
                     }
                 },
+                    {
+                        field: 'goodsNo',
+                        align: 'center',
+                        title: '货物编号',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsNo' value='%s'>", index, value);
+                            return html;
+                        }
+                    },
                 {
                     field: 'goodsName',
                     align: 'center',
@@ -183,68 +185,21 @@
                         var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].remark' value='%s'>", index, value);
                         return html;
                     }
-				},
-                {
-                    field: 'goodsNo',
-                    align: 'center',
-                    title: '货物编号',
-                    formatter: function(value, row, index) {
-                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsNo' value='%s'>", index, value);
-                        return html;
-                    }
-				},
-                {
-                    field: 'isDelete',
-                    align: 'center',
-                    title: '货物编号',
-                    formatter: function(value, row, index) {
-                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].isDelete' value='%s'>", index, value);
-                        return html;
-                    }
-				},
-                {
-                    field: 'createTime',
-                    align: 'center',
-                    title: '货物编号',
-                    formatter: function(value, row, index) {
-                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].createTime' value='%s'>", index, value);
-                        return html;
-                    }
-				},
-                {
-                    field: 'createBy',
-                    align: 'center',
-                    title: '货物编号',
-                    formatter: function(value, row, index) {
-                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].createBy' value='%s'>", index, value);
-                        return html;
-                    }
-				
-                }]
+				}]
             };
             $.table.init(options);
         });
-
         function addColumn() {
-            var count = $("#" + table.options.id).bootstrapTable('getData').length;
-            sub.editColumn();
-        	
-            $("#" + table.options.id).bootstrapTable('insertRow', {
-                index: count,
-                row: {
-                    index: $.table.serialNumber(count),
-                    goodsName: "",
-                    goodsSize: "",
-                    goodsQuantity: "",
-                    goodsPrice: "",
-                    totalPrice: "",
-                    remark: "",
-                    goodsNo: "",
-                    isDelete: "",
-                    createTime: "",
-                    createBy: ""
-        	    }
-            });
+            var row = {
+                goodsNo: "",
+                goodsName: "",
+                goodsSize: "",
+                goodsQuantity: "",
+                goodsPrice: "",
+                totalPrice: "",
+                remark: ""
+            };
+            sub.addColumn(row);
         }
     </script>
 </body>
