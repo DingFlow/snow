@@ -11,4 +11,9 @@ public class SequenceContants {
      *请假
      */
     public static final String OA_LEAVE_SEQUENCE = "OA_QJ";
+
+    /**
+     * 采购单
+     */
+    public static final String OA_PURCHASE_SEQUENCE="OA_CG";
 }

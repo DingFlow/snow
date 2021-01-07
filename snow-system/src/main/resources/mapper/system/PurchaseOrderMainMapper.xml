@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.PurchaseOrderMainMapper">
+    
+    <resultMap type="PurchaseOrderMain" id="PurchaseOrderMainResult">
+        <result property="id"    column="id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="totalQuantity"    column="total_quantity"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="title"    column="title"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="orderTime"    column="order_time"    />
+        <result property="deliveryDate"    column="delivery_date"    />
+        <result property="processStatus"    column="process_status"    />
+        <result property="belongUser"    column="belong_user"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="PurchaseOrderMainPurchaseOrderItemResult" type="PurchaseOrderMain" extends="PurchaseOrderMainResult">
+        <collection property="purchaseOrderItemList" notNullColumn="id" javaType="java.util.List" resultMap="PurchaseOrderItemResult" />
+    </resultMap>
+
+    <resultMap type="PurchaseOrderItem" id="PurchaseOrderItemResult">
+        <result property="id"    column="id"    />
+        <result property="purchaseOrderNo"    column="purchase_order_no"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsSize"    column="goods_size"    />
+        <result property="goodsQuantity"    column="goods_quantity"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsNo"    column="goods_no"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectPurchaseOrderMainVo">
+        select id, order_no, total_quantity, total_price, title, supplier_name, order_time, delivery_date, process_status, belong_user, is_delete, create_time, create_by, update_time, update_by, remark from purchase_order_main
+    </sql>
+
+    <select id="selectPurchaseOrderMainList" parameterType="PurchaseOrderMain" resultMap="PurchaseOrderMainResult">
+        <include refid="selectPurchaseOrderMainVo"/>
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="totalQuantity != null "> and total_quantity = #{totalQuantity}</if>
+            <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="orderTime != null "> and order_time = #{orderTime}</if>
+            <if test="deliveryDate != null "> and delivery_date = #{deliveryDate}</if>
+            <if test="processStatus != null "> and process_status = #{processStatus}</if>
+            <if test="belongUser != null  and belongUser != ''"> and belong_user = #{belongUser}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectPurchaseOrderMainById" parameterType="Integer" resultMap="PurchaseOrderMainPurchaseOrderItemResult">
+        select a.id, a.order_no, a.total_quantity, a.total_price, a.title, a.supplier_name, a.order_time, a.delivery_date, a.process_status, a.belong_user, a.is_delete, a.create_time, a.create_by, a.update_time, a.update_by, a.remark,
+            b.id, b.purchase_order_no, b.goods_name, b.goods_size, b.goods_quantity, b.goods_price, b.total_price, b.remark, b.goods_no, b.is_delete, b.create_time, b.create_by
+        from purchase_order_main a
+        left join purchase_order_item b on b.purchase_order_no = a.order_no
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertPurchaseOrderMain" parameterType="PurchaseOrderMain" useGeneratedKeys="true" keyProperty="id">
+        insert into purchase_order_main
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">order_no,</if>
+            <if test="totalQuantity != null">total_quantity,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="title != null">title,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="orderTime != null">order_time,</if>
+            <if test="deliveryDate != null">delivery_date,</if>
+            <if test="processStatus != null">process_status,</if>
+            <if test="belongUser != null">belong_user,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="totalQuantity != null">#{totalQuantity},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="title != null">#{title},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="orderTime != null">#{orderTime},</if>
+            <if test="deliveryDate != null">#{deliveryDate},</if>
+            <if test="processStatus != null">#{processStatus},</if>
+            <if test="belongUser != null">#{belongUser},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseOrderMain" parameterType="PurchaseOrderMain">
+        update purchase_order_main
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="totalQuantity != null">total_quantity = #{totalQuantity},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="orderTime != null">order_time = #{orderTime},</if>
+            <if test="deliveryDate != null">delivery_date = #{deliveryDate},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="belongUser != null">belong_user = #{belongUser},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePurchaseOrderMainById" parameterType="Integer">
+        delete from purchase_order_main where id = #{id}
+    </delete>
+
+    <delete id="deletePurchaseOrderMainByIds" parameterType="String">
+        delete from purchase_order_main where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deletePurchaseOrderItemByPurchaseOrderNos" parameterType="String">
+        delete from purchase_order_item where purchase_order_no in 
+        <foreach item="purchaseOrderNo" collection="array" open="(" separator="," close=")">
+            #{purchaseOrderNo}
+        </foreach>
+    </delete>
+
+    <delete id="deletePurchaseOrderItemByPurchaseOrderNo" parameterType="Long">
+        delete from purchase_order_item where purchase_order_no = #{purchaseOrderNo}
+    </delete>
+
+    <insert id="batchPurchaseOrderItem">
+        insert into purchase_order_item( id, purchase_order_no, goods_name, goods_size, goods_quantity, goods_price, total_price, remark, goods_no, is_delete, create_time, create_by) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.purchaseOrderNo}, #{item.goodsName}, #{item.goodsSize}, #{item.goodsQuantity}, #{item.goodsPrice}, #{item.totalPrice}, #{item.remark}, #{item.goodsNo}, #{item.isDelete}, #{item.createTime}, #{item.createBy})
+        </foreach>
+    </insert>
+
+</mapper>
