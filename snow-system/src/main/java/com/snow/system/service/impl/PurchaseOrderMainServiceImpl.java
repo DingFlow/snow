@@ -87,7 +87,7 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
     public int updatePurchaseOrderMain(PurchaseOrderMain purchaseOrderMain)
     {
         purchaseOrderMain.setUpdateTime(DateUtils.getNowDate());
-        purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNo(purchaseOrderMain.getId());
+        purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNo(purchaseOrderMain.getOrderNo());
         insertPurchaseOrderItem(purchaseOrderMain);
         return purchaseOrderMainMapper.updatePurchaseOrderMain(purchaseOrderMain);
     }
@@ -102,7 +102,12 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
     @Override
     public int deletePurchaseOrderMainByIds(String ids)
     {
-        purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNos(Convert.toStrArray(ids));
+        List<String> idsList = Arrays.asList(Convert.toStrArray(ids));
+        idsList.parallelStream().forEach(t->{
+            PurchaseOrderMain purchaseOrderMain = purchaseOrderMainMapper.selectPurchaseOrderMainById(Integer.parseInt(t));
+            purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNo(purchaseOrderMain.getOrderNo());
+
+        });
         return purchaseOrderMainMapper.deletePurchaseOrderMainByIds(Convert.toStrArray(ids));
     }
 
@@ -115,7 +120,7 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
     @Override
     public int deletePurchaseOrderMainById(Integer id)
     {
-        purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNo(id);
+       // purchaseOrderMainMapper.deletePurchaseOrderItemByPurchaseOrderNo(id);
         return purchaseOrderMainMapper.deletePurchaseOrderMainById(id);
     }
 

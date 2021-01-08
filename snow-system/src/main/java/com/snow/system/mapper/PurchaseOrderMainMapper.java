@@ -83,5 +83,5 @@ public interface PurchaseOrderMainMapper
      * @param roleId 角色ID
      * @return 结果
      */
-    public int deletePurchaseOrderItemByPurchaseOrderNo(Integer id);
+    public int deletePurchaseOrderItemByPurchaseOrderNo(String id);
 }

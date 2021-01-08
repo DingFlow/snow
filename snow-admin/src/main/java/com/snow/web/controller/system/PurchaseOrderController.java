@@ -1,12 +1,15 @@
 package com.snow.web.controller.system;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.google.common.collect.Lists;
 import com.snow.common.constant.SequenceContants;
+import com.snow.common.utils.poi.EasyExcelUtil;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
 import com.snow.framework.util.ShiroUtils;
@@ -32,6 +35,8 @@ import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 采购单主表Controller
@@ -84,6 +89,29 @@ public class PurchaseOrderController extends BaseController
         return util.exportExcel(list, "purchaseOrder");
     }
 
+    /**
+     * 下载标准模板
+     */
+    @GetMapping("/download")
+    @ResponseBody
+    public AjaxResult download(HttpServletResponse response)
+    {
+        PurchaseOrderImport purchaseOrderImport=new PurchaseOrderImport();
+        purchaseOrderImport.setGoodsNo("CSJ0001");
+        purchaseOrderImport.setGoodsName("示例商品1");
+        purchaseOrderImport.setGoodsPrice(new BigDecimal(2.5));
+        purchaseOrderImport.setGoodsQuantity(new BigDecimal(2));
+        purchaseOrderImport.setGoodsSize("示例规格1");
+        purchaseOrderImport.setRemark("示例备注1");
+        List<PurchaseOrderImport> list=Lists.newArrayList();
+        list.add(purchaseOrderImport);
+        try {
+            EasyExcelUtil.writeExcel("采购单明细表","明细表",PurchaseOrderImport.class,list,response);
+            return AjaxResult.success("下载成功");
+        } catch (Exception e) {
+            return AjaxResult.error("下载模板异常，请联系管理员");
+        }
+    }
     /**
      * 新增采购单主表
      */
@@ -170,4 +198,17 @@ public class PurchaseOrderController extends BaseController
     {
         return toAjax(purchaseOrderMainService.deletePurchaseOrderMainByIds(ids));
     }
+
+
+    /**
+     * 详情页
+     */
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        PurchaseOrderMain purchaseOrderMain = purchaseOrderMainService.selectPurchaseOrderMainById(id);
+        mmap.put("purchaseOrder", purchaseOrderMain);
+        return prefix + "/detail";
+    }
+
 }

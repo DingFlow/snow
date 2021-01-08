@@ -13,16 +13,11 @@
                 <div class="col-sm-4">
                     <input name="orderNo" class="form-control" type="text" th:value="${orderNo}" readonly>
                 </div>
-            </div>
-            <div class="form-group">
                 <label class="col-sm-2 control-label">采购标题：</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input name="title" class="form-control" type="text" required>
                 </div>
-
             </div>
-
-
         <!--    <div class="form-group">
                 <label class="col-sm-3 control-label">总数量：</label>
                 <div class="col-sm-8">
@@ -77,7 +72,6 @@
                     <a class="btn btn-sm btn-info" onclick="importData()" shiro:hasPermission="system:purchaseOrder:import">
                         <i class="fa fa-upload"></i> 导入
                     </a>
-
                     <div class="col-sm-12 select-table table-striped">
                         <table id="bootstrap-table"></table>
                     </div>
@@ -89,7 +83,8 @@
     <th:block th:include="include :: datetimepicker-js" />
     <script th:src="@{/js/jquery.tmpl.js}"></script>
     <script th:inline="javascript">
-        var prefix = ctx + "system/purchaseOrder"
+        var prefix = ctx + "system/purchaseOrder";
+
         $("#form-purchaseOrder-add").validate({
             focusCleanup: true
         });
@@ -287,9 +282,9 @@
                         <div class="col-sm-4">
                             <input type="file" id="file" name="file"/>
                         </div>
-                      <!--  <div class="col-sm-4">
-                            <a onclick="$.table.importTemplate()" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i>  下载模板</a>
-                        </div>-->
+                       <div class="col-sm-4">
+                            <a href="/system/purchaseOrder/download" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i>  下载模板</a>
+                        </div>
                     </div>
                 </div>
                 <font color="red" class="pull-left mt10">

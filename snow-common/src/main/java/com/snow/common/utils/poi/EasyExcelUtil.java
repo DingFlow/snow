@@ -6,6 +6,7 @@ import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.WriteWorkbook;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.snow.common.annotation.Excel;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.Future;
+
 /**
  * @author qimingjin
  * @Title: easyExcel 实体类
@@ -25,9 +28,24 @@ import java.util.List;
  * @date 2020/12/31 14:06
  */
 @Slf4j
-public class EasyExcelUtil {
-
-    private static OutputStream getOutputStream(HttpServletResponse response,
+public class EasyExcelUtil{
+    /**
+     * 写入Excel
+     * @param fileName
+     * @param response
+     * @throws Exception
+     */
+    public static void writeExcel(String fileName,String sheetName, Class classClass,List list, HttpServletResponse response ) throws Exception{
+        WriteWorkbook writeWorkbook=new WriteWorkbook();
+        writeWorkbook.setOutputStream(getOutputStream(response,fileName,ExcelTypeEnum.XLSX));
+        ExcelWriter excelWriter = new ExcelWriter(writeWorkbook);
+        WriteSheet writeSheet = EasyExcel.writerSheet(sheetName).build();
+        writeSheet.setSheetNo(1);
+        writeSheet.setClazz(classClass);
+        excelWriter.write(list, writeSheet);
+        excelWriter.finish();
+    }
+    public static OutputStream getOutputStream(HttpServletResponse response,
                                                 String fileName,
                                                 ExcelTypeEnum excelTypeEnum) throws IOException {
         try {

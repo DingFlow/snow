@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('人事审批')" />
+	<th:block th:include="include :: jsonview-css" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m-t" id="signupForm">
+		<div class="row">
+			<div class="col-sm-offset-0 col-sm-10">
+				<button type="button" class="btn btn-success btn-sm" onclick="printData()"><i class="fa fa-plus"> 打印</i></button>
+				<!--<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="submitHandler()"><i class="fa fa-remove"></i>驳 回</button>&nbsp;-->
+			</div>
+		</div>
+		<br/>
+		<!--<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  name="businessKey" th:value="${sysOaLeave.leaveNo}"/>-->
+		<input name="id" th:value="${purchaseOrder.id}" type="hidden">
+		<h2 class="form-header h4" align="center" >采购单信息</h2>
+		<br/>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">单号：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.orderNo}"/>
+			    </div>
+			</div>
+			<label class="col-sm-2 control-label">采购标题：</label>
+			<div class="col-sm-6">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.title}"/>
+			    </div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">供应商：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.supplierName}"/>
+				</div>
+			</div>
+			<label class="col-sm-2 control-label">订货日期：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${#dates.format(purchaseOrder.orderTime, 'yyyy-MM-dd')}"/>
+				</div>
+			</div>
+		    <label class="col-sm-2 control-label">交货日期：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${#dates.format(purchaseOrder.deliveryDate, 'yyyy-MM-dd')}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">采购人：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.belongUser}"/>
+				</div>
+			</div>
+	        <label class="col-sm-2 control-label">总数量：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.totalQuantity}"/>
+				</div>
+			</div>
+				<label class="col-sm-2 control-label">采购总金额：</label>
+			<div class="col-sm-2">
+				<div class="form-control-static" style="float:left">
+					<span th:text="${purchaseOrder.totalPrice}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">备注：</label>
+			<div class="col-sm-10">
+				<div class="form-control-static"><pre id="reason"></pre></div>
+			</div>
+		</div>
+
+			<h4 class="form-header h4">采购单明细</h4>
+				<div class="row">
+					<div class="col-sm-12">
+					<!--	<button type="button" class="btn btn-success btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
+						<button type="button" class="btn btn-warning btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>-->
+						<div class="col-sm-12 select-table table-striped">
+							<table id="bootstrap-table"></table>
+						</div>
+					</div>
+				</div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: jsonview-js" />
+	<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
+	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+    <script th:inline="javascript">
+
+        function printData(){
+            $("#signupForm").jqprint();
+        }
+	    $(function() {
+	    	var reason = [[${purchaseOrder.remark}]];
+	    	console.log(reason);
+	    	if ($.common.isNotEmpty(reason) && reason.length < 2000) {
+                $("#reason").text(reason);
+	    	} else {
+	    		$("#reason").text(reason);
+	    	}
+
+	    });
+
+        $(function() {
+            var options = {
+                data: [[${purchaseOrder.purchaseOrderItemList}]],
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [
+                    {
+                        field: 'index',
+                        align: 'center',
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                            return columnIndex + $.table.serialNumber(index);
+                        }
+                    },
+                    {
+                        field: 'goodsNo',
+                        align: 'center',
+                        title: '货物编号'
+                    },
+                    {
+                        field: 'goodsName',
+                        align: 'center',
+                        title: '名称'
+                    },
+                    {
+                        field: 'goodsSize',
+                        align: 'center',
+                        title: '规格'
+                    },
+                    {
+                        field: 'goodsQuantity',
+                        align: 'center',
+                        title: '数量'
+                    },
+                    {
+                        field: 'goodsPrice',
+                        align: 'center',
+                        title: '单价'
+                    },
+                    {
+                        field: 'totalPrice',
+                        align: 'center',
+                        title: '总价'
+                    },
+                    {
+                        field: 'remark',
+                        align: 'center',
+                        title: '备注'
+                    }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

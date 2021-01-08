@@ -148,7 +148,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <delete id="deletePurchaseOrderItemByPurchaseOrderNo" parameterType="Long">
+    <delete id="deletePurchaseOrderItemByPurchaseOrderNo" parameterType="String">
         delete from purchase_order_item where purchase_order_no = #{purchaseOrderNo}
     </delete>
 
