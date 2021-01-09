@@ -46,9 +46,9 @@
 				        </div>
 				    </div>
             	</li>
-                <li>
+                <!--<li>
                     <a class="menuItem" th:href="@{/system/main}"><i class="fa fa-home"></i> <span class="nav-label">首页</span> </a>
-                </li>
+                </li>-->
                 <li th:each="menu : ${menus}">
                 	<a th:class="@{${menu.url != '' && menu.url != '#'} ? ${menu.target}}" th:href="@{${menu.url == ''} ? |#| : ${menu.url}}">
                 		<i class="fa fa-bar-chart-o" th:class="${menu.icon}"></i>
@@ -182,7 +182,7 @@
                     </a>
                 </div>
                 <ul class="nav navbar-top-links navbar-right welcome-message">
-
+					<li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="#" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>
 	                <li><a title="全屏显示" href="javascript:void(0)" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏显示</a></li>
                     <li class="dropdown user-menu">
 						<a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
@@ -201,6 +201,10 @@
 							<li>
 								<a onclick="switchSkin()">
 								<i class="fa fa-dashboard"></i> 切换主题</a>
+							</li>
+							<li>
+								<a onclick="toggleMenu()">
+									<i class="fa fa-toggle-off"></i> 横向菜单</a>
 							</li>
 							<li class="divider"></li>
 							<li>
@@ -233,7 +237,7 @@
             <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/system/main}"
                     th:src="@{/system/main}" frameborder="0" seamless></iframe>
         </div>
-        <div class="footer">
+        <<div th:if="${ignoreFooter}" class="footer">
             <div class="pull-right">© [[${copyrightYear}]] QJD Copyright </div>
         </div>
     </div>
@@ -247,12 +251,18 @@
 <script th:src="@{/js/jquery.contextMenu.min.js}"></script>
 <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
 <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
-<script th:src="@{/ruoyi/js/ry-ui.js?v=4.3.1}"></script>
-<script th:src="@{/ruoyi/js/common.js?v=4.3.1}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+<script th:src="@{/ruoyi/js/common.js}"></script>
 <script th:src="@{/ruoyi/index.js}"></script>
 <script th:src="@{/ajax/libs/fullscreen/jquery.fullscreen.js}"></script>
+<script th:src="@{/js/resize-tabs.js}"></script>
 <script th:inline="javascript">
+    window.history.forward(1);
 var ctx = [[@{/}]];
+var lockscreen = [[${session.lockscreen}]];
+if(lockscreen){
+    window.top.location=ctx+"lockscreen";
+}
 // 皮肤缓存
 var skin = storage.get("skin");
 // history（表示去掉地址的#）否则地址以"#"形式展示
@@ -286,7 +296,14 @@ function switchSkin() {
 		content : [ctx + "system/switchSkin", 'no']
 	})
 }
-
+        /* 切换菜单 */
+function toggleMenu() {
+	$.modal.confirm("确认要切换成横向菜单吗？", function() {
+		$.get(ctx + 'system/menuStyle/topnav', function(result) {
+			window.location.reload();
+		});
+	})
+}
 /** 刷新时访问路径页签 */
 function applyPath(url) {
 	$('a[href$="' + decodeURI(url) + '"]').click();
@@ -306,8 +323,38 @@ $(function() {
 	    if ($.common.isNotEmpty(hash)) {
 	        var url = hash.substring(1, hash.length);
 	        applyPath(url);
-	    }
+	    }else {
+            if($.common.equals("history", mode)) {
+                storage.set('publicPath', "");
+            }
+        }
 	}
+    /* 初始密码提示 */
+    if([[${isDefaultModifyPwd}]]) {
+        layer.confirm("您的密码还是初始密码，请修改密码！", {
+            icon: 0,
+            title: "安全提示",
+            btn: ['确认'	, '取消'],
+            offset: ['30%']
+        }, function (index) {
+            resetPwd();
+            layer.close(index);
+        });
+    }
+
+    /* 过期密码提示 */
+    if([[${isPasswordExpired}]]) {
+        layer.confirm("您的密码已过期，请尽快修改密码！", {
+            icon: 0,
+            title: "安全提示",
+            btn: ['确认'	, '取消'],
+            offset: ['30%']
+        }, function (index) {
+            resetPwd();
+            layer.close(index);
+        });
+    }
+    $("[data-toggle='tooltip']").tooltip();
 });
 </script>
 </body>

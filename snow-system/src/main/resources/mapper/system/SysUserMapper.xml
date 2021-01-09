@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="hiredDate"       column="hired_date"       />
 		<result property="orgEmail"       column="org_email"       />
 		<result property="dingUserId"       column="ding_user_id"       />
+		<result property="pwdUpdateDate" column="pwd_update_date" />
 
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
@@ -56,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectUserVo">
-        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_time, u.remark,
+        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.pwd_update_date, u.create_time, u.remark,
        		    d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
        		    r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,
        		    u.ding_user_id
@@ -221,6 +222,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="workPlace != null">work_place = #{workPlace},</if>
 			<if test="tel != null">tel = #{tel},</if>
 			<if test="hiredDate != null">hired_date = #{hiredDate},</if>
+			<if test="pwdUpdateDate != null">pwd_update_date = #{pwdUpdateDate},</if>
 			<if test="orgEmail != null">org_email = #{orgEmail},</if>
 			<if test="dingUserId != null">ding_user_id = #{dingUserId},</if>
  			update_time = sysdate()
@@ -242,6 +244,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="password != null and password != ''">password,</if>
  			<if test="salt != null and salt != ''">salt,</if>
  			<if test="status != null and status != ''">status,</if>
+		    <if test="pwdUpdateDate != null">pwd_update_date,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			<if test="remark != null and remark != ''">remark,</if>
 		<if test="isSenior != null">is_senior,</if>
@@ -265,6 +268,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="password != null and password != ''">#{password},</if>
  			<if test="salt != null and salt != ''">#{salt},</if>
  			<if test="status != null and status != ''">#{status},</if>
+		<if test="pwdUpdateDate != null">#{pwdUpdateDate},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
 		<if test="isSenior != null ">#{isSenior},</if>
