@@ -5,20 +5,13 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
-import com.snow.common.exception.BusinessException;
-import com.snow.common.utils.StringUtils;
-import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.*;
-import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysOaLeave;
 import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysOaLeaveService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,8 +35,6 @@ import java.util.List;
 public class FlowController extends BaseController {
     private String prefix = "flow";
 
-    @Autowired
-    private ISysOaLeaveService sysOaLeaveService;
     @Autowired
     private FlowableServiceImpl flowableService;
     @Autowired

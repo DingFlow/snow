@@ -326,6 +326,7 @@ public class FlowableServiceImpl implements FlowableService {
         return task;
     }
 
+
     @Override
     public PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
         //根据用户ID获取角色
@@ -423,7 +424,7 @@ public class FlowableServiceImpl implements FlowableService {
      * @return
      */
     @Override
-    public  Set<SysUser>  getHistoricIdentityLinksForTask(String taskId){
+    public Set<SysUser> getHistoricIdentityLinksForTask(String taskId){
         Set<SysUser> userList=new HashSet<>();
         List<HistoricIdentityLink> historicIdentityLinksForTask = historyService.getHistoricIdentityLinksForTask(taskId);
         if(!CollectionUtils.isEmpty(historicIdentityLinksForTask)){
