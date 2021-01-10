@@ -45,6 +45,12 @@ public interface PurchaseOrderMainMapper
     public int updatePurchaseOrderMain(PurchaseOrderMain purchaseOrderMain);
 
     /**
+     *
+      * @param purchaseOrderMain
+     * @return
+     */
+    public int updatePurchaseOrderMainByOrderNo(PurchaseOrderMain purchaseOrderMain);
+    /**
      * 删除采购单主表
      * 
      * @param id 采购单主表ID

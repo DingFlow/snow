@@ -7,18 +7,23 @@ import java.util.List;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.utils.poi.EasyExcelUtil;
+import com.snow.flowable.domain.leave.SysOaLeaveForm;
+import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
+import com.snow.flowable.service.FlowableService;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.FinanceAlipayFlowImport;
-import com.snow.system.domain.PurchaseOrderImport;
-import com.snow.system.domain.SysUser;
+import com.snow.system.domain.*;
 import com.snow.system.service.ISysSequenceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.snow.common.annotation.Log;
 import com.snow.common.enums.BusinessType;
 import org.springframework.stereotype.Controller;
-import com.snow.system.domain.PurchaseOrderMain;
 import com.snow.system.service.IPurchaseOrderMainService;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -52,6 +56,8 @@ public class PurchaseOrderController extends BaseController
 
     @Autowired
     private IPurchaseOrderMainService purchaseOrderMainService;
+    @Autowired
+    private FlowableService flowableService;
 
     @Autowired
     private ISysSequenceService sequenceService;
@@ -174,17 +180,31 @@ public class PurchaseOrderController extends BaseController
     }
 
     /**
-     * 修改保存采购单主表
+     * 修改保存采购单并发起申请
      */
     @RequiresPermissions("system:purchaseOrder:edit")
     @Log(title = "采购单主表", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
+    @Transactional
     public AjaxResult editSave(PurchaseOrderMain purchaseOrderMain)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         purchaseOrderMain.setUpdateBy(String.valueOf(sysUser.getUserId()));
-        return toAjax(purchaseOrderMainService.updatePurchaseOrderMain(purchaseOrderMain));
+        int i = purchaseOrderMainService.updatePurchaseOrderMain(purchaseOrderMain);
+        PurchaseOrderMain newPurchaseOrderMain = purchaseOrderMainService.selectPurchaseOrderMainById(purchaseOrderMain.getId());
+        //发起审批
+        PurchaseOrderForm purchaseOrderForm=new PurchaseOrderForm();
+        BeanUtils.copyProperties(newPurchaseOrderMain,purchaseOrderForm);
+        purchaseOrderForm.setBusinessKey(purchaseOrderMain.getOrderNo());
+        purchaseOrderForm.setStartUserId(String.valueOf(sysUser.getUserId()));
+        purchaseOrderForm.setBusVarJson(JSON.toJSONString(purchaseOrderForm));
+        purchaseOrderForm.setClassPackName(PurchaseOrderForm.class.getCanonicalName());
+        purchaseOrderForm.setBusVarUrl("/system/purchaseOrder/detail");
+        ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(purchaseOrderForm);
+        //推进任务节点
+        flowableService.automaticTask(processInstance.getProcessInstanceId());
+        return toAjax(i);
     }
 
     /**

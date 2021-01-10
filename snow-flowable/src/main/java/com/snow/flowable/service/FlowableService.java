@@ -84,6 +84,13 @@ public interface FlowableService {
      */
     ProcessInstance startProcessInstanceByAppForm(AppForm appForm);
 
+
+    /**
+     * 自动完成任务
+     * @param processInstanceId
+     */
+    void automaticTask(String processInstanceId);
+
     /**
      * 根据任务ID获取代办
      * @param taskId

@@ -54,26 +54,30 @@ public class FlowController extends BaseController {
      * 跳转完成任务界面
      * @return
      */
-    //@RequiresPermissions("modeler:flow:view")
     @GetMapping("/toFinishTask")
-    public String toFinishTask(String businessKey,String taskId,ModelMap mmap)
+    public String toFinishTask(String taskId,ModelMap mmap)
     {
         Task task =  flowableService.getTask(taskId);
-        HistoricProcessInstance historicProcessInstance= flowableService.getHistoricProcessInstanceById(task.getProcessInstanceId());
-        String processDefinitionKey = historicProcessInstance.getProcessDefinitionKey();
-        if(processDefinitionKey.equals("snow_oa_leave")){
-            SysOaLeave sysOaLeave=new SysOaLeave();
-            sysOaLeave.setLeaveNo(businessKey);
-            List<SysOaLeave> sysOaLeaves = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
-            if(StringUtils.isEmpty(sysOaLeaves)){
-                throw new BusinessException("跳转请假申请页面异常");
-            }
-            mmap.put("sysOaLeave", sysOaLeaves.get(0));
-            mmap.put("taskId", taskId);
-        }
+        //获取业务参数
+        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
+        mmap.put("appFrom", appFrom);
+        mmap.put("taskId", taskId);
         return task.getFormKey();
     }
 
+    /**
+     * 完成任务
+     * @return
+     */
+    @PostMapping("/finishTask")
+    @ResponseBody
+    public AjaxResult finishTask(CompleteTaskDTO completeTaskDTO)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        flowableService.completeTask(completeTaskDTO);
+        return AjaxResult.success();
+    }
     /**
      * 获取所有节点
      * @param processInstanceId

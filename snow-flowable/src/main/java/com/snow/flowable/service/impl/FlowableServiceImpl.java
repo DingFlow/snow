@@ -309,7 +309,15 @@ public class FlowableServiceImpl implements FlowableService {
         return processInstance;
     }
 
-
+    @Override
+    public void automaticTask(String processInstanceId){
+        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+        Task task=getTaskProcessInstanceById(processInstanceId);
+        completeTaskDTO.setTaskId(task.getId());
+        completeTaskDTO.setIsPass(true);
+        completeTaskDTO.setUserId(task.getAssignee());
+        completeTask(completeTaskDTO);
+    }
     @Override
     public Task getTask(String taskId) {
         Task task = taskService.createTaskQuery()

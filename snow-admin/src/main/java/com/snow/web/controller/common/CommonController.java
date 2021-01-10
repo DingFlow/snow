@@ -2,6 +2,11 @@ package com.snow.web.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.uuid.impl.UUIDUtil;
+import com.snow.common.utils.uuid.IdUtils;
+import com.snow.common.utils.uuid.UUID;
+import org.apache.logging.log4j.core.util.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +85,7 @@ public class CommonController
             String fileName = FileUploadUtils.upload(filePath, file);
             String url = serverConfig.getUrl() + fileName;
             AjaxResult ajax = AjaxResult.success();
+            ajax.put("fileKey",IdUtils.fastUUID());
             ajax.put("fileName", fileName);
             ajax.put("url", url);
             return ajax;

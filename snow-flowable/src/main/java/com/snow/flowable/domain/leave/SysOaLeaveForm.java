@@ -15,6 +15,7 @@ import java.util.Date;
  */
 @Data
 public class SysOaLeaveForm extends AppForm {
+
     /** id */
     private Integer id;
 

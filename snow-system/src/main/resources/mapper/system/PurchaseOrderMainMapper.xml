@@ -130,6 +130,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+
+    <update id="updatePurchaseOrderMainByOrderNo" parameterType="PurchaseOrderMain">
+        update purchase_order_main
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="totalQuantity != null">total_quantity = #{totalQuantity},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="orderTime != null">order_time = #{orderTime},</if>
+            <if test="deliveryDate != null">delivery_date = #{deliveryDate},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="belongUser != null">belong_user = #{belongUser},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where order_no = #{orderNo}
+    </update>
+
+
     <delete id="deletePurchaseOrderMainById" parameterType="Integer">
         delete from purchase_order_main where id = #{id}
     </delete>

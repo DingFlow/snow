@@ -43,12 +43,12 @@ public class PurchaseOrderMain extends BaseEntity
     private String supplierName;
 
     /** 订货日期 */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @Excel(name = "订货日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date orderTime;
 
     /** 交货日期 */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @Excel(name = "交货日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date deliveryDate;
 

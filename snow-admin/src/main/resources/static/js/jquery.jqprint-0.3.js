@@ -50,6 +50,8 @@
                     doc.write("<link type='text/css' rel='stylesheet' href='" + $(this).attr("href") + "' />");
                 });
             }
+
+
         }
         
         if (opt.printContainer) { doc.write($element.outer()); }

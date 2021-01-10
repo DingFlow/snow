@@ -50,4 +50,6 @@ public class CompleteTaskDTO implements Serializable {
     private Map<String,Object> paramMap;
 
     public final static String IS_PASS="isPass";
+
+    private String attachments;
 }
