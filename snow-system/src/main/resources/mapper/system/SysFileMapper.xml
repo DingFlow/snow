@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysFileMapper">
+    
+    <resultMap type="SysFile" id="SysFileResult">
+        <result property="id"    column="id"    />
+        <result property="file_key"    column="key"    />
+        <result property="file_name"    column="name"    />
+        <result property="file_type"    column="type"    />
+        <result property="file_size"    column="size"    />
+        <result property="url"    column="url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysFileVo">
+        select id, file_key, file_name, file_type, file_size, url, create_by, create_time, update_by, update_time, remark, is_delete from sys_file
+    </sql>
+
+    <select id="selectSysFileList" parameterType="SysFile" resultMap="SysFileResult">
+        <include refid="selectSysFileVo"/>
+        <where>  
+            <if test="key != null  and key != ''"> and file_key = #{key}</if>
+            <if test="name != null  and name != ''"> and file_name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and file_type = #{type}</if>
+            <if test="size != null "> and file_size = #{size}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysFileById" parameterType="Long" resultMap="SysFileResult">
+        <include refid="selectSysFileVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysFileByKey" parameterType="String" resultMap="SysFileResult">
+        <include refid="selectSysFileVo"/>
+        where key = #{key}
+    </select>
+
+    <insert id="insertSysFile" parameterType="SysFile" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="key != null and key != ''">file_key,</if>
+            <if test="name != null and name != ''">file_name,</if>
+            <if test="type != null and type != ''">file_type,</if>
+            <if test="size != null">file_size,</if>
+            <if test="url != null">url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="key != null and key != ''">#{key},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="size != null">#{size},</if>
+            <if test="url != null">#{url},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFile" parameterType="SysFile">
+        update sys_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="key != null and key != ''">file_key = #{key},</if>
+            <if test="name != null and name != ''">file_name = #{name},</if>
+            <if test="type != null and type != ''">file_type = #{type},</if>
+            <if test="size != null">file_size = #{size},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysFileById" parameterType="Long">
+        delete from sys_file where id = #{id}
+    </delete>
+
+    <delete id="deleteSysFileByIds" parameterType="String">
+        delete from sys_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -5,7 +5,7 @@ package com.snow.framework.web.domain.server;
  * 
  * @author snow
  */
-public class SysFile
+public class SysOsFile
 {
     /**
      * 盘符路径

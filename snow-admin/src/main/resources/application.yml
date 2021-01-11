@@ -147,6 +147,10 @@ flowable:
         idm-admin:
             user: admin
             password: test
+#上传文件的方式
+sys:
+   file:
+     active: aliyun
 
 log4j:
 #custom
