@@ -8,7 +8,9 @@
         <form class="form-horizontal m" id="form-sequence-edit" >
             <input name="processInstanceId"  id="processInstanceId"  th:value="${processInstanceId}" type="hidden" >
 
-            <input name="busVarUrl"  id="busVarUrl"  th:value="${busVarUrl}" type="hidden" >
+            <input name="busVarUrl"  id="busVarUrl"  th:value="${busVarUrl}" type="hidden" >\
+            <input name="appId"  id="appId"  th:value="${appId}" type="hidden" >
+
             <div class="ibox float-e-margins">
                 <h4 class="form-header h4">流程图</h4>
                 <div class="vertical-timeline-block" >
@@ -112,9 +114,9 @@
         });
 
         function getProcessDiagram() {
-            var processInstanceId= $("#processInstanceId").val();
+            var appId= $("#appId").val();
             var busVarUrl= $("#busVarUrl").val();
-            $.modal.open('业务单', busVarUrl+"?processInstanceId="+processInstanceId);
+            $.modal.open('业务单', busVarUrl+"/"+appId);
 
         }
     </script>

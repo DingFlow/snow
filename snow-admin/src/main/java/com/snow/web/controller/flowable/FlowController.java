@@ -1,5 +1,6 @@
 package com.snow.web.controller.flowable;
 
+import cn.hutool.core.util.ReflectUtil;
 import com.alibaba.fastjson.JSON;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -123,6 +124,7 @@ public class FlowController extends BaseController {
         modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
         modelMap.put("processInstanceId",processInstanceId);
         modelMap.put("busVarUrl",appFrom.getBusVarUrl());
+        modelMap.put("appId",ReflectUtil.getFieldValue(appFrom,"id"));
         return prefix +"/myStartProcessDetail";
     }
 
