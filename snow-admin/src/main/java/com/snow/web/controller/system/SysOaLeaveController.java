@@ -173,9 +173,7 @@ public class SysOaLeaveController extends BaseController
         BeanUtils.copyProperties(sysOaLeave,sysOaLeaveForm);
         sysOaLeaveForm.setBusinessKey(newSysOaLeave.getLeaveNo());
         sysOaLeaveForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        sysOaLeaveForm.setBusVarJson(com.alibaba.fastjson.JSON.toJSONString(sysOaLeaveForm));
-        sysOaLeaveForm.setClassPackName(SysOaLeaveForm.class.getCanonicalName());
-        sysOaLeaveForm.setBusVarUrl("/system/leave/leaveDetail");
+        sysOaLeaveForm.setBusVarUrl("/system/leave/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaLeaveForm);
         //提交
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
@@ -207,16 +205,6 @@ public class SysOaLeaveController extends BaseController
         return prefix + "/detail";
     }
 
-    /**
-     * 请假单详情
-     */
-    @GetMapping("/leaveDetail")
-    public String leaveDetail(@RequestParam("processInstanceId") String processInstanceId, ModelMap mmap)
-    {
-        SysOaLeaveForm appFrom = appFormService.getAppFromBySerializable(processInstanceId);
-        mmap.put("sysOaLeave", appFrom);
-        return prefix + "/leaveDetail";
-    }
     /**
      * 删除请假单
      */

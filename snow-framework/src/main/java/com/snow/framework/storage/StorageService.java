@@ -1,7 +1,9 @@
 package com.snow.framework.storage;
 
 import cn.hutool.core.util.IdUtil;
+import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysFile;
+import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -50,7 +52,7 @@ public class StorageService {
     public SysFile store(InputStream inputStream, long contentLength, String contentType, String fileName) {
         String key = generateKey(fileName);
         storage.store(inputStream, contentLength, contentType, key);
-
+        SysUser sysUser = ShiroUtils.getSysUser();
         String url = generateUrl(key);
         SysFile storageInfo = new SysFile();
         storageInfo.setName(fileName);
@@ -58,6 +60,7 @@ public class StorageService {
         storageInfo.setType(contentType);
         storageInfo.setKey(key);
         storageInfo.setUrl(url);
+        storageInfo.setCreateBy(sysUser.getUserName());
         sysFileService.insertSysFile(storageInfo);
 
         return storageInfo;

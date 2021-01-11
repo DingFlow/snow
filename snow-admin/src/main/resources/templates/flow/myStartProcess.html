@@ -39,12 +39,9 @@
     <th:block th:include="include :: footer" />
      <th:block th:include="include :: select2-js" />
      <script th:inline="javascript">
-         var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
-
          var detailFlag = [[${@permission.hasPermi('system:flow:myStartProcessDetail')}]];
 
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
-         var prefix = ctx + "modeler";
          var prefixFlow = ctx + "flow";
          $(function() {
              var options = {
@@ -74,7 +71,8 @@
                          title: '单号',
                          formatter: function(value, row, index) {
                              var fromDetailUrl= row.fromDetailUrl;
-                             return '<a class="success" href="' + fromDetailUrl+ '" >'+value+'</a> ';
+
+                             return '<a class="success" href="javascript:void(0)" onclick="fromDetailUrl(\'' + fromDetailUrl+ '\')">'+value+'</a>'
                          }
                      },
                      {
@@ -117,6 +115,10 @@
          function getProcessDiagram(processInstanceId) {
              var preViewUrl=prefixFlow+'/myStartProcessDetail?processInstanceId='+processInstanceId;
              $.modal.openTab("详情", preViewUrl);
+         }
+
+         function fromDetailUrl(detailUrl) {
+             $.modal.openTab("详情", detailUrl);
          }
 
      </script>

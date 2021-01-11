@@ -6,10 +6,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SysFile" id="SysFileResult">
         <result property="id"    column="id"    />
-        <result property="file_key"    column="key"    />
-        <result property="file_name"    column="name"    />
-        <result property="file_type"    column="type"    />
-        <result property="file_size"    column="size"    />
+        <result column="file_key"   property ="key"    />
+        <result column="file_name"    property="name"    />
+        <result column="file_type"    property="type"    />
+        <result column="file_size"    property="size"    />
         <result property="url"    column="url"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />

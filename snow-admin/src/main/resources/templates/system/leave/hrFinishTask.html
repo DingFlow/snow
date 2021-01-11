@@ -17,6 +17,8 @@
 		</div>
 		<br/>
 		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
+
 		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.leaveNo}"/>
 		<h4 class="form-header h4">请假信息</h4>
 		<div class="form-group">
@@ -48,6 +50,10 @@
 			<div class="form-control-static" th:text="${appFrom.applyPerson}">
 			</div>
 		</div>
+		<h4 class="form-header h4">流程图</h4>
+		<div class="vertical-timeline-block" >
+			<img  class="imgcode" width="85%"/>
+		</div>
 		<h4 class="form-header h4">填写信息</h4>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">人事审批意见：</label>
@@ -71,6 +77,12 @@
     <th:block th:include="include :: jsonview-js" />
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
     <script th:inline="javascript">
+
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
 	    $(function() {
 	    	var reason = [[${appFrom.reason}]];
 	    	console.log(reason);

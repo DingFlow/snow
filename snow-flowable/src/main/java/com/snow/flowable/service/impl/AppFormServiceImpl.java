@@ -30,32 +30,12 @@ public class AppFormServiceImpl implements AppFormService {
 
 
     @Override
-    public <A extends AppForm> A getAppFrom(String classInfoJson,String className) {
-        return JSON.parseObject(classInfoJson, getFormClass(className));
-    }
-
-    @Override
-    public <A extends AppForm> A getAppFrom(String classInfoJson,Class<A> className) {
-        return JSON.parseObject(classInfoJson, className);
-    }
-
-
-    @Override
-    public <A extends AppForm> A getAppFromBySerializable(String processInstanceId) {
+    public <A extends AppForm> A getAppFrom(String processInstanceId) {
         HistoricProcessInstance historicProcessInstance=flowableService.getHistoricProcessInstanceById(processInstanceId);
         return getVariable(historicProcessInstance, FlowConstants.APP_FORM);
 
     }
 
-
-
-    @Override
-    public <A extends AppForm> A getAppFrom(String processInstanceId) {
-        HistoricProcessInstance historicProcessInstance=flowableService.getHistoricProcessInstanceById(processInstanceId);
-        String classInfoJson = getVariable(historicProcessInstance, FlowConstants.BUS_VAR);
-        String classPackName = getVariable(historicProcessInstance, FlowConstants.CLASS_PACK_NAME);
-        return getAppFrom(classInfoJson, classPackName);
-    }
 
     /**
      * 获取流程变量
@@ -67,11 +47,4 @@ public class AppFormServiceImpl implements AppFormService {
         return (V)historicProcessInstance.getProcessVariables().get(key);
     }
 
-    private <A> Class<A> getFormClass(String className) {
-        try {
-            return (Class<A>) Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

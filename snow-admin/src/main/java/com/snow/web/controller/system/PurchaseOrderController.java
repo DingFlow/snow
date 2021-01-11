@@ -82,7 +82,7 @@ public class PurchaseOrderController extends BaseController
     }
 
     /**
-     * 导出采购单主表列表
+     * 导出采购单主表列表detail
      */
     @RequiresPermissions("system:purchaseOrder:export")
     @Log(title = "采购单主表", businessType = BusinessType.EXPORT)
@@ -198,7 +198,7 @@ public class PurchaseOrderController extends BaseController
         BeanUtils.copyProperties(newPurchaseOrderMain,purchaseOrderForm);
         purchaseOrderForm.setBusinessKey(purchaseOrderMain.getOrderNo());
         purchaseOrderForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        purchaseOrderForm.setBusVarJson(JSON.toJSONString(purchaseOrderForm));
+       // purchaseOrderForm.setBusVarJson(JSON.toJSONString(purchaseOrderForm));
         purchaseOrderForm.setClassPackName(PurchaseOrderForm.class.getCanonicalName());
         purchaseOrderForm.setBusVarUrl("/system/purchaseOrder/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(purchaseOrderForm);

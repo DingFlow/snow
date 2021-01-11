@@ -53,6 +53,7 @@ public class FlowController extends BaseController {
         AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
         mmap.put("appFrom", appFrom);
         mmap.put("taskId", taskId);
+        mmap.put("processInstanceId", task.getProcessInstanceId());
         return task.getFormKey();
     }
 
@@ -118,7 +119,7 @@ public class FlowController extends BaseController {
         historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
         //historicTaskInstanceDTO.setProcessStatus(1);
         List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
-        AppForm appFrom = appFormService.getAppFromBySerializable(processInstanceId);
+        AppForm appFrom = appFormService.getAppFrom(processInstanceId);
         modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
         modelMap.put("processInstanceId",processInstanceId);
         modelMap.put("busVarUrl",appFrom.getBusVarUrl());

@@ -33,11 +33,12 @@ public abstract class AppForm implements Serializable {
     /**
      * 业务数据json
      */
+    @Deprecated
     private String busVarJson;
     /**
      * 当前类的包名称
      */
-    @NotBlank(message = "当前类的包名称不能为空")
+    @Deprecated
     private String classPackName;
 
     /**

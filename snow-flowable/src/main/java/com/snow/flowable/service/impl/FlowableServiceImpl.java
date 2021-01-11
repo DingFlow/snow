@@ -301,7 +301,7 @@ public class FlowableServiceImpl implements FlowableService {
         paramMap.remove("busVarJson");
         identityService.setAuthenticatedUserId(startUserId);
         paramMap.put(FlowConstants.APP_FORM,appForm);
-        paramMap.put(FlowConstants.BUS_VAR,appForm.getBusVarJson());
+        //paramMap.put(FlowConstants.BUS_VAR,appForm.getBusVarJson());
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(appForm.getFlowDef().getCode(),appForm.getBusinessKey(),paramMap);
 
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
@@ -762,8 +762,10 @@ public class FlowableServiceImpl implements FlowableService {
 
             Map<String, Object> processVariables = t.getProcessVariables();
             String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
+            //设置返回详情页
             if(!StringUtils.isEmpty(url)){
-                t.setFromDetailUrl(url+"?processInstanceId="+t.getId());
+                if(!StringUtils.isEmpty(processVariables.get("id")))
+                t.setFromDetailUrl(url+"/"+processVariables.get("id"));
             }
             AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
             t.setAppForm(appForm);
@@ -836,8 +838,10 @@ public class FlowableServiceImpl implements FlowableService {
             }
             Map<String, Object> processVariables = t.getProcessVariables();
             String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
+            //设置返回详情页
             if(!StringUtils.isEmpty(url)){
-                historicTaskInstanceVO.setFromDetailUrl(url+"?processInstanceId="+t.getProcessInstanceId());
+                if(!StringUtils.isEmpty(processVariables.get("id")))
+                    historicTaskInstanceVO.setFromDetailUrl(url+"/"+processVariables.get("id"));
             }
             AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
             historicTaskInstanceVO.setAppForm(appForm);

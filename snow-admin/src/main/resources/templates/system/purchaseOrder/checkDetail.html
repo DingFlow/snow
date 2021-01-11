@@ -13,6 +13,7 @@
 <body class="white-bg" >
 	<form class="form-horizontal m-t"  id="signupForm">
 		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
 		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.orderNo}"/>
 		<input name="id" th:value="${appFrom.id}" type="hidden">
 	    <br/>
@@ -70,6 +71,10 @@
 			</div>
 		</div>
     <br/>
+		<h4 class="form-header h4">流程图</h4>
+		<div class="vertical-timeline-block" >
+			<img  class="imgcode" width="85%"/>
+		</div>
 	<h4 class="form-header h4">填写信息</h4>
 	<div class="form-group">
 		<label class="col-sm-3 control-label">审批结果：</label>
@@ -104,6 +109,11 @@
     <th:block th:include="include :: footer" />
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
     <script th:inline="javascript">
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
         var files=new Array();
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
