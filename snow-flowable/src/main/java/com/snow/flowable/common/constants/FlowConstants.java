@@ -26,6 +26,11 @@ public class FlowConstants {
     public static final String IS_PASS="isPass";
 
     /**
+     * 流程发起变量名称
+     */
+    public static final String IS_START="isStart";
+
+    /**
      *comment类型---意见
      */
 

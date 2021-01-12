@@ -7,4 +7,6 @@ package com.snow.flowable.common.enums;
  * @create: 2020-12-13 19:54
  **/
 public enum  FlowStatusEnum {
+
+    pass,reject,start,end
 }

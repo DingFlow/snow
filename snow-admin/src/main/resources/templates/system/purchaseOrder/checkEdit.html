@@ -12,7 +12,7 @@
 </head>
 <body class="white-bg" >
 	<form class="form-horizontal m-t"  id="signupForm" th:object="${appFrom}">
-		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  name="taskId" th:value="${taskId}"/>
 		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.orderNo}"/>
 		<input name="id" th:value="${appFrom.id}" type="hidden">
 		<h2 class="form-header h2" align="center" >采购单信息</h2>
@@ -51,7 +51,7 @@
 			<label class="col-sm-3 control-label">订货日期：</label>
 			<div class="col-sm-8">
 				<div class="input-group date">
-					<input name="orderTime" th:value="${#dates.format(purchaseOrderMain.orderTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+					<input name="orderTime" th:value="${#dates.format(appFrom.orderTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
 					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 				</div>
 			</div>
@@ -60,7 +60,7 @@
 			<label class="col-sm-3 control-label">交货日期：</label>
 			<div class="col-sm-8">
 				<div class="input-group date">
-					<input name="deliveryDate" th:value="${#dates.format(purchaseOrderMain.deliveryDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+					<input name="deliveryDate" th:value="${#dates.format(appFrom.deliveryDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
 					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 				</div>
 			</div>

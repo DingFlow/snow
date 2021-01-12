@@ -28,6 +28,11 @@ public class CompleteTaskDTO implements Serializable {
     private Boolean isPass;
 
     /**
+     * 是否通过
+     */
+    private Boolean isStart;
+
+    /**
      * 审批意见
      */
     private String comment;
@@ -49,7 +54,11 @@ public class CompleteTaskDTO implements Serializable {
      */
     private Map<String,Object> paramMap;
 
-    public final static String IS_PASS="isPass";
+
 
     private String attachments;
+
+    public final static String IS_PASS="isPass";
+
+    public final static String IS_START="isStart";
 }

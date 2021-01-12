@@ -30,12 +30,19 @@
                                 <h2 th:text="${task.taskName }"></h2>
                                 <br class="form-group">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4" th:if="${task.isStart} == ''">
                                                 <label  >审批结果：</label>
                                                 <label th:switch="${task.isPass}">
                                                     <span  class="btn-outline btn-danger" th:case="'false'">驳回</span>
                                                     <span  class="btn-outline btn-success"  th:case="'true'">通过</span>
                                                     <span  class="btn-outline btn-info" th:case=" ''">待审核</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-4" th:if="${task.isStart} != ''">
+                                                <label  >状态：</label>
+                                                <label th:switch="${task.isStart}">
+                                                    <span  class="btn-outline btn-danger" th:case="'false'">结束</span>
+                                                    <span  class="btn-outline btn-success"  th:case="'true'">开始</span>
                                                 </label>
                                             </div>
                                             <div class="col-md-4" th:if="${task.assigneeName} != null">

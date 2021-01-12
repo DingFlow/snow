@@ -10,6 +10,7 @@ import com.snow.flowable.common.SpringContextUtil;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.listener.AbstractEventListener;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.SysUserMapper;
@@ -36,7 +37,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title: 发送消息
  * @Description:
  * @date 2020/12/8 14:38
  */
@@ -53,7 +54,8 @@ public class SendMessageEventLister extends AbstractEventListener {
                         FlowableEngineEventType.TASK_CREATED
                 )),
                 new HashSet<>(Arrays.asList(
-                        FlowDefEnum.SNOW_OA_LEAVE
+                        FlowDefEnum.SNOW_OA_LEAVE,
+                        FlowDefEnum.PURCHASE_ORDER_PROCESS
                 )));
     }
 
@@ -71,6 +73,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      */
     public void sendDingTalkMessage(FlowableEngineEntityEvent event){
         SysUserMapper sysUserMapper = (SysUserMapper)SpringContextUtil.getBean(SysUserMapper.class);
+        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl)SpringContextUtil.getBean(FlowableUserServiceImpl.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
@@ -91,7 +94,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                             applicationContext.publishEvent(syncEventGroup);
                         }
                         else if(!StringUtils.isEmpty(groupId)) {
-                            List<SysUser> sysUsers = sysUserMapper.selectUserListByRoleId(groupId);
+                            List<SysUser> sysUsers = flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
                             sysUsers.forEach(sysUser->{
                                 WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(String.valueOf(sysUser.getUserId()), event);
                                 SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
@@ -131,7 +134,7 @@ public class SendMessageEventLister extends AbstractEventListener {
         workrecordAddRequest.setCreateTime(entity.getCreateTime().getTime());
         List<WorkrecordAddRequest.FormItemVo> formItemList=Lists.newArrayList();
         WorkrecordAddRequest.FormItemVo formItemVo = new WorkrecordAddRequest.FormItemVo();
-        formItemVo.setTitle("请假单号");
+        formItemVo.setTitle("单号");
         formItemVo.setContent(processInstance.getBusinessKey());
         formItemList.add(formItemVo);
         WorkrecordAddRequest.FormItemVo formItemVo3 = new WorkrecordAddRequest.FormItemVo();

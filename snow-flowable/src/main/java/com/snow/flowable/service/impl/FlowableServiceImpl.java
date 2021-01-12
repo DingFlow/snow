@@ -15,6 +15,7 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowStatusEnum;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.enums.FlowFinishedStatusEnum;
@@ -316,7 +317,7 @@ public class FlowableServiceImpl implements FlowableService {
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
         Task task=getTaskProcessInstanceById(processInstanceId);
         completeTaskDTO.setTaskId(task.getId());
-        completeTaskDTO.setIsPass(true);
+        completeTaskDTO.setIsStart(true);
         completeTaskDTO.setUserId(task.getAssignee());
         completeTask(completeTaskDTO);
     }
@@ -461,13 +462,14 @@ public class FlowableServiceImpl implements FlowableService {
         }else {
             taskService.addComment(task.getId(),task.getProcessInstanceId(),FlowConstants.OPINION,"");
         }
+
         List<FileEntry> files = completeTaskDTO.getFiles();
         if(!CollectionUtils.isEmpty(files)){
             files.stream().forEach(t->
                 taskService.createAttachment("url",task.getId(),task.getProcessInstanceId(),t.getName(),t.getKey(),t.getUrl())
             );
         }
-        runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+
         Map<String, Object> paramMap = StringUtils.isEmpty(completeTaskDTO.getParamMap())?Maps.newHashMap():completeTaskDTO.getParamMap();
         if(!CollectionUtils.isEmpty(paramMap)){
             Set<Map.Entry<String, Object>> entries = paramMap.entrySet();
@@ -475,7 +477,15 @@ public class FlowableServiceImpl implements FlowableService {
                 runtimeService.setVariable(task.getExecutionId(),t.getKey(),t.getValue())
             );
         }
-        paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+        if(!StringUtils.isEmpty(completeTaskDTO.getIsPass())){
+            runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+            paramMap.put(CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
+        }
+        if(!StringUtils.isEmpty(completeTaskDTO.getIsStart())){
+            runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
+            paramMap.put(CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
+        }
+
 
         //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
         taskService.claim(task.getId(),completeTaskDTO.getUserId());
@@ -624,6 +634,10 @@ public class FlowableServiceImpl implements FlowableService {
         return historicTaskInstanceVOS;
     }
 
+    /**
+     * 处理任务参数
+     * @param list
+     */
     private void setHistoricTaskInstanceVos(List<HistoricTaskInstanceVO> list){
 
         list.forEach(t -> {
@@ -641,8 +655,10 @@ public class FlowableServiceImpl implements FlowableService {
 
             Optional.ofNullable( t.getTaskLocalVariables()).ifPresent(u->{
                 Object isPass =Optional.ofNullable(u.get(FlowConstants.IS_PASS)).orElse("");
+                Object isStart =Optional.ofNullable(u.get(FlowConstants.IS_START)).orElse("");
                 //处理审核条件
                 t.setIsPass(String.valueOf(isPass));
+                t.setIsStart(String.valueOf(isStart));
             });
 
             List<Comment> comment = taskService.getTaskComments(t.getTaskId(), FlowConstants.OPINION);

@@ -63,6 +63,11 @@ public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
     private String isPass;
 
     /**
+     * 是否发起
+     */
+    private String isStart;
+
+    /**
      * 评论
      */
     private List<Comment> commentList;
