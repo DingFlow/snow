@@ -80,17 +80,12 @@ public class CommonController
      */
     @PostMapping("/common/upload")
     @ResponseBody
-    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    public AjaxResult uploadFile(MultipartFile file)
     {
         try
         {
             String originalFilename = file.getOriginalFilename();
             SysFile store = storageService.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename);
-        /*    // 上传文件路径
-            String filePath = Global.getUploadPath();
-            // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;*/
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileKey",store.getKey());
             ajax.put("fileName", store.getName());

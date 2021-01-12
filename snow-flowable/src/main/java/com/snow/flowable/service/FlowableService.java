@@ -107,7 +107,7 @@ public interface FlowableService {
     PageModel<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
 
     /**
-     * 根据任务ID获取关联待办人活着待办组的人
+     * 根据任务ID获取关联待办人待办组的人
      * @param taskId
      * @return
      */

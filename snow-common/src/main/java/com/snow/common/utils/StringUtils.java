@@ -2,6 +2,8 @@ package com.snow.common.utils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Pattern;
+
 import com.snow.common.core.text.StrFormatter;
 
 /**
@@ -155,6 +157,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
     public static String trim(String str)
     {
         return (str == null ? "" : str.trim());
+    }
+
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 
     /**

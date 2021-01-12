@@ -21,6 +21,13 @@ public interface IFlowGroupDOService
     public FlowGroupDO selectFlowGroupDOById(Long roleId);
 
     /**
+     * 根据用户查询流程组
+     * @param userId
+     * @return
+     */
+    public List<FlowGroupDO> selectFlowGroupDOByUserId(Long userId);
+
+    /**
      * 查询流程组信息列表
      * 
      * @param flowGroupDO 流程组信息

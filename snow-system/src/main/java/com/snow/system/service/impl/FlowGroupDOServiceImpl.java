@@ -35,6 +35,11 @@ public class FlowGroupDOServiceImpl implements IFlowGroupDOService
         return flowGroupDOMapper.selectFlowGroupDOById(roleId);
     }
 
+    @Override
+    public List<FlowGroupDO> selectFlowGroupDOByUserId(Long userId) {
+        return flowGroupDOMapper.selectFlowGroupDOByUserId(userId);
+    }
+
     /**
      * 查询流程组信息列表
      * 

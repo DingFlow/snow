@@ -199,7 +199,7 @@ public class PurchaseOrderController extends BaseController
         purchaseOrderForm.setBusinessKey(purchaseOrderMain.getOrderNo());
         purchaseOrderForm.setStartUserId(String.valueOf(sysUser.getUserId()));
        // purchaseOrderForm.setBusVarJson(JSON.toJSONString(purchaseOrderForm));
-        purchaseOrderForm.setClassPackName(PurchaseOrderForm.class.getCanonicalName());
+       // purchaseOrderForm.setClassPackName(PurchaseOrderForm.class.getCanonicalName());
         purchaseOrderForm.setBusVarUrl("/system/purchaseOrder/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(purchaseOrderForm);
         //推进任务节点

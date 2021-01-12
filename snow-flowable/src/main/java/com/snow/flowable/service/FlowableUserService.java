@@ -1,5 +1,6 @@
 package com.snow.flowable.service;
 
+import com.snow.system.domain.FlowGroupDO;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
 import org.flowable.ui.common.model.RemoteGroup;
@@ -7,6 +8,7 @@ import org.flowable.ui.common.model.RemoteUser;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author qimingjin
@@ -37,7 +39,7 @@ public interface FlowableUserService {
 
 
     /**
-     * 根据流程组查询角色
+     * 根据流程组查询用户
      * @param groupId
      * @return
      */
@@ -49,5 +51,5 @@ public interface FlowableUserService {
      * @param userId
      * @return
      */
-    List<SysRole> getFlowGroupByUserId(Long userId);
+    Set<Long> getFlowGroupByUserId(Long userId);
 }

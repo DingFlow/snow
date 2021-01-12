@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,6 +21,7 @@ import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableUserService;
 import com.snow.system.domain.ActDeModel;
+import com.snow.system.domain.FlowGroupDO;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.SysUserMapper;
@@ -330,16 +332,15 @@ public class FlowableServiceImpl implements FlowableService {
     @Override
     public PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
         //根据用户ID获取角色
-        List<SysRole> sysRoles = roleService.selectRolesByUserId(Long.parseLong(userId));
-
+        Set<Long> sysRoles = flowableUserService.getFlowGroupByUserId(Long.parseLong(userId));
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .or()
                 .taskCandidateOrAssigned(userId);
         //这个地方查询回去查询系统的用户组表，希望的是查询自己的用户表
         if(!CollectionUtils.isEmpty(sysRoles)) {
-            List<String> roleIds = sysRoles.stream().map(t -> {
-                return String.valueOf(t.getRoleId());
-            }).collect(Collectors.toList());
+            List<String> roleIds = sysRoles.stream().map(t ->
+                 String.valueOf(t)
+            ).collect(Collectors.toList());
             taskQuery.taskCandidateGroupIn(roleIds);
         }
         if(!StringUtils.isEmpty(taskBaseDTO.getProcessInstanceId())){
@@ -463,7 +464,7 @@ public class FlowableServiceImpl implements FlowableService {
         List<FileEntry> files = completeTaskDTO.getFiles();
         if(!CollectionUtils.isEmpty(files)){
             files.stream().forEach(t->
-                taskService.createAttachment("url",task.getId(),task.getProcessInstanceId(),t.getKey(),t.getName(),t.getUrl())
+                taskService.createAttachment("url",task.getId(),task.getProcessInstanceId(),t.getName(),t.getKey(),t.getUrl())
             );
         }
         runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,completeTaskDTO.getIsPass());
@@ -625,7 +626,7 @@ public class FlowableServiceImpl implements FlowableService {
 
     private void setHistoricTaskInstanceVos(List<HistoricTaskInstanceVO> list){
 
-        list.parallelStream().forEach(t -> {
+        list.forEach(t -> {
             //保存待办人
             Set<SysUser> identityLinksForTask = getHistoricIdentityLinksForTask(t.getTaskId());
             Optional.ofNullable(identityLinksForTask).ifPresent(m->{
@@ -633,7 +634,7 @@ public class FlowableServiceImpl implements FlowableService {
                 t.setHandleUserList(userNameList);
             });
 
-            if (!StringUtils.isEmpty(t.getAssignee())) {
+            if (!StringUtils.isEmpty(t.getAssignee())&&com.snow.common.utils.StringUtils.isNumeric(t.getAssignee())) {
                 SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getAssignee()));
                 t .setAssigneeName(sysUser.getUserName());
             }
