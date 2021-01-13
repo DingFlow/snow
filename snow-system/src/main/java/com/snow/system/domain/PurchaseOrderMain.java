@@ -6,6 +6,7 @@ import java.util.Date;
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author snow
  * @date 2021-01-07
  */
+@Data
 public class PurchaseOrderMain extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -65,137 +67,4 @@ public class PurchaseOrderMain extends BaseEntity
 
     /** $table.subTable.functionName信息 */
     private List<PurchaseOrderItem> purchaseOrderItemList;
-
-    public void setId(Integer id) 
-    {
-        this.id = id;
-    }
-
-    public Integer getId() 
-    {
-        return id;
-    }
-    public void setOrderNo(String orderNo) 
-    {
-        this.orderNo = orderNo;
-    }
-
-    public String getOrderNo() 
-    {
-        return orderNo;
-    }
-    public void setTotalQuantity(BigDecimal totalQuantity) 
-    {
-        this.totalQuantity = totalQuantity;
-    }
-
-    public BigDecimal getTotalQuantity() 
-    {
-        return totalQuantity;
-    }
-    public void setTotalPrice(BigDecimal totalPrice) 
-    {
-        this.totalPrice = totalPrice;
-    }
-
-    public BigDecimal getTotalPrice() 
-    {
-        return totalPrice;
-    }
-    public void setTitle(String title) 
-    {
-        this.title = title;
-    }
-
-    public String getTitle() 
-    {
-        return title;
-    }
-    public void setSupplierName(String supplierName) 
-    {
-        this.supplierName = supplierName;
-    }
-
-    public String getSupplierName() 
-    {
-        return supplierName;
-    }
-    public void setOrderTime(Date orderTime) 
-    {
-        this.orderTime = orderTime;
-    }
-
-    public Date getOrderTime() 
-    {
-        return orderTime;
-    }
-    public void setDeliveryDate(Date deliveryDate) 
-    {
-        this.deliveryDate = deliveryDate;
-    }
-
-    public Date getDeliveryDate() 
-    {
-        return deliveryDate;
-    }
-    public void setProcessStatus(Long processStatus) 
-    {
-        this.processStatus = processStatus;
-    }
-
-    public Long getProcessStatus() 
-    {
-        return processStatus;
-    }
-    public void setBelongUser(String belongUser) 
-    {
-        this.belongUser = belongUser;
-    }
-
-    public String getBelongUser() 
-    {
-        return belongUser;
-    }
-    public void setIsDelete(Long isDelete) 
-    {
-        this.isDelete = isDelete;
-    }
-
-    public Long getIsDelete() 
-    {
-        return isDelete;
-    }
-
-    public List<PurchaseOrderItem> getPurchaseOrderItemList()
-    {
-        return purchaseOrderItemList;
-    }
-
-    public void setPurchaseOrderItemList(List<PurchaseOrderItem> purchaseOrderItemList)
-    {
-        this.purchaseOrderItemList = purchaseOrderItemList;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("orderNo", getOrderNo())
-            .append("totalQuantity", getTotalQuantity())
-            .append("totalPrice", getTotalPrice())
-            .append("title", getTitle())
-            .append("supplierName", getSupplierName())
-            .append("orderTime", getOrderTime())
-            .append("deliveryDate", getDeliveryDate())
-            .append("processStatus", getProcessStatus())
-            .append("belongUser", getBelongUser())
-            .append("isDelete", getIsDelete())
-            .append("createTime", getCreateTime())
-            .append("createBy", getCreateBy())
-            .append("updateTime", getUpdateTime())
-            .append("updateBy", getUpdateBy())
-            .append("remark", getRemark())
-            .append("purchaseOrderItemList", getPurchaseOrderItemList())
-            .toString();
-    }
 }

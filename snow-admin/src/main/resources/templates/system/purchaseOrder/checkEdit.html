@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
-	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
-	<!-- bootstrap-table 表格插件样式 -->
-	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
-	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
-	<link th:href="@{/css/style.css}" rel="stylesheet" />
-	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: header('采购单审核')" />
+	<th:block th:include="include :: datetimepicker-css" />
 	<th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
 <body class="white-bg" >
 	<form class="form-horizontal m-t"  id="signupForm" th:object="${appFrom}">
 		<input class="form-control" type="hidden"  name="taskId" th:value="${taskId}"/>
+		<input class="form-control" type="hidden" id="processInstanceId"  th:value="${processInstanceId}"/>
+
 		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.orderNo}"/>
 		<input name="id" th:value="${appFrom.id}" type="hidden">
 		<h2 class="form-header h2" align="center" >采购单信息</h2>
@@ -20,31 +17,19 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label">订单号：</label>
 			<div class="col-sm-8">
-				<input name="orderNo" th:field="*{orderNo}" class="form-control" type="text">
+				<input name="orderNo" th:field="*{orderNo}" class="form-control" type="text" readonly>
 			</div>
 		</div>
-		<!-- <div class="form-group">
-             <label class="col-sm-3 control-label">总数量：</label>
-             <div class="col-sm-8">
-                 <input name="totalQuantity" th:field="*{totalQuantity}" class="form-control" type="text">
-             </div>
-         </div>
-         <div class="form-group">
-             <label class="col-sm-3 control-label">采购总金额：</label>
-             <div class="col-sm-8">
-                 <input name="totalPrice" th:field="*{totalPrice}" class="form-control" type="text">
-             </div>
-         </div>-->
 		<div class="form-group">
 			<label class="col-sm-3 control-label">采购标题：</label>
 			<div class="col-sm-8">
-				<input name="title" th:field="*{title}" class="form-control" type="text">
+				<input name="title" th:field="*{title}" class="form-control" type="text"  required>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">供应商：</label>
 			<div class="col-sm-8">
-				<input name="supplierName" th:field="*{supplierName}" class="form-control" type="text">
+				<input name="supplierName" th:field="*{supplierName}" class="form-control" type="text" >
 			</div>
 		</div>
 		<div class="form-group">
@@ -74,21 +59,32 @@
 		</div>
 		<h4 class="form-header h4">采购单明细信息</h4>
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="col-sm-11 col-sm-offset-1">
 				<button type="button" class="btn btn-success btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
 				<button type="button" class="btn btn-warning btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
-				<div class="col-sm-12 select-table table-striped">
+				<div class="col-sm-11 select-table table-striped">
 					<table id="bootstrap-table"></table>
 				</div>
 			</div>
 		</div>
-	</form>
+	<h4 class="form-header h4">流程图</h4>
+		<div class="col-sm-offset-1">
+		     <img  class="imgcode" width="85%"/>
+	    </div>
 	<h4 class="form-header h4">填写信息</h4>
-
+	<div class="form-group">
+		<label class="col-sm-3 control-label">审批结果：</label>
+		<div class="col-sm-8">
+			<div class="radio-box" th:each="dict : ${@dict.getType('process_check_status')}">
+				<input type="radio" th:id="${dict.dictCode}" name="isStart" th:value="${dict.dictValue}" required>
+				<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+			</div>
+		</div>
+	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label">审批意见：</label>
 		<div class="col-sm-8">
-			<textarea name="suggestion" class="form-control"></textarea>
+			<textarea name="comment" class="form-control"></textarea>
 		</div>
 	</div>
 	<div class="form-group">
@@ -100,12 +96,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-6 col-sm-10">
+			<button type="button" class="btn btn-sm btn-success" onclick="submitCheckHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+		</div>
+	</div>
+	</form>
     <th:block th:include="include :: footer" />
-	<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
-	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
+	<th:block th:include="include :: datetimepicker-js" />
     <script th:inline="javascript">
-
+        var files=new Array();
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
             $(this).fileinput({
@@ -115,28 +121,44 @@
                 maxFileCount: 1,
                 autoReplace: true
             }).on('fileuploaded', function (event, data, previewId, index) {
-                $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+                files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+               // $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
             }).on('fileremoved', function (event, id, index) {
                 $("input[name='" + event.currentTarget.id + "']").val('')
             })
             $(this).fileinput('_initFileActions');
         });
+        $("input[name='orderTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
 
+        $("input[name='deliveryDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
         function submitCheckHandler() {
             if ($.validate.form()) {
                 var data = $("#signupForm").serializeArray();
-                data.push({"name": "checkStatus", "value": 0});
-                $.operate.saveTab("/system/leave/managerFinishTask", data);
+                for(var i=0;i<data.length;i++){
+                    if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                        $.modal.alertError("请填写审批意见");
+                        return false;
+                    }
+                }
+                if(files!=null||files!=''){
+                    for(var i=0;i<files.length;i++){
+                        data.push({"name": "files["+i+"].key", "value":files[i].key});
+                        data.push({"name": "files["+i+"].name", "value":files[i].name});
+                        data.push({"name": "files["+i+"].url", "value":files[i].url});
+                    }
+                }
+                console.log(data);
+                $.operate.saveTab("/system/purchaseOrder/restart", data);
             }
         }
-        function submitHandler() {
-            if ($.validate.form()) {
-                var data = $("#signupForm").serializeArray();
-                data.push({"name": "checkStatus", "value": 1});
-                $.operate.saveTab("/system/leave/managerFinishTask", data);
-            }
-        }
-
         $(function() {
             var options = {
                 data: [[${appFrom.purchaseOrderItemList}]],
@@ -146,7 +168,9 @@
                 showToggle: false,
                 showColumns: false,
                 sidePagination: "client",
-                columns: [
+                columns: [{
+                    checkbox: true
+                },
                     {
                         field: 'index',
                         align: 'center',
@@ -159,41 +183,81 @@
                     {
                         field: 'goodsNo',
                         align: 'center',
-                        title: '货物编号'
+                        title: '货物编号',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsNo' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'goodsName',
                         align: 'center',
-                        title: '名称'
+                        title: '名称',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsName' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'goodsSize',
                         align: 'center',
-                        title: '规格'
+                        title: '规格',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsSize' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'goodsQuantity',
                         align: 'center',
-                        title: '数量'
+                        title: '数量',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsQuantity' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'goodsPrice',
                         align: 'center',
-                        title: '单价'
+                        title: '单价',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsPrice' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'totalPrice',
                         align: 'center',
-                        title: '总价'
+                        title: '总价',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].totalPrice' value='%s'>", index, value);
+                            return html;
+                        }
                     },
                     {
                         field: 'remark',
                         align: 'center',
-                        title: '备注'
+                        title: '备注',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].remark' value='%s'>", index, value);
+                            return html;
+                        }
                     }]
             };
             $.table.init(options);
         });
+        function addColumn() {
+            var row = {
+                goodsNo: "",
+                goodsName: "",
+                goodsSize: "",
+                goodsQuantity: "",
+                goodsPrice: "",
+                totalPrice: "",
+                remark: ""
+            };
+            sub.addColumn(row);
+        }
     </script>
 </body>
 </html>

@@ -11,8 +11,10 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.utils.poi.EasyExcelUtil;
+import com.snow.flowable.domain.CompleteTaskDTO;
 import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
+import com.snow.flowable.domain.purchaseOrder.PurchaseOrderMainTask;
 import com.snow.flowable.service.FlowableService;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
@@ -229,6 +231,30 @@ public class PurchaseOrderController extends BaseController
         PurchaseOrderMain purchaseOrderMain = purchaseOrderMainService.selectPurchaseOrderMainById(id);
         mmap.put("purchaseOrder", purchaseOrderMain);
         return prefix + "/detail";
+    }
+
+
+    /**
+     * 重新申请
+     */
+    @PostMapping("/restart")
+    @ResponseBody
+    @Transactional
+    public AjaxResult restart(PurchaseOrderMainTask purchaseOrderMainTask)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        purchaseOrderMainTask.setUpdateBy(String.valueOf(sysUser.getUserId()));
+        PurchaseOrderMain purchaseOrderMain=new PurchaseOrderMain();
+        BeanUtils.copyProperties(purchaseOrderMainTask,purchaseOrderMain);
+        int i = purchaseOrderMainService.updatePurchaseOrderMain(purchaseOrderMain);
+        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        completeTaskDTO.setComment(purchaseOrderMainTask.getComment());
+        completeTaskDTO.setIsStart(purchaseOrderMainTask.getIsStart());
+        completeTaskDTO.setFiles(purchaseOrderMainTask.getFiles());
+        completeTaskDTO.setTaskId(purchaseOrderMainTask.getTaskId());
+        flowableService.completeTask(completeTaskDTO);
+        return toAjax(i);
     }
 
 }

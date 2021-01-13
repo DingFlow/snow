@@ -492,7 +492,11 @@ public class FlowableServiceImpl implements FlowableService {
         taskService.complete(task.getId(),paramMap,true);
     }
 
+    @Override
+    public <T extends CompleteTaskDTO> void submitTask(T completeTaskDTO) {
 
+        return;
+    }
     @Override
     public void getProcessDiagram(HttpServletResponse httpServletResponse, String processId) {
 

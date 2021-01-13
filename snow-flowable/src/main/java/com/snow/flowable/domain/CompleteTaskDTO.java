@@ -55,9 +55,6 @@ public class CompleteTaskDTO implements Serializable {
     private Map<String,Object> paramMap;
 
 
-
-    private String attachments;
-
     public final static String IS_PASS="isPass";
 
     public final static String IS_START="isStart";

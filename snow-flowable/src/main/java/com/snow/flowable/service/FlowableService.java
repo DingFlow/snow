@@ -127,6 +127,13 @@ public interface FlowableService {
      void completeTask(CompleteTaskDTO completeTaskDTO);
 
     /**
+     * 完成任务
+     * @param completeTaskDTO
+     * @param <T>
+     */
+     <T extends CompleteTaskDTO> void submitTask(T completeTaskDTO);
+
+    /**
      * 获取流程图
      * @param httpServletResponse
      * @param processId
