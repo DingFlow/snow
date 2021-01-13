@@ -7,6 +7,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.flowable.domain.*;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowablePublishServiceImpl;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
@@ -37,8 +38,7 @@ public class FlowModelerController extends BaseController
 {
     private String prefix = "flow";
 
-    @Autowired
-    private IFinanceAlipayFlowService financeAlipayFlowService;
+
     @Autowired
     private FlowableServiceImpl flowableService;
     @Autowired
@@ -84,18 +84,7 @@ public class FlowModelerController extends BaseController
         return getFlowDataTable(deploymentList);
     }
 
-    /**
-     * 获取我的待办
-     */
-    @RequiresPermissions("modeler:flow:todoList")
-    @PostMapping("/findTasksByUserId")
-    @ResponseBody
-    public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
-    {
-        Long userId = ShiroUtils.getUserId();
-        PageModel<TaskVO> taskList = flowableService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
-        return getFlowDataTable(taskList);
-    }
+
 
     /**
      * 获取XML

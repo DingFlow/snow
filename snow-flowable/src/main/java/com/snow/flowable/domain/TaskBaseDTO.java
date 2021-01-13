@@ -13,13 +13,35 @@ import java.io.Serializable;
 @Data
 public class TaskBaseDTO extends FlowBaseDTO implements Serializable {
 
+    /**
+     * 流程实例ID
+     */
     private String processInstanceId;
 
+    /**
+     * 流程定义key
+     */
     private String definitionKey;
 
+    /**
+     * 任务ID
+     */
     private String taskId;
 
+    /**
+     * 任务名称
+     */
+    private String taskName;
+
+    /**
+     * 业务参数
+     */
     private String businessKey;
+
+    /**
+     * 流程名称
+     */
+    private String processDefinitionName;
 
 
 }

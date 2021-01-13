@@ -85,53 +85,14 @@ public interface FlowableService {
     ProcessInstance startProcessInstanceByAppForm(AppForm appForm);
 
 
-    /**
-     * 自动完成任务
-     * @param processInstanceId
-     */
-    void automaticTask(String processInstanceId);
-
-    /**
-     * 根据任务ID获取代办
-     * @param taskId
-     * @return
-     */
-    Task getTask(String taskId);
-
-    /**
-     * 获取代办 分页获取
-     * @param userId
-     * @param taskBaseDTO
-     * @return
-     */
-    PageModel<TaskVO> findTasksByUserId(String userId,TaskBaseDTO taskBaseDTO);
-
-    /**
-     * 根据任务ID获取关联待办人待办组的人
-     * @param taskId
-     * @return
-     */
-    Set<SysUser> getIdentityLinksForTask(String taskId,String type);
-
-    /**
-     * 获取历史的
-     * @param taskId
-     * @return
-     */
-    Set<SysUser>  getHistoricIdentityLinksForTask(String taskId);
 
     /**
      * 完成任务
      * @param completeTaskDTO
      */
-     void completeTask(CompleteTaskDTO completeTaskDTO);
+    @Deprecated
+    void completeTask(CompleteTaskDTO completeTaskDTO);
 
-    /**
-     * 完成任务
-     * @param completeTaskDTO
-     * @param <T>
-     */
-     <T extends CompleteTaskDTO> void submitTask(T completeTaskDTO);
 
     /**
      * 获取流程图

@@ -18,6 +18,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class FlowBaseDTO implements Serializable {
+
+
     /** 当前记录起始索引 */
     private Integer pageNum;
 

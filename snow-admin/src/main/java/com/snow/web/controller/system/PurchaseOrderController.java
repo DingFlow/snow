@@ -16,6 +16,7 @@ import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderMainTask;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
 import com.snow.framework.util.ShiroUtils;
@@ -58,8 +59,12 @@ public class PurchaseOrderController extends BaseController
 
     @Autowired
     private IPurchaseOrderMainService purchaseOrderMainService;
+
     @Autowired
     private FlowableService flowableService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @Autowired
     private ISysSequenceService sequenceService;
@@ -205,7 +210,7 @@ public class PurchaseOrderController extends BaseController
         purchaseOrderForm.setBusVarUrl("/system/purchaseOrder/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(purchaseOrderForm);
         //推进任务节点
-        flowableService.automaticTask(processInstance.getProcessInstanceId());
+        flowableTaskService.automaticTask(processInstance.getProcessInstanceId());
         return toAjax(i);
     }
 

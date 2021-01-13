@@ -7,6 +7,7 @@ import com.snow.flowable.domain.DeploymentQueryDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.domain.TaskVO;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,9 @@ public class FlowableServiceTests extends JunitTestApplication {
 
     @Autowired
     private FlowableUserServiceImpl flowableUserService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @Test
     public void startProcessInstanceByKey(){
@@ -72,7 +76,7 @@ public class FlowableServiceTests extends JunitTestApplication {
         List<Task> list = taskQuery.list();
         list.forEach(task -> {
             List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
-            flowableService.getIdentityLinksForTask(task.getId(),"");
+            flowableTaskService.getIdentityLinksForTask(task.getId(),"");
             log.info(JSON.toJSONString(identityLinksForTask));
         });
 

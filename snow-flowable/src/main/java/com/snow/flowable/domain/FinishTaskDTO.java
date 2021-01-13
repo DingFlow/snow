@@ -16,9 +16,6 @@ import java.util.Map;
  * @create: 2020-11-23 22:13
  **/
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class FinishTaskDTO implements Serializable {
 
     /**

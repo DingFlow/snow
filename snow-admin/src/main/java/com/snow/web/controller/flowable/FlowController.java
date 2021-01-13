@@ -8,6 +8,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.AppFormService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
@@ -38,9 +39,12 @@ public class FlowController extends BaseController {
 
     @Autowired
     private FlowableServiceImpl flowableService;
+
     @Autowired
     private AppFormService appFormService;
 
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     /**
      * 跳转完成任务界面
@@ -49,7 +53,7 @@ public class FlowController extends BaseController {
     @GetMapping("/toFinishTask")
     public String toFinishTask(String taskId,ModelMap mmap)
     {
-        Task task =  flowableService.getTask(taskId);
+        Task task =  flowableTaskService.getTask(taskId);
         //获取业务参数
         AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
         mmap.put("appFrom", appFrom);
@@ -71,6 +75,19 @@ public class FlowController extends BaseController {
         flowableService.completeTask(completeTaskDTO);
         return AjaxResult.success();
     }
+
+    /**
+     * 获取我的待办
+     */
+    @RequiresPermissions("flow:get:todoList")
+    @PostMapping("/findTasksByUserId")
+    @ResponseBody
+    public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
+    {
+        Long userId = ShiroUtils.getUserId();
+        PageModel<TaskVO> taskList = flowableTaskService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
+        return getFlowDataTable(taskList);
+    }
     /**
      * 获取所有节点
      * @param processInstanceId
@@ -83,6 +100,10 @@ public class FlowController extends BaseController {
         return AjaxResult.success(dynamicFlowNodeInfo);
     }
 
+    /**
+     * 跳转我发起的流程
+     * @return
+     */
     @RequiresPermissions("flow:get:getMyStartProcess")
     @GetMapping("/toMyStartProcess")
     public String getMyHistoricProcessInstance()

@@ -1,5 +1,6 @@
 package com.snow.flowable.domain.leave;
 
+import com.snow.flowable.domain.FinishTaskDTO;
 import com.snow.system.domain.SysOaLeave;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,20 +19,12 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LeaveFinishTaskDTO  extends SysOaLeave implements Serializable {
+public class LeaveFinishTaskDTO  extends FinishTaskDTO implements Serializable {
 
-
-    private String taskId;
-
-    private String suggestion;
-
-    private String suggestionFileUrl;
+    private static final long serialVersionUID = -6573836100426806321L;
     /**
-     * 0通过，1--驳回
+     * hr userID
      */
-    private Integer checkStatus;
-    /**
-     * 业务参数
-     */
-    private String businessKey;
+    private String hr;
+
 }

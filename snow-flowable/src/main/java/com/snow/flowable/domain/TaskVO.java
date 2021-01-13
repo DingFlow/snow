@@ -29,6 +29,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TaskVO implements Serializable {
 
+    private static final long serialVersionUID = -8748902102208523880L;
     /**
      * 任务ID
      */

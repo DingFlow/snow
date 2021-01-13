@@ -15,8 +15,10 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.domain.leave.LeaveFinishTaskDTO;
+import com.snow.flowable.domain.leave.LeaveRestartTaskDTO;
 import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.service.AppFormService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
@@ -60,7 +62,7 @@ public class SysOaLeaveController extends BaseController
     private ISysSequenceService sequenceService;
 
     @Autowired
-    private AppFormService appFormService;
+    private FlowableTaskService flowableTaskService;
 
 
     @RequiresPermissions("system:leave:view")
@@ -221,93 +223,47 @@ public class SysOaLeaveController extends BaseController
     @PostMapping("/managerFinishTask")
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult managerFinishTask(FinishTaskDTO finishTaskDTO)
+    public AjaxResult managerFinishTask(LeaveFinishTaskDTO finishTaskDTO)
 
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-
-        List<FileEntry> files=Lists.newArrayList();
-        FileEntry fileEntry=new FileEntry();
-        fileEntry.setName("请假申请");
-        fileEntry.setUrl(finishTaskDTO.getSuggestionFileUrl());
-        files.add(fileEntry);
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
-        completeTaskDTO.setTaskId(finishTaskDTO.getTaskId());
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        completeTaskDTO.setFiles(files);
-        completeTaskDTO.setComment(finishTaskDTO.getSuggestion());
-        Integer checkStatus = finishTaskDTO.getCheckStatus();
-        Map<String,Object> paramMap=Maps.newHashMap();
-        paramMap.put("hr",2);
-        completeTaskDTO.setParamMap(paramMap);
-        if(checkStatus==0){
-            completeTaskDTO.setIsPass(true);
-        }else {
-            completeTaskDTO.setIsPass(false);
-        }
-        flowableService.completeTask(completeTaskDTO);
+        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        finishTaskDTO.setHr("2");
+        flowableTaskService.submitTask(finishTaskDTO);
         return AjaxResult.success();
     }
 
     /**
      * hr完成审批
      */
-    //@RequiresPermissions("system:leave:startLeaveProcess")
     @Log(title = "hr完成审批", businessType = BusinessType.OTHER)
     @PostMapping("/hrFinishTask")
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult hrFinishTask(FinishTaskDTO finishTaskDTO)
+    public AjaxResult hrFinishTask(LeaveFinishTaskDTO finishTaskDTO)
     {
-        SysOaLeave sysOaLeave=new SysOaLeave();
-        sysOaLeave.setLeaveNo(finishTaskDTO.getBusinessKey());
-        List<SysOaLeave> sysOaLeaves = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
-        if(StringUtils.isEmpty(sysOaLeaves)){
-            return AjaxResult.error("该业务参数不存在");
-        }
         SysUser sysUser = ShiroUtils.getSysUser();
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        completeTaskDTO.setTaskId(finishTaskDTO.getTaskId());
-        Integer checkStatus = finishTaskDTO.getCheckStatus();
-        if(checkStatus==0){
-            completeTaskDTO.setIsPass(true);
-        }else {
-            completeTaskDTO.setIsPass(false);
-        }
-        completeTaskDTO.setComment(finishTaskDTO.getSuggestion());
-        flowableService.completeTask(completeTaskDTO);
+        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        flowableTaskService.submitTask(finishTaskDTO);
         return AjaxResult.success();
     }
 
     /**
      * 重新发起申请
      */
-    @Log(title = "重新发起申请", businessType = BusinessType.UPDATE)
+    @Log(title = "重新发起申请", businessType = BusinessType.OTHER)
     @PostMapping("/reStartTask")
     @ResponseBody
-    public AjaxResult reStartTask(LeaveFinishTaskDTO sysOaLeave)
+    @Transactional
+    public AjaxResult reStartTask(LeaveRestartTaskDTO finishTaskDTO)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        sysOaLeave.setApplyPerson(sysUser.getUserName());
+        SysOaLeave sysOaLeave=new SysOaLeave();
+        BeanUtils.copyProperties(finishTaskDTO,sysOaLeave);
+        sysOaLeave.setUpdateBy(sysUser.getUserName());
         int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
-        SysOaLeave newSysOaLeave = sysOaLeaveService.selectSysOaLeaveById(sysOaLeave.getId());
-        String leaveString= JSON.toJSONString(newSysOaLeave);
-        //提交
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        completeTaskDTO.setTaskId(sysOaLeave.getTaskId());
-        completeTaskDTO.setComment(sysOaLeave.getSuggestion());
-        Integer checkStatus = sysOaLeave.getCheckStatus();
-        if(checkStatus==0){
-            completeTaskDTO.setIsPass(true);
-        }else {
-            completeTaskDTO.setIsPass(false);
-        }
-        Map<String, Object> map=Maps.newHashMap();
-        map.put(FlowConstants.BUS_VAR,leaveString);
-        completeTaskDTO.setParamMap(map);
-        flowableService.completeTask(completeTaskDTO);
-        return toAjax(i);
+        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        flowableTaskService.submitTask(finishTaskDTO);
+        return AjaxResult.success();
     }
 }

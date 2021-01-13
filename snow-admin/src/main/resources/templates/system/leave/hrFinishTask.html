@@ -11,8 +11,8 @@
 	<form class="form-horizontal m-t" id="signupForm">
 		<div class="row">
 			<div class="col-sm-offset-0 col-sm-10">
-				<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
-				<button type="button" class="btn btn-sm btn-danger" onclick="submitHandler()"><i class="fa fa-remove"></i>驳 回</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler(true)"><i class="fa fa-check"></i>通 过</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="submitCheckHandler(false)"><i class="fa fa-remove"></i>驳 回</button>&nbsp;
 			</div>
 		</div>
 		<br/>
@@ -58,13 +58,12 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label">人事审批意见：</label>
 			<div class="col-sm-8">
-				<textarea name="suggestion" class="form-control"></textarea>
+				<textarea name="comment" class="form-control"></textarea>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">审批附件：</label>
 			<div class="col-sm-8">
-				<input type="hidden" name="suggestionFileUrl" >
 				<div class="file-loading">
 					<input class="form-control file-upload" id="suggestionFileUrl" name="file" type="file">
 				</div>
@@ -77,12 +76,13 @@
     <th:block th:include="include :: jsonview-js" />
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
     <script th:inline="javascript">
-
+        var files=new Array();
         $(function () {
             var processInstanceId= $("#processInstanceId").val();
             var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
             $(".imgcode").attr("src", url);
         });
+
 	    $(function() {
 	    	var reason = [[${appFrom.reason}]];
 	    	console.log(reason);
@@ -94,6 +94,7 @@
 
 	    });
 
+
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
             $(this).fileinput({
@@ -103,27 +104,37 @@
                 maxFileCount: 1,
                 autoReplace: true
             }).on('fileuploaded', function (event, data, previewId, index) {
-                $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+
+                files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
             }).on('fileremoved', function (event, id, index) {
                 $("input[name='" + event.currentTarget.id + "']").val('')
             })
             $(this).fileinput('_initFileActions');
         });
 
-        function submitCheckHandler() {
+
+        function submitCheckHandler(status) {
             if ($.validate.form()) {
                 var data = $("#signupForm").serializeArray();
-                data.push({"name": "checkStatus", "value": 0});
+                for(var i=0;i<data.length;i++){
+                    if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                        $.modal.alertError("请填写审批意见");
+                        return false;
+                    }
+                }
+                if(files!=null||files!=''){
+                    for(var i=0;i<files.length;i++){
+                        data.push({"name": "files["+i+"].key", "value":files[i].key});
+                        data.push({"name": "files["+i+"].name", "value":files[i].name});
+                        data.push({"name": "files["+i+"].url", "value":files[i].url});
+                    }
+                }
+                data.push({"name": "isPass", "value": status});
+                console.log(data);
                 $.operate.saveTab("/system/leave/hrFinishTask", data);
             }
         }
-        function submitHandler() {
-            if ($.validate.form()) {
-                var data = $("#signupForm").serializeArray();
-                data.push({"name": "checkStatus", "value": 1});
-                $.operate.saveTab("/system/leave/hrFinishTask", data);
-            }
-        }
+
     </script>
 </body>
 </html>
