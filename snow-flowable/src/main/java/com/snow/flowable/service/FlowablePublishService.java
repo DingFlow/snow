@@ -56,4 +56,13 @@ public interface FlowablePublishService {
      * @return
      */
     Deployment createBytesDeploymentByModelId(String id);
+
+
+    /**
+     * 根据模型ID发布
+     * @param id
+     * @param deploymentType
+     * @return
+     */
+    String deploymentByModelId(String id,int deploymentType);
 }

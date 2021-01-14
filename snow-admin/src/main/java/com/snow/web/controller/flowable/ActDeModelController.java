@@ -1,5 +1,6 @@
 package com.snow.web.controller.flowable;
 
+import com.google.common.collect.Lists;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -59,6 +60,7 @@ public class ActDeModelController extends BaseController
     public TableDataInfo list(ActDeModel actDeModel)
     {
         startPage();
+        actDeModel.setModelTypeList(Lists.newArrayList(ActDeModel.MODEL_TYPE_BPMN,ActDeModel.MODEL_TYPE_DECISION_TABLE));
         List<ActDeModel> list = actDeModelService.selectActDeModelList(actDeModel);
         return getDataTable(list);
     }
@@ -155,10 +157,10 @@ public class ActDeModelController extends BaseController
     @RequiresPermissions("system:model:deployment")
     @PostMapping("/deployment")
     @ResponseBody
-    public AjaxResult deployment(String id)
+    public AjaxResult deployment(String id,Integer type)
     {
-        Deployment Deployment = flowablePublishServiceImpl.createBytesDeploymentByModelId(id);
-        if(Deployment==null){
+        String deploymentId = flowablePublishServiceImpl.deploymentByModelId(id, type);
+        if(deploymentId==null){
             return AjaxResult.error("modelId不存在");
         }
         return AjaxResult.success("发布成功");

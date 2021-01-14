@@ -1,6 +1,8 @@
 package com.snow.system.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
@@ -78,6 +80,19 @@ public class ActDeModel extends BaseEntity
     @Excel(name = "租户ID")
     private String tenantId;
 
+    private List modelTypeList;
+
+    public static final int MODEL_TYPE_BPMN = 0;
+
+    public static final int MODEL_TYPE_FORM = 2;
+
+    public static final int MODEL_TYPE_APP = 3;
+
+    public static final int MODEL_TYPE_DECISION_TABLE = 4;
+
+    public static final int MODEL_TYPE_CMMN = 5;
+
+    public static final int MODEL_TYPE_DECISION_SERVICE = 6;
 
     @Override
     public String toString() {

@@ -1162,15 +1162,16 @@ var table = {
         			$.operate.submit(url, "post", "json", data);
         		});
             },
-            // 删除信息
-            deployment: function(id) {
+            // 发布信息
+            deployment: function(id,type) {
+        		console.log("=======>"+type);
                 table.set();
                 $.modal.confirm("确定发布该条" + table.options.modalName + "信息吗？", function() {
                     var url = $.common.isEmpty(id) ? table.options.deploymentUrl : table.options.deploymentUrl.replace("{id}", id);
                     if(table.options.type == table_type.bootstrapTreeTable) {
                         $.operate.get(url);
                     } else {
-                        var data = { "id": id };
+                        var data = { "id": id ,"type":type};
                         $.operate.submit(url, "post", "json", data);
                     }
                 });

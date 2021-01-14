@@ -1,12 +1,19 @@
 package com.snow.flowable.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.ClassDeploymentDTO;
 import com.snow.flowable.domain.DeploymentDTO;
 import com.snow.flowable.service.FlowablePublishService;
+import com.snow.system.domain.ActDeModel;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.util.IoUtil;
+import org.flowable.dmn.api.DmnDeployment;
+import org.flowable.dmn.api.DmnRepositoryService;
+import org.flowable.dmn.model.DmnDefinition;
+import org.flowable.editor.dmn.converter.DmnJsonConverter;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentBuilder;
@@ -15,6 +22,7 @@ import org.flowable.ui.modeler.service.ModelServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.zip.ZipInputStream;
@@ -45,6 +53,14 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
 
     @Autowired
     private ModelServiceImpl modelService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
+
+    @Autowired
+    private DmnRepositoryService dmnRepositoryService;
 
     /**
      * class部署
@@ -134,6 +150,34 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
         deployModel.setResourceName(model.getName()+".bpmn20.xml");
         Deployment deploy = createInputStreamDeployment(deployModel,inputStream);
         return deploy;
+    }
+
+    @Override
+    public String deploymentByModelId(String id, int deploymentType) {
+        Model model = modelService.getModel(id);
+        if(StringUtils.isNull(model)){
+            return null;
+        }
+        try {
+        if(deploymentType==ActDeModel.MODEL_TYPE_DECISION_TABLE){
+            JsonNode editorJsonNode = objectMapper.readTree(model.getModelEditorJson());
+            DmnJsonConverter dmnJsonConverter=new DmnJsonConverter();
+            DmnDefinition dmnDefinition = dmnJsonConverter.convertToDmn(editorJsonNode, model.getId(), model.getVersion(), null);
+            DmnDeployment deploy = dmnRepositoryService.createDeployment()
+                    .name(model.getName())
+                    .addDmnModel(model.getName()+".dmn",dmnDefinition)
+                    .category("system_dmn")
+                    .deploy();
+            return deploy.getId();
+        }else if(deploymentType==ActDeModel.MODEL_TYPE_BPMN){
+            Deployment deployment = createBytesDeploymentByModelId(id);
+            return deployment.getId();
+        }
+          return null;
+        } catch (IOException e) {
+            log.error("DeploymentByModelId is fail",e.getMessage());
+            throw new RuntimeException("发布流程失败");
+        }
     }
 
 }

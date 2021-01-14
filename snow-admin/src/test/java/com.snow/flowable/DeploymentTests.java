@@ -26,7 +26,7 @@ public class DeploymentTests extends JunitTestApplication {
 
     @Test
     public void createClassDeployment() throws Exception{
-        InputStream in = new BufferedInputStream(new FileInputStream("D:\\ChromeCoreDownloads\\snow_leave.bpmn20.xml"));
+      //  InputStream in = new BufferedInputStream(new FileInputStream("D:\\ChromeCoreDownloads\\snow_leave.bpmn20.xml"));
         DeploymentDTO classDeploymentDTO=new DeploymentDTO();
      //   classDeploymentDTO.setKey("snow_leave");
         classDeploymentDTO.setName("请假流程");
@@ -34,7 +34,8 @@ public class DeploymentTests extends JunitTestApplication {
         classDeploymentDTO.setResourceName("请假流程");
        // classDeploymentDTO.setTenantId("snow");
        // classDeploymentDTO.setClassPathResource("D:\\modeler\\leave.bpmn20.xml");
-        Deployment classDeployment = flowAblePublishService.createInputStreamDeployment(classDeploymentDTO,in);
-        log.info("发布结果:{}",JSON.toJSONString(classDeployment));
+       // Deployment classDeployment = flowAblePublishService.createInputStreamDeployment(classDeploymentDTO,in);
+        flowAblePublishService.deploymentByModelId("054863dc-5629-11eb-802b-040e3c9c6b2f",4);
+       // log.info("发布结果:{}",JSON.toJSONString(classDeployment));
     }
 }

@@ -40,6 +40,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="modelEditorJson != null  and modelEditorJson != ''"> and model_editor_json = #{modelEditorJson}</if>
             <if test="modelType != null "> and model_type = #{modelType}</if>
             <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+
+            <if test="modelTypeList != null and modelTypeList.size()>0">
+                and model_type IN
+                <foreach item="item" index="index" collection="modelTypeList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
     </select>
     

@@ -38,6 +38,8 @@ public class FlowableConfig {
         configuration.setTransactionManager(transactionManager);
         configuration.setDatabaseSchemaUpdate("false");
         configuration.setAsyncExecutorActivate(true);
+        //开启历史数据异步保存
+        configuration.setAsyncHistoryEnabled(true);
         configuration.setProcessDiagramGenerator(customProcessDiagramGenerator);
         //修改id生成器
         configuration.setIdGenerator(new FlowIdGenerator());

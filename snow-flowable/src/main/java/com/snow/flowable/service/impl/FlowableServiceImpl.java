@@ -35,6 +35,7 @@ import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.common.engine.impl.util.IoUtil;
+import org.flowable.dmn.api.DmnRepositoryService;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -99,6 +100,7 @@ public class FlowableServiceImpl implements FlowableService {
     @Autowired
     private RepositoryService repositoryService;
 
+
     @Autowired
     private HistoryService historyService;
 
@@ -110,9 +112,6 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Autowired
     private ExpressionServiceImpl expressionService;
-
-    @Resource
-    private SysUserMapper sysUserMapper;
 
     @Autowired
     private ModelServiceImpl modelService;
@@ -148,7 +147,7 @@ public class FlowableServiceImpl implements FlowableService {
         model.setCreatedBy(actDeModel.getCreatedBy());
         model.setKey(actDeModel.getModelKey());
         model.setModelType(actDeModel.getModelType().intValue());
-        model.setVersion(1);
+        model.setVersion(actDeModel.getVersion().intValue());
         model.setModelEditorJson(editorNode.toString());
         modelService.saveModel(model);
     }

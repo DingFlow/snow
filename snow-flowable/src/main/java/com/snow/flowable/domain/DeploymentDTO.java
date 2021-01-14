@@ -32,4 +32,9 @@ public class DeploymentDTO implements Serializable {
      * 文件名
      */
     private String resourceName;
+
+    /**
+     * 发布类型
+     */
+    private Integer deploymentType;
 }
