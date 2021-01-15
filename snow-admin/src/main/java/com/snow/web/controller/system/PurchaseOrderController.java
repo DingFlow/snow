@@ -9,6 +9,7 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.utils.poi.EasyExcelUtil;
 import com.snow.flowable.domain.CompleteTaskDTO;
@@ -143,6 +144,7 @@ public class PurchaseOrderController extends BaseController
     @Log(title = "采购单主表", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
+    @RepeatSubmit
     public AjaxResult addSave(PurchaseOrderMain purchaseOrderMain)
     {
         return toAjax(purchaseOrderMainService.insertPurchaseOrderMain(purchaseOrderMain));
@@ -190,10 +192,11 @@ public class PurchaseOrderController extends BaseController
      * 修改保存采购单并发起申请
      */
     @RequiresPermissions("system:purchaseOrder:edit")
-    @Log(title = "采购单主表", businessType = BusinessType.UPDATE)
+    @Log(title = "采购单主表", businessType = BusinessType.OTHER)
     @PostMapping("/edit")
     @ResponseBody
     @Transactional
+    @RepeatSubmit
     public AjaxResult editSave(PurchaseOrderMain purchaseOrderMain)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
@@ -245,6 +248,7 @@ public class PurchaseOrderController extends BaseController
     @PostMapping("/restart")
     @ResponseBody
     @Transactional
+    @RepeatSubmit
     public AjaxResult restart(PurchaseOrderMainTask purchaseOrderMainTask)
     {
         SysUser sysUser = ShiroUtils.getSysUser();

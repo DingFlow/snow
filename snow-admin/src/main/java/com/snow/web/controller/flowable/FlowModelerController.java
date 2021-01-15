@@ -1,6 +1,7 @@
 package com.snow.web.controller.flowable;
 
 import com.snow.common.annotation.Log;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
@@ -136,6 +137,7 @@ public class FlowModelerController extends BaseController
     @RequiresPermissions("modeler:deployment:deployment")
     @PostMapping("/importData")
     @ResponseBody
+    @RepeatSubmit
     public AjaxResult importData(MultipartFile file, String name,String key,String category) throws Exception
     {
         InputStream inputStream = file.getInputStream();

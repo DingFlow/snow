@@ -175,7 +175,7 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
         }
           return null;
         } catch (IOException e) {
-            log.error("DeploymentByModelId is fail",e.getMessage());
+            log.error("deploymentByModelId is fail",e.getMessage());
             throw new RuntimeException("发布流程失败");
         }
     }
