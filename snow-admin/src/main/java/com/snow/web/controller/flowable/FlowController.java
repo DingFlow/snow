@@ -151,6 +151,10 @@ public class FlowController extends BaseController {
         return prefix +"/myStartProcessDetail";
     }
 
+    /**
+     * 我参与的任务
+     * @return
+     */
     @RequiresPermissions("flow:process:getMyTakePartInProcess")
     @GetMapping("/toMyTakePartInProcess")
     public String getMyTakePartInProcess()
