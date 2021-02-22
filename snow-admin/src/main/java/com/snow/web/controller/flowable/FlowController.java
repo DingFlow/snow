@@ -2,6 +2,7 @@ package com.snow.web.controller.flowable;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.alibaba.fastjson.JSON;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
@@ -68,6 +69,7 @@ public class FlowController extends BaseController {
      */
     @PostMapping("/finishTask")
     @ResponseBody
+    @RepeatSubmit
     public AjaxResult finishTask(CompleteTaskDTO completeTaskDTO)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
@@ -149,6 +151,10 @@ public class FlowController extends BaseController {
         return prefix +"/myStartProcessDetail";
     }
 
+    /**
+     * 我参与的任务
+     * @return
+     */
     @RequiresPermissions("flow:process:getMyTakePartInProcess")
     @GetMapping("/toMyTakePartInProcess")
     public String getMyTakePartInProcess()

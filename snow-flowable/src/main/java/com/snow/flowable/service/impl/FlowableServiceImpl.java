@@ -620,6 +620,9 @@ public class FlowableServiceImpl implements FlowableService {
         if(!StringUtils.isEmpty(processInstanceDTO.getStartedUserId())){
             historicProcessInstanceQuery.startedBy(processInstanceDTO.getStartedUserId());
         }
+        if(!StringUtils.isEmpty(processInstanceDTO.getProcessDefinitionName())){
+            historicProcessInstanceQuery.processDefinitionName(processInstanceDTO.getProcessDefinitionName());
+        }
         historicProcessInstanceQuery.includeProcessVariables();
         long count = historicProcessInstanceQuery.
                 orderByProcessInstanceStartTime().
@@ -683,7 +686,7 @@ public class FlowableServiceImpl implements FlowableService {
                 }
         );
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKeyLike())){
-            historicTaskInstanceQuery.processInstanceBusinessKeyLike(historicTaskInstanceDTO.getBusinessKeyLike());
+            historicTaskInstanceQuery.processInstanceBusinessKeyLike("%"+historicTaskInstanceDTO.getBusinessKeyLike()+"%");
         }
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKey())){
             historicTaskInstanceQuery.processInstanceBusinessKey(historicTaskInstanceDTO.getBusinessKey());

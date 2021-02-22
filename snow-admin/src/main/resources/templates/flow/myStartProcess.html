@@ -13,7 +13,7 @@
                     <div class="row">
                         <ul>
                             <li>
-                                <label>&nbsp;&nbsp; 流程名称：</label>
+                                <label>流程名称：</label>
                                 <input type="text" name="processDefinitionName"/>
                             </li>
                             <li>
@@ -40,7 +40,6 @@
      <th:block th:include="include :: select2-js" />
      <script th:inline="javascript">
          var detailFlag = [[${@permission.hasPermi('system:flow:myStartProcessDetail')}]];
-
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
          var prefixFlow = ctx + "flow";
          $(function() {
