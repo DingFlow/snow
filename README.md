@@ -1,5 +1,5 @@
 ## 平台简介
- 
+ 致力于构建钉钉流程OA一体化
 
 ## 内置功能
 
@@ -20,11 +20,38 @@
 15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
 16. 在线构建器：拖动表单元素生成相应的HTML代码。
 17. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
+18. **钉钉管理：钉钉用户，部门体系数据同步，请假单，采购单流程**
+19. **流程管理： 流程模型在线设计，流程组管理**
 
 ## 在线体验
-
+  暂未开放数据库，有需要的可以加群，项目可搭建流程平台商业化
+  QQ群 577813338
 - admin/admin123  
+
+## 项目截图
+<table>
+    <tr>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/094981bad3844c25b4e0e9ae5fdfb253.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/694936c6e1b34af4a9c2525bf25156ba.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/102a95b10c5b4094ae9eea060ed3d0c4.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/de48282f792d4300ba26b7a397464d71.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/952eaddf26164feaae13ec9ffdbeab35.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/416ffa7c1f1f42f8807a24dc2e63a08d.png"/></td>
+    </tr>
+</table>
+
 
 ## 未来规划
  TODO 1.0
- 1.0 部门，用户，角色与钉钉打通
+ 1.0 角色与钉钉打通
+ 2.0 流程表单设计
+ 
+## 交流群
+  QQ群 577813338
+
+## 感谢诺依系统提供框架
+   诺依系统地址 http://ruoyi.vip  
