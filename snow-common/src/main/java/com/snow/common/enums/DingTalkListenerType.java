@@ -29,7 +29,7 @@ public enum  DingTalkListenerType {
     ;
 
 
-    /**
+    /**WORK_RECODE_CREATE
      * 一级code
      */
     private final Integer code;

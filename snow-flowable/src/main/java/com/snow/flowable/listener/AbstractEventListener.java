@@ -99,6 +99,23 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
     }
 
     /**
+     * 初始化监听哪些流程
+     * @param flowableEngineEvent
+     */
+    public void initProcessDefinition(FlowableEngineEvent flowableEngineEvent){
+        ProcessDefinitionEntity processDefinition = getProcessDefinition(flowableEngineEvent);
+        if(flowDefEnums!=null&&processDefinition!=null){
+            String key = Optional.ofNullable(processDefinition.getKey()).orElse("");
+            for(FlowDefEnum flowDefEnum:flowDefEnums){
+                //在流程中存在的才监听
+                if(flowDefEnum.getCode().equals(key)){
+                    initEngineEventType(flowableEngineEvent);
+                }
+            }
+        }
+
+    }
+    /**
      * 初始化事件类型
      * @param flowableEngineEvent
      */
@@ -251,19 +268,8 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
         }
     }
 
-    public void initProcessDefinition(FlowableEngineEvent flowableEngineEvent){
-        ProcessDefinitionEntity processDefinition = getProcessDefinition(flowableEngineEvent);
-        if(flowDefEnums!=null&&processDefinition!=null){
-            String key = Optional.ofNullable(processDefinition.getKey()).orElse("");
-            for(FlowDefEnum flowDefEnum:flowDefEnums){
-                //在流程中存在的才监听
-                if(flowDefEnum.getCode().equals(key)){
-                    initEngineEventType(flowableEngineEvent);
-                }
-            }
-        }
 
-    }
+
 
 
 
