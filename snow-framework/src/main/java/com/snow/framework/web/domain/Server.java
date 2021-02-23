@@ -10,7 +10,7 @@ import com.snow.framework.web.domain.server.Cpu;
 import com.snow.framework.web.domain.server.Jvm;
 import com.snow.framework.web.domain.server.Mem;
 import com.snow.framework.web.domain.server.Sys;
-import com.snow.framework.web.domain.server.SysFile;
+import com.snow.framework.web.domain.server.SysOsFile;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
@@ -54,7 +54,7 @@ public class Server
     /**
      * 磁盘相关信息
      */
-    private List<SysFile> sysFiles = new LinkedList<SysFile>();
+    private List<SysOsFile> sysFiles = new LinkedList<SysOsFile>();
 
     public Cpu getCpu()
     {
@@ -96,12 +96,12 @@ public class Server
         this.sys = sys;
     }
 
-    public List<SysFile> getSysFiles()
+    public List<SysOsFile> getSysFiles()
     {
         return sysFiles;
     }
 
-    public void setSysFiles(List<SysFile> sysFiles)
+    public void setSysFiles(List<SysOsFile> sysFiles)
     {
         this.sysFiles = sysFiles;
     }
@@ -196,7 +196,7 @@ public class Server
             long free = fs.getUsableSpace();
             long total = fs.getTotalSpace();
             long used = total - free;
-            SysFile sysFile = new SysFile();
+            SysOsFile sysFile = new SysOsFile();
             sysFile.setDirName(fs.getMount());
             sysFile.setSysTypeName(fs.getType());
             sysFile.setTypeName(fs.getName());

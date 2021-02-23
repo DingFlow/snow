@@ -43,6 +43,9 @@ public class SysMenu extends BaseEntity
     /** 菜单状态:0显示,1隐藏 */
     private String visible;
 
+    /** 是否刷新（0刷新 1不刷新） */
+    private String isRefresh;
+
     /** 权限字符串 */
     private String perms;
 
@@ -145,6 +148,16 @@ public class SysMenu extends BaseEntity
     public void setVisible(String visible)
     {
         this.visible = visible;
+    }
+
+    public String getIsRefresh()
+    {
+        return isRefresh;
+    }
+
+    public void setIsRefresh(String isRefresh)
+    {
+        this.isRefresh = isRefresh;
     }
 
     @Size(min = 0, max = 100, message = "权限标识长度不能超过100个字符")

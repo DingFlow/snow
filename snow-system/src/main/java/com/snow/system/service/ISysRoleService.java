@@ -2,6 +2,8 @@ package com.snow.system.service;
 
 import java.util.List;
 import java.util.Set;
+
+import com.snow.common.core.domain.Ztree;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUserRole;
 
@@ -156,4 +158,11 @@ public interface ISysRoleService
      * @return 结果
      */
     public int insertAuthUsers(Long roleId, String userIds);
+
+
+    /**
+     * 角色数
+     * @return
+     */
+    public List<Ztree> selectSysRoleTree();
 }

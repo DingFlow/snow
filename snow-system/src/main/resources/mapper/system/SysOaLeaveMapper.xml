@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaLeaveMapper">
+    
+    <resultMap type="SysOaLeave" id="SysOaLeaveResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="reason"    column="reason"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="processStatus"    column="process_status"    />
+        <result property="processInstanceId"    column="process_instance_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="applyPerson"    column="apply_person"    />
+        <result property="remark"    column="remark"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="leaveNo"    column="leave_no"    />
+
+    </resultMap>
+
+    <sql id="selectSysOaLeaveVo">
+        select id, name,leave_no, reason, start_time, end_time, process_status, process_instance_id, create_by, create_time, update_time, update_by, apply_person, remark, is_delete, file_url from sys_oa_leave
+    </sql>
+
+    <select id="selectSysOaLeaveList" parameterType="SysOaLeave" resultMap="SysOaLeaveResult">
+        <include refid="selectSysOaLeaveVo"/>
+        <where>
+            <if test="leaveNo != null  and leaveNo != ''"> and leave_no like concat('%', #{leaveNo}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="processStatus != null "> and process_status = #{processStatus}</if>
+            <if test="processInstanceId != null  and processInstanceId != ''"> and process_instance_id = #{processInstanceId}</if>
+            <if test="applyPerson != null  and applyPerson != ''"> and apply_person = #{applyPerson}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysOaLeaveById" parameterType="Integer" resultMap="SysOaLeaveResult">
+        <include refid="selectSysOaLeaveVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysOaLeaveByLeaveNo" parameterType="String" resultMap="SysOaLeaveResult">
+        <include refid="selectSysOaLeaveVo"/>
+        where leave_no = #{leaveNo}
+    </select>
+        
+    <insert id="insertSysOaLeave" parameterType="SysOaLeave" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="leaveNo != null  and leaveNo != ''"> leave_no,</if>
+            <if test="reason != null">reason,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="processStatus != null">process_status,</if>
+            <if test="processInstanceId != null">process_instance_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="applyPerson != null">apply_person,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="fileUrl != null">file_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="leaveNo != null ">#{leaveNo},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="processStatus != null">#{processStatus},</if>
+            <if test="processInstanceId != null">#{processInstanceId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="applyPerson != null">#{applyPerson},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaLeave" parameterType="SysOaLeave">
+        update sys_oa_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="leaveNo != null ">leave_no=#{leaveNo},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="processInstanceId != null">process_instance_id = #{processInstanceId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="applyPerson != null">apply_person = #{applyPerson},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateSysOaLeaveByLeaveNo" parameterType="SysOaLeave">
+        update sys_oa_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="processInstanceId != null">process_instance_id = #{processInstanceId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="applyPerson != null">apply_person = #{applyPerson},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where leave_no = #{leaveNo}
+    </update>
+    <delete id="deleteSysOaLeaveById" parameterType="Integer">
+        delete from sys_oa_leave where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaLeaveByIds" parameterType="String">
+        delete from sys_oa_leave where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

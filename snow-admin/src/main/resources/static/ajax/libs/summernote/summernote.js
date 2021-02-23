@@ -3523,8 +3523,8 @@
   /**
    * @class Create a virtual table to create what actions to do in change.
    * @param {object} startPoint Cell selected to apply change.
-   * @param {enum} where  Where change will be applied Row or Col. Use enum: TableResultAction.where
-   * @param {enum} action Action to be applied. Use enum: TableResultAction.requestAction
+   * @param {enums} where  Where change will be applied Row or Col. Use enums: TableResultAction.where
+   * @param {enums} action Action to be applied. Use enums: TableResultAction.requestAction
    * @param {object} domTable Dom element of table to make changes.
    */
   var TableResultAction = function (startPoint, where, action, domTable) {
@@ -3760,17 +3760,17 @@
   };
   /**
   *
-  * Where action occours enum.
+  * Where action occours enums.
   */
   TableResultAction.where = { 'Row': 0, 'Column': 1 };
   /**
   *
-  * Requested action to apply enum.
+  * Requested action to apply enums.
   */
   TableResultAction.requestAction = { 'Add': 0, 'Delete': 1 };
   /**
   *
-  * Result action to be executed enum.
+  * Result action to be executed enums.
   */
   TableResultAction.resultAction = { 'Ignore': 0, 'SubtractSpanCount': 1, 'RemoveCell': 2, 'AddCell': 3, 'SumSpanCount': 4 };
   /**

@@ -25,10 +25,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"     column="update_by"    />
 		<result property="updateTime"   column="update_time"  />
 		<result property="remark"       column="remark"       />
+		<result property="isSenior"       column="is_senior"       />
+		<result property="jobnumber"       column="job_number"       />
+		<result property="workPlace"       column="work_place"       />
+		<result property="tel"       column="tel"       />
+		<result property="hiredDate"       column="hired_date"       />
+		<result property="orgEmail"       column="org_email"       />
+		<result property="dingUserId"       column="ding_user_id"       />
+		<result property="pwdUpdateDate" column="pwd_update_date" />
+
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
-	
+
 	<resultMap id="deptResult" type="SysDept">
 		<id     property="deptId"   column="dept_id"     />
 		<result property="parentId" column="parent_id"   />
@@ -48,9 +57,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectUserVo">
-        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_time, u.remark,
+        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.pwd_update_date, u.create_time, u.remark,
        		    d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
-       		    r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+       		    r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,
+       		    u.ding_user_id
 		from sys_user u
 			 left join sys_dept d on u.dept_id = d.dept_id
 			 left join sys_user_role ur on u.user_id = ur.user_id
@@ -58,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 	
 	<select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u
+		select u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader,u.ding_user_id from sys_user u
 		left join sys_dept d on u.dept_id = d.dept_id
 		where u.del_flag = '0'
 		<if test="loginName != null and loginName != ''">
@@ -93,13 +103,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <if test="loginName != null and loginName != ''">
 			AND u.login_name like concat('%', #{loginName}, '%')
 		</if>
+		<if test="userName != null and userName != ''">
+			AND u.user_name like concat('%', #{userName}, '%')
+		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
 	</select>
-	
+	<select id="selectUserListByRoleId" parameterType="string" resultMap="SysUserResult">
+		select distinct u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.status, u.create_time
+		from sys_user u
+		left join sys_user_role r on r.user_id = u.user_id
+		where u.del_flag = '0'
+
+		 and r.role_id = #{roleId}
+
+	</select>
+
+
+	<select id="selectUserListByRoleIds"  resultMap="SysUserResult">
+		select distinct u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar,
+		 u.phonenumber, u.status, u.create_time
+		from sys_user u
+		left join sys_user_role r on r.user_id = u.user_id
+		where u.del_flag = '0'
+		<if test="roleIds!=null and roleIds.size()>0">
+			and r.role_id in
+			<foreach collection="roleIds" close=")" open="(" separator="," item="roleId">
+				#{roleId}
+			</foreach>
+		</if>
+
+
+	</select>
 	<select id="selectUnallocatedList" parameterType="SysUser" resultMap="SysUserResult">
 	    select distinct u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.status, u.create_time
 	    from sys_user u
@@ -179,6 +217,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="loginDate != null">login_date = #{loginDate},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
  			<if test="remark != null">remark = #{remark},</if>
+			<if test="isSenior != null">is_senior = #{isSenior},</if>
+			<if test="jobnumber != null">job_number = #{jobnumber},</if>
+			<if test="workPlace != null">work_place = #{workPlace},</if>
+			<if test="tel != null">tel = #{tel},</if>
+			<if test="hiredDate != null">hired_date = #{hiredDate},</if>
+			<if test="pwdUpdateDate != null">pwd_update_date = #{pwdUpdateDate},</if>
+			<if test="orgEmail != null">org_email = #{orgEmail},</if>
+			<if test="dingUserId != null">ding_user_id = #{dingUserId},</if>
  			update_time = sysdate()
  		</set>
  		where user_id = #{userId}
@@ -198,8 +244,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="password != null and password != ''">password,</if>
  			<if test="salt != null and salt != ''">salt,</if>
  			<if test="status != null and status != ''">status,</if>
+		    <if test="pwdUpdateDate != null">pwd_update_date,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			<if test="remark != null and remark != ''">remark,</if>
+		<if test="isSenior != null">is_senior,</if>
+		<if test="jobnumber != null">job_number,</if>
+		<if test="workPlace != null">work_place ,</if>
+		<if test="tel != null">tel ,</if>
+		<if test="hiredDate != null">hired_date,</if>
+		<if test="orgEmail != null">org_email,</if>
+		<if test="dingUserId != null">ding_user_id,</if>
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
@@ -214,8 +268,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="password != null and password != ''">#{password},</if>
  			<if test="salt != null and salt != ''">#{salt},</if>
  			<if test="status != null and status != ''">#{status},</if>
+		<if test="pwdUpdateDate != null">#{pwdUpdateDate},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="isSenior != null ">#{isSenior},</if>
+		<if test="jobnumber != null and jobnumber !=''"> #{jobnumber},</if>
+		<if test="workPlace != null and workPlace !=''">#{workPlace},</if>
+		<if test="tel != null and tel!=''">#{tel},</if>
+		<if test="hiredDate != null and hiredDate !='' ">#{hiredDate},</if>
+		<if test="orgEmail != null and orgEmail !=''"> #{orgEmail},</if>
+		<if test="dingUserId != null">#{dingUserId},</if>
  			sysdate()
  		)
 	</insert>

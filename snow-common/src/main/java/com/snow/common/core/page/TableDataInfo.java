@@ -24,6 +24,11 @@ public class TableDataInfo implements Serializable
     /** 消息内容 */
     private String msg;
 
+    private int pageSize;
+
+    private int pageIndex;
+
+
     /**
      * 表格数据对象
      */
@@ -81,5 +86,21 @@ public class TableDataInfo implements Serializable
     public void setMsg(String msg)
     {
         this.msg = msg;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
 }

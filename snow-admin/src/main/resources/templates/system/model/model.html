@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('设计器model列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>模型名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>模型key：</label>
+                                <input type="text" name="modelKey"/>
+                            </li>
+
+                            <li>
+                                <label>版本号：</label>
+                                <input type="text" name="version"/>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary"  href="/modeler/index" target="_blank" shiro:hasPermission="modeler:flow:view">
+                    <i class="fa fa-desktop"></i> 设计流程
+                </a>
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:model:add">
+                    <i class="fa fa-plus"></i> 添加模型
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:model:remove">
+                    <i class="fa fa-remove"></i> 删除模型
+                </a>
+
+
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:model:export">
+                    <i class="fa fa-download"></i> 导出数据
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:model:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:model:remove')}]];
+        var deploymentFlag = [[${@permission.hasPermi('system:model:deployment')}]];
+        var exportXmlFlag = [[${@permission.hasPermi('system:model:exportXml')}]];
+        var flowModelTypes = [[${@dict.getType('flow_model_type')}]];
+
+        var prefix = ctx + "system/model";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl: prefix + "/edit/{id}",
+                deploymentUrl: prefix + "/deployment",
+                modalName: "设计器model",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'name',
+                    title: '模型名称',
+                    formatter: function(value, row, index) {
+                        return '<a class="success" href="../system/model/showXml/' + row.id + '"  target="_blank">'+value+'</a> ';
+                    }
+                },
+                    {
+                        field: 'version',
+                        title: '版本号'
+                    },
+                {
+                    field: 'modelKey',
+                    title: '模型key'
+                },
+                 {
+                     field: 'modelType',
+                     title: '模型类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(flowModelTypes, value);
+                        }
+                    },
+
+                {
+                    field: 'created',
+                    title: '创建时间'
+                },
+
+
+                {
+                    field: 'lastUpdated',
+                    title: '更新时间'
+                },
+
+
+
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.parentDetail(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑模型</a> ');
+                        actions.push('<a class="btn btn-warning btn-xs ' + deploymentFlag + '" href="javascript:void(0)" onclick="$.operate.deployment(\'' + row.id + '\','+row.modelType+')"><i class="fa fa-dashboard"></i>发布</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + exportXmlFlag + '" href="javascript:void(0)" onclick="getXmlUrl(\'' + row.id + '\')"><i class="fa fa-expand"></i>导出</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        //导出
+        function getXmlUrl(id) {
+            window.location.href =prefix+'/exportXml/'+id;
+        }
+    </script>
+</body>
+</html>

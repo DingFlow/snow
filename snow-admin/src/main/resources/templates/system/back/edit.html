@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改回调事件')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-back-edit" th:object="${dingtalkCallBack}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">回调名称：</label>
+                <div class="col-sm-8">
+                    <input name="callBackName" th:field="*{callBackName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">加解密token：</label>
+                <div class="col-sm-8">
+                    <input name="token" th:field="*{token}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">数据加密密钥：</label>
+                <div class="col-sm-8">
+                    <input name="aesKey" th:field="*{aesKey}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">事件回调url：</label>
+                <div class="col-sm-8">
+                    <input name="url" th:field="*{url}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">通讯录事件回调：</label>
+                <div class="col-sm-8" th:with="type=${@dict.getType('address_book')}">
+                    <label th:each="dict : ${type}" class="check-box">
+                        <input name="eventNameList" type="checkbox" th:value="${dict.dictValue}" th:attr="checked=${dingtalkCallBack.eventNameList.contains(dict.dictValue)?true:false}" th:text="${dict.dictLabel}" required>
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/back";
+        $("#form-back-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-back-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

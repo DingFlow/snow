@@ -480,7 +480,9 @@ $(function() {
     $('#fullScreen').on('click', function () {
     	$(document).toggleFullScreen();
     });
-
+    $('#lockScreen').on('click', function () {
+        location.href  = ctx + "lockscreen";
+    });
     // 页签刷新按钮
     $('.tabReload').on('click', refreshTab);
 

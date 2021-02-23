@@ -399,14 +399,14 @@
 	  var result = [];
 	  var key;
 	  for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key);
-	  // Don't enum bug & hidden keys
+	  // Don't enums bug & hidden keys
 	  while (names.length > i) if (has(O, key = names[i++])) {
 	    ~indexOf(result, key) || result.push(key);
 	  }
 	  return result;
 	};
 
-	// IE8- don't enum bug keys
+	// IE8- don't enums bug keys
 	var enumBugKeys = [
 	  'constructor',
 	  'hasOwnProperty',

@@ -19,6 +19,12 @@ public interface SysRoleMapper
     public List<SysRole> selectRoleList(SysRole role);
 
     /**
+     * 获取所有的角色
+     * @return
+     */
+    public List<SysRole> selectRoleAll();
+
+    /**
      * 根据用户ID查询角色
      * 
      * @param userId 用户ID

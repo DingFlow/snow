@@ -1,7 +1,10 @@
 package com.snow.system.mapper;
 
 import java.util.List;
+import java.util.Set;
+
 import com.snow.system.domain.SysUser;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户表 数据层
@@ -25,6 +28,20 @@ public interface SysUserMapper
      * @return 用户信息集合信息
      */
     public List<SysUser> selectAllocatedList(SysUser user);
+
+    /**
+     *
+     * @param roleId
+     * @return
+     */
+    public List<SysUser> selectUserListByRoleId(String roleId);
+
+    /**
+     *
+     * @param roleIds
+     * @return
+     */
+    public List<SysUser>  selectUserListByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     /**
      * 根据条件分页查询未分配用户角色列表

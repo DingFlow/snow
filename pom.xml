@@ -202,6 +202,20 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!--钉钉模块-->
+            <dependency>
+                <groupId>com.snow</groupId>
+                <artifactId>snow-dingtalk</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+            <!--工作流模块-->
+            <dependency>
+                <groupId>com.snow</groupId>
+                <artifactId>snow-flowable</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -213,6 +227,7 @@
         <module>snow-generator</module>
         <module>snow-common</module>
         <module>snow-dingtalk</module>
+        <module>snow-flowable</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -244,6 +259,17 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus Staging</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 

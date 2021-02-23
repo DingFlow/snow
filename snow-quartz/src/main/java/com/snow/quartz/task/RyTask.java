@@ -21,7 +21,10 @@ public class RyTask
         System.out.println("执行有参方法：" + params);
     }
 
-    public void ryNoParams()
+    /**
+     *
+     */
+    public void updateSquenceValue()
     {
         System.out.println("执行无参方法");
     }

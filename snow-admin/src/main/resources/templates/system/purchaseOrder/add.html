@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('新增采购单主表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-purchaseOrder-add">
+            <h4 class="form-header h4">采购单主表信息</h4>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">采购单号：</label>
+                <div class="col-sm-4">
+                    <input name="orderNo" class="form-control" type="text" th:value="${orderNo}" readonly>
+                </div>
+                <label class="col-sm-2 control-label">采购标题：</label>
+                <div class="col-sm-4">
+                    <input name="title" class="form-control" type="text" required>
+                </div>
+            </div>
+        <!--    <div class="form-group">
+                <label class="col-sm-3 control-label">总数量：</label>
+                <div class="col-sm-8">
+                    <input name="totalQuantity" class="form-control" type="text">
+                </div>
+            </div>-->
+          <!--  <div class="form-group">
+                <label class="col-sm-3 control-label">采购总金额：</label>
+                <div class="col-sm-8">
+                    <input name="totalPrice" class="form-control" type="text">
+                </div>
+            </div>-->
+
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">供应商：</label>
+                <div class="col-sm-4">
+                    <input name="supplierName" class="form-control" type="text">
+                </div>
+                <label class="col-sm-2 control-label">采购人：</label>
+                <div class="col-sm-4">
+                    <input name="belongUser" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">订货日期：</label>
+                <div class="col-sm-4">
+                    <div class="input-group date">
+                        <input name="orderTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+                <label class="col-sm-2 control-label">交货日期：</label>
+                <div class="col-sm-4">
+                    <div class="input-group date">
+                        <input name="deliveryDate" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="remark" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <h4 class="form-header h4">采购单明细信息</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-success btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
+                    <a class="btn btn-sm btn-info" onclick="importData()" shiro:hasPermission="system:purchaseOrder:import">
+                        <i class="fa fa-upload"></i> 导入
+                    </a>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:src="@{/js/jquery.tmpl.js}"></script>
+    <script th:inline="javascript">
+        var prefix = ctx + "system/purchaseOrder";
+
+        $("#form-purchaseOrder-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-purchaseOrder-add').serialize());
+            }
+        }
+
+        $("input[name='orderTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='deliveryDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $(function() {
+            var options = {
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                    	var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                    	return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'goodsNo',
+                    align: 'center',
+                    title: '货物编号',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsNo' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'goodsName',
+                    align: 'center',
+                    title: '名称',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsName' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'goodsSize',
+                    align: 'center',
+                    title: '规格',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsSize' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'goodsQuantity',
+                    align: 'center',
+                    title: '数量',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsQuantity' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'goodsPrice',
+                    align: 'center',
+                    title: '单价',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsPrice' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'totalPrice',
+                    align: 'center',
+                    title: '总价',
+                    formatter: function(value, row, index) {
+                        value=row.goodsPrice*row.goodsQuantity;
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].totalPrice' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'remark',
+                    align: 'center',
+                    title: '备注',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].remark' value='%s'>", index, value);
+                        return html;
+                    }
+                }
+              ]
+            };
+            $.table.init(options);
+        });
+
+        function addColumn() {
+            var row = {
+                goodsNo: "",
+                goodsName: "",
+                goodsSize: "",
+                goodsQuantity: "",
+                goodsPrice: "",
+                totalPrice: "",
+                remark: ""
+            };
+            sub.addColumn(row);
+        }
+
+
+        function importData(formId) {
+            var prefix = ctx + "system/purchaseOrder";
+            table.set();
+            var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+            layer.open({
+                type: 1,
+                area: ['400px', '230px'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: '导入采购单明细数据',
+                content: $('#' + currentId).html(),
+                btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
+                // 弹层外区域关闭
+                shadeClose: true,
+                btn1: function(index, layero){
+                    var file = layero.find('#file').val();
+                    if (file == '' || (!$.common.endWith(file, '.xls') && !$.common.endWith(file, '.xlsx'))){
+                        $.modal.msgWarning("请选择后缀为 “xls”或“xlsx”的文件。");
+                        return false;
+                    }
+                    var index = layer.load(2, {shade: false});
+                    $.modal.disable();
+                    var formData = new FormData(layero.find('form')[0]);
+                    $.ajax({
+                        url:prefix+'/import',
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: 'POST',
+                        success: function (result) {
+                            if (result.code == web_status.SUCCESS) {
+                                layer.closeAll(); //关闭加载层
+                                $.modal.enable();
+                                $.table.refresh();
+                                //console.log(JSON.stringify(result))
+                                var data= result.data;
+
+                                for (var i = 0; i < data.length; i++){
+                                    sub.addColumn(data[i]);
+                                }
+
+
+                                // $.modal.alertSuccess(result.msg);
+                            } else if (result.code == web_status.WARNING) {
+                                layer.close(index);
+                                $.modal.enable();
+                                $.modal.alertWarning(result.msg)
+                            } else {
+                                layer.close(index);
+                                $.modal.enable();
+                                $.modal.alertError(result.msg);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+    <!-- 导入区域 -->
+    <script id="importTpl" type="text/template">
+        <form enctype="multipart/form-data" class=" form-horizontal m mt20 mb10" >
+            <div class="col-xs-offset-1">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">导入数据：</label>
+                        <div class="col-sm-4">
+                            <input type="file" id="file" name="file"/>
+                        </div>
+                       <div class="col-sm-4">
+                            <a href="/system/purchaseOrder/download" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i>  下载模板</a>
+                        </div>
+                    </div>
+                </div>
+                <font color="red" class="pull-left mt10">
+                    提示：仅允许导入“xls”或“xlsx”格式文件！
+                </font>
+            </div>
+        </form>
+
+    </script>
+
+
+</body>
+</html>

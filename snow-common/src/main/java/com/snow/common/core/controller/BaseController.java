@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.snow.common.core.page.PageModel;
 import com.snow.common.utils.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,6 @@ public class BaseController
             PageHelper.startPage(pageNum, pageSize, orderBy);
         }
     }
-
     /**
      * 设置请求排序数据
      */
@@ -111,9 +111,27 @@ public class BaseController
         rspData.setCode(0);
         rspData.setRows(list);
         rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setPageIndex(new PageInfo(list).getPageNum());
+        rspData.setPageSize(new PageInfo(list).getPageSize());
+
         return rspData;
     }
 
+    /**
+     * flowable的分页
+     * @param list
+     * @return
+     */
+    protected TableDataInfo getFlowDataTable(PageModel<?> list)
+    {
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(0);
+        rspData.setRows(list.getPagedRecords());
+        rspData.setTotal(list.getTotalCount());
+        rspData.setPageIndex(list.getPageNo());
+        rspData.setPageSize(list.getPageSize());
+        return rspData;
+    }
     /**
      * 响应返回结果
      * 

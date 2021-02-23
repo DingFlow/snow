@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysDingtalkSyncLogMapper">
+    
+    <resultMap type="SysDingtalkSyncLog" id="SysDingtalkSyncLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="title"    column="title"    />
+        <result property="moduleType"    column="module_type"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="method"    column="method"    />
+        <result property="requestMethod"    column="request_method"    />
+        <result property="operatorType"    column="operator_type"    />
+        <result property="operName"    column="oper_name"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="operUrl"    column="oper_url"    />
+        <result property="operIp"    column="oper_ip"    />
+        <result property="operLocation"    column="oper_location"    />
+        <result property="operSourceParam"    column="oper_source_param"    />
+        <result property="operDingtalkParam"    column="oper_dingtalk_param"    />
+        <result property="jsonResult"    column="json_result"    />
+        <result property="status"    column="status"    />
+        <result property="errorMsg"    column="error_msg"    />
+        <result property="operTime"    column="oper_time"    />
+        <result property="logType"    column="log_type"    />
+    </resultMap>
+
+    <sql id="selectSysDingtalkSyncLogVo">
+        select log_id, title, module_type, log_type,business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_source_param, oper_dingtalk_param, json_result, status, error_msg, oper_time from sys_dingtalk_sync_log
+    </sql>
+
+    <select id="selectSysDingtalkSyncLogList" parameterType="SysDingtalkSyncLog" resultMap="SysDingtalkSyncLogResult">
+        <include refid="selectSysDingtalkSyncLogVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="moduleType != null "> and module_type = #{moduleType}</if>
+            <if test="businessType != null "> and business_type = #{businessType}</if>
+            <if test="method != null  and method != ''"> and method like concat('%', #{method}, '%')</if>
+            <if test="requestMethod != null  and requestMethod != ''"> and request_method = #{requestMethod}</if>
+            <if test="operatorType != null "> and operator_type = #{operatorType}</if>
+            <if test="operName != null  and operName != ''"> and oper_name like concat('%', #{operName}, '%')</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="operUrl != null  and operUrl != ''"> and oper_url = #{operUrl}</if>
+            <if test="operIp != null  and operIp != ''"> and oper_ip = #{operIp}</if>
+            <if test="operLocation != null  and operLocation != ''"> and oper_location = #{operLocation}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="operTime != null "> and oper_time = #{operTime}</if>
+            <if test="logType != null "> and log_type = #{logType}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDingtalkSyncLogById" parameterType="Long" resultMap="SysDingtalkSyncLogResult">
+        <include refid="selectSysDingtalkSyncLogVo"/>
+        where log_id = #{logId}
+    </select>
+        
+    <insert id="insertSysDingtalkSyncLog" parameterType="SysDingtalkSyncLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into sys_dingtalk_sync_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="moduleType != null">module_type,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="method != null">method,</if>
+            <if test="requestMethod != null">request_method,</if>
+            <if test="operatorType != null">operator_type,</if>
+            <if test="operName != null">oper_name,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="operUrl != null">oper_url,</if>
+            <if test="operIp != null">oper_ip,</if>
+            <if test="operLocation != null">oper_location,</if>
+            <if test="operSourceParam != null and operSourceParam != ''">oper_source_param,</if>
+            <if test="operDingtalkParam != null and operDingtalkParam != ''">oper_dingtalk_param,</if>
+            <if test="jsonResult != null">json_result,</if>
+            <if test="status != null">status,</if>
+            <if test="errorMsg != null">error_msg,</if>
+            <if test="operTime != null">oper_time,</if>
+            <if test="logType != null "> log_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="moduleType != null">#{moduleType},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="method != null">#{method},</if>
+            <if test="requestMethod != null">#{requestMethod},</if>
+            <if test="operatorType != null">#{operatorType},</if>
+            <if test="operName != null">#{operName},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="operUrl != null">#{operUrl},</if>
+            <if test="operIp != null">#{operIp},</if>
+            <if test="operLocation != null">#{operLocation},</if>
+            <if test="operSourceParam != null and operSourceParam != ''">#{operSourceParam},</if>
+            <if test="operDingtalkParam != null and operDingtalkParam != ''">#{operDingtalkParam},</if>
+            <if test="jsonResult != null">#{jsonResult},</if>
+            <if test="status != null">#{status},</if>
+            <if test="errorMsg != null">#{errorMsg},</if>
+            <if test="operTime != null">#{operTime},</if>
+            <if test="logType != null ">  #{logType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDingtalkSyncLog" parameterType="SysDingtalkSyncLog">
+        update sys_dingtalk_sync_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="moduleType != null">module_type = #{moduleType},</if>
+            <if test="businessType != null">business_type = #{businessType},</if>
+            <if test="method != null">method = #{method},</if>
+            <if test="requestMethod != null">request_method = #{requestMethod},</if>
+            <if test="operatorType != null">operator_type = #{operatorType},</if>
+            <if test="operName != null">oper_name = #{operName},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="operUrl != null">oper_url = #{operUrl},</if>
+            <if test="operIp != null">oper_ip = #{operIp},</if>
+            <if test="operLocation != null">oper_location = #{operLocation},</if>
+            <if test="operSourceParam != null and operSourceParam != ''">oper_source_param = #{operSourceParam},</if>
+            <if test="operDingtalkParam != null and operDingtalkParam != ''">oper_dingtalk_param = #{operDingtalkParam},</if>
+            <if test="jsonResult != null">json_result = #{jsonResult},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="errorMsg != null">error_msg = #{errorMsg},</if>
+            <if test="operTime != null">oper_time = #{operTime},</if>
+            <if test="logType != null ">  log_type = #{logType},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteSysDingtalkSyncLogById" parameterType="Long">
+        delete from sys_dingtalk_sync_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteSysDingtalkSyncLogByIds" parameterType="String">
+        delete from sys_dingtalk_sync_log where log_id in 
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+
+</mapper>

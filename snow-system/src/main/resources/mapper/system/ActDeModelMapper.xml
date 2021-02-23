@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.ActDeModelMapper">
+    
+    <resultMap type="ActDeModel" id="ActDeModelResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="modelKey"    column="model_key"    />
+        <result property="description"    column="description"    />
+        <result property="modelComment"    column="model_comment"    />
+        <result property="created"    column="created"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="lastUpdated"    column="last_updated"    />
+        <result property="lastUpdatedBy"    column="last_updated_by"    />
+        <result property="version"    column="version"    />
+        <result property="modelEditorJson"    column="model_editor_json"    />
+        <result property="thumbnail"    column="thumbnail"    />
+        <result property="modelType"    column="model_type"    />
+        <result property="tenantId"    column="tenant_id"    />
+    </resultMap>
+
+    <sql id="selectActDeModelVo">
+        select id, name, model_key, description, model_comment, created, created_by, last_updated, last_updated_by, version, model_editor_json, thumbnail, model_type, tenant_id from act_de_model
+    </sql>
+
+    <select id="selectActDeModelList" parameterType="ActDeModel" resultMap="ActDeModelResult">
+        <include refid="selectActDeModelVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="modelKey != null  and modelKey != ''"> and model_key = #{modelKey}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="modelComment != null  and modelComment != ''"> and model_comment = #{modelComment}</if>
+            <if test="created != null "> and created = #{created}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="lastUpdated != null "> and last_updated = #{lastUpdated}</if>
+            <if test="lastUpdatedBy != null  and lastUpdatedBy != ''"> and last_updated_by = #{lastUpdatedBy}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="modelEditorJson != null  and modelEditorJson != ''"> and model_editor_json = #{modelEditorJson}</if>
+            <if test="modelType != null "> and model_type = #{modelType}</if>
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+
+            <if test="modelTypeList != null and modelTypeList.size()>0">
+                and model_type IN
+                <foreach item="item" index="index" collection="modelTypeList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectActDeModelById" parameterType="String" resultMap="ActDeModelResult">
+        <include refid="selectActDeModelVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertActDeModel" parameterType="ActDeModel">
+        insert into act_de_model
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="modelKey != null and modelKey != ''">model_key,</if>
+            <if test="description != null">description,</if>
+            <if test="modelComment != null">model_comment,</if>
+            <if test="created != null">created,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="lastUpdated != null">last_updated,</if>
+            <if test="lastUpdatedBy != null">last_updated_by,</if>
+            <if test="version != null">version,</if>
+            <if test="modelEditorJson != null">model_editor_json,</if>
+            <if test="thumbnail != null">thumbnail,</if>
+            <if test="modelType != null">model_type,</if>
+            <if test="tenantId != null">tenant_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="modelKey != null and modelKey != ''">#{modelKey},</if>
+            <if test="description != null">#{description},</if>
+            <if test="modelComment != null">#{modelComment},</if>
+            <if test="created != null">#{created},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="lastUpdated != null">#{lastUpdated},</if>
+            <if test="lastUpdatedBy != null">#{lastUpdatedBy},</if>
+            <if test="version != null">#{version},</if>
+            <if test="modelEditorJson != null">#{modelEditorJson},</if>
+            <if test="thumbnail != null">#{thumbnail},</if>
+            <if test="modelType != null">#{modelType},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateActDeModel" parameterType="ActDeModel">
+        update act_de_model
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="modelKey != null and modelKey != ''">model_key = #{modelKey},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="modelComment != null">model_comment = #{modelComment},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="lastUpdated != null">last_updated = #{lastUpdated},</if>
+            <if test="lastUpdatedBy != null">last_updated_by = #{lastUpdatedBy},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="modelEditorJson != null">model_editor_json = #{modelEditorJson},</if>
+            <if test="thumbnail != null">thumbnail = #{thumbnail},</if>
+            <if test="modelType != null">model_type = #{modelType},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActDeModelById" parameterType="String">
+        delete from act_de_model where id = #{id}
+    </delete>
+
+    <delete id="deleteActDeModelByIds" parameterType="String">
+        delete from act_de_model where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -399,12 +399,12 @@ function getUniqueId(wizard)
 }
 
 /**
- * Gets a valid enum value by checking a specific enum key or value.
+ * Gets a valid enums value by checking a specific enums key or value.
  * 
  * @static
  * @private
  * @method getValidEnumValue
- * @param enumType {Object} Type of enum
+ * @param enumType {Object} Type of enums
  * @param keyOrValue {Object} Key as `String` or value as `Integer` to check for
  */
 function getValidEnumValue(enumType, keyOrValue)
@@ -418,7 +418,7 @@ function getValidEnumValue(enumType, keyOrValue)
         var value = enumType[keyOrValue];
         if (value === undefined)
         {
-            throwError("The enum key '{0}' does not exist.", keyOrValue);
+            throwError("The enums key '{0}' does not exist.", keyOrValue);
         }
 
         return value;
@@ -434,7 +434,7 @@ function getValidEnumValue(enumType, keyOrValue)
             }
         }
 
-        throwError("Invalid enum value '{0}'.", keyOrValue);
+        throwError("Invalid enums value '{0}'.", keyOrValue);
     }
     // Type is not supported
     else
@@ -1475,7 +1475,7 @@ $.fn.steps.skip = function (count)
 };
 
 /**
- * An enum represents the different content types of a step and their loading mechanisms.
+ * An enums represents the different content types of a step and their loading mechanisms.
  *
  * @class contentMode
  * @for steps
@@ -1513,7 +1513,7 @@ var contentMode = $.fn.steps.contentMode = {
 };
 
 /**
- * An enum represents the orientation of the steps navigation.
+ * An enums represents the orientation of the steps navigation.
  *
  * @class stepsOrientation
  * @for steps
@@ -1541,7 +1541,7 @@ var stepsOrientation = $.fn.steps.stepsOrientation = {
 };
 
 /**
- * An enum that represents the various transition animations.
+ * An enums that represents the various transition animations.
  *
  * @class transitionEffect
  * @for steps

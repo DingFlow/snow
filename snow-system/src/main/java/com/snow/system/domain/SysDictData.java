@@ -52,6 +52,8 @@ public class SysDictData extends BaseEntity
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
+    private Boolean extfalg=true;
+
     public Long getDictCode()
     {
         return dictCode;

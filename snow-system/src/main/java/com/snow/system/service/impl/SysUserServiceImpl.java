@@ -2,12 +2,16 @@ package com.snow.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysUserPost;
 import com.snow.system.domain.SysUserRole;
+import com.snow.system.event.SyncEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.snow.common.annotation.DataScope;
@@ -55,6 +59,9 @@ public class SysUserServiceImpl implements ISysUserService
     @Autowired
     private ISysConfigService configService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /**
      * 根据条件分页查询用户列表
      * 
@@ -66,6 +73,11 @@ public class SysUserServiceImpl implements ISysUserService
     public List<SysUser> selectUserList(SysUser user)
     {
         return userMapper.selectUserList(user);
+    }
+
+    @Override
+    public List<SysUser> selectUserListByRoleIds(List<Long> roleIds) {
+        return userMapper.selectUserListByRoleIds(roleIds);
     }
 
     /**
@@ -184,6 +196,9 @@ public class SysUserServiceImpl implements ISysUserService
         {
             checkUserAllowed(new SysUser(userId));
         }
+        //同步用户数据
+        SyncEvent syncEvent = new SyncEvent(ids, DingTalkListenerType.USER_DELETE);
+        applicationContext.publishEvent(syncEvent);
         return userMapper.deleteUserByIds(userIds);
     }
 
@@ -203,6 +218,11 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user.getUserId(), user.getRoleIds());
+        //同步用户数据
+        if(user.getIsSyncDingTalk()){
+            SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
+            applicationContext.publishEvent(syncEvent);
+        }
         return rows;
     }
 
@@ -281,7 +301,7 @@ public class SysUserServiceImpl implements ISysUserService
     /**
      * 新增用户角色信息
      * 
-     * @param user 用户对象
+     * @param userId 用户对象
      */
     public void insertUserRole(Long userId, Long[] roleIds)
     {

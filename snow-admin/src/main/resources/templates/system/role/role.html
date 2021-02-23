@@ -29,7 +29,7 @@
 								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
 							</li>
 							<li>
-								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.treeTable.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
 							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
 							</li>
 						</ul>
@@ -41,19 +41,14 @@
 				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:role:add">
 	                <i class="fa fa-plus"></i> 新增
 	            </a>
-	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:role:edit">
-		            <i class="fa fa-edit"></i> 修改
-		        </a>
-				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:role:remove">
-		            <i class="fa fa-remove"></i> 删除
-		        </a>
 		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:role:export">
 		            <i class="fa fa-download"></i> 导出
 		        </a>
 	        </div>
 	        
 	        <div class="col-sm-12 select-table table-striped">
-			    <table id="bootstrap-table"></table>
+			    <!--<table id="bootstrap-table"></table>-->
+				<table id="bootstrap-tree-table"></table>
 			</div>
 		</div>
 	</div>
@@ -66,6 +61,11 @@
 
 		$(function() {
 		    var options = {
+                code: "roleId",
+                parentCode: "parentId",
+                uniqueId: "roleName",
+                expandAll: false,
+                expandFirst: false,
 		        url: prefix + "/list",
 		        createUrl: prefix + "/add",
 		        updateUrl: prefix + "/edit/{id}",
@@ -73,17 +73,14 @@
 		        exportUrl: prefix + "/export",
 		        sortName: "roleSort",
 		        modalName: "角色",
-		        columns: [{
-		            checkbox: true
-		        },
-		        {
-		            field: 'roleId',
-		            title: '角色编号'
-		        },
+		        columns: [
+                    {
+                        field: 'selectItem',
+                        radio: true
+                    },
 		        {
 		            field: 'roleName',
-		            title: '角色名称',
-		            sortable: true
+		            title: '角色名称'
 		        },
 		        {
 		            field: 'roleKey',
@@ -123,7 +120,7 @@
 		            }
 		        }]
 		    };
-		    $.table.init(options);
+		    $.treeTable.init(options);
 		});
 		
 		/* 角色管理-分配数据权限 */

@@ -18,6 +18,7 @@
 
 <!-- 通用JS -->
 <div th:fragment="footer">
+	<script th:inline="javascript"> var ctx = [[@{/}]]; var lockscreen = [[${session.lockscreen}]]; if(lockscreen){window.top.location=ctx+"lockscreen";} </script>
     <a id="scroll-up" href="#" class="btn btn-sm display"><i class="fa fa-angle-double-up"></i></a>
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/bootstrap.min.js}"></script>
@@ -41,6 +42,10 @@
 	<script th:inline="javascript"> var ctx = [[@{/}]]; </script>
 </div>
 
+<!--图片显示JS-->
+<div th:fragment="jquery-ajax-blob-arraybuffer">
+	<script th:href="@{/ruoyi/js/jquery-ajax-blob-arraybuffer.js}" ></script>
+</div>
 <!-- ztree树插件 -->
 <div th:fragment="ztree-css">
     <link th:href="@{/ajax/libs/jquery-ztree/3.5/css/metro/zTreeStyle.css}" rel="stylesheet"/>
@@ -204,4 +209,8 @@
 <!-- 表格打印插件 -->
 <div th:fragment="bootstrap-table-print-js">
 	<script th:src="@{/ajax/libs/bootstrap-table/extensions/print/bootstrap-table-print.min.js?v=20200729}"></script>
+</div>
+<!-- 打印插件 -->
+<div th:fragment="jquery.jqprint-0.3.js">
+	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
 </div>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改钉钉同步日志记录')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-log-edit" th:object="${sysDingtalkSyncLog}">
+            <input name="logId" th:field="*{logId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">模块标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">模块类型：</label>
+                <div class="col-sm-8">
+                    <select name="moduleType" class="form-control m-b" th:with="type=${@dict.getType('dingtalk_module_type')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{moduleType}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">业务类型：</label>
+                <div class="col-sm-8">
+                    <select name="businessType" class="form-control m-b" th:with="type=${@dict.getType('dingtalk_oper_type')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{businessType}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">方法名称：</label>
+                <div class="col-sm-8">
+                    <input name="method" th:field="*{method}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">请求方式：</label>
+                <div class="col-sm-8">
+                    <input name="requestMethod" th:field="*{requestMethod}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">操作类别：</label>
+                <div class="col-sm-8">
+                    <select name="operatorType" class="form-control m-b">
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">操作人员：</label>
+                <div class="col-sm-8">
+                    <input name="operName" th:field="*{operName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">部门名称：</label>
+                <div class="col-sm-8">
+                    <input name="deptName" th:field="*{deptName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">请求URL：</label>
+                <div class="col-sm-8">
+                    <input name="operUrl" th:field="*{operUrl}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">主机地址：</label>
+                <div class="col-sm-8">
+                    <input name="operIp" th:field="*{operIp}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">操作地点：</label>
+                <div class="col-sm-8">
+                    <input name="operLocation" th:field="*{operLocation}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">请求原参数：</label>
+                <div class="col-sm-8">
+                    <textarea name="operSourceParam" class="form-control" required>[[*{operSourceParam}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">请求钉钉参数：</label>
+                <div class="col-sm-8">
+                    <textarea name="operDingtalkParam" class="form-control" required>[[*{operDingtalkParam}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">返回参数：</label>
+                <div class="col-sm-8">
+                    <textarea name="jsonResult" class="form-control">[[*{jsonResult}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">操作状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box">
+                        <input type="radio" name="status" value="">
+                        <label th:for="status" th:text="未知"></label>
+                    </div>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">错误消息：</label>
+                <div class="col-sm-8">
+                    <textarea name="errorMsg" class="form-control">[[*{errorMsg}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">操作时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="operTime" th:value="${#dates.format(sysDingtalkSyncLog.operTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/log";
+        $("#form-log-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-log-edit').serialize());
+            }
+        }
+
+        $("input[name='operTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

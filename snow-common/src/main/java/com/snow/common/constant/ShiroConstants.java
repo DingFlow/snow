@@ -18,6 +18,11 @@ public class ShiroConstants
     public static final String CURRENT_USERNAME = "username";
 
     /**
+     * 锁定屏幕字段
+     */
+    public static final String LOCK_SCREEN = "lockscreen";
+
+    /**
      * 消息key
      */
     public static final String MESSAGE = "message";

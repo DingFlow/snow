@@ -117,8 +117,8 @@
 		    },
 		    focusCleanup: true
 		});
-
 		function edit() {
+            var parentId = $("input[name='parentId']").val();
 			var roleId = $("input[name='roleId']").val();
 			var roleName = $("input[name='roleName']").val();
 			var roleKey = $("input[name='roleKey']").val();
@@ -131,6 +131,7 @@
 				type : "POST",
 				url : ctx + "system/role/edit",
 				data : {
+                    "parentId": 0,
 					"roleId": roleId,
 					"roleName": roleName,
 					"roleKey": roleKey,

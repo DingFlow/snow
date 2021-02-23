@@ -99,6 +99,12 @@ public class UserConstants
     public static final String REGISTER_USER_TYPE = "01";
 
     /**
+     * 用户类型
+     */
+    public static final Integer SYSTEM_ROLE_TYPE = 1;
+    public static final Integer FLOW_ROLE_TYPE = 2;
+
+    /**
      * 手机号码格式限制
      */
     public static final String MOBILE_PHONE_NUMBER_PATTERN = "^0{0,1}(13[0-9]|15[0-9]|14[0-9]|18[0-9])[0-9]{8}$";

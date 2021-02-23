@@ -1,5 +1,5 @@
 # 项目相关配置
-ruoyi:
+snow:
   # 名称
   name: snow
   # 版本
@@ -54,7 +54,7 @@ spring:
     basename: static/i18n/messages
   jackson:
     time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
+
   profiles: 
     active: druid
   # 文件上传
@@ -75,9 +75,10 @@ mybatis:
     # 搜索指定包别名
     typeAliasesPackage: com.snow.**.domain
     # 配置mapper的扫描，找到所有的mapper.xml映射文件
-    mapperLocations: classpath*:mapper/**/*Mapper.xml
+    mapperLocations: classpath*:META-INF/modeler-mybatis-mappings/*.xml,classpath*:mapper/**/*Mapper.xml
     # 加载全局的配置文件
     configLocation: classpath:mybatis/mybatis-config.xml
+
 
 # PageHelper分页插件
 pagehelper: 
@@ -135,3 +136,28 @@ xss:
 swagger:
   # 是否开启swagger
   enabled: true
+flowable:
+  #关闭定时任务JOB
+  async-executor-activate: false
+  #  将databaseSchemaUpdate设置为true。当Flowable发现库与数据库表结构不一致时，会自动将数据库表结构升级至新版本。
+  database-schema-update: true
+  common:
+      app:
+        idm-url: http://localhost:80
+        idm-admin:
+            user: admin
+            password: test
+#上传文件的方式
+sys:
+   file:
+     active: aliyun
+
+log4j:
+   logger:
+      org:
+        flowable:
+            task:
+                service:
+                  impl:
+                      persistence:
+                        entity: DEBUG

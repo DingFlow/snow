@@ -1015,7 +1015,9 @@
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+	<script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.10.3/dingtalk.open.js"></script>
     <script type="text/javascript">
+		var code;
 	    $('#pay-qrcode').click(function(){
 	        var html=$(this).html();
 	        parent.layer.open({
@@ -1027,6 +1029,17 @@
 	            content: html
 	        });
 	    });
+        if (dd.env.platform !== 'notInDingTalk') {
+            dd.ready(function () {
+                dd.runtime.permission.requestAuthCode({
+                    corpId: 795114284, // 企业id
+                    onSuccess: function (info) {
+                        code = info.code; // 通过该免登授权码可以获取用户身份
+                        console.log("钉钉code" + code);
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>

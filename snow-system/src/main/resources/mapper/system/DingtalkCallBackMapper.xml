@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.DingtalkCallBackMapper">
+    
+    <resultMap type="DingtalkCallBack" id="DingtalkCallBackResult">
+        <result property="id"    column="id"    />
+        <result property="token"    column="token"    />
+        <result property="aesKey"    column="aes_key"    />
+        <result property="url"    column="url"    />
+        <result property="corpId"    column="corp_id"    />
+        <result property="suiteKey"    column="suite_key"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="callBackName"    column="call_back_name"    />
+    </resultMap>
+
+    <sql id="selectDingtalkCallBackVo">
+        select id, token, aes_key, url, corp_id, suite_key, del_flag, create_by, create_time, update_by, update_time, call_back_name from dingtalk_call_back
+    </sql>
+
+    <select id="selectDingtalkCallBackList" parameterType="DingtalkCallBack" resultMap="DingtalkCallBackResult">
+        <include refid="selectDingtalkCallBackVo"/>
+        <where>  
+            <if test="callBackName != null  and callBackName != ''"> and call_back_name like concat('%', #{callBackName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDingtalkCallBackById" parameterType="Long" resultMap="DingtalkCallBackResult">
+        <include refid="selectDingtalkCallBackVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDingtalkCallBack" parameterType="DingtalkCallBack" useGeneratedKeys="true" keyProperty="id">
+        insert into dingtalk_call_back
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="token != null">token,</if>
+            <if test="aesKey != null">aes_key,</if>
+            <if test="url != null">url,</if>
+            <if test="corpId != null">corp_id,</if>
+            <if test="suiteKey != null">suite_key,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="callBackName != null">call_back_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="token != null">#{token},</if>
+            <if test="aesKey != null">#{aesKey},</if>
+            <if test="url != null">#{url},</if>
+            <if test="corpId != null">#{corpId},</if>
+            <if test="suiteKey != null">#{suiteKey},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="callBackName != null">#{callBackName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDingtalkCallBack" parameterType="DingtalkCallBack">
+        update dingtalk_call_back
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="token != null">token = #{token},</if>
+            <if test="aesKey != null">aes_key = #{aesKey},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="corpId != null">corp_id = #{corpId},</if>
+            <if test="suiteKey != null">suite_key = #{suiteKey},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="callBackName != null">call_back_name = #{callBackName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDingtalkCallBackById" parameterType="Long">
+        delete from dingtalk_call_back where id = #{id}
+    </delete>
+
+    <delete id="deleteDingtalkCallBackByIds" parameterType="String">
+        delete from dingtalk_call_back where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

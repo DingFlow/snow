@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('流程发布实例')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <div class="row">
+                            <ul>
+                                <li>
+                                    <label>name：</label>
+                                    <input type="text" name="deploymentNameLike"/>
+                                </li>
+
+                            <li>
+                                <label>流程分类：</label>
+                                <select name="category" th:with="type=${@dict.getType('flow_category')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:flow:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importFlowDeployment()" shiro:hasPermission="modeler:flow:import">
+                    <i class="fa fa-upload"></i> 发布流程
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:flow:remove')}]];
+        var flowCategoryDatas = [[${@dict.getType('flow_category')}]];
+        var prefix = ctx + "modeler";
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                importUrl: prefix + "/importData",
+                importTemplateUrl: prefix + "/importTemplate",
+                modalName: "流程发布实例",
+                columns: [{
+                    checkbox: true
+                },
+
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+
+                {
+                    field: 'name',
+                    title: '流程名称'
+                },
+                    {
+                        field: 'category',
+                        title: '分类',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(flowCategoryDatas, value);
+                        }
+                    },
+                {
+                    field: 'deploymentTime',
+                    title: '流程发布时间'
+                },
+
+                {
+                    field: 'key',
+                    title: '发布key'
+                 },
+
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+
+                        var getXmlUrl=prefix+'/getXml?id='+row.id+'&resourceName=';
+                        var actions = [];
+                        /*   actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="previewXml(\'' + processDefinition.deploymentId + '\',\''+processDefinition.diagramResourceName+'\');"><i class="fa fa-edit"></i>流程图</a> ');*/
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="previewXml(\'' + row.id+ '\',);"><i class="fa fa-edit"></i>流程图</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="'+getXmlUrl+'" target="_blank"><i class="fa fa-eye"></i>XML</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /**
+         * 预览XML
+         * @param tableId
+         */
+        function previewXml(deploymentId) {
+            console.log(JSON.stringify(deploymentId));
+            var preViewUrl=prefix+'/getFlowPicture?id='+deploymentId+'&resourceName=';
+            $.modal.openTab("预览流程图", preViewUrl);
+        }
+    </script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class=" form-horizontal m mt20 mb10" >
+        <div class="col-xs-offset-1">
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">导入流程BPMN：</label>
+                    <div class="col-sm-4">
+                        <input type="file" id="file" name="file"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">流程分类：</label>
+                    <div class="col-sm-8">
+                        <div class="radio-box" th:each="dict : ${@dict.getType('flow_category')}">
+                            <input type="radio" th:id="${'flowCategory_' + dict.dictCode}" name="category" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                            <label th:for="${'flowCategory_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">流程名称：</label>
+                    <div class="col-sm-8">
+                        <input name="name" id="name" class="form-control"  type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">流程key：</label>
+                <div class="col-sm-8">
+                    <input name="key" id="key" class="form-control" type="text">
+                </div>
+            </div>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+
+</script>
+</html>

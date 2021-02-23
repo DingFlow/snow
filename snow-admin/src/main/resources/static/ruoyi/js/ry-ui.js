@@ -135,6 +135,7 @@ var table = {
                     responseHandler: $.table.responseHandler,           // 在加载服务器发送来的数据之前处理函数
                     onLoadSuccess: $.table.onLoadSuccess,               // 当所有数据被加载时触发处理函数
                     exportOptions: options.exportOptions,               // 前端导出忽略列索引
+                    printPageBuilder: options.printPageBuilder,         // 自定义打印页面模板
                     detailFormatter: options.detailFormatter,           // 在行下面展示其他数据列表
                 });
             },
@@ -377,6 +378,123 @@ var table = {
 	    			});
     			});
     		},
+            // 导入数据
+             importExcelAlipay:function(formId) {
+                 table.set();
+                 var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+                 layer.open({
+                     type: 1,
+                     area: ['550px', '500px'],
+                     fix: false,
+                     //不固定
+                     maxmin: true,
+                     shade: 0.3,
+                     title: '导入' + table.options.modalName + '数据',
+                     content: $('#' + currentId).html(),
+                     btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
+                     // 弹层外区域关闭
+                     shadeClose: true,
+                     btn1: function(index, layero){
+                         var file = layero.find('#file').val();
+                         var tradeAccount = layero.find('#tradeAccount').val();
+                         var tradeRealName = layero.find('#tradeRealName').val();
+                         if (file == '' || (!$.common.endWith(file, '.xls') && !$.common.endWith(file, '.xlsx'))){
+                             $.modal.msgWarning("请选择后缀为 “xls”或“xlsx”的文件。");
+                             return false;
+                         }
+                         if(tradeAccount==''||tradeAccount==null){
+                             $.modal.msgWarning("交易账户不能为空");
+                             return false;
+                         }
+                         if(tradeRealName==''||tradeRealName==null){
+                             $.modal.msgWarning("真实姓名不能为空");
+                             return false;
+                         }
+                         var index = layer.load(2, {shade: false});
+                         $.modal.disable();
+                         var formData = new FormData(layero.find('form')[0]);
+                         $.ajax({
+                             url: table.options.importUrl,
+                             data: formData,
+                             cache: false,
+                             contentType: false,
+                             processData: false,
+                             type: 'POST',
+                             success: function (result) {
+                                 if (result.code == web_status.SUCCESS) {
+                                     $.modal.closeAll();
+                                     $.modal.alertSuccess(result.msg);
+                                     $.table.refresh();
+                                 } else if (result.code == web_status.WARNING) {
+                                     layer.close(index);
+                                     $.modal.enable();
+                                     $.modal.alertWarning(result.msg)
+                                 } else {
+                                     layer.close(index);
+                                     $.modal.enable();
+                                     $.modal.alertError(result.msg);
+                                 }
+                             }
+                         });
+                     }
+                 });
+            },
+            // 导入数据
+            importFlowDeployment:function(formId) {
+                table.set();
+                var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+                layer.open({
+                    type: 1,
+                    area: ['550px', '500px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: '导入' + table.options.modalName + '数据',
+                    content: $('#' + currentId).html(),
+                    btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
+                    // 弹层外区域关闭
+                    shadeClose: true,
+                    btn1: function(index, layero){
+                        var file = layero.find('#file').val();
+                        var name = layero.find('#name').val();
+                        if (file == '' || (!$.common.endWith(file, '.xml') && !$.common.endWith(file, '.zip'))){
+                            $.modal.msgWarning("请选择后缀为 “xml”或“zip”的文件。");
+                            return false;
+                        }
+                        if(name==''||name==null){
+                            $.modal.msgWarning("流程名称不能为空");
+                            return false;
+                        }
+                        var index = layer.load(2, {shade: false});
+                        $.modal.disable();
+                        var formData = new FormData(layero.find('form')[0]);
+                        $.ajax({
+                            url: table.options.importUrl,
+                            data: formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            type: 'POST',
+                            success: function (result) {
+                                if (result.code == web_status.SUCCESS) {
+                                    $.modal.closeAll();
+                                    $.modal.alertSuccess(result.msg);
+                                    $.table.refresh();
+                                } else if (result.code == web_status.WARNING) {
+                                    layer.close(index);
+                                    $.modal.enable();
+                                    $.modal.alertWarning(result.msg)
+                                } else {
+                                    layer.close(index);
+                                    $.modal.enable();
+                                    $.modal.alertError(result.msg);
+                                }
+                            }
+                        });
+                    }
+                });
+            },
     		// 下载模板
     		importTemplate: function() {
     			table.set();
@@ -981,6 +1099,41 @@ var table = {
             	}
                 return url;
             },
+
+            // 弹出层全屏
+            parentDetail: function ( id, width, height) {
+                var url = $.operate.detailUrl(id);
+                var title='设计器';
+                //如果是移动端，就使用自适应大小弹窗
+                if ($.common.isMobile()) {
+                    width = 'auto';
+                    height = 'auto';
+                }
+                if ($.common.isEmpty(title)) {
+                    title = false;
+                }
+                if ($.common.isEmpty(url)) {
+                    url = "/404.html";
+                }
+                if ($.common.isEmpty(width)) {
+                    width = 800;
+                }
+                if ($.common.isEmpty(height)) {
+                    height = ($(window).height() - 50);
+                }
+                var index = parent.layer.open({
+                    type: 2,
+                    area: [width + 'px', height + 'px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: '流程设计器',
+                    content: url
+
+                });
+                layer.full(index);
+            },
             // 删除信息
             remove: function(id) {
             	table.set();
@@ -1008,6 +1161,21 @@ var table = {
         			var data = { "ids": rows.join() };
         			$.operate.submit(url, "post", "json", data);
         		});
+            },
+            // 发布信息
+            deployment: function(id,type) {
+        		console.log("=======>"+type);
+                table.set();
+                $.modal.confirm("确定发布该条" + table.options.modalName + "信息吗？", function() {
+                    var url = $.common.isEmpty(id) ? table.options.deploymentUrl : table.options.deploymentUrl.replace("{id}", id);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        $.operate.get(url);
+                    } else {
+                        var data = { "id": id ,"type":type};
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                });
+
             },
             // 清空信息
             clean: function() {
@@ -1581,6 +1749,21 @@ var table = {
             // 判断移动端
             isMobile: function () {
                 return navigator.userAgent.match(/(Android|iPhone|SymbianOS|Windows Phone|iPad|iPod)/i);
+            },
+            getDataById: function(url,id) {
+                $.ajaxSettings.async = false;
+                var resultData='';
+                $.post(url, {"id":id}, function(result) {
+                    if (result.code == web_status.SUCCESS) {
+                        console.log(result)
+                        resultData=result.data;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                });
+                return resultData;
             },
         }
     });

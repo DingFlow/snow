@@ -86,13 +86,14 @@
 	    $(function() {
 		    var options = {
                 pagination: false,
-		        showSearch: false,
+                showSearch: false,
                 showRefresh: false,
                 showToggle: false,
                 showColumns: false,
-		        columns: [{
-		            checkbox: true
-		        },
+                sidePagination: "client",
+                columns: [{
+                    checkbox: true
+                },
 		        {
 		        	field: 'index',
 		        	align: 'center',
@@ -153,8 +154,17 @@
             minView: "month",
             autoclose: true
         });
-        
         function addColumn() {
+            var row = {
+                name: "",
+                weight: "",
+                price: "",
+                date: "",
+                type: "",
+            }
+            sub.addColumn(row);
+        }
+      /*  function addColumn() {
         	var count = $("#" + table.options.id).bootstrapTable('getData').length;
         	sub.editColumn();
         	
@@ -168,7 +178,7 @@
                 	type: "",
                 }
         	});
-        }
+        }*/
     </script>
 </body>
 </html>

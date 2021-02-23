@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('钉钉同步日志记录列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>模块标题：</label>
+                                <input type="text" name="title"/>
+                            </li>
+                            <li>
+                                <label>模块类型：</label>
+                                <select name="moduleType" th:with="type=${@dict.getType('dingtalk_module_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>日志类型：</label>
+                                <select name="logType" th:with="type=${@dict.getType('sync_log_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>业务类型：</label>
+                                <select name="businessType" th:with="type=${@dict.getType('dingtalk_oper_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <label>操作类别：</label>
+                                <select name="businessType" th:with="type=${@dict.getType('dingtalk_sync_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label>操作时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginOperTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endOperTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:log:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:log:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:log:edit')}]];
+        var detailFlag=[[${@permission.hasPermi('system:log:detail')}]];
+        var removeFlag = [[${@permission.hasPermi('system:log:remove')}]];
+        var moduleTypeDatas = [[${@dict.getType('dingtalk_module_type')}]];
+        var businessTypeDatas = [[${@dict.getType('dingtalk_oper_type')}]];
+        var syncTypeDatas = [[${@dict.getType('dingtalk_sync_type')}]];
+        var syncLogTypeDatas = [[${@dict.getType('sync_log_type')}]];
+        var prefix = ctx + "system/log";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl: prefix + "/detail/{id}",
+                modalName: "钉钉同步日志",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'logId',
+                    title: '日志编号',
+                    visible: true
+                },
+                    {
+                        field: 'moduleType',
+                        title: '模块类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(moduleTypeDatas, value);
+                        }
+                    },
+                {
+                    field: 'title',
+                    title: '模块标题'
+                },
+
+                {
+                    field: 'businessType',
+                    title: '业务类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(businessTypeDatas, value);
+                    }
+                },
+                 {
+                     field: 'logType',
+                     title: '日志类型',
+                     formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(syncLogTypeDatas, value);
+                      }
+                 },
+
+                {
+                    field: 'requestMethod',
+                    title: '请求方式'
+                },
+                {
+                    field: 'operatorType',
+                    title: '操作类别',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(syncTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'operName',
+                    title: '操作人员'
+                },
+                {
+                    field: 'deptName',
+                    title: '部门名称'
+                },
+                {
+                    field: 'operIp',
+                    title: '主机地址'
+                },
+                {
+                    field: 'operLocation',
+                    title: '操作地点'
+                },
+
+                {
+                    field: 'status',
+                    title: '操作状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        if (value == 0) {
+                            return '<span class="badge badge-primary">成功</span>';
+                        } else if (value == 1) {
+                            return '<span class="badge badge-danger">失败</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'operTime',
+                    title: '操作时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if(row.status==1){
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.logId + '\')"><i class="fa fa-edit"></i>手工同步</a> ');
+                        }
+
+
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.logId + '\')"><i class="fa fa-remove"></i>删除</a> ');
+
+                        actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.logId + '\')"><i class="fa fa-search"></i>详细</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -2,6 +2,13 @@ package com.snow.web.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.uuid.impl.UUIDUtil;
+import com.snow.common.utils.uuid.IdUtils;
+import com.snow.common.utils.uuid.UUID;
+import com.snow.framework.storage.StorageService;
+import com.snow.system.domain.SysFile;
+import org.apache.logging.log4j.core.util.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +37,9 @@ public class CommonController
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private StorageService storageService;
 
     /**
      * 通用下载请求
@@ -70,18 +80,16 @@ public class CommonController
      */
     @PostMapping("/common/upload")
     @ResponseBody
-    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    public AjaxResult uploadFile(MultipartFile file)
     {
         try
         {
-            // 上传文件路径
-            String filePath = Global.getUploadPath();
-            // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;
+            String originalFilename = file.getOriginalFilename();
+            SysFile store = storageService.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("fileName", fileName);
-            ajax.put("url", url);
+            ajax.put("fileKey",store.getKey());
+            ajax.put("fileName", store.getName());
+            ajax.put("url", store.getUrl());
             return ajax;
         }
         catch (Exception e)

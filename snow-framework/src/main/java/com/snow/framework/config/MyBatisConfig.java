@@ -2,6 +2,7 @@ package com.snow.framework.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import javax.sql.DataSource;
@@ -97,12 +98,33 @@ public class MyBatisConfig
         String configLocation = env.getProperty("mybatis.configLocation");
         typeAliasesPackage = setTypeAliasesPackage(typeAliasesPackage);
         VFS.addImplClass(SpringBootVFS.class);
-
+        String[] split = mapperLocations.split(",");
+        List<String> mapperLocationList= Arrays.asList(split);
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setTypeAliasesPackage(typeAliasesPackage);
-        sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocations));
+        sessionFactory.setMapperLocations(resolveMapperLocations(mapperLocationList));
         sessionFactory.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
         return sessionFactory.getObject();
+    }
+
+    /**
+     * 加载多个mapper路径
+     * @return
+     */
+    public Resource[] resolveMapperLocations(List<String> mapperLocations ) {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        List<Resource> resources = new ArrayList<>();
+        if (mapperLocations != null) {
+            for (String mapperLocation : mapperLocations) {
+                try {
+                    Resource[] mappers = resourceResolver.getResources(mapperLocation);
+                    resources.addAll(Arrays.asList(mappers));
+                } catch (IOException e) {
+                    e.getStackTrace();
+                }
+            }
+        }
+        return resources.toArray(new Resource[resources.size()]);
     }
 }

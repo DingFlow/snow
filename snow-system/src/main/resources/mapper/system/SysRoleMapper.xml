@@ -17,11 +17,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"     column="update_by"      />
 		<result property="updateTime"   column="update_time"    />
 		<result property="remark"       column="remark"         />
+		<result property="parentId"   column="parent_id"   />
+		<result property="roleType" column="role_type"/>
 	</resultMap>
 	
 	<sql id="selectRoleContactVo">
         select distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,
-            r.status, r.del_flag, r.create_time, r.remark 
+            r.status, r.del_flag, r.create_time, r.remark,r.parent_id,r.role_type
         from sys_role r
 	        left join sys_user_role ur on ur.role_id = r.role_id
 	        left join sys_user u on u.user_id = ur.user_id
@@ -29,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
     
     <sql id="selectRoleVo">
-		select r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status, r.del_flag, r.create_time, r.remark 
+		select r.role_id, r.role_name, r.role_key, r.role_sort,r.role_type, r.data_scope, r.status, r.del_flag, r.create_time, r.remark,r.parent_id
         from sys_role r
 	</sql>
 	
@@ -41,6 +43,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<if test="status != null and status != ''">
 			AND r.status = #{status}
+		</if>
+		<if test="parentId != null and parentId != ''">
+			AND r.parent_id = #{parentId}
+		</if>
+		<if test="roleType != null and roleType != ''">
+			AND r.role_type = #{roleType}
 		</if>
 		<if test="roleKey != null and roleKey != ''">
 			AND r.role_key like concat('%', #{roleKey}, '%')
@@ -56,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
+		order by r.parent_id, r.role_sort
 	</select>
 
 	<select id="selectRolesByUserId" parameterType="Long" resultMap="SysRoleResult">
@@ -72,7 +81,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectRoleVo"/>
 		 where r.role_name=#{roleName}
 	</select>
-	
+	<select id="selectRoleAll" resultMap="SysRoleResult">
+		<include refid="selectRoleVo"/>
+		order by r.parent_id, r.role_sort
+	</select>
+
 	<select id="checkRoleKeyUnique" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
 		 where r.role_key=#{roleKey}
@@ -99,6 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status = #{status},</if>
  			<if test="remark != null">remark = #{remark},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
  			update_time = sysdate()
  		</set>
  		where role_id = #{roleId}
@@ -107,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	<insert id="insertRole" parameterType="SysRole" useGeneratedKeys="true" keyProperty="roleId">
  		insert into sys_role(
  			<if test="roleId != null and roleId != 0">role_id,</if>
+		    <if test="parentId != null and parentId != 0">parent_id,</if>
  			<if test="roleName != null and roleName != ''">role_name,</if>
  			<if test="roleKey != null and roleKey != ''">role_key,</if>
  			<if test="roleSort != null and roleSort != ''">role_sort,</if>
@@ -114,9 +129,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status,</if>
  			<if test="remark != null and remark != ''">remark,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
+		<if test="roleType != null and roleType != ''">
+		   r.role_type ,
+		</if>
  			create_time
  		)values(
  			<if test="roleId != null and roleId != 0">#{roleId},</if>
+		    <if test="parentId != null and parentId != 0">#{parentId},</if>
  			<if test="roleName != null and roleName != ''">#{roleName},</if>
  			<if test="roleKey != null and roleKey != ''">#{roleKey},</if>
  			<if test="roleSort != null and roleSort != ''">#{roleSort},</if>
@@ -124,6 +143,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
+		<if test="roleType != null and roleType != ''">
+		 #{roleType},
+		</if>
  			sysdate()
  		)
 	</insert>

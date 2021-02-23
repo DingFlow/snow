@@ -91,4 +91,38 @@ public class Constants
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
+
+    /**
+     * 系统用户授权缓存
+     */
+    public static final String SYS_AUTH_CACHE = "sys-authCache";
+
+    public static final String POST="POST";
+
+    public static final String GET="GET";
+    /**
+     * 钉钉企业内部APPkey
+     */
+    public static final String ENTERPRICE_APP_KEY="enterprice.app.key";
+    /**
+     * 钉钉企业内部ENTERPRICE_APP_SECRET
+     */
+    public static final String ENTERPRICE_APP_SECRET="enterprice.app.secret";
+    /**
+     * 钉钉企业内部 AGENT_ID
+     */
+    public static final String AGENT_ID="agent.id";
+
+    /**
+     * 通讯录事件type_key
+     */
+    public static final String ADDRESS_BOOK="address_book";
+    /**
+     * 钉钉回调成功返回
+     */
+    public static final String CALL_BACK_SUCCESS_RETURN="success";
+    /**
+     * 钉钉回调失败返回
+     */
+    public static final String CALL_BACK_FAIL_RETURN="fail";
 }

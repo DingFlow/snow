@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysSequenceMapper">
+    
+    <resultMap type="SysSequence" id="SysSequenceResult">
+        <result property="name"    column="name"    />
+        <result property="currentValue"    column="current_value"    />
+        <result property="increment"    column="increment"    />
+        <result property="described"    column="described"    />
+
+    </resultMap>
+
+    <sql id="selectSysSequenceVo">
+        select name,described, current_value, increment from sys_sequence
+    </sql>
+
+    <select id="selectSysSequenceList" parameterType="SysSequence" resultMap="SysSequenceResult">
+        <include refid="selectSysSequenceVo"/>
+        <where>
+            <if test="currentValue != null "> and current_value = #{currentValue}</if>
+            <if test="increment != null "> and increment = #{increment}</if>
+        </where>
+    </select>
+
+    <select id="selectSysSequenceById" parameterType="String" resultMap="SysSequenceResult">
+        <include refid="selectSysSequenceVo"/>
+        where name = #{name}
+    </select>
+
+    <insert id="insertSysSequence" parameterType="SysSequence">
+        insert into sys_sequence
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="currentValue != null">current_value,</if>
+            <if test="increment != null">increment,</if>
+            <if test="described != null">described,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="currentValue != null">#{currentValue},</if>
+            <if test="increment != null">#{increment},</if>
+            <if test="described != null">#{described},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysSequence" parameterType="SysSequence">
+        update sys_sequence
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currentValue != null">current_value = #{currentValue},</if>
+            <if test="increment != null">increment = #{increment},</if>
+            <if test="described != null">described = #{described},</if>
+        </trim>
+        where name = #{name}
+    </update>
+
+    <update id="updateNextSequence" parameterType="String">
+         UPDATE sys_sequence
+          SET current_value = current_value + increment
+          WHERE name = #{name}
+    </update>
+
+    <select id="getNextSequence" parameterType="String" resultType="integer">
+         select current_value
+          from sys_sequence
+          WHERE name = #{name}
+    </select>
+    <delete id="deleteSysSequenceById" parameterType="String">
+        delete from sys_sequence where name = #{name}
+    </delete>
+
+    <delete id="deleteSysSequenceByIds" parameterType="String">
+        delete from sys_sequence where name in 
+        <foreach item="name" collection="array" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </delete>
+
+</mapper>

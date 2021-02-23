@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('人事审批')" />
+	<th:block th:include="include :: jsonview-css" />
+	<th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m-t" id="signupForm">
+		<!--<div class="row">
+			<div class="col-sm-offset-0 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="submitHandler()"><i class="fa fa-remove"></i>驳 回</button>&nbsp;
+			</div>
+		</div>
+		<br/>-->
+		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  name="businessKey" th:value="${sysOaLeave.leaveNo}"/>
+		<h4 class="form-header h4">请假信息</h4>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">单号：</label>
+			<div class="form-control-static"  th:text="${sysOaLeave.leaveNo}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">标题：</label>
+			<div class="form-control-static" th:text="${sysOaLeave.name}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">请假理由：</label>
+			<div class="form-control-static"><pre id="reason"></pre></div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">开始时间：</label>
+			<div class="form-control-static" th:text="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd hh:mm:ss')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">结束时间：</label>
+			<div class="form-control-static" th:text="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">请假时长：</label>
+			<div class="form-control-static" th:text="${sysOaLeave.leaveTime}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">申请人：</label>
+			<div class="form-control-static" th:text="${sysOaLeave.applyPerson}">
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins">
+			<h4 class="form-header h4">审批信息</h4>
+			<div id="ibox-content">
+				<div id="vertical-timeline" class="vertical-container light-timeline light-dark">
+
+					<div class="vertical-timeline-block" th:each="task,iterStat : ${historicTaskInstanceList}">
+						<div class="vertical-timeline-icon navy-bg">
+							<i class="fa fa-tasks"></i>
+						</div>
+
+						<div class="vertical-timeline-content">
+
+							<h2 th:text="${task.taskName }"></h2>
+							    <p th:if="${task.isPass} ne ''">
+							       <label  >审批结果：</label>
+									<span  style="color: red"  th:if="${#strings.trim(task.isPass)} eq 'false'">驳回</span>
+									<span   style="color: blue"  th:if="${#strings.trim(task.isPass)} eq 'true'">通过</span>
+								</p>
+
+							    <p><label>操作人：</label> <span th:text="${task.assigneeName}"></span></p>
+								<p><label>任务历时：</label> <span th:text="${task.handleTaskTime}"></span></p>
+							    <div th:each="comment:${task.commentList}">
+									<p th:if="${comment.fullMessage} ne ''">
+								    <label>审批意见：</label> <span th:text="${comment.fullMessage}"></span>
+									</p>
+							   </div>
+							<span class="vertical-date">
+                                <label>时间：</label> <small th:text="${#dates.format(task.startTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+								<label>~</label> <small th:text="${#dates.format(task.completeTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                           </span>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: jsonview-js" />
+	<th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+	    $(function() {
+	    	var reason = [[${sysOaLeave.reason}]];
+	    	console.log(reason);
+	    	if ($.common.isNotEmpty(reason) && reason.length < 2000) {
+                $("#reason").text(reason);
+	    	} else {
+	    		$("#reason").text(reason);
+	    	}
+
+	    });
+
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").val();
+            $(this).fileinput({
+                'uploadUrl': '/common/upload',
+                initialPreviewAsData: true,
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+
+        function submitCheckHandler() {
+            if ($.validate.form()) {
+                var data = $("#signupForm").serializeArray();
+                data.push({"name": "checkStatus", "value": 0});
+                $.operate.saveTab("/system/leave/hrFinishTask", data);
+            }
+        }
+    </script>
+</body>
+</html>

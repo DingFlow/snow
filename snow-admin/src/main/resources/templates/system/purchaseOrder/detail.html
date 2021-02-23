@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: jsonview-css" />
+
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t"  id="signupForm">
+		<!--<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  name="businessKey" th:value="${sysOaLeave.leaveNo}"/>-->
+		<input name="id" th:value="${purchaseOrder.id}" type="hidden">
+		<h2 class="form-header h2" align="center" >采购单信息</h2>
+		<br/>
+		<div class="row">
+			<div class="col-xs-4 col-sm-5 col-md-offset-1">
+				<label>单号：</label>
+				<span th:text="${purchaseOrder.orderNo}"/>
+			</div>
+			<div class="col-xs-4 col-sm-6">
+				<label>采购标题：</label>
+				<span th:text="${purchaseOrder.title}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3 col-sm-4 col-md-offset-1">
+				<label>供应商：</label>
+				<span th:text="${purchaseOrder.supplierName}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >订货日期：</label>
+				<span th:text="${#dates.format(purchaseOrder.orderTime, 'yyyy-MM-dd')}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label>交货日期：</label>
+				<span th:text="${#dates.format(purchaseOrder.deliveryDate, 'yyyy-MM-dd')}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3 col-sm-4 col-md-offset-1">
+				<label >采购人：</label>
+				<span th:text="${purchaseOrder.belongUser}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >总数量：</label>
+				<span th:text="${purchaseOrder.totalQuantity}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >总金额：</label>
+				<span th:text="${purchaseOrder.totalPrice}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10 col-sm-10 col-md-offset-1">
+				<label>备注：</label>
+				<span th:text="${purchaseOrder.remark}"/>
+			</div>
+		</div>
+			<h4 class="form-header h4">采购单明细</h4>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="col-sm-12 select-table table-striped">
+							<table id="bootstrap-table"></table>
+						</div>
+					</div>
+				</div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+   <!-- <th:block th:include="include :: jsonview-js" />-->
+	<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
+	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+    <script th:inline="javascript">
+
+        function printData(){
+            $("#signupForm").jqprint({
+				debug: false,
+				importCSS: true,
+				printContainer: true,
+				operaSupport: false
+             });
+        };
+
+	    $(function() {
+	    	var reason = [[${purchaseOrder.remark}]];
+	    	console.log(reason);
+	    	if ($.common.isNotEmpty(reason) && reason.length < 2000) {
+                $("#reason").text(reason);
+	    	} else {
+	    		$("#reason").text(reason);
+	    	}
+
+	    });
+
+        $(function() {
+            var options = {
+                data: [[${purchaseOrder.purchaseOrderItemList}]],
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [
+                    {
+                        field: 'index',
+                        align: 'center',
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                            return columnIndex + $.table.serialNumber(index);
+                        }
+                    },
+                    {
+                        field: 'goodsNo',
+                        align: 'center',
+                        title: '货物编号'
+                    },
+                    {
+                        field: 'goodsName',
+                        align: 'center',
+                        title: '名称'
+                    },
+                    {
+                        field: 'goodsSize',
+                        align: 'center',
+                        title: '规格'
+                    },
+                    {
+                        field: 'goodsQuantity',
+                        align: 'center',
+                        title: '数量'
+                    },
+                    {
+                        field: 'goodsPrice',
+                        align: 'center',
+                        title: '单价'
+                    },
+                    {
+                        field: 'totalPrice',
+                        align: 'center',
+                        title: '总价'
+                    },
+                    {
+                        field: 'remark',
+                        align: 'center',
+                        title: '备注'
+                    }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

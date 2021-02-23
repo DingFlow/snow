@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('人事审批')" />
+	<th:block th:include="include :: jsonview-css" />
+	<th:block th:include="include :: bootstrap-fileinput-css"/>
+	<th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="signupForm" th:object="${appFrom}">
+			<div class="row">
+				<div class="col-sm-offset-0 col-sm-10">
+					<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler(true)"><i class="fa fa-check"></i>重新申请</button>&nbsp;
+					<button type="button" class="btn btn-sm btn-danger" onclick="submitCheckHandler(false)"><i class="fa fa-remove"></i>删除</button>&nbsp;
+				</div>
+			</div>
+			<br/>
+			<h4 class="form-header h4">请假信息</h4>
+			<input name="id" th:field="*{id}" type="hidden">
+			<input class="form-control" type="hidden"  name="taskId" th:value="${taskId}"/>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">请假单号：</label>
+				<div class="col-sm-8">
+					<input name="name" th:field="*{leaveNo}" class="form-control" type="text" readonly>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">请假名称：</label>
+				<div class="col-sm-8">
+					<input name="name" th:field="*{name}" class="form-control" type="text" required>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label">请假理由：</label>
+				<div class="col-sm-8">
+					<textarea name="reason" class="form-control" required>[[*{reason}]]</textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">开始时间：</label>
+				<div class="col-sm-8">
+					<div class="input-group date">
+						<input name="startTime" id="startTime" th:value="${#dates.format(appFrom.startTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">结束时间：</label>
+				<div class="col-sm-8">
+					<div class="input-group date">
+						<input name="endTime" id="endTime" th:value="${#dates.format(appFrom.endTime, 'yyyy-MM-dd HH:mm:ss')}"  class="form-control" placeholder="yyyy-MM-dd" type="text">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">附件：</label>
+				<div class="col-sm-8">
+					<input type="hidden" name="fileUrl" th:field="*{fileUrl}">
+					<div class="file-loading">
+						<input class="form-control file-upload" id="fileUrl" name="file" type="file">
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">填写信息</h4>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">重新申请说明：</label>
+				<div class="col-sm-8">
+					<textarea name="comment" class="form-control" required></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">审批附件：</label>
+				<div class="col-sm-8">
+
+					<div class="file-loading">
+						<input class="form-control file-upload" id="suggestionFileUrl" name="file" type="file">
+					</div>
+				</div>
+			</div>
+		</form>
+
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: jsonview-js" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        var files=new Array();
+
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").val();
+            $(this).fileinput({
+                'uploadUrl': '/common/upload',
+                initialPreviewAsData: true,
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+        $("#signupForm").validate({
+            focusCleanup: true
+        });
+
+        $("input[name='startTime']").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            minView: "hour",
+            autoclose: true
+        });
+
+        $("input[name='endTime']").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            minView: "hour",
+            autoclose: true
+        });
+        function submitCheckHandler(status) {
+            if ($.validate.form()) {
+                var data = $("#signupForm").serializeArray();
+                for(var i=0;i<data.length;i++){
+                    if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                        $.modal.alertError("请填写审批意见");
+                        return false;
+                    }
+                }
+                if(files!=null||files!=''){
+                    for(var i=0;i<files.length;i++){
+                        data.push({"name": "files["+i+"].key", "value":files[i].key});
+                        data.push({"name": "files["+i+"].name", "value":files[i].name});
+                        data.push({"name": "files["+i+"].url", "value":files[i].url});
+                    }
+                }
+                data.push({"name": "isPass", "value": status});
+                console.log(data);
+                $.operate.saveTab("/system/leave/reStartTask", data);
+            }
+        }
+    </script>
+</body>
+</html>

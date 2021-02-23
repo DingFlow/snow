@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('请假单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>请假名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>流程状态：</label>
+                                <select name="processStatus" th:with="type=${@dict.getType('process_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:leave:add">
+                    <i class="fa fa-plus"></i> 添加申请单
+                </a>
+               <!-- <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:leave:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>-->
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:leave:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" data-show-print="true" data-print-as-filtered-and-sorted-on-ui="true"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-table-print-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:leave:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:leave:remove')}]];
+        var processStatusDatas = [[${@dict.getType('process_status')}]];
+        var prefix = ctx + "system/leave";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl:prefix + "/detail/{id}",
+                printPageBuilder: printPageBuilder,
+                modalName: "请假单",
+                columns: [{
+                    checkbox: true,
+                    printIgnore: true
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false,
+                    printIgnore: true
+                },
+                {
+                    field: 'leaveNo',
+                    title: '单号'
+                },
+                {
+                    field: 'name',
+                    title: '请假名称'
+                },
+
+
+                {
+                    field: 'processStatus',
+                    title: '审批状态',
+
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(processStatusDatas, value);
+                    }
+
+                },
+                {
+                    field: 'applyPerson',
+                    title: '申请人'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                 },
+                {
+                    title: '操作',
+                    align: 'center',
+                    printIgnore: true,
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起申请</a> ');
+                        }
+                        if(row.processStatus!=0) {
+                            actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search-plus"></i>详情</a> ');
+                        }
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        }
+                        return actions.join('');
+
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        // 自定义打印页面模板
+        function printPageBuilder(table) {
+            return `
+        	<html>
+        	  <head>
+        	  <style type="text/css" media="print">
+        	  @page {
+        	    size: auto;
+        	    margin: 25px 0 25px 0;
+        	  }
+        	  </style>
+        	  <style type="text/css" media="all">
+        	  table {
+        	    border-collapse: collapse;
+        	    font-size: 12px;
+        	  }
+        	  table, th, td {
+        	    border: 1px solid grey;
+        	  }
+        	  th, td {
+        	    text-align: center;
+        	    vertical-align: middle;
+        	  }
+        	  p {
+        	    font-weight: bold;
+        	    margin-left:20px;
+        	  }
+        	  table {
+        	    width:95%;
+        	    margin-left:3%;
+        	    margin-right:3%;
+        	  }
+        	  div.bs-table-print {
+        	    text-align:center;
+        	  }
+        	  </style>
+        	  </head>
+        	  <title>打印请假申请单</title>
+
+        	  <body>
+        	  <h1 style="text-align:center">请假申请单 </h1>
+        	  <div class="bs-table-print">${table}</div>
+        	  </body>
+        	</html>`
+        }
+
+        $(function() {
+            var myDate = new Date;
+            var year = myDate.getFullYear(); //获取当前年
+            var mon = myDate.getMonth() + 1; //获取当前月
+            var date = myDate.getDate(); //获取当前日
+            var h = myDate.getHours();//获取当前小时数(0-23)
+            var m = myDate.getMinutes();//获取当前分钟数(0-59)
+            var s = myDate.getSeconds();//获取当前秒
+            var week = myDate.getDay();
+            var weeks = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+            console.log(year, mon, date, weeks[week])
+            $("#times").html(year + "年" + mon + "月" + date + "日" + h + "年" + m + "月" + s + "日" + weeks[week]);
+        })
+    </script>
+</body>
+</html>

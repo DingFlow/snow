@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysDept;
+import com.snow.system.event.SyncEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.snow.common.annotation.DataScope;
@@ -18,6 +21,8 @@ import com.snow.system.domain.SysRole;
 import com.snow.system.mapper.SysDeptMapper;
 import com.snow.system.service.ISysDeptService;
 
+import javax.annotation.Resource;
+
 /**
  * 部门管理 服务实现
  * 
@@ -28,6 +33,9 @@ public class SysDeptServiceImpl implements ISysDeptService
 {
     @Autowired
     private SysDeptMapper deptMapper;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     /**
      * 查询部门管理数据
@@ -185,7 +193,12 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int deleteDeptById(Long deptId)
     {
-        return deptMapper.deleteDeptById(deptId);
+        int i = deptMapper.deleteDeptById(deptId);
+        //同步钉钉数据
+        SyncEvent syncEvent = new SyncEvent(deptId, DingTalkListenerType.DEPARTMENT_DELETED);
+        applicationContext.publishEvent(syncEvent);
+
+        return i;
     }
 
     /**
@@ -204,6 +217,11 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new BusinessException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
+        if(dept.getIsSyncDingTalk()){
+            //同步钉钉数据
+            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
+            applicationContext.publishEvent(syncEvent);
+        }
         return deptMapper.insertDept(dept);
     }
 
@@ -231,6 +249,11 @@ public class SysDeptServiceImpl implements ISysDeptService
         {
             // 如果该部门是启用状态，则启用该部门的所有上级部门
             updateParentDeptStatus(dept);
+        }
+        if(dept.getIsSyncDingTalk()){
+            //同步钉钉数据
+            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_UPDATE);
+            applicationContext.publishEvent(syncEvent);
         }
         return result;
     }

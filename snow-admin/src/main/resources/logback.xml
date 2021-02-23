@@ -75,7 +75,9 @@
 	<logger name="com.snow" level="info" />
 	<!-- Spring日志级别控制  -->
 	<logger name="org.springframework" level="warn" />
-
+    <logger name="org.flowable.task.service.impl.persistence.entity" level="DEBUG" />
+    <logger name="org.flowable.db.mapping.entity" level="DEBUG" />
+    <logger name="org.flowable.engine.impl.persistence.entity" level="DEBUG" />
 	<root level="info">
 		<appender-ref ref="console" />
 	</root>

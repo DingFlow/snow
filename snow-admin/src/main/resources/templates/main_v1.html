@@ -9,6 +9,7 @@
     <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
     <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
     <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+    <th:block th:include="include :: header('请假单列表')" />
 </head>
 
 <body class="gray-bg">
@@ -72,143 +73,48 @@
                 </div>
             </div>
         </div>
+
         
         <div class="row">
             <div class="col-sm-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>订单</h5>
+                        <h5>我的待办</h5>
                         <div class="pull-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-xs btn-white active">天</button>
-                                <button type="button" class="btn btn-xs btn-white">月</button>
-                                <button type="button" class="btn btn-xs btn-white">年</button>
+                                时间
                             </div>
                         </div>
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-sm-9">
-                                <div class="flot-chart">
-                                    <div class="flot-chart-content" id="flot-dashboard-chart"></div>
-                                </div>
+                          <div class="col-sm-12 search-collapse">
+                                <form id="formId">
+                                    <div class="select-list">
+                                        <ul>
+                                            <li>
+                                                <label>流程名称：</label>
+                                                <input type="text" name="processDefinitionName"/>
+                                            </li>
+                                            <li>
+                                                <label>单号：</label>
+                                                <input type="text" name="businessKey"/>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="col-sm-3">
-                                <ul class="stat-list">
-                                    <li>
-                                        <h2 class="no-margins">2,346</h2>
-                                        <small>订单总数</small>
-                                        <div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i>
-                                        </div>
-                                        <div class="progress progress-mini">
-                                            <div style="width: 48%;" class="progress-bar"></div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h2 class="no-margins ">4,422</h2>
-                                        <small>最近一个月订单</small>
-                                        <div class="stat-percent">60% <i class="fa fa-level-down text-navy"></i>
-                                        </div>
-                                        <div class="progress progress-mini">
-                                            <div style="width: 60%;" class="progress-bar"></div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <h2 class="no-margins ">9,180</h2>
-                                        <small>最近一个月销售额</small>
-                                        <div class="stat-percent">22% <i class="fa fa-bolt text-navy"></i>
-                                        </div>
-                                        <div class="progress progress-mini">
-                                            <div style="width: 22%;" class="progress-bar"></div>
-                                        </div>
-                                    </li>
-                                 </ul>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="bootstrap-table"></table>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>用户项目列表</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <table class="table table-hover no-margins">
-                            <thead>
-                                <tr>
-                                    <th>状态</th>
-                                    <th>日期</th>
-                                    <th>用户</th>
-                                    <th>值</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><small>进行中...</small>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 11:20</td>
-                                    <td>青衣5858</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 24%</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="label label-warning">已取消</span>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 10:40</td>
-                                    <td>徐子崴</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 66%</td>
-                                </tr>
-                                <tr>
-                                    <td><small>进行中...</small>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 01:30</td>
-                                    <td>姜岚昕</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 54%</td>
-                                </tr>
-                                <tr>
-                                    <td><small>进行中...</small>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 02:20</td>
-                                    <td>武汉大兵哥</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 12%</td>
-                                </tr>
-                                <tr>
-                                    <td><small>进行中...</small>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 09:40</td>
-                                    <td>荆莹儿</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 22%</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="label label-primary">已完成</span>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 04:10</td>
-                                    <td>栾某某</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 66%</td>
-                                </tr>
-                                <tr>
-                                    <td><small>进行中...</small>
-                                    </td>
-                                    <td><i class="fa fa-clock-o"></i> 12:08</td>
-                                    <td>范范范二妮</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 23%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
          </div>
       </div>
     </div>
@@ -217,120 +123,88 @@
     <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
     
     <th:block th:include="include :: sparkline-js" />
-    <script type="text/javascript">
-	    $(document).ready(function () {
-	        var data2 = [
-	            [gd(2012, 1, 1), 7], [gd(2012, 1, 2), 6], [gd(2012, 1, 3), 4], [gd(2012, 1, 4), 8],
-	            [gd(2012, 1, 5), 9], [gd(2012, 1, 6), 7], [gd(2012, 1, 7), 5], [gd(2012, 1, 8), 4],
-	            [gd(2012, 1, 9), 7], [gd(2012, 1, 10), 8], [gd(2012, 1, 11), 9], [gd(2012, 1, 12), 6],
-	            [gd(2012, 1, 13), 4], [gd(2012, 1, 14), 5], [gd(2012, 1, 15), 11], [gd(2012, 1, 16), 8],
-	            [gd(2012, 1, 17), 8], [gd(2012, 1, 18), 11], [gd(2012, 1, 19), 11], [gd(2012, 1, 20), 6],
-	            [gd(2012, 1, 21), 6], [gd(2012, 1, 22), 8], [gd(2012, 1, 23), 11], [gd(2012, 1, 24), 13],
-	            [gd(2012, 1, 25), 7], [gd(2012, 1, 26), 9], [gd(2012, 1, 27), 9], [gd(2012, 1, 28), 8],
-	            [gd(2012, 1, 29), 5], [gd(2012, 1, 30), 8], [gd(2012, 1, 31), 25]
-	        ];
-	
-	        var data3 = [
-	            [gd(2012, 1, 1), 800], [gd(2012, 1, 2), 500], [gd(2012, 1, 3), 600], [gd(2012, 1, 4), 700],
-	            [gd(2012, 1, 5), 500], [gd(2012, 1, 6), 456], [gd(2012, 1, 7), 800], [gd(2012, 1, 8), 589],
-	            [gd(2012, 1, 9), 467], [gd(2012, 1, 10), 876], [gd(2012, 1, 11), 689], [gd(2012, 1, 12), 700],
-	            [gd(2012, 1, 13), 500], [gd(2012, 1, 14), 600], [gd(2012, 1, 15), 700], [gd(2012, 1, 16), 786],
-	            [gd(2012, 1, 17), 345], [gd(2012, 1, 18), 888], [gd(2012, 1, 19), 888], [gd(2012, 1, 20), 888],
-	            [gd(2012, 1, 21), 987], [gd(2012, 1, 22), 444], [gd(2012, 1, 23), 999], [gd(2012, 1, 24), 567],
-	            [gd(2012, 1, 25), 786], [gd(2012, 1, 26), 666], [gd(2012, 1, 27), 888], [gd(2012, 1, 28), 900],
-	            [gd(2012, 1, 29), 178], [gd(2012, 1, 30), 555], [gd(2012, 1, 31), 993]
-	        ];
-	
-	
-	        var dataset = [
-	            {
-	                label: "订单数",
-	                data: data3,
-	                color: "#1ab394",
-	                bars: {
-	                    show: true,
-	                    align: "center",
-	                    barWidth: 24 * 60 * 60 * 600,
-	                    lineWidth: 0
-	                }
-	
-	            }, {
-	                label: "付款数",
-	                data: data2,
-	                yaxis: 2,
-	                color: "#464f88",
-	                lines: {
-	                    lineWidth: 1,
-	                    show: true,
-	                    fill: true,
-	                    fillColor: {
-	                        colors: [{
-	                            opacity: 0.2
-	                        }, {
-	                            opacity: 0.2
-	                        }]
-	                    }
-	                },
-	                splines: {
-	                    show: false,
-	                    tension: 0.6,
-	                    lineWidth: 1,
-	                    fill: 0.1
-	                },
-	            }
-	        ];
-	
-	
-	        var options = {
-	            xaxis: {
-	                mode: "time",
-	                tickSize: [3, "day"],
-	                tickLength: 0,
-	                axisLabel: "Date",
-	                axisLabelUseCanvas: true,
-	                axisLabelFontSizePixels: 12,
-	                axisLabelFontFamily: 'Arial',
-	                axisLabelPadding: 10,
-	                color: "#838383"
-	            },
-	            yaxes: [{
-	                    position: "left",
-	                    max: 1070,
-	                    color: "#838383",
-	                    axisLabelUseCanvas: true,
-	                    axisLabelFontSizePixels: 12,
-	                    axisLabelFontFamily: 'Arial',
-	                    axisLabelPadding: 3
-	            }, {
-	                    position: "right",
-	                    clolor: "#838383",
-	                    axisLabelUseCanvas: true,
-	                    axisLabelFontSizePixels: 12,
-	                    axisLabelFontFamily: ' Arial',
-	                    axisLabelPadding: 67
-	            }
-	            ],
-	            legend: {
-	                noColumns: 1,
-	                labelBoxBorderColor: "#000000",
-	                position: "nw"
-	            },
-	            grid: {
-	                hoverable: false,
-	                borderWidth: 0,
-	                color: '#838383'
-	            }
-	        };
-	
-	        function gd(year, month, day) {
-	            return new Date(year, month - 1, day).getTime();
-	        }
-	
-	        var previousPoint = null,
-	            previousLabel = null;
-	
-	        $.plot($("#flot-dashboard-chart"), dataset, options);
-	    });
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
+        var prefix = ctx + "modeler";
+        var prefixFlow = ctx + "flow";
+        $(function() {
+            var options = {
+                id: "bootstrap-table",
+                formId:"formId",
+                url: prefixFlow + "/findTasksByUserId",
+                striped: true,
+                showToggle: false,
+                loadingFontSize:20,
+                showRefresh: false,                   // 是否显示刷新按钮
+                showColumns: false,                   // 是否显示隐藏某列下拉框
+                showToggle: false,
+                showSearch: false,                     // 是否显示检索信息
+                modalName: "我的待办",
+                columns: [{
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                    {
+                        field: 'taskId',
+                        title: 'taskId',
+                        visible: false
+                    },
+                    {
+                        field: 'processDefinitionName',
+                        title: '流程名称'
+                    },
+                    {
+                        field: 'businessKey',
+                        title: '单号'
+
+                    },
+
+                    {
+                        field: 'taskName',
+                        title: '审批节点'
+
+                    },
+                    {
+                        field: 'startUserName',
+                        title: '流程发起人'
+                    },
+                    {
+                        field: 'startTime',
+                        title: '流程发起时间'
+                    },
+                    {
+                        field: 'createDate',
+                        title: '任务创建时间'
+                    },
+
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                            /*actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.processInstanceId + '\')"><i class="fa fa-eye"></i>流程图</a>');*/
+                            return actions.join('');
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function cancelTask(taskId) {
+            console.log(JSON.stringify(taskId));
+            var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
+            $.modal.openTab("审批", preViewUrl);
+        }
+        function getProcessDiagram(processInstanceId) {
+
+            var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
+            $.modal.open("流程图", preViewUrl,500,500);
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('采购单主表列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>订单号：</label>
+                                <input type="text" name="orderNo" />
+                            </li>
+                            <li>
+                                <label>采购标题：</label>
+                                <input type="text" name="title"/>
+                            </li>
+                            <li>
+                                <label>供应商：</label>
+                                <input type="text" name="supplierName"/>
+                            </li>
+                        <!--    <li class="select-time">
+                                <label>订货日期：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginOrderTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endOrderTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>交货日期：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginDeliveryDate]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endDeliveryDate]"/>
+                            </li>-->
+                            <li>
+                                <label>审批状态：</label>
+                                <select name="processStatus" th:with="type=${@dict.getType('process_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:purchaseOrder:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:purchaseOrder:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:purchaseOrder:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:purchaseOrder:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:purchaseOrder:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:purchaseOrder:remove')}]];
+        var processStatusDatas = [[${@dict.getType('process_status')}]];
+        var prefix = ctx + "system/purchaseOrder";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl:prefix + "/detail/{id}",
+                modalName: "采购单",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+
+                {
+                    field: 'orderNo',
+                    title: '订单号'
+                },
+                {
+                    field: 'title',
+                    title: '采购标题'
+                },
+                {
+                    field: 'totalQuantity',
+                    title: '总数量'
+                },
+                {
+                    field: 'totalPrice',
+                    title: '采购总金额'
+                },
+
+                {
+                    field: 'supplierName',
+                    title: '供应商名称'
+                },
+                {
+                    field: 'orderTime',
+                    title: '订货日期'
+                },
+                {
+                    field: 'deliveryDate',
+                    title: '交货日期'
+                },
+                {
+                    field: 'processStatus',
+                    title: '审批状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(processStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'belongUser',
+                    title: '采购人'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if(row.processStatus!=0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="printPur(\'' + row.id + '\')"><i class="fa fa-print"></i>打印</a> ');
+                        }
+
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起审批</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function printPur(id) {
+            var  detailUrl=prefix + "/detail/"+id;
+            var index = layer.open({
+                type: 2,
+                area: [ '100%', '100%'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: "采购单详情",
+                content: detailUrl,
+                btn: ['打印', '关闭'],
+                // 弹层外区域关闭
+                shadeClose: true,
+                yes: function(index, layero) {
+                    //当点击‘确定’按钮的时候，获取弹出层返回的值
+                    var res = window["layui-layer-iframe" + index].printData();
+                },
+                cancel: function(index) {
+                    return true;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改采购单主表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-purchaseOrder-edit" th:object="${purchaseOrderMain}">
+            <h4 class="form-header h4">采购单主表信息</h4>
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单号：</label>
+                <div class="col-sm-8">
+                    <input name="orderNo" th:field="*{orderNo}" class="form-control" type="text">
+                </div>
+            </div>
+           <!-- <div class="form-group">
+                <label class="col-sm-3 control-label">总数量：</label>
+                <div class="col-sm-8">
+                    <input name="totalQuantity" th:field="*{totalQuantity}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">采购总金额：</label>
+                <div class="col-sm-8">
+                    <input name="totalPrice" th:field="*{totalPrice}" class="form-control" type="text">
+                </div>
+            </div>-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">采购标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商：</label>
+                <div class="col-sm-8">
+                    <input name="supplierName" th:field="*{supplierName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="orderTime" th:value="${#dates.format(purchaseOrderMain.orderTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">交货日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="deliveryDate" th:value="${#dates.format(purchaseOrderMain.deliveryDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">采购人：</label>
+                <div class="col-sm-8">
+                    <input name="belongUser" th:field="*{belongUser}" class="form-control" type="text">
+                </div>
+            </div>
+            <h4 class="form-header h4">采购单明细信息</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-success btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/purchaseOrder";
+        $("#form-purchaseOrder-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-purchaseOrder-edit').serialize());
+            }
+        }
+
+        $("input[name='orderTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='deliveryDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $(function() {
+            var options = {
+                data: [[${purchaseOrderMain.purchaseOrderItemList}]],
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                    	var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                    	return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                    {
+                        field: 'goodsNo',
+                        align: 'center',
+                        title: '货物编号',
+                        formatter: function(value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsNo' value='%s'>", index, value);
+                            return html;
+                        }
+                    },
+                {
+                    field: 'goodsName',
+                    align: 'center',
+                    title: '名称',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsName' value='%s'>", index, value);
+                        return html;
+                    }
+				},
+                {
+                    field: 'goodsSize',
+                    align: 'center',
+                    title: '规格',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsSize' value='%s'>", index, value);
+                        return html;
+                    }
+				},
+                {
+                    field: 'goodsQuantity',
+                    align: 'center',
+                    title: '数量',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsQuantity' value='%s'>", index, value);
+                        return html;
+                    }
+				},
+                {
+                    field: 'goodsPrice',
+                    align: 'center',
+                    title: '单价',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].goodsPrice' value='%s'>", index, value);
+                        return html;
+                    }
+				},
+                {
+                    field: 'totalPrice',
+                    align: 'center',
+                    title: '总价',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].totalPrice' value='%s'>", index, value);
+                        return html;
+                    }
+				},
+                {
+                    field: 'remark',
+                    align: 'center',
+                    title: '备注',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='purchaseOrderItemList[%s].remark' value='%s'>", index, value);
+                        return html;
+                    }
+				}]
+            };
+            $.table.init(options);
+        });
+        function addColumn() {
+            var row = {
+                goodsNo: "",
+                goodsName: "",
+                goodsSize: "",
+                goodsQuantity: "",
+                goodsPrice: "",
+                totalPrice: "",
+                remark: ""
+            };
+            sub.addColumn(row);
+        }
+    </script>
+</body>
+</html>

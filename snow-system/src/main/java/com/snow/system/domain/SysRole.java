@@ -7,6 +7,9 @@ import com.snow.common.annotation.Excel;
 import com.snow.common.annotation.Excel.ColumnType;
 import com.snow.common.core.domain.BaseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 角色表 sys_role
  * 
@@ -19,6 +22,8 @@ public class SysRole extends BaseEntity
     /** 角色ID */
     @Excel(name = "角色序号", cellType = ColumnType.NUMERIC)
     private Long roleId;
+    @Excel(name = "父角色", cellType = ColumnType.NUMERIC)
+    private Long parentId;
 
     /** 角色名称 */
     @Excel(name = "角色名称")
@@ -51,6 +56,20 @@ public class SysRole extends BaseEntity
 
     /** 部门组（数据权限） */
     private Long[] deptIds;
+
+
+    public Integer getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Integer roleType) {
+        this.roleType = roleType;
+    }
+
+    private Integer roleType;
+
+    /** 子菜单 */
+    private List<SysRole> children = new ArrayList<>();
 
     public SysRole()
     {
@@ -175,6 +194,22 @@ public class SysRole extends BaseEntity
     public void setDeptIds(Long[] deptIds)
     {
         this.deptIds = deptIds;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public List<SysRole> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<SysRole> children) {
+        this.children = children;
     }
 
     @Override
