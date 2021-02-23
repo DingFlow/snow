@@ -29,7 +29,14 @@
   
 - QQ群: 577813338
 - admin/admin123  
-
+## 启动项目配置
+- 1.加群，在群文档获取项目数据库
+- 2.配置钉钉秘钥
+  <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/c2a24a8fd77e462586137f21f3a5380f.png"/>
+- 3.配置钉钉回调参数
+  <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/bbee68c5a1c64092ab4e0fa29d7cdf5d.png"/>
+  钉钉回调需要公网，为了方便提供一个内网穿透工具，详情参考：http://snowblog.shop.csj361.com/post/26
+  
 ## 项目截图
 <table>
     <tr>
@@ -51,9 +58,10 @@
  TODO 1.0
  - 1.0 角色与钉钉打通
  - 2.0 流程表单设计
+ - 3.0 钉钉工作流与系统工作流打通(让流程移动化)
  
 ## 交流群
-  QQ群: 577813338
+  QQ群: 577813338  欢迎入群讨论，我们的口号：借助钉钉，致力于流程，让流程更简单
 
 ## 感谢诺依系统提供框架
    诺依系统地址 http://ruoyi.vip  
