@@ -161,4 +161,11 @@ public class SysIndexController extends BaseController
         }
         return false;
     }
+
+    // 系统首页
+    @GetMapping("/system/bigScreen")
+    public String bigScreen(ModelMap mmap)
+    {
+        return "big_screen";
+    }
 }
