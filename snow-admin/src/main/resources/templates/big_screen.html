@@ -59,25 +59,25 @@
 	<div class="loadbox"> <img th:src="@{/images/loading.gif}"> 页面加载中... </div>
 </div>
 <div class="head">
-	<h1><img th:src="@{/images/logo.png}" >Ding-Flow可视化大屏</h1>
+	<h1>Ding-Flow可视化大屏</h1>
 	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span>2017-12-30</span></div>
 </div>
 <div class="mainbox">
 	<ul class="clearfix">
 		<li>
 			<div class="boxall" style="height: 2.7rem">
-				<div class="alltitle">生意参谋</div>
+				<div class="alltitle">流程概况</div>
 
 				<div class="sycm">
 					<ul class="clearfix">
-						<li><h2>1824</h2><span>今日销售额</span></li>
-						<li><h2>1920</h2><span>昨日销售额</span></li>
-						<li><h2>19%</h2><span>环比增长</span></li>
+						<li><h2 th:text="${flowGeneralSituation.todoTaskNum}"></h2><span>我的待办数</span></li>
+						<li><h2 th:text="${flowGeneralSituation.doneTaskNum}"></h2><span>我的已办数</span></li>
+						<li><h2 th:text="${flowGeneralSituation.myStartProcessInstanceNum}"></h2><span>我发起的审批数</span></li>
 					</ul>
 					<div style="border-bottom: 1px solid rgba(255,255,255,.1)"></div>
 					<ul class="clearfix">
-						<li><h2>1824</h2><span>今日销售额</span></li>
-						<li><h2>1920</h2><span>昨日销售额</span></li>
+						<li><h2 style="color: red" th:text="${flowGeneralSituation.threeTodoTaskNum}"></h2><span>超时任务数(3天)</span></li>
+						<li><h2 th:text="${flowGeneralSituation.processInstanceNum}"></h2><span>总流程数</span></li>
 						<li><h2>19%</h2><span>环比增长</span></li>
 					</ul>
 

@@ -205,7 +205,7 @@ public class FlowableServiceImpl implements FlowableService {
 
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentNameLike())){
-            deploymentQuery.deploymentNameLike(deploymentQueryDTO.getDeploymentNameLike());
+            deploymentQuery.deploymentNameLike("%"+deploymentQueryDTO.getDeploymentNameLike()+"%");
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentCategory())){
             deploymentQuery.deploymentCategory(deploymentQueryDTO.getDeploymentCategory());
@@ -214,18 +214,26 @@ public class FlowableServiceImpl implements FlowableService {
             deploymentQuery.deploymentId(deploymentQueryDTO.getDeploymentId());
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentKeyLike())){
-            deploymentQuery.deploymentKeyLike(deploymentQueryDTO.getDeploymentKeyLike());
+            deploymentQuery.deploymentKeyLike("%"+deploymentQueryDTO.getDeploymentKeyLike()+"%");
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getProcessDefinitionKeyLike())){
-            deploymentQuery.processDefinitionKeyLike(deploymentQueryDTO.getProcessDefinitionKeyLike());
+            deploymentQuery.processDefinitionKeyLike("%"+deploymentQueryDTO.getProcessDefinitionKeyLike()+"%");
         }
+
+
         long count = deploymentQuery.orderByDeploymenTime().desc().
                 count();
         List<Deployment> deployments = deploymentQuery.orderByDeploymenTime().desc().
                 listPage(deploymentQueryDTO.getPageNum(), deploymentQueryDTO.getPageSize());
+
+
         List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
             DeploymentVO deploymentVO = new DeploymentVO();
             BeanUtils.copyProperties(t, deploymentVO);
+            deploymentVO.setEngineVersion(processDefinition.getVersion());
+            deploymentVO.setResourceName(processDefinition.getResourceName());
+            deploymentVO.setDgrmResourceName(processDefinition.getDiagramResourceName());
             return deploymentVO;
         }).collect(Collectors.toList());
 
@@ -448,7 +456,7 @@ public class FlowableServiceImpl implements FlowableService {
         return  historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(id)
                 //标识查询的时候返回流程变量参数，不然取不到
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .singleResult();
     }
 
