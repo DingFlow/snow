@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.event.support.TypedEventListener;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.EngineDeployer;
+import org.flowable.common.engine.impl.history.HistoryLevel;
 import org.flowable.engine.impl.rules.RulesDeployer;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class FlowableConfig {
         configuration.setAsyncExecutorActivate(true);
         //开启历史数据异步保存
         configuration.setAsyncHistoryEnabled(true);
+        configuration.setHistoryLevel(HistoryLevel.FULL);
+        configuration.setDbHistoryUsed(true);
         configuration.setProcessDiagramGenerator(customProcessDiagramGenerator);
         //修改id生成器
         configuration.setIdGenerator(new FlowIdGenerator());

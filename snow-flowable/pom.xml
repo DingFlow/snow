@@ -21,28 +21,27 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.38</version>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter</artifactId>
-            <version>6.4.1</version>
+            <version>6.4.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-ui-modeler-rest</artifactId>
-            <version>6.4.1</version>
+            <version>6.4.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-json-converter</artifactId>
-            <version>6.4.1</version>
+            <version>6.4.0</version>
         </dependency>
     </dependencies>
 </project>
