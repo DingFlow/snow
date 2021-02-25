@@ -456,7 +456,7 @@ public class FlowableServiceImpl implements FlowableService {
         return  historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(id)
                 //标识查询的时候返回流程变量参数，不然取不到
-                //.includeProcessVariables()
+                .includeProcessVariables()
                 .singleResult();
     }
 

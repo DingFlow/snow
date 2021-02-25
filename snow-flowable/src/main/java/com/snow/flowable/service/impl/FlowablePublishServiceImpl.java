@@ -136,7 +136,6 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Override
     public Deployment createBytesDeploymentByModelId(String id) {
         Model model = modelService.getModel(id);
-       // BpmnModel bpmnModel = modelService.getBpmnModel(model);
         if(StringUtils.isNull(model)){
             return null;
         }
@@ -159,21 +158,21 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
             return null;
         }
         try {
-        if(deploymentType==ActDeModel.MODEL_TYPE_DECISION_TABLE){
-            JsonNode editorJsonNode = objectMapper.readTree(model.getModelEditorJson());
-            DmnJsonConverter dmnJsonConverter=new DmnJsonConverter();
-            DmnDefinition dmnDefinition = dmnJsonConverter.convertToDmn(editorJsonNode, model.getId(), model.getVersion(), null);
-            DmnDeployment deploy = dmnRepositoryService.createDeployment()
+            if(deploymentType==ActDeModel.MODEL_TYPE_DECISION_TABLE){
+                JsonNode editorJsonNode = objectMapper.readTree(model.getModelEditorJson());
+                DmnJsonConverter dmnJsonConverter=new DmnJsonConverter();
+                DmnDefinition dmnDefinition = dmnJsonConverter.convertToDmn(editorJsonNode, model.getId(), model.getVersion(), null);
+                DmnDeployment deploy = dmnRepositoryService.createDeployment()
                     .name(model.getName())
                     .addDmnModel(model.getName()+".dmn",dmnDefinition)
                     .category("system_dmn")
                     .deploy();
-            return deploy.getId();
-        }else if(deploymentType==ActDeModel.MODEL_TYPE_BPMN){
-            Deployment deployment = createBytesDeploymentByModelId(id);
-            return deployment.getId();
-        }
-          return null;
+                return deploy.getId();
+            }else if(deploymentType==ActDeModel.MODEL_TYPE_BPMN){
+                Deployment deployment = createBytesDeploymentByModelId(id);
+                return deployment.getId();
+            }
+            return null;
         } catch (IOException e) {
             log.error("deploymentByModelId is fail",e.getMessage());
             throw new RuntimeException("发布流程失败");
