@@ -82,17 +82,19 @@ a:hover{ color:#06c; text-decoration: none!important}
 .map2{ width:5.66rem; top:.85rem; left: .77rem; z-index: 3; opacity: 0.2; animation: myfirst 10s infinite linear;}
 .map3{ width:5.18rem; top:1.07rem; left: 1.13rem; z-index: 1;}
 
-#echarts1,#echarts2,#echarts3,#echarts6,#echarts7,#echarts8{ position:relative;}
+#echarts1,#echarts9,#echarts2,#echarts3,#echarts6,#echarts7,#echarts8{ position:relative;}
 #echarts1:before,
+#echarts9:before,
 #echarts2:before,
 #echarts3:before,
 #echarts6:before,
 #echarts7:before,
 #echarts8:before{ position:absolute; content: "23124"; width: 100%; text-align: center; bottom: .15rem; color: #fff; opacity: .7; font-size: .18rem;}
 
-#echarts1:before{ content: "平均单客价"}
-#echarts2:before{ content: "男消费"}
-#echarts3:before{ content: "女消费"}
+#echarts1:before{ content: "成功数"}
+#echarts9:before{ content: "失败数"}
+#echarts2:before{ content: "成功占比"}
+#echarts3:before{ content: "失败占比"}
 
 #echarts6:before{ content: "新增会员"}
 #echarts7:before{ content: "新增领卡会员"}
@@ -132,7 +134,7 @@ a:hover{ color:#06c; text-decoration: none!important}
 .wrap{ height:2.54rem; overflow: hidden;}
 .wrap li{  line-height:.42rem; height:.42rem; font-size: .18rem; text-indent: .24rem; margin-bottom: .1rem; }
 .wrap li p{border: 1px solid rgba(25,186,139,.17);color: rgba(255,255,255,.6); }
-.sy{ float:left; width: 25%; height: 2.2rem; margin-top: -.25rem;}
+.sy{ float:left; width: 24%; height: 2.2rem; margin-top: -.25rem;}
 
 
 .adduser{ height:1.5rem; overflow: hidden;}

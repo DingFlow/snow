@@ -74,7 +74,7 @@
 			<div class="boxall" style="height: 2.65rem">
 				<div class="alltitle">钉钉数据同步概况</div>
 				<div class="sy" id="echarts1"></div>
-				<div class="sy" id="echarts14"></div>
+				<div class="sy" id="echarts9"></div>
 				<div class="sy" id="echarts2"></div>
 				<div class="sy" id="echarts3"></div>
 				<div class="boxfoot"></div>
@@ -179,6 +179,7 @@
 		myChart6.resize();
 		myChart7.resize();
 		myChart8.resize();
+		myChart9.resize();
 	})
 	window.addEventListener("resize", function () {
 		myChart1.resize();
@@ -187,6 +188,7 @@
 		myChart6.resize();
 		myChart7.resize();
 		myChart8.resize();
+		myChart9.resize();
 	});
 </script>
 <script type="text/javascript">
@@ -354,9 +356,9 @@
 	var myChart1 = echarts.init(document.getElementById('echarts1'));
 	var v1 = [[${DingTalkSituation.failureNums}]];
 	var v2 = [[${DingTalkSituation.successNums}]];
-
-	option0 = {
-		//同步失败数
+	var v3 = [[${DingTalkSituation.successRatio}]];
+	var v4 = [[${DingTalkSituation.failureRatio}]];
+	option1 = {
 		series: [{
 			type: 'pie',
 			radius: ['70%', '80%'],
@@ -382,10 +384,8 @@
 			]
 		}]
 	};
-	var myChart14 = echarts.init(document.getElementById('echarts14'));
-	var v1 = [[${DingTalkSituation.failureNums}]];
-	var v2 = [[${DingTalkSituation.successNums}]];
-	option1 = {
+	var myChart9 = echarts.init(document.getElementById('echarts9'));
+	option9 = {
        //同步失败数
 		series: [{
 			type: 'pie',
@@ -415,9 +415,6 @@
 
 
 	var myChart3 = echarts.init(document.getElementById('echarts3'));
-	var v1 = 298
-	var v2 = 523
-	var v3 = v1 + v2
 	option2 = {
 
 		series: [{
@@ -430,27 +427,27 @@
 				}
 			},
 			data: [{
-				value: v1,
-				name: '成功占比',
+				value: v2,
+				name: '成功数',
 				label: {
 					normal: {
-						formatter: v1 + '',
+						formatter: v2 + '',
 						textStyle: {
 							fontSize: 20,
-							color: '#fff',
+							color: '#fff ',
 						}
 					}
 				}
 			}, {
-				value: v2,
-				name: '失败占比',
+				value: v1,
+				name: '成功占比',
 				label: {
 					normal: {
 						formatter: function (params) {
-							return '占比' + Math.round(v1 / v3 * 100) + '%'
+							return  v3+ '%'
 						},
 						textStyle: {
-							color: '#aaa',
+							color: '#fff ',
 							fontSize: 12
 						}
 					}
@@ -479,27 +476,27 @@
 				}
 			},
 			data: [{
-				value: v2,
-				name: '失败占比',
+				value: v1,
+				name: '失败数',
 				label: {
 					normal: {
-						formatter: v2 + '',
+						formatter: v1+ '',
 						textStyle: {
 							fontSize: 20,
-							color: '#fff',
+							color: '#FF0000',
 						}
 					}
 				}
 			}, {
 				value: v1,
-				name: '成功占比',
+				name: '失败占比',
 				label: {
 					normal: {
 						formatter: function (params) {
-							return '占比' + Math.round(v2 / v3 * 100) + '%'
+							return v4 + '%'
 						},
 						textStyle: {
-							color: '#aaa',
+							color: '#FF0000',
 							fontSize: 12
 						}
 					}
@@ -516,8 +513,8 @@
 		}]
 	};
 	setTimeout(function () {
-		myChart1.setOption(option0);
-		myChart14.setOption(option1)
+		myChart1.setOption(option1);
+		myChart9.setOption(option9)
 		myChart2.setOption(option2);
 		myChart3.setOption(option3);
 	}, 500);
@@ -561,17 +558,17 @@
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
 	},  {
-		offset: [75, 75],
+		offset: [93, 30],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
 	},
 	{
-		offset: [75, 75],
+		offset: [85, 75],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
 	},
 	{
-		offset: [75, 75],
+		offset: [26, 19],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
 	}];
