@@ -132,7 +132,7 @@ a:hover{ color:#06c; text-decoration: none!important}
 .wrap{ height:2.54rem; overflow: hidden;}
 .wrap li{  line-height:.42rem; height:.42rem; font-size: .18rem; text-indent: .24rem; margin-bottom: .1rem; }
 .wrap li p{border: 1px solid rgba(25,186,139,.17);color: rgba(255,255,255,.6); }
-.sy{ float:left; width: 33%; height: 2.2rem; margin-top: -.25rem;}
+.sy{ float:left; width: 25%; height: 2.2rem; margin-top: -.25rem;}
 
 
 .adduser{ height:1.5rem; overflow: hidden;}

@@ -13,6 +13,9 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.FlowGeneralSituationVO;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.shiro.service.SysPasswordService;
+import com.snow.system.domain.SysDingtalkSyncLog;
+import com.snow.system.domain.SysDingtalkSyncSituationVO;
+import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -51,6 +54,9 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private FlowableTaskService flowableTaskService;
+
+    @Autowired
+    private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService;
 
     // 系统首页
     @GetMapping("/index")
@@ -167,7 +173,11 @@ public class SysIndexController extends BaseController
         return false;
     }
 
-    // 数据大屏
+    /**
+     * 数据大屏  （后面改成接口的形式获取）
+     * @param mmap
+     * @return
+     */
     @GetMapping("/system/bigScreen")
     public String bigScreen(ModelMap mmap)
     {
@@ -175,6 +185,9 @@ public class SysIndexController extends BaseController
         //流程概况
         FlowGeneralSituationVO flowGeneralSituation = flowableTaskService.getFlowGeneralSituation(String.valueOf(user.getUserId()));
         mmap.put("flowGeneralSituation",flowGeneralSituation);
+        SysDingtalkSyncLog sysDingtalkSyncLog=new SysDingtalkSyncLog();
+        SysDingtalkSyncSituationVO sysDingtalkSyncSituation = sysDingtalkSyncLogService.getSysDingtalkSyncSituation(sysDingtalkSyncLog);
+        mmap.put("DingTalkSituation",sysDingtalkSyncSituation);
         return "big_screen";
     }
 }

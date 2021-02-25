@@ -27,8 +27,6 @@
 
 		},2400);
 
-
-
 		var html2=$(".adduser ul").html()
 		$(".adduser ul").append(html2)
 		var ls2=$(".adduser li").length/2+1
@@ -41,17 +39,7 @@
 				$(".adduser ul").animate({marginTop:-'.5'*a+'rem'},800)
 			}
 			$(".adduser ul").animate({marginTop:-'.5'*a+'rem'},800)
-
-
 		},4300);
-
-
-
-
-
-
-
-
 	})
 </script>
 <body>
@@ -60,7 +48,7 @@
 </div>
 <div class="head">
 	<h1>Ding-Flow可视化大屏</h1>
-	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span>2017-12-30</span></div>
+	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span>2021-2-25</span></div>
 </div>
 <div class="mainbox">
 	<ul class="clearfix">
@@ -80,20 +68,19 @@
 						<li><h2 th:text="${flowGeneralSituation.processInstanceNum}"></h2><span>总流程数</span></li>
 						<li><h2>19%</h2><span>环比增长</span></li>
 					</ul>
-
-
 				</div>
 				<div class="boxfoot"></div>
 			</div>
 			<div class="boxall" style="height: 2.65rem">
-				<div class="alltitle">消费占比</div>
+				<div class="alltitle">钉钉数据同步概况</div>
 				<div class="sy" id="echarts1"></div>
+				<div class="sy" id="echarts14"></div>
 				<div class="sy" id="echarts2"></div>
 				<div class="sy" id="echarts3"></div>
 				<div class="boxfoot"></div>
 			</div>
 			<div class="boxall" style="height: 2.95rem">
-				<div class="alltitle">行业区分比例</div>
+				<div class="alltitle">账单消费概况</div>
 				<div id="echarts4" style="height: 2.2rem; width: 100%;"></div>
 				<div class="boxfoot"></div>
 			</div>
@@ -207,9 +194,6 @@
 	var v1 = 353;
 	var v2 = 178;
 	var v3 = 68;
-
-
-
 	var myChart6 = echarts.init(document.getElementById('echarts6'));
 	option6 = {
 		series: [{
@@ -310,14 +294,9 @@
 				}]
 		}]
 	};
-
-
 	var myChart8 = echarts.init(document.getElementById('echarts8'));
 	option8 = {
-
-
 		series: [{
-
 			type: 'pie',
 			radius: ['70%', '80%'],
 			color: '#62b62f',
@@ -370,14 +349,44 @@
 	}, 500);
 
 </script>
+  <!--钉钉数据同步情况-->
 <script type="text/javascript">
 	var myChart1 = echarts.init(document.getElementById('echarts1'));
-	var v1 = 298;
-	var v2 = 523;
-	var v3 = v1 + v2;
+	var v1 = [[${DingTalkSituation.failureNums}]];
+	var v2 = [[${DingTalkSituation.successNums}]];
+
+	option0 = {
+		//同步失败数
+		series: [{
+			type: 'pie',
+			radius: ['70%', '80%'],
+			color: '#0088cc',
+			label: {
+				normal: {
+					position: 'center'
+				}
+			},
+			data: [{
+				value: v2,
+				name: '同步成功数',
+				label: {
+					normal: {
+						formatter: v2 + '',
+						textStyle: {
+							fontSize: 20,
+							color: '#0088cc',
+						}
+					}
+				}
+			},
+			]
+		}]
+	};
+	var myChart14 = echarts.init(document.getElementById('echarts14'));
+	var v1 = [[${DingTalkSituation.failureNums}]];
+	var v2 = [[${DingTalkSituation.successNums}]];
 	option1 = {
-
-
+       //同步失败数
 		series: [{
 			type: 'pie',
 			radius: ['70%', '80%'],
@@ -389,13 +398,13 @@
 			},
 			data: [{
 				value: v1,
-				name: '平均单客价',
+				name: '同步失败数',
 				label: {
 					normal: {
-						formatter: v3 + '',
+						formatter: v1 + '',
 						textStyle: {
 							fontSize: 20,
-							color: '#fff',
+							color: '#FF0000',
 						}
 					}
 				}
@@ -411,7 +420,6 @@
 	var v3 = v1 + v2
 	option2 = {
 
-
 		series: [{
 			type: 'pie',
 			radius: ['70%', '80%'],
@@ -423,7 +431,7 @@
 			},
 			data: [{
 				value: v1,
-				name: '男消费',
+				name: '成功占比',
 				label: {
 					normal: {
 						formatter: v1 + '',
@@ -435,7 +443,7 @@
 				}
 			}, {
 				value: v2,
-				name: '女消费',
+				name: '失败占比',
 				label: {
 					normal: {
 						formatter: function (params) {
@@ -459,13 +467,9 @@
 		}]
 	};
 
-
 	var myChart2 = echarts.init(document.getElementById('echarts2'));
 	option3 = {
-
-
 		series: [{
-
 			type: 'pie',
 			radius: ['70%', '80%'],
 			color: '#62b62f',
@@ -476,7 +480,7 @@
 			},
 			data: [{
 				value: v2,
-				name: '女消费',
+				name: '失败占比',
 				label: {
 					normal: {
 						formatter: v2 + '',
@@ -488,7 +492,7 @@
 				}
 			}, {
 				value: v1,
-				name: '男消费',
+				name: '成功占比',
 				label: {
 					normal: {
 						formatter: function (params) {
@@ -512,7 +516,8 @@
 		}]
 	};
 	setTimeout(function () {
-		myChart1.setOption(option1);
+		myChart1.setOption(option0);
+		myChart14.setOption(option1)
 		myChart2.setOption(option2);
 		myChart3.setOption(option3);
 	}, 500);
@@ -521,32 +526,33 @@
 <script type="text/javascript">
 	var myChart = echarts.init(document.getElementById('echarts4'));
 	var plantCap = [{
-		name: '工业',
+		name: '商户消费',
 		value: '222'
 	}, {
-		name: '农业',
+		name: '转账',
 		value: '115'
 	}, {
-		name: '互联网',
+		name: '微信红包',
 		value: '113'
-	}, {
-		name: '医疗',
-		value: '95'
-	}, {
-		name: '文学',
-		value: '92'
-	}, {
-		name: '服装',
+	},
+	{
+		name: '微信红包-退款',
 		value: '87'
+	},
+	{
+		name:'扫二维码付款',
+		value: ''
+	},
+	{
+		name: '二维码收款',
+		value: ''
 	}];
 	var datalist = [{
 		offset: [56, 48],
 		symbolSize: 110,
-
 		color: 'rgba(73,188,247,.14)',
 
 	}, {
-
 		offset: [30, 70],
 		symbolSize: 70,
 		color: 'rgba(73,188,247,.14)'
@@ -554,20 +560,20 @@
 		offset: [0, 43],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
-
-	}, {
-		offset: [93, 30],
-		symbolSize: 70,
-		color: 'rgba(73,188,247,.14)'
-	}, {
-		offset: [26, 19],
-		symbolSize: 65,
-		color: 'rgba(73,188,247,.14)'
-	}, {
+	},  {
 		offset: [75, 75],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
-
+	},
+	{
+		offset: [75, 75],
+		symbolSize: 60,
+		color: 'rgba(73,188,247,.14)'
+	},
+	{
+		offset: [75, 75],
+		symbolSize: 60,
+		color: 'rgba(73,188,247,.14)'
 	}];
 
 	var datas = [];
