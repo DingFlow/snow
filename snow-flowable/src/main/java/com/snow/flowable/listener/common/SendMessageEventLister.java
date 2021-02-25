@@ -64,7 +64,7 @@ public class SendMessageEventLister extends AbstractEventListener {
     protected void taskCreated(FlowableEngineEntityEvent event) {
         //任务创建可发送短信，邮件通知接收人(代办人)
         log.info("ManagerTaskEventListener----taskCreated任务创建监听：{}",JSON.toJSONString(event));
-        sendDingTalkMessage(event);
+       // sendDingTalkMessage(event);
         //todo 邮件通知
     }
 

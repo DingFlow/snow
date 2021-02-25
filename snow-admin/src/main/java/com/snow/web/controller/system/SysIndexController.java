@@ -10,6 +10,8 @@ import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
+import com.snow.flowable.domain.FlowGeneralSituationVO;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.shiro.service.SysPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +48,9 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private SysPasswordService passwordService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     // 系统首页
     @GetMapping("/index")
@@ -160,5 +165,16 @@ public class SysIndexController extends BaseController
             return DateUtils.differentDaysByMillisecond(nowDate, pwdUpdateDate) > passwordValidateDays;
         }
         return false;
+    }
+
+    // 数据大屏
+    @GetMapping("/system/bigScreen")
+    public String bigScreen(ModelMap mmap)
+    {
+        SysUser user = ShiroUtils.getSysUser();
+        //流程概况
+        FlowGeneralSituationVO flowGeneralSituation = flowableTaskService.getFlowGeneralSituation(String.valueOf(user.getUserId()));
+        mmap.put("flowGeneralSituation",flowGeneralSituation);
+        return "big_screen";
     }
 }

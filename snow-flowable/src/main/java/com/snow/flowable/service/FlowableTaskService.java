@@ -1,10 +1,7 @@
 package com.snow.flowable.service;
 
 import com.snow.common.core.page.PageModel;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.FinishTaskDTO;
-import com.snow.flowable.domain.TaskBaseDTO;
-import com.snow.flowable.domain.TaskVO;
+import com.snow.flowable.domain.*;
 import com.snow.system.domain.SysUser;
 import org.flowable.task.api.Task;
 
@@ -75,8 +72,15 @@ public interface FlowableTaskService {
      */
    void delegateTask(String taskId,String curUserId,String targetUserId);
 
+    /**
+     * 挂起或激活流程
+     * @param instanceId
+     * @param suspendState
+     */
    void suspendOrActiveApply(String instanceId, String suspendState);
 
-
-
+    /**
+     * 获取流程概况（流程大屏显示）
+     */
+    FlowGeneralSituationVO getFlowGeneralSituation(String userId);
 }
