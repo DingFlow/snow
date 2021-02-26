@@ -2,6 +2,7 @@ package com.snow.system.service;
 
 import java.util.List;
 import com.snow.system.domain.FinanceAlipayFlow;
+import com.snow.system.domain.FinanceBillSituationVO;
 
 /**
  * 财务支付宝流水Service接口
@@ -65,4 +66,11 @@ public interface IFinanceAlipayFlowService
      * @return 结果
      */
     public int deleteFinanceAlipayFlowById(Long id);
+
+    /**
+     * 获取账单消费概况
+     * @param userId
+     * @return
+     */
+    public FinanceBillSituationVO getFinanceAlipayFlowSituation(Long userId);
 }

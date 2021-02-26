@@ -48,7 +48,7 @@
 </div>
 <div class="head">
 	<h1>Ding-Flow可视化大屏</h1>
-	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span>2021-2-25</span></div>
+	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span th:text="${date}"></span></div>
 </div>
 <div class="mainbox">
 	<ul class="clearfix">
@@ -89,14 +89,14 @@
 			<div class="bar">
 				<div class="barbox">
 					<ul class="clearfix">
-						<li class="pulll_left counter">12581189</li>
-						<li class="pulll_left counter">3912410</li>
+						<li class="pulll_left counter" style="color: red">[[${financeBillSituation.expenditureTotal}]]</li>
+						<li class="pulll_left counter">[[${financeBillSituation.inComeTotal}]]</li>
 					</ul>
 				</div>
 				<div class="barbox2">
 					<ul class="clearfix">
-						<li class="pulll_left">消费总金额</li>
-						<li class="pulll_left">消费总笔数</li>
+						<li class="pulll_left">支出总金额</li>
+						<li class="pulll_left">收入总金额</li>
 					</ul>
 				</div>
 			</div>
@@ -136,26 +136,13 @@
 				<div class="boxfoot"></div>
 			</div>
 			<div class="boxall" style="height: 3.4rem">
-				<div class="alltitle">实时消费记录</div>
+				<div class="alltitle">实时异常操作记录</div>
 				<div class="wrap">
-					<ul>
-						<li>
-							<p>1李东梁-支付宝支付-120元-XXX门店</p>
-						</li>
-						<li>
-							<p>2李东梁-支付宝支付-120元-XXX门店</p>
-						</li>
-						<li>
-							<p>3李东梁-支付宝支付-120元-XXX门店</p>
-						</li>
-						<li>
-							<p>4李东梁-支付宝支付-120元-XXX门店</p>
-						</li>
-						<li>
-							<p>5李东梁-支付宝支付-120元-XXX门店</p>
-						</li>
-						<li>
-							<p>6李东梁-支付宝支付-120元-XXX门店</p>
+					<ul >
+						<li th:each="syslog,syslogStat : ${sysOperLogs}">
+							<p>
+								<label style="color: white" th:text="${syslogStat.count}"></label>--<label  style="color: white" th:text="${syslog.title}"></label>--<label  style="color: white" th:text="${syslog.operName}"></label>
+							</p>
 						</li>
 					</ul>
 				</div>
@@ -522,27 +509,28 @@
 </script>
 <script type="text/javascript">
 	var myChart = echarts.init(document.getElementById('echarts4'));
+	var consumptionTotal = [[${financeBillSituation.consumptionTotal}]];
 	var plantCap = [{
 		name: '商户消费',
-		value: '222'
+		value: consumptionTotal
 	}, {
 		name: '转账',
-		value: '115'
+		value: [[${financeBillSituation.transferAccountsTotal}]]
 	}, {
 		name: '微信红包',
-		value: '113'
+		value: [[${financeBillSituation.wxRedPacketsTotal}]]
 	},
 	{
 		name: '微信红包-退款',
-		value: '87'
+		value: [[${financeBillSituation.redPacketsRefundTotal}]]
 	},
 	{
 		name:'扫二维码付款',
-		value: ''
+		value: [[${financeBillSituation.scannerQrCodePaymentTotal}]]
 	},
 	{
 		name: '二维码收款',
-		value: ''
+		value: [[${financeBillSituation.qrCodePaymentTotal}]]
 	}];
 	var datalist = [{
 		offset: [56, 48],

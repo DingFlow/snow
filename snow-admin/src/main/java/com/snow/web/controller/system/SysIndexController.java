@@ -3,6 +3,7 @@ package com.snow.web.controller.system;
 import java.util.Date;
 import java.util.List;
 
+import cn.hutool.core.date.DateUtil;
 import com.snow.common.constant.ShiroConstants;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.text.Convert;
@@ -13,8 +14,9 @@ import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.FlowGeneralSituationVO;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.shiro.service.SysPasswordService;
-import com.snow.system.domain.SysDingtalkSyncLog;
-import com.snow.system.domain.SysDingtalkSyncSituationVO;
+import com.snow.system.domain.*;
+import com.snow.system.service.ISysOperLogService;
+import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
 import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.snow.common.config.Global;
 import com.snow.common.core.controller.BaseController;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysMenu;
-import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.ISysMenuService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +57,12 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService;
+
+    @Autowired
+    private FinanceAlipayFlowServiceImpl financeAlipayFlowService;
+
+    @Autowired
+    private ISysOperLogService operLogService;
 
     // 系统首页
     @GetMapping("/index")
@@ -181,13 +187,24 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/bigScreen")
     public String bigScreen(ModelMap mmap)
     {
+        String date= DateUtil.formatDate(new Date());
+        mmap.put("date",date);
         SysUser user = ShiroUtils.getSysUser();
         //流程概况
         FlowGeneralSituationVO flowGeneralSituation = flowableTaskService.getFlowGeneralSituation(String.valueOf(user.getUserId()));
         mmap.put("flowGeneralSituation",flowGeneralSituation);
+        //钉钉概况
         SysDingtalkSyncLog sysDingtalkSyncLog=new SysDingtalkSyncLog();
         SysDingtalkSyncSituationVO sysDingtalkSyncSituation = sysDingtalkSyncLogService.getSysDingtalkSyncSituation(sysDingtalkSyncLog);
         mmap.put("DingTalkSituation",sysDingtalkSyncSituation);
+        //账单概况
+        FinanceBillSituationVO financeAlipayFlowSituation = financeAlipayFlowService.getFinanceAlipayFlowSituation(user.getUserId());
+        mmap.put("financeBillSituation",financeAlipayFlowSituation);
+        //暂时先存放操作失败的日志
+        SysOperLog sysOperLog=new SysOperLog();
+        sysOperLog.setStatus(1);
+        List<SysOperLog> sysOperLogs = operLogService.selectOperLogList(sysOperLog);
+        mmap.put("sysOperLogs",sysOperLogs);
         return "big_screen";
     }
 }
