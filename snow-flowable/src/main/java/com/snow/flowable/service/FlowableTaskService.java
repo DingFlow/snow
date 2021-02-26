@@ -79,8 +79,5 @@ public interface FlowableTaskService {
      */
    void suspendOrActiveApply(String instanceId, String suspendState);
 
-    /**
-     * 获取流程概况（流程大屏显示）
-     */
-    FlowGeneralSituationVO getFlowGeneralSituation(String userId);
+
 }

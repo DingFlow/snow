@@ -61,7 +61,11 @@ public class FinanceFlowController extends BaseController
     @ResponseBody
     public TableDataInfo list(FinanceAlipayFlow financeAlipayFlow)
     {
+        SysUser user = ShiroUtils.getSysUser();
         startPage();
+        if(!user.isAdmin()){
+            financeAlipayFlow.setBelongUserId(user.getUserId());
+        }
         List<FinanceAlipayFlow> list = financeAlipayFlowService.selectFinanceAlipayFlowList(financeAlipayFlow);
         return getDataTable(list);
     }

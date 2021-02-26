@@ -282,46 +282,5 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     }
 
-    @Override
-    public FlowGeneralSituationVO getFlowGeneralSituation(String userId) {
-        //根据用户ID获取角色
-        Set<Long> sysRoles = flowableUserService.getFlowGroupByUserId(Long.parseLong(userId));
 
-        TaskQuery taskQuery = taskService.createTaskQuery()
-                .or()
-                .taskCandidateOrAssigned(userId);
-        //这个地方查询会去查询系统的用户组表，希望的是查询自己的用户表
-        if(!CollectionUtils.isEmpty(sysRoles)) {
-            List<String> roleIds = sysRoles.stream().map(t ->
-                    String.valueOf(t)
-            ).collect(Collectors.toList());
-            taskQuery.taskCandidateGroupIn(roleIds).endOr();
-        }
-
-        List<Task> taskList = taskQuery.list();
-
-        //待办总数
-        FlowGeneralSituationVO.FlowGeneralSituationVOBuilder flowGeneralSituationVOBuilder = FlowGeneralSituationVO.builder().todoTaskNum(taskQuery.count());
-
-        //获取我发起的流程数
-        HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery().startedBy(userId);
-        flowGeneralSituationVOBuilder.myStartProcessInstanceNum(historicProcessInstanceQuery.count());
-
-        //我的已办任务数
-        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId);
-        List<HistoricProcessInstance> list = historicProcessInstanceQuery.list();
-        flowGeneralSituationVOBuilder.doneTaskNum(historicTaskInstanceQuery.count());
-
-
-        //获取超过三天未处理的待办
-        long count = taskList.stream().filter(t ->
-                DateUtil.betweenDay(t.getCreateTime(), new Date(),false) > 3
-        ).count();
-        flowGeneralSituationVOBuilder.threeTodoTaskNum(count);
-
-        //流程数
-        int length = FlowDefEnum.values().length;
-        return flowGeneralSituationVOBuilder.processInstanceNum(length).build();
-
-    }
 }

@@ -66,7 +66,7 @@
 					<ul class="clearfix">
 						<li><h2 style="color: red" th:text="${flowGeneralSituation.threeTodoTaskNum}"></h2><span>超时任务数(3天)</span></li>
 						<li><h2 th:text="${flowGeneralSituation.processInstanceNum}"></h2><span>总流程数</span></li>
-						<li><h2>19%</h2><span>环比增长</span></li>
+						<li><h2>19</h2><span>流程消息数</span></li>
 					</ul>
 				</div>
 				<div class="boxfoot"></div>
@@ -95,8 +95,8 @@
 				</div>
 				<div class="barbox2">
 					<ul class="clearfix">
-						<li class="pulll_left">支出总金额</li>
-						<li class="pulll_left">收入总金额</li>
+						<li class="pulll_left">支出总金额（元）</li>
+						<li class="pulll_left">收入总金额（元）</li>
 					</ul>
 				</div>
 			</div>
@@ -109,7 +109,7 @@
 		</li>
 		<li>
 			<div class="boxall" style="height:5.2rem">
-				<div class="alltitle">新增会员信息</div>
+				<div class="alltitle">钉钉信息</div>
 				<div class="tabs">
 					<ul class="clearfix">
 						<li><a class="active" href="#">7天</a></li>
@@ -121,15 +121,20 @@
 					<div class="sy" id="echarts6"></div>
 					<div class="sy" id="echarts7"></div>
 					<div class="sy" id="echarts8"></div>
+					<div class="sy" id="echarts10"></div>
 				</div>
 				<div class="addnew">
-					<div class="tit02"><span>今日新增会员列表</span></div>
+					<div class="tit02"><span>今日新增流程</span></div>
 					<div class="adduser">
 						<ul class="clearfix">
-							<li class="clearfix"> <span class="pulll_left"><img th:src="@{/images/head.jpg}">1今日新增会员列表</span> <span class="pulll_right">24岁 - 女 - 广州 </span> </li>
-							<li class="clearfix"> <span class="pulll_left"><img th:src="@{/images/head.jpg}">2今日新增会员列表</span> <span class="pulll_right">24岁 - 女 - 广州 </span> </li>
-							<li class="clearfix"> <span class="pulll_left"><img th:src="@{/images/head.jpg}">3今日新增会员列表</span> <span class="pulll_right">24岁 - 女 - 广州 </span> </li>
-							<li class="clearfix"> <span class="pulll_left"><img th:src="@{/images/head.jpg}">4今日新增会员列表</span> <span class="pulll_right">24岁 - 女 - 广州 </span> </li>
+
+							<li class="clearfix" th:each="historicProcessInstance,historicProcessInstanceStat : ${historicProcessInstanceList}">
+								<span class="pulll_left" th:text="${historicProcessInstanceStat.count}"></span>
+								<span class="pulll_left">.</span>
+								<span class="pulll_left" th:text="${historicProcessInstance.processDefinitionName}"></span>
+								<span class="pulll_right" th:text="${#dates.format(historicProcessInstance.startTime, 'yyyy-MM-dd HH:mm:ss')}"> </span>
+							</li>
+
 						</ul>
 					</div>
 				</div>
@@ -138,11 +143,12 @@
 			<div class="boxall" style="height: 3.4rem">
 				<div class="alltitle">实时异常操作记录</div>
 				<div class="wrap">
-					<ul >
-						<li th:each="syslog,syslogStat : ${sysOperLogs}">
-							<p>
-								<label style="color: white" th:text="${syslogStat.count}"></label>--<label  style="color: white" th:text="${syslog.title}"></label>--<label  style="color: white" th:text="${syslog.operName}"></label>
-							</p>
+					<ul class="clearfix">
+						<li class="clearfix" th:each="syslog,syslogStat : ${sysOperLogs}">
+							<span class="pulll_left" th:text="${syslogStat.count}"></span>
+
+							<span class="pulll_left" th:text="${syslog.title}"></span>
+							<span class="pulll_right" th:text="${#dates.format(syslog.operTime, 'yyyy-MM-dd HH:mm:ss')}"> </span>
 						</li>
 					</ul>
 				</div>
@@ -167,7 +173,8 @@
 		myChart7.resize();
 		myChart8.resize();
 		myChart9.resize();
-	})
+        myChart10.resize();
+	});
 	window.addEventListener("resize", function () {
 		myChart1.resize();
 		myChart2.resize();
@@ -176,6 +183,7 @@
 		myChart7.resize();
 		myChart8.resize();
 		myChart9.resize();
+        myChart10.resize();
 	});
 </script>
 <script type="text/javascript">
@@ -213,7 +221,7 @@
 					label: {
 						normal: {
 							formatter: function (params) {
-								return '占比' + Math.round(v1 / v0 * 100) + '%'
+								return '占比60%'
 							},
 							textStyle: {
 								color: '#aaa',
@@ -264,7 +272,7 @@
 					label: {
 						normal: {
 							formatter: function (params) {
-								return '占比' + Math.round(v2 / v0 * 100) + '%'
+								return '占比40%'
 							},
 							textStyle: {
 								color: '#aaa',
@@ -312,7 +320,7 @@
 				label: {
 					normal: {
 						formatter: function (params) {
-							return '占比' + Math.round(v2 / v0 * 100) + '%'
+							return '占比34%'
 						},
 						textStyle: {
 							color: '#aaa',
@@ -331,10 +339,59 @@
 			}]
 		}]
 	};
+    var myChart10 = echarts.init(document.getElementById('echarts10'));
+    option10 = {
+        series: [{
+            type: 'pie',
+            radius: ['70%', '80%'],
+            color: '#62b62f',
+            label: {
+                normal: {
+                    position: 'center'
+                }
+            },
+            data: [{
+                value: v3,
+                name: '女消费',
+                label: {
+                    normal: {
+                        formatter: v3 + '',
+                        textStyle: {
+                            fontSize: 20,
+                            color: '#fff',
+                        }
+                    }
+                }
+            }, {
+                value: v0,
+                name: '男消费',
+                label: {
+                    normal: {
+                        formatter: function (params) {
+                            return '占比66%'
+                        },
+                        textStyle: {
+                            color: '#aaa',
+                            fontSize: 12
+                        }
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: 'rgba(255,255,255,.2)'
+                    },
+                    emphasis: {
+                        color: '#fff'
+                    }
+                },
+            }]
+        }]
+    };
 	setTimeout(function () {
 		myChart6.setOption(option6);
 		myChart7.setOption(option7);
 		myChart8.setOption(option8);
+        myChart10.setOption(option10);
 	}, 500);
 
 </script>
@@ -510,7 +567,11 @@
 <script type="text/javascript">
 	var myChart = echarts.init(document.getElementById('echarts4'));
 	var consumptionTotal = [[${financeBillSituation.consumptionTotal}]];
-	var plantCap = [{
+	var plantCap = [
+    {
+		name: '即时到账',
+		value: [[${financeBillSituation.immediatelyAccountTotal}]]
+     },{
 		name: '商户消费',
 		value: consumptionTotal
 	}, {
@@ -521,8 +582,8 @@
 		value: [[${financeBillSituation.wxRedPacketsTotal}]]
 	},
 	{
-		name: '微信红包-退款',
-		value: [[${financeBillSituation.redPacketsRefundTotal}]]
+		name: '支付宝担保交易',
+		value: [[${financeBillSituation.alipaySecuredTransactionTotal}]]
 	},
 	{
 		name:'扫二维码付款',
@@ -532,7 +593,13 @@
 		name: '二维码收款',
 		value: [[${financeBillSituation.qrCodePaymentTotal}]]
 	}];
-	var datalist = [{
+	var datalist = [
+    {
+		offset: [0, 70],
+		symbolSize: 60,
+		color: 'rgba(73,188,247,.14)',
+	},
+	{
 		offset: [56, 48],
 		symbolSize: 110,
 		color: 'rgba(73,188,247,.14)',
@@ -542,7 +609,7 @@
 		symbolSize: 70,
 		color: 'rgba(73,188,247,.14)'
 	}, {
-		offset: [0, 43],
+		offset: [0, 23],
 		symbolSize: 60,
 		color: 'rgba(73,188,247,.14)'
 	},  {

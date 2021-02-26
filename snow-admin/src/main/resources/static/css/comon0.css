@@ -4,7 +4,7 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box}
 *,body{padding:0px;	margin:0px;color: #222;font-family: "微软雅黑";}
-body{ background:#000d4a url(../images/bg.jpg) center top; background-size:cover;color:#666; padding-bottom: 30px;font-size: .1rem;}
+body{ background:#000d4a url(../images/bg1.jpg) center top; background-size:cover;color:#666; padding-bottom: 30px;font-size: .1rem;}
 li{ list-style-type:none;}
 table{}
 i{ margin:0px; padding:0px; text-indent:0px;}
@@ -82,23 +82,25 @@ a:hover{ color:#06c; text-decoration: none!important}
 .map2{ width:5.66rem; top:.85rem; left: .77rem; z-index: 3; opacity: 0.2; animation: myfirst 10s infinite linear;}
 .map3{ width:5.18rem; top:1.07rem; left: 1.13rem; z-index: 1;}
 
-#echarts1,#echarts9,#echarts2,#echarts3,#echarts6,#echarts7,#echarts8{ position:relative;}
+#echarts1,#echarts9,#echarts2,#echarts3,#echarts6,#echarts7,#echarts8,#echarts10{ position:relative;}
 #echarts1:before,
 #echarts9:before,
 #echarts2:before,
 #echarts3:before,
 #echarts6:before,
 #echarts7:before,
-#echarts8:before{ position:absolute; content: "23124"; width: 100%; text-align: center; bottom: .15rem; color: #fff; opacity: .7; font-size: .18rem;}
+#echarts8:before,
+#echarts10:before { position:absolute; content: "23124"; width: 100%; text-align: center; bottom: .15rem; color: #fff; opacity: .7; font-size: .18rem;}
 
 #echarts1:before{ content: "成功数"}
 #echarts9:before{ content: "失败数"}
 #echarts2:before{ content: "成功占比"}
 #echarts3:before{ content: "失败占比"}
 
-#echarts6:before{ content: "新增会员"}
-#echarts7:before{ content: "新增领卡会员"}
-#echarts8:before{ content: "新增消费会员"}
+#echarts6:before{ content: "出勤比"}
+#echarts7:before{ content: "缺勤比"}
+#echarts8:before{ content: "钉钉流程数"}
+#echarts10:before{ content: "钉钉待办数"}
 
 
 
@@ -133,7 +135,7 @@ a:hover{ color:#06c; text-decoration: none!important}
 
 .wrap{ height:2.54rem; overflow: hidden;}
 .wrap li{  line-height:.42rem; height:.42rem; font-size: .18rem; text-indent: .24rem; margin-bottom: .1rem; }
-.wrap li p{border: 1px solid rgba(25,186,139,.17);color: rgba(255,255,255,.6); }
+.wrap li span{color: rgba(255,255,255,.6); }
 .sy{ float:left; width: 24%; height: 2.2rem; margin-top: -.25rem;}
 
 

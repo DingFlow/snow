@@ -137,6 +137,13 @@ public interface FlowableService {
     List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId);
 
     /**
+     * 获取历史流程
+     * @param processInstanceDTO
+     * @return
+     */
+    List<ProcessInstanceVO> getHistoricProcessInstanceList(ProcessInstanceDTO processInstanceDTO);
+
+    /**
      * 查询历史流程实例(分页)
      * 可查询我发起的流程
      * @param processInstanceDTO
@@ -156,4 +163,12 @@ public interface FlowableService {
      * 获取流程图像，已执行节点和流程线高亮显示
      */
     void getFlowableProcessImage(String processInstanceId, HttpServletResponse response);
+
+
+    /**
+     * 获取流程概况（流程大屏显示）
+     */
+    FlowGeneralSituationVO getFlowGeneralSituation(String userId);
+
+
 }

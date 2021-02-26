@@ -1,6 +1,7 @@
 package com.snow.system.domain;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
 
@@ -31,14 +32,17 @@ public class FinanceAlipayFlow extends BaseEntity
 
     /** 交易创建时间 */
     @ExcelProperty(index = 3)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date tradeCreateTime;
 
     /** 交易支付时间 */
     @ExcelProperty(index = 4)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date payTime;
 
     /** 最近修改时间 */
     @ExcelProperty(index = 5)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastModifyTime;
 
     /** 交易来源地 */
