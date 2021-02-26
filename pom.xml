@@ -8,11 +8,11 @@
     <version>4.3.1</version>
 
     <name>snow</name>
-    <url>http://www.ruoyi.vip</url>
+    <url>http://snowblog.shop.csj361.com</url>
     <description>snow管理系统</description>
     
     <properties>
-        <ruoyi.version>4.3.1</ruoyi.version>
+        <snow.version>4.3.1</snow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -171,49 +171,49 @@
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-quartz</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!-- 代码生成-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-generator</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!-- 核心模块-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-framework</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!-- 系统模块-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-system</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-common</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!--钉钉模块-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-dingtalk</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
             <!--工作流模块-->
             <dependency>
                 <groupId>com.snow</groupId>
                 <artifactId>snow-flowable</artifactId>
-                <version>${ruoyi.version}</version>
+                <version>${snow.version}</version>
             </dependency>
 
         </dependencies>

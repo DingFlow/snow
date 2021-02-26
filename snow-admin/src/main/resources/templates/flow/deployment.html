@@ -13,13 +13,13 @@
                         <div class="row">
                             <ul>
                                 <li>
-                                    <label>name：</label>
+                                    <label>名称：</label>
                                     <input type="text" name="deploymentNameLike"/>
                                 </li>
 
                             <li>
-                                <label>流程分类：</label>
-                                <select name="category" th:with="type=${@dict.getType('flow_category')}">
+                                <label>分类：</label>
+                                <select name="deploymentCategory" th:with="type=${@dict.getType('flow_category')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
@@ -77,22 +77,25 @@
                     field: 'name',
                     title: '流程名称'
                 },
-                    {
-                        field: 'category',
-                        title: '分类',
-                        formatter: function(value, row, index) {
-                            return $.table.selectDictLabel(flowCategoryDatas, value);
-                        }
-                    },
+                {
+                    field: 'category',
+                    title: '分类',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(flowCategoryDatas, value);
+                    }
+                },
+                {
+                    field: 'key',
+                    title: '发布key'
+                },
+                {
+                    field: 'engineVersion',
+                    title: '版本号'
+                },
                 {
                     field: 'deploymentTime',
                     title: '流程发布时间'
                 },
-
-                {
-                    field: 'key',
-                    title: '发布key'
-                 },
 
                 {
                     title: '操作',

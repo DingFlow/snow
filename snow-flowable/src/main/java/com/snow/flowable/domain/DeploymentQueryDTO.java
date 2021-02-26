@@ -13,12 +13,24 @@ import java.io.Serializable;
 @Data
 public class DeploymentQueryDTO extends FlowBaseDTO implements Serializable {
 
+    /**
+     * 发布key  模糊
+     */
     private String deploymentKeyLike;
 
+    /**
+     * 发布id
+     */
     private String deploymentId;
 
+    /**
+     * 发布名称 模糊
+     */
     private String deploymentNameLike;
 
+    /**
+     * 流程定义key 模糊
+     */
     private String processDefinitionKeyLike;
 
     /**

@@ -1,33 +1,39 @@
 package com.snow.web.controller.system;
 
-import java.util.Date;
-import java.util.List;
-
+import cn.hutool.core.date.DateUtil;
+import com.snow.common.config.Global;
 import com.snow.common.constant.ShiroConstants;
+import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.text.Convert;
 import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
+import com.snow.flowable.domain.FlowGeneralSituationVO;
+import com.snow.flowable.domain.ProcessInstanceDTO;
+import com.snow.flowable.domain.ProcessInstanceVO;
+import com.snow.flowable.service.FlowableService;
 import com.snow.framework.shiro.service.SysPasswordService;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.*;
+import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.ISysMenuService;
+import com.snow.system.service.ISysOperLogService;
+import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
+import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.snow.common.config.Global;
-import com.snow.common.core.controller.BaseController;
-import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysMenu;
-import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysMenuService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 首页 业务处理
@@ -46,6 +52,18 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private SysPasswordService passwordService;
+
+    @Autowired
+    private FlowableService flowableService;
+
+    @Autowired
+    private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService;
+
+    @Autowired
+    private FinanceAlipayFlowServiceImpl financeAlipayFlowService;
+
+    @Autowired
+    private ISysOperLogService operLogService;
 
     // 系统首页
     @GetMapping("/index")
@@ -160,5 +178,40 @@ public class SysIndexController extends BaseController
             return DateUtils.differentDaysByMillisecond(nowDate, pwdUpdateDate) > passwordValidateDays;
         }
         return false;
+    }
+
+    /**
+     * 数据大屏  （后面改成接口的形式获取）
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/system/bigScreen")
+    public String bigScreen(ModelMap mmap)
+    {
+        String date= DateUtil.formatDate(new Date());
+        mmap.put("date",date);
+        SysUser user = ShiroUtils.getSysUser();
+        //流程概况
+        FlowGeneralSituationVO flowGeneralSituation = flowableService.getFlowGeneralSituation(String.valueOf(user.getUserId()));
+        mmap.put("flowGeneralSituation",flowGeneralSituation);
+        //钉钉概况
+        SysDingtalkSyncLog sysDingtalkSyncLog=new SysDingtalkSyncLog();
+        SysDingtalkSyncSituationVO sysDingtalkSyncSituation = sysDingtalkSyncLogService.getSysDingtalkSyncSituation(sysDingtalkSyncLog);
+        mmap.put("DingTalkSituation",sysDingtalkSyncSituation);
+        //账单概况
+        FinanceBillSituationVO financeAlipayFlowSituation = financeAlipayFlowService.getFinanceAlipayFlowSituation(user.getUserId());
+        mmap.put("financeBillSituation",financeAlipayFlowSituation);
+        //暂时先存放操作失败的日志
+        SysOperLog sysOperLog=new SysOperLog();
+        sysOperLog.setStatus(1);
+        List<SysOperLog> sysOperLogs = operLogService.selectOperLogList(sysOperLog);
+        mmap.put("sysOperLogs",sysOperLogs);
+        ProcessInstanceDTO processInstanceDTO=new ProcessInstanceDTO();
+        //获取当天发起的流程
+        processInstanceDTO.setStartedAfter(DateUtils.parseDate(DateUtils.getDate()+"00:00:00"));
+        processInstanceDTO.setStartedBefore(DateUtils.parseDate(DateUtils.getDate()+"23:59:59"));
+        List<ProcessInstanceVO> historicProcessInstanceList = flowableService.getHistoricProcessInstanceList(processInstanceDTO);
+        mmap.put("historicProcessInstanceList",historicProcessInstanceList);
+        return "big_screen";
     }
 }

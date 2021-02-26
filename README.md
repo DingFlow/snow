@@ -22,11 +22,11 @@
 17. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
 18. **钉钉管理：钉钉用户，部门体系数据同步，请假单，采购单流程**
 19. **流程管理： 流程模型在线设计，流程组管理，待办钉钉通知**
-20. **支付管理：一键导入支付宝和微信账单，可系统化管理账单**
+20. **账单管理：一键导入支付宝和微信账单，可系统化管理账单**
 21. **系统序列设置：每日凌晨更新序列号，系统按照日期生成自增序列单号**
-
+22. **可视化大屏：智能化科技大屏，实时了解钉钉数据，流程数据状态**
 ## 在线体验
-  暂未开放数据库，有需要的可以加群，项目可搭建流程平台商业化
+  暂未开放数据库，有需要的可以加群，项目可用于搭建流程平台商业化
   
 - QQ群: 577813338
 - admin/admin123  
@@ -42,27 +42,52 @@
 <table>
     <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/094981bad3844c25b4e0e9ae5fdfb253.png"/></td>
+            <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/a5b69fa27ba147a89efc229d90e1d27e.png"/></td>
+    </tr>
+    <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/694936c6e1b34af4a9c2525bf25156ba.png"/></td>
-    </tr>
-    <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/102a95b10c5b4094ae9eea060ed3d0c4.png"/></td>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/de48282f792d4300ba26b7a397464d71.png"/></td>
     </tr>
     <tr>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/de48282f792d4300ba26b7a397464d71.png"/></td>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/952eaddf26164feaae13ec9ffdbeab35.png"/></td>
+    </tr>
+    <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/416ffa7c1f1f42f8807a24dc2e63a08d.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0ffee016a6be4d5eb5b5f18a0291353e.png"/></td>
     </tr>
 </table>
 
-
+## 版本发布
+v1.0 2021-2-24 ding-flow首发
+  - 1.0 集成flowable官方设计器
+  - 2.0 抛弃官方设计器用户组，使用ding-flow自带用户，流程角色。流程角色实现向下兼容（即流程某节点配置父角色，其父角色下所有子角色都具有流程审批权限）
+  - 3.0 系统自带请假申请和采购单申请，采用类form表单提交，保存流程资源表。反序列化表单，实现流程中取业务数据。接口通用，一个接口按照规定格式设计流程即可。
+  - 4.0 全局监听器抽象设计，实现任务创建时，钉钉消息通知，待办人实时接收消息，及时处理任务。
+  - 5.0 任务监听器抽象设计，满足各种节点自定义业务需求，按照各种开发即可。
+  - 6.0 系统创建用户和部门，同步到钉钉用户和部门。实现钉钉移动化办公。
+  - 7.0 钉钉修改用户和部门，系统异步监听数据变化，实时修改系统数据。实现钉钉和系统数据同步。
+  - 8.0 账单管理，导出支付宝，微信账单。一键导入系统，系统轻松管理账单数据，日常消费明了清晰。
+  
+v1.1 2021-2-26 
+   - 1.0 集成ding-flow数据大屏，智能化科技大屏，实时了解钉钉数据，流程数据状态
+   - 2.0 修复流程历史数据保存失败问题
+   - 3.0 调整待办，增加已办功能
+   
 ## 未来规划
- TODO 1.0
+
  - 1.0 角色与钉钉打通
  - 2.0 流程表单设计
  - 3.0 钉钉工作流与系统工作流打通(让流程移动化)
+ - 4.0 钉钉同步数据失败后，手工重试
+ - 5.0 记录消息通知轨迹
+ - 6.0 钉钉流程和系统流程打通，让流程移动化
  
 ## 交流群
-  QQ群: 577813338  欢迎入群讨论，我们的口号：借助钉钉，致力于流程，让流程更简单
+ - QQ群: 577813338   欢迎入群讨论，我们的口号：借助钉钉，致力于流程，让流程更简单
+ 
+## 我有话说 
+  开源离不开您的参与、支持与鼓励。开源不易，如果您觉得项目对您有帮助，请您动动小手star一下，也是对作者的最大帮助。
 
 ## 感谢诺依系统提供框架
-   诺依系统地址 http://ruoyi.vip  
+   诺依系统地址： http://ruoyi.vip  

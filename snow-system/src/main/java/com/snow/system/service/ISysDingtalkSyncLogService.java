@@ -2,6 +2,7 @@ package com.snow.system.service;
 
 import java.util.List;
 import com.snow.system.domain.SysDingtalkSyncLog;
+import com.snow.system.domain.SysDingtalkSyncSituationVO;
 
 /**
  * 钉钉同步日志记录Service接口
@@ -58,4 +59,9 @@ public interface ISysDingtalkSyncLogService
      * @return 结果
      */
     public int deleteSysDingtalkSyncLogById(Long logId);
+
+    /**
+     * 获取钉钉同步数据概况
+     */
+    public SysDingtalkSyncSituationVO getSysDingtalkSyncSituation(SysDingtalkSyncLog sysDingtalkSyncLog);
 }

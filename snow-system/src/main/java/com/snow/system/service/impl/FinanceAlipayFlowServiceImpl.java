@@ -1,19 +1,20 @@
 package com.snow.system.service.impl;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-
+import com.snow.common.core.text.Convert;
+import com.snow.common.enums.FinanceTradeType;
 import com.snow.common.utils.DateUtils;
+import com.snow.system.domain.FinanceAlipayFlow;
+import com.snow.system.domain.FinanceBillSituationVO;
 import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import com.snow.system.mapper.SysUserMapper;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import com.snow.system.service.IFinanceAlipayFlowService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.snow.system.mapper.FinanceAlipayFlowMapper;
-import com.snow.system.domain.FinanceAlipayFlow;
-import com.snow.system.service.IFinanceAlipayFlowService;
-import com.snow.common.core.text.Convert;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 财务支付宝流水Service业务层处理
@@ -111,5 +112,65 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
     public int deleteFinanceAlipayFlowById(Long id)
     {
         return financeAlipayFlowMapper.deleteFinanceAlipayFlowById(id);
+    }
+
+    /**
+     * 获取账单消费概况
+     * @param userId
+     * @return
+     */
+    @Override
+    public FinanceBillSituationVO getFinanceAlipayFlowSituation(Long userId) {
+        FinanceAlipayFlow financeAlipayFlow=new FinanceAlipayFlow();
+        financeAlipayFlow.setBelongUserId(userId);
+        FinanceBillSituationVO.FinanceBillSituationVOBuilder builder = FinanceBillSituationVO.builder();
+        List<FinanceAlipayFlow> financeAlipayFlowList = financeAlipayFlowMapper.selectFinanceAlipayFlowList(financeAlipayFlow);
+        if(CollectionUtils.isNotEmpty(financeAlipayFlowList)) {
+            BigDecimal immediatelyAccountTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.IMMEDIATELY_ACCOUNT.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.immediatelyAccountTotal(immediatelyAccountTotal);
+
+            BigDecimal alipaySecuredTransactionTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.ALIPAY_SECURED_TRANSACTION.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.alipaySecuredTransactionTotal(alipaySecuredTransactionTotal);
+
+            BigDecimal consumptionTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.CONSUMPTION.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.consumptionTotal(consumptionTotal);
+
+            BigDecimal transferAccountsTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.TRANSFER_ACCOUNTS.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.transferAccountsTotal(transferAccountsTotal);
+
+            BigDecimal wxRedPacketsTotal = financeAlipayFlowList.stream().filter(t ->
+                    t.getTradeType() == FinanceTradeType.WX_RED_PACKETS.getCode() || t.getTradeType() == FinanceTradeType.WX_GROUP_RED_PACKETS.getCode() || t.getTradeType() == FinanceTradeType.WX_SINGLE_RED_PACKETS.getCode()
+            ).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.wxRedPacketsTotal(wxRedPacketsTotal);
+
+            BigDecimal redPacketsRefundTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.WX_RED_PACKETS_REFUND.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.redPacketsRefundTotal(redPacketsRefundTotal);
+
+            BigDecimal scannerQrCodePaymentTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.SCANNER_QR_CODE_PAYMENT.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.scannerQrCodePaymentTotal(scannerQrCodePaymentTotal);
+
+            BigDecimal qrCodePaymentTotal = financeAlipayFlowList.stream().filter(t -> t.getTradeType() == FinanceTradeType.QR_CODE_PAYMENT.getCode()).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.qrCodePaymentTotal(qrCodePaymentTotal);
+            //支出
+            BigDecimal expenditureTotal = financeAlipayFlowList.stream().filter(t -> t.getIncomeExpenditureType() == 1).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.expenditureTotal(expenditureTotal);
+            //收入
+            BigDecimal inComeTotal = financeAlipayFlowList.stream().filter(t -> t.getIncomeExpenditureType() == 2).map(FinanceAlipayFlow::getTradePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+            builder.inComeTotal(inComeTotal);
+        }else {
+            builder.immediatelyAccountTotal(BigDecimal.ZERO)
+                    .alipaySecuredTransactionTotal(BigDecimal.ZERO)
+                    .alipaySecuredTransactionTotal(BigDecimal.ZERO)
+                    .consumptionTotal(BigDecimal.ZERO)
+                    .expenditureTotal(BigDecimal.ZERO)
+                    .inComeTotal(BigDecimal.ZERO)
+                    .qrCodePaymentTotal(BigDecimal.ZERO)
+                    .redPacketsRefundTotal(BigDecimal.ZERO)
+                    .scannerQrCodePaymentTotal(BigDecimal.ZERO)
+                    .redPacketsRefundTotal(BigDecimal.ZERO)
+                    .transferAccountsTotal(BigDecimal.ZERO)
+                    .wxRedPacketsTotal(BigDecimal.ZERO);
+        }
+        return builder.build();
     }
 }

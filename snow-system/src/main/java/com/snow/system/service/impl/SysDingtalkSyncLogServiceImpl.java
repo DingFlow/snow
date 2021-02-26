@@ -1,7 +1,11 @@
 package com.snow.system.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import com.snow.system.domain.SysDingtalkSyncSituationVO;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.snow.system.mapper.SysDingtalkSyncLogMapper;
@@ -93,5 +97,37 @@ public class SysDingtalkSyncLogServiceImpl implements ISysDingtalkSyncLogService
     public int deleteSysDingtalkSyncLogById(Long logId)
     {
         return sysDingtalkSyncLogMapper.deleteSysDingtalkSyncLogById(logId);
+    }
+
+    /**
+     * 获取同步数据
+     * @param sysDingtalkSyncLog
+     * @return
+     */
+    @Override
+    public SysDingtalkSyncSituationVO getSysDingtalkSyncSituation(SysDingtalkSyncLog sysDingtalkSyncLog) {
+
+        List<SysDingtalkSyncLog> sysDingtalkSyncLogs = sysDingtalkSyncLogMapper.selectSysDingtalkSyncLogList(sysDingtalkSyncLog);
+        SysDingtalkSyncSituationVO.SysDingtalkSyncSituationVOBuilder sysDingtalkSyncSituationVOBuilder = SysDingtalkSyncSituationVO.builder();
+        if(CollectionUtils.isNotEmpty(sysDingtalkSyncLogs)){
+            long successCount = sysDingtalkSyncLogs.stream().filter(t -> t.getStatus() == 0).count();
+            long failureCount = sysDingtalkSyncLogs.stream().filter(t -> t.getStatus() == 1).count();
+            sysDingtalkSyncSituationVOBuilder.successNums(successCount).failureNums(failureCount);
+            long total=successCount+failureCount;
+            if(failureCount ==0){
+                sysDingtalkSyncSituationVOBuilder.failureRatio(new BigDecimal(0));
+            }else {
+                sysDingtalkSyncSituationVOBuilder.failureRatio(new BigDecimal(failureCount).divide(new BigDecimal(total),4,BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100)));
+            }
+            if (successCount==0){
+                sysDingtalkSyncSituationVOBuilder.successRatio(new BigDecimal(0));
+            }else {
+                sysDingtalkSyncSituationVOBuilder.successRatio(new BigDecimal(successCount).divide(new BigDecimal(total),4,BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100)));
+            }
+
+        }else {
+            sysDingtalkSyncSituationVOBuilder.successNums(0).failureNums(0).failureRatio(new BigDecimal(0)).successRatio(new BigDecimal(0));
+        }
+        return sysDingtalkSyncSituationVOBuilder.build();
     }
 }

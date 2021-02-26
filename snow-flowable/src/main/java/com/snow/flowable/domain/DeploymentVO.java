@@ -1,15 +1,10 @@
 package com.snow.flowable.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.flowable.common.engine.api.repository.EngineResource;
-import org.flowable.engine.repository.ProcessDefinition;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @program: snow
@@ -50,6 +45,17 @@ public class DeploymentVO implements Serializable {
    /**
     * 版本
     */
-   private String engineVersion;
+   private int engineVersion;
+
+   /**
+    * xml
+    */
+   private String resourceName;
+
+   /**
+    * 图片
+    */
+   private String dgrmResourceName;
+
 
 }

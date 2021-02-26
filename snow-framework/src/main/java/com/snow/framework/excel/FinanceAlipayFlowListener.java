@@ -2,22 +2,17 @@ package com.snow.framework.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.snow.common.json.JSON;
+import com.snow.common.enums.FinanceTradeType;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
-import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import com.snow.system.service.IFinanceAlipayFlowService;
-import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -92,6 +87,9 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
         saveData();
     }
 
+    /**
+     * 保存数据
+     */
     public void saveData(){
 
         List<FinanceAlipayFlow> financeAlipayFlowList = list.stream().map(t -> {
@@ -148,30 +146,9 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             String tradeType = t.getTradeType();
             if (StringUtils.isEmpty(tradeType)) {
                 financeAlipayFlow.setTradeType(null);
-            } else if (tradeType.equals("即时到账交易")) {
-                financeAlipayFlow.setTradeType(1);
-            } else if (tradeType.equals("支付宝担保交易")) {
-                financeAlipayFlow.setTradeType(2);
-            }else if (tradeType.equals("商户消费")) {
-                financeAlipayFlow.setTradeType(3);
-            }
-            else if (tradeType.equals("转账")) {
-                financeAlipayFlow.setTradeType(4);
-            }
-            else if (tradeType.equals("微信红包")) {
-                financeAlipayFlow.setTradeType(5);
-            }
-            else if (tradeType.equals("微信红包（群红包）")) {
-                financeAlipayFlow.setTradeType(6);
-            }
-            else if (tradeType.equals("微信红包（单发）")) {
-                financeAlipayFlow.setTradeType(7);
-            }else if(tradeType.equals("微信红包-退款")){
-                financeAlipayFlow.setTradeType(8);
-            }else if(tradeType.equals("扫二维码付款")){
-                financeAlipayFlow.setTradeType(9);
-            }else if(tradeType.equals("二维码收款")){
-                financeAlipayFlow.setTradeType(10);
+            }else {
+                Integer financeTradeTypeCode = FinanceTradeType.getFinanceTradeTypeCode(tradeType);
+                financeAlipayFlow.setTradeType(financeTradeTypeCode);
             }
             financeAlipayFlow.setCreateBy(sysUser.getUserName());
             financeAlipayFlow.setBelongUserId(sysUser.getUserId());

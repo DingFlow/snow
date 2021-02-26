@@ -79,6 +79,17 @@ public class FlowController extends BaseController {
     }
 
     /**
+     * 跳转待办页
+     * @return
+     */
+    @RequiresPermissions("flow:get:todoList")
+    @GetMapping("/toDoMyTask")
+    public String todoTask()
+    {
+
+        return prefix+"/myTask";
+    }
+    /**
      * 获取我的待办
      */
     @RequiresPermissions("flow:get:todoList")

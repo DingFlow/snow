@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.event.support.TypedEventListener;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
 import org.flowable.common.engine.impl.EngineDeployer;
+import org.flowable.common.engine.impl.history.HistoryLevel;
 import org.flowable.engine.impl.rules.RulesDeployer;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,10 @@ public class FlowableConfig {
         configuration.setTransactionManager(transactionManager);
         configuration.setDatabaseSchemaUpdate("false");
         configuration.setAsyncExecutorActivate(true);
-        //开启历史数据异步保存
-        configuration.setAsyncHistoryEnabled(true);
+        //设置历史数据保存级别
+        configuration.setHistoryLevel(HistoryLevel.FULL);
+        //开启历史数据异步保存(这个地方是坑，开启后历史数据保存不了，暂时还不知道怎么回事，先注释了)
+        //configuration.setAsyncHistoryEnabled(true);
         configuration.setProcessDiagramGenerator(customProcessDiagramGenerator);
         //修改id生成器
         configuration.setIdGenerator(new FlowIdGenerator());

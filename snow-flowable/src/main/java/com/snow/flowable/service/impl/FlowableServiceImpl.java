@@ -15,6 +15,7 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.common.enums.FlowStatusEnum;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
@@ -205,7 +206,7 @@ public class FlowableServiceImpl implements FlowableService {
 
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentNameLike())){
-            deploymentQuery.deploymentNameLike(deploymentQueryDTO.getDeploymentNameLike());
+            deploymentQuery.deploymentNameLike("%"+deploymentQueryDTO.getDeploymentNameLike()+"%");
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentCategory())){
             deploymentQuery.deploymentCategory(deploymentQueryDTO.getDeploymentCategory());
@@ -214,18 +215,26 @@ public class FlowableServiceImpl implements FlowableService {
             deploymentQuery.deploymentId(deploymentQueryDTO.getDeploymentId());
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentKeyLike())){
-            deploymentQuery.deploymentKeyLike(deploymentQueryDTO.getDeploymentKeyLike());
+            deploymentQuery.deploymentKeyLike("%"+deploymentQueryDTO.getDeploymentKeyLike()+"%");
         }
         if(!StringUtils.isEmpty(deploymentQueryDTO.getProcessDefinitionKeyLike())){
-            deploymentQuery.processDefinitionKeyLike(deploymentQueryDTO.getProcessDefinitionKeyLike());
+            deploymentQuery.processDefinitionKeyLike("%"+deploymentQueryDTO.getProcessDefinitionKeyLike()+"%");
         }
+
+
         long count = deploymentQuery.orderByDeploymenTime().desc().
                 count();
         List<Deployment> deployments = deploymentQuery.orderByDeploymenTime().desc().
                 listPage(deploymentQueryDTO.getPageNum(), deploymentQueryDTO.getPageSize());
+
+
         List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
             DeploymentVO deploymentVO = new DeploymentVO();
             BeanUtils.copyProperties(t, deploymentVO);
+            deploymentVO.setEngineVersion(processDefinition.getVersion());
+            deploymentVO.setResourceName(processDefinition.getResourceName());
+            deploymentVO.setDgrmResourceName(processDefinition.getDiagramResourceName());
             return deploymentVO;
         }).collect(Collectors.toList());
 
@@ -597,7 +606,41 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
+    public List<ProcessInstanceVO> getHistoricProcessInstanceList(ProcessInstanceDTO processInstanceDTO) {
+        HistoricProcessInstanceQuery historicProcessInstanceQuery = buildHistoricProcessInstanceCondition(processInstanceDTO);
+        List<HistoricProcessInstance> list = historicProcessInstanceQuery.
+                orderByProcessInstanceStartTime().
+                desc().
+                list();
+        return ProcessInstanceVO.warpList(list);
+    }
+
+    @Override
     public PageModel<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO) {
+
+        HistoricProcessInstanceQuery historicProcessInstanceQuery = buildHistoricProcessInstanceCondition(processInstanceDTO);
+        long count = historicProcessInstanceQuery.
+                orderByProcessInstanceStartTime().
+                desc().
+                count();
+        List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.
+                orderByProcessInstanceStartTime().
+                desc().
+                listPage(processInstanceDTO.getPageNum(), processInstanceDTO.getPageSize());
+        List<ProcessInstanceVO> processInstanceVOS = ProcessInstanceVO.warpList(historicProcessInstances);
+        setProcessInstanceVOs(processInstanceVOS);
+        PageModel<ProcessInstanceVO> pageModel = new PageModel<> ();
+        pageModel.setTotalCount((int)count);
+        pageModel.setPagedRecords(processInstanceVOS);
+        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(pageInfo.getList(), ProcessInstanceVO.class);
+        return pageModel;
+    }
+
+    /**
+     * 构建查询条件
+     * @param processInstanceDTO
+     */
+    public HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
         if(!StringUtils.isEmpty(processInstanceDTO.getBusinessKey())){
             historicProcessInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey());
@@ -624,23 +667,8 @@ public class FlowableServiceImpl implements FlowableService {
             historicProcessInstanceQuery.processDefinitionName(processInstanceDTO.getProcessDefinitionName());
         }
         historicProcessInstanceQuery.includeProcessVariables();
-        long count = historicProcessInstanceQuery.
-                orderByProcessInstanceStartTime().
-                desc().
-                count();
-        List<HistoricProcessInstance> historicProcessInstances = historicProcessInstanceQuery.
-                orderByProcessInstanceStartTime().
-                desc().
-                listPage(processInstanceDTO.getPageNum(), processInstanceDTO.getPageSize());
-        List<ProcessInstanceVO> processInstanceVOS = ProcessInstanceVO.warpList(historicProcessInstances);
-        setProcessInstanceVOs(processInstanceVOS);
-        PageModel<ProcessInstanceVO> pageModel = new PageModel<> ();
-        pageModel.setTotalCount((int)count);
-        pageModel.setPagedRecords(processInstanceVOS);
-        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(pageInfo.getList(), ProcessInstanceVO.class);
-        return pageModel;
+        return historicProcessInstanceQuery;
     }
-
     /**
      * 赋值ProcessInstanceVOs
      * @param processInstanceVOS
@@ -964,6 +992,49 @@ public class FlowableServiceImpl implements FlowableService {
             log.error("【异常】-获取流程图失败！" + e.getMessage());
             throw new BusinessException("获取流程图失败！" + e.getMessage());
         }
+    }
+
+    @Override
+    public FlowGeneralSituationVO getFlowGeneralSituation(String userId) {
+        //根据用户ID获取角色
+        Set<Long> sysRoles = flowableUserService.getFlowGroupByUserId(Long.parseLong(userId));
+
+        TaskQuery taskQuery = taskService.createTaskQuery()
+                .or()
+                .taskCandidateOrAssigned(userId);
+        //这个地方查询会去查询系统的用户组表，希望的是查询自己的用户表
+        if(!CollectionUtils.isEmpty(sysRoles)) {
+            List<String> roleIds = sysRoles.stream().map(t ->
+                    String.valueOf(t)
+            ).collect(Collectors.toList());
+            taskQuery.taskCandidateGroupIn(roleIds).endOr();
+        }
+
+        List<Task> taskList = taskQuery.list();
+
+        //待办总数
+        FlowGeneralSituationVO.FlowGeneralSituationVOBuilder flowGeneralSituationVOBuilder = FlowGeneralSituationVO.builder().todoTaskNum(taskQuery.count());
+
+        //获取我发起的流程数
+        HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery().startedBy(userId);
+        flowGeneralSituationVOBuilder.myStartProcessInstanceNum(historicProcessInstanceQuery.count());
+
+        //我的已办任务数
+        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId);
+        List<HistoricProcessInstance> list = historicProcessInstanceQuery.list();
+        flowGeneralSituationVOBuilder.doneTaskNum(historicTaskInstanceQuery.count());
+
+
+        //获取超过三天未处理的待办
+        long count = taskList.stream().filter(t ->
+                DateUtil.betweenDay(t.getCreateTime(), new Date(),false) > 3
+        ).count();
+        flowGeneralSituationVOBuilder.threeTodoTaskNum(count);
+
+        //流程数
+        int length = FlowDefEnum.values().length;
+        return flowGeneralSituationVOBuilder.processInstanceNum(length).build();
+
     }
 
     /**

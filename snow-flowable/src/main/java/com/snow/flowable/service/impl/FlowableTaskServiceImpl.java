@@ -1,10 +1,12 @@
 package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Maps;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -17,20 +19,20 @@ import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.history.HistoricProcessInstanceQuery;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.history.HistoricIdentityLink;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
+import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +71,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
         TaskQuery taskQuery = taskService.createTaskQuery()
                 .or()
                 .taskCandidateOrAssigned(userId);
-        //这个地方查询回去查询系统的用户组表，希望的是查询自己的用户表
+        //这个地方查询会去查询系统的用户组表，希望的是查询自己的用户表
         if(!CollectionUtils.isEmpty(sysRoles)) {
             List<String> roleIds = sysRoles.stream().map(t ->
                     String.valueOf(t)
@@ -116,7 +118,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
             taskVO.setParentTaskId(t.getParentTaskId());
             taskVO.setAssignee(t.getAssignee());
             taskVO.setOwner(t.getOwner());
-            HistoricProcessInstance historicProcessInstance = flowableService.getHistoricProcessInstanceById(t.getProcessInstanceId());
+            ProcessInstance historicProcessInstance = flowableService.getProcessInstanceById(t.getProcessInstanceId());
             taskVO.setProcessDefinitionName(historicProcessInstance.getProcessDefinitionName());
             String startUserId = historicProcessInstance.getStartUserId();
             SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
@@ -279,4 +281,6 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     public void suspendOrActiveApply(String instanceId, String suspendState) {
 
     }
+
+
 }

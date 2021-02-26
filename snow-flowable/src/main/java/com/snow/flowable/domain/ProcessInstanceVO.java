@@ -1,13 +1,9 @@
 package com.snow.flowable.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
-import com.snow.common.utils.spring.SpringUtils;
-import com.snow.system.service.impl.SysConfigServiceImpl;
-import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +14,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

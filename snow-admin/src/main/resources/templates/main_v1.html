@@ -126,8 +126,7 @@
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: select2-js" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:flow:edit')}]];
-        var prefix = ctx + "modeler";
+        var todoList = [[${@permission.hasPermi('flow:get:todoList')}]];
         var prefixFlow = ctx + "flow";
         $(function() {
             var options = {
@@ -186,8 +185,7 @@
                         align: 'center',
                         formatter: function(value, row, index) {
                             var actions = [];
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
-                            /*actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.processInstanceId + '\')"><i class="fa fa-eye"></i>流程图</a>');*/
+                            actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
                             return actions.join('');
                         }
                     }]
@@ -199,11 +197,6 @@
             console.log(JSON.stringify(taskId));
             var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
             $.modal.openTab("审批", preViewUrl);
-        }
-        function getProcessDiagram(processInstanceId) {
-
-            var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
-            $.modal.open("流程图", preViewUrl,500,500);
         }
     </script>
 </body>
