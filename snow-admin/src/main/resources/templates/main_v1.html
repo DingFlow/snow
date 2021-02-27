@@ -19,56 +19,62 @@
             <div class="col-sm-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <span class="label label-success pull-right">月</span>
-                        <h5>收入</h5>
+                      <!--  <span class="label label-success pull-right">月</span>-->
+                        <h5>待办任务数</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">40 886,200</h1>
-                        <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i>
-                        </div>
-                        <small>总收入</small>
+                        <h1 class="no-margins" th:text="${flowGeneralSituation.todoTaskNum}"></h1>
+                       <div class="stat-percent font-bold text-success">
+                           <i class="fa fa-level-down"></i>
+                           <a onclick="toDoMyTask()">去完成</a>
+                       </div>
+                      <!--<small>总收入</small>-->
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <span class="label label-info pull-right">全年</span>
-                        <h5>订单</h5>
+                       <!-- <span class="label label-info pull-right">全年</span>-->
+                        <h5>已办任务数</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">275,800</h1>
-                        <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
+                        <h1 class="no-margins" th:text="${flowGeneralSituation.doneTaskNum}"></h1>
+                        <div class="stat-percent font-bold text-info">
+                            <i class="fa fa-level-up"></i>
+                            <a onclick="toMyTakePartInProcess()">详情</a>
                         </div>
-                        <small>新订单</small>
+                        <!--<small>新订单</small>-->
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <span class="label label-primary pull-right">今天</span>
-                        <h5>访客</h5>
+                       <!-- <span class="label label-primary pull-right">今天</span>-->
+                        <h5>发起流程数</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">106,120</h1>
-                        <div class="stat-percent font-bold text-navy">44% <i class="fa fa-level-up"></i>
+                        <h1 class="no-margins" th:text="${flowGeneralSituation.myStartProcessInstanceNum}"></h1>
+                        <div class="stat-percent font-bold text-navy">
+                            <i class="fa fa-level-up"></i>
                         </div>
-                        <small>新访客</small>
+                      <!--  <small>新访客</small>-->
                     </div>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <span class="label label-danger pull-right">最近一个月</span>
-                        <h5>活跃用户</h5>
+                        <!--<span class="label label-danger pull-right">最近一个月</span>-->
+                        <h5>任务超时数（3天）</h5>
                     </div>
                     <div class="ibox-content">
-                        <h1 class="no-margins">80,600</h1>
-                        <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i>
+                        <h1 class="no-margins" th:text="${flowGeneralSituation.threeTodoTaskNum}"></h1>
+                        <div class="stat-percent font-bold text-danger">
+                            <i class="fa fa-level-down"></i>
                         </div>
-                        <small>12月</small>
+                        <!-- <small>12月</small>-->
                     </div>
                 </div>
             </div>
@@ -197,6 +203,16 @@
             console.log(JSON.stringify(taskId));
             var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
             $.modal.openTab("审批", preViewUrl);
+        }
+
+        function toDoMyTask() {
+            var preViewUrl=prefixFlow+'/toDoMyTask?';
+            $.modal.openTab("我的待办任务", preViewUrl);
+        }
+
+        function toMyTakePartInProcess() {
+            var preViewUrl=prefixFlow+'/toMyTakePartInProcess?';
+            $.modal.openTab("我的已办任务", preViewUrl);
         }
     </script>
 </body>

@@ -109,7 +109,11 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/main")
     public String main(ModelMap mmap)
     {
+        SysUser sysUser = ShiroUtils.getSysUser();
         mmap.put("version", Global.getVersion());
+        //流程概况
+        FlowGeneralSituationVO flowGeneralSituation = flowableService.getFlowGeneralSituation(String.valueOf(sysUser.getUserId()));
+        mmap.put("flowGeneralSituation",flowGeneralSituation);
         return "main_v1";
     }
 

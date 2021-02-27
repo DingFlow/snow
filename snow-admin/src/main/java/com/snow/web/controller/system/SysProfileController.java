@@ -1,5 +1,7 @@
 package com.snow.web.controller.system;
 
+import com.snow.framework.storage.StorageService;
+import com.snow.system.domain.SysFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class SysProfileController extends BaseController
     
     @Autowired
     private SysPasswordService passwordService;
+
+    @Autowired
+    private StorageService storageService;
 
     /**
      * 个人信息
@@ -154,8 +159,8 @@ public class SysProfileController extends BaseController
         {
             if (!file.isEmpty())
             {
-                String avatar = FileUploadUtils.upload(Global.getAvatarPath(), file);
-                currentUser.setAvatar(avatar);
+                SysFile store = storageService.store(file.getInputStream(), file.getSize(), file.getContentType(), file.getOriginalFilename());
+                currentUser.setAvatar(store.getUrl());
                 if (userService.updateUserInfo(currentUser) > 0)
                 {
                     ShiroUtils.setSysUser(userService.selectUserById(currentUser.getUserId()));
