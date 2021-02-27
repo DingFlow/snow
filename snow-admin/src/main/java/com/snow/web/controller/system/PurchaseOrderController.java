@@ -85,6 +85,12 @@ public class PurchaseOrderController extends BaseController
     public TableDataInfo list(PurchaseOrderMain purchaseOrderMain)
     {
         startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        purchaseOrderMain.setCreateBy(sysUser.getUserName());
+        //管理员权限判断
+        if(!ShiroUtils.getSysUser().isAdmin()){
+            purchaseOrderMain.setCreateBy(String.valueOf(sysUser.getUserId()));
+        }
         List<PurchaseOrderMain> list = purchaseOrderMainService.selectPurchaseOrderMainList(purchaseOrderMain);
         return getDataTable(list);
     }
@@ -98,6 +104,12 @@ public class PurchaseOrderController extends BaseController
     @ResponseBody
     public AjaxResult export(PurchaseOrderMain purchaseOrderMain)
     {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        purchaseOrderMain.setCreateBy(sysUser.getUserName());
+        //管理员权限判断
+        if(!ShiroUtils.getSysUser().isAdmin()){
+            purchaseOrderMain.setCreateBy(String.valueOf(sysUser.getUserId()));
+        }
         List<PurchaseOrderMain> list = purchaseOrderMainService.selectPurchaseOrderMainList(purchaseOrderMain);
         ExcelUtil<PurchaseOrderMain> util = new ExcelUtil<PurchaseOrderMain>(PurchaseOrderMain.class);
         return util.exportExcel(list, "purchaseOrder");

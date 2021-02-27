@@ -1,6 +1,8 @@
 package com.snow.system.domain;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
 import com.snow.common.enums.DingTalkListenerType;
@@ -92,6 +94,7 @@ public class SysDingtalkSyncLog extends BaseEntity
 
     /** 操作时间 */
     @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date operTime;
 
     private DingTalkListenerType dingTalkListenerType;
