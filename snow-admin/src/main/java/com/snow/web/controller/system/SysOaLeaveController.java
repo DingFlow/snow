@@ -100,6 +100,12 @@ public class SysOaLeaveController extends BaseController
     @ResponseBody
     public AjaxResult export(SysOaLeave sysOaLeave)
     {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaLeave.setCreateBy(sysUser.getUserName());
+        //管理员权限判断
+        if(!ShiroUtils.getSysUser().isAdmin()){
+            sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
+        }
         List<SysOaLeave> list = sysOaLeaveService.selectSysOaLeaveList(sysOaLeave);
         ExcelUtil<SysOaLeave> util = new ExcelUtil<SysOaLeave>(SysOaLeave.class);
         return util.exportExcel(list, "leave");
