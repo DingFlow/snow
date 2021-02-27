@@ -1,14 +1,12 @@
 package com.snow.web.controller.common;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.uuid.impl.UUIDUtil;
-import com.snow.common.utils.uuid.IdUtils;
-import com.snow.common.utils.uuid.UUID;
+import com.snow.common.config.Global;
+import com.snow.common.constant.Constants;
+import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.file.FileUtils;
 import com.snow.framework.storage.StorageService;
 import com.snow.system.domain.SysFile;
-import org.apache.logging.log4j.core.util.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import com.snow.common.config.Global;
-import com.snow.common.config.ServerConfig;
-import com.snow.common.constant.Constants;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.StringUtils;
-import com.snow.common.utils.file.FileUploadUtils;
-import com.snow.common.utils.file.FileUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用请求处理
@@ -35,8 +29,7 @@ public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
-    @Autowired
-    private ServerConfig serverConfig;
+
 
     @Autowired
     private StorageService storageService;

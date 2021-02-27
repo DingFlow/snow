@@ -52,7 +52,7 @@ public class FlowUserController extends BaseController {
     }
 
     /**
-     * 获取用户列表
+     * 获取用户组列表
      * @param filter
      */
     @GetMapping(value = "/rest/getUserGroupList")

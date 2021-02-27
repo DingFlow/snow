@@ -68,6 +68,7 @@ public class FlowController extends BaseController {
      * @return
      */
     @PostMapping("/finishTask")
+    @RequiresPermissions("system:flow:finishTask")
     @ResponseBody
     @RepeatSubmit
     public AjaxResult finishTask(CompleteTaskDTO completeTaskDTO)
@@ -89,8 +90,9 @@ public class FlowController extends BaseController {
 
         return prefix+"/myTask";
     }
+
     /**
-     * 获取我的待办
+     * 获取我的待办列表
      */
     @RequiresPermissions("flow:get:todoList")
     @PostMapping("/findTasksByUserId")
@@ -101,6 +103,7 @@ public class FlowController extends BaseController {
         PageModel<TaskVO> taskList = flowableTaskService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
         return getFlowDataTable(taskList);
     }
+
     /**
      * 获取所有节点
      * @param processInstanceId
@@ -163,7 +166,7 @@ public class FlowController extends BaseController {
     }
 
     /**
-     * 我参与的任务
+     * 跳转我的已办
      * @return
      */
     @RequiresPermissions("flow:process:getMyTakePartInProcess")

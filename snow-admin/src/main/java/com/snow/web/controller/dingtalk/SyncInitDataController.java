@@ -28,6 +28,10 @@ public class SyncInitDataController {
     @Autowired
     private SysDeptServiceImpl sysDeptService;
 
+
+    /**
+     * 钉钉部门数据初始化到系统
+     */
     @GetMapping("/initDepartment")
     public void initDepartment(){
         List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();

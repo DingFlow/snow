@@ -449,6 +449,7 @@ public class FlowableServiceImpl implements FlowableService {
     public ProcessInstance getProcessInstanceById(String id){
         return runtimeService.createProcessInstanceQuery()
                 .processInstanceId(id)
+                .includeProcessVariables()
                 .singleResult();
     }
 
@@ -669,6 +670,8 @@ public class FlowableServiceImpl implements FlowableService {
         historicProcessInstanceQuery.includeProcessVariables();
         return historicProcessInstanceQuery;
     }
+
+
     /**
      * 赋值ProcessInstanceVOs
      * @param processInstanceVOS
@@ -698,6 +701,7 @@ public class FlowableServiceImpl implements FlowableService {
             t.setStartUserName(sysUser.getUserName());
         });
     }
+
     @Override
     public PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO) {
         HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
