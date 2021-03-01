@@ -86,10 +86,9 @@ public class PurchaseOrderController extends BaseController
     {
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
-        purchaseOrderMain.setCreateBy(sysUser.getUserName());
         //管理员权限判断
         if(!ShiroUtils.getSysUser().isAdmin()){
-            purchaseOrderMain.setCreateBy(String.valueOf(sysUser.getUserId()));
+            purchaseOrderMain.setBelongUser(String.valueOf(sysUser.getUserId()));
         }
         List<PurchaseOrderMain> list = purchaseOrderMainService.selectPurchaseOrderMainList(purchaseOrderMain);
         return getDataTable(list);

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysMessageTemplateMapper">
+    
+    <resultMap type="SysMessageTemplate" id="SysMessageTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="templateCode"    column="template_code"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="templateBody"    column="template_body"    />
+        <result property="templateDesc"    column="template_desc"    />
+        <result property="templateType"    column="template_type"    />
+        <result property="templateStatus"    column="template_status"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysMessageTemplateVo">
+        select id, template_code, template_name, template_body, template_desc, template_type, template_status, is_delete, create_by, create_time, update_by, update_time from sys_message_template
+    </sql>
+
+    <select id="selectSysMessageTemplateList" parameterType="SysMessageTemplate" resultMap="SysMessageTemplateResult">
+        <include refid="selectSysMessageTemplateVo"/>
+        where
+             is_delete=0
+            <if test="templateCode != null  and templateCode != ''"> and template_code = #{templateCode}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="templateType != null "> and template_type = #{templateType}</if>
+            <if test="templateStatus != null "> and template_status = #{templateStatus}</if>
+
+
+    </select>
+    
+    <select id="selectSysMessageTemplateById" parameterType="Integer" resultMap="SysMessageTemplateResult">
+        <include refid="selectSysMessageTemplateVo"/>
+        where id = #{id} and is_delete=0
+    </select>
+
+    <select id="getSysMessageTemplateByCode" parameterType="String" resultMap="SysMessageTemplateResult">
+        <include refid="selectSysMessageTemplateVo"/>
+        where template_code = #{code} and is_delete=0
+    </select>
+
+        
+    <insert id="insertSysMessageTemplate" parameterType="SysMessageTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_message_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateCode != null and templateCode != ''">template_code,</if>
+            <if test="templateName != null">template_name,</if>
+            <if test="templateBody != null and templateBody != ''">template_body,</if>
+            <if test="templateDesc != null">template_desc,</if>
+            <if test="templateType != null">template_type,</if>
+            <if test="templateStatus != null">template_status,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateCode != null and templateCode != ''">#{templateCode},</if>
+            <if test="templateName != null">#{templateName},</if>
+            <if test="templateBody != null and templateBody != ''">#{templateBody},</if>
+            <if test="templateDesc != null">#{templateDesc},</if>
+            <if test="templateType != null">#{templateType},</if>
+            <if test="templateStatus != null">#{templateStatus},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysMessageTemplate" parameterType="SysMessageTemplate">
+        update sys_message_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateCode != null and templateCode != ''">template_code = #{templateCode},</if>
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="templateBody != null and templateBody != ''">template_body = #{templateBody},</if>
+            <if test="templateDesc != null">template_desc = #{templateDesc},</if>
+            <if test="templateType != null">template_type = #{templateType},</if>
+            <if test="templateStatus != null">template_status = #{templateStatus},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysMessageTemplateById" parameterType="Integer">
+        delete from sys_message_template where id = #{id}
+    </delete>
+
+    <delete id="deleteSysMessageTemplateByIds" parameterType="String">
+        delete from sys_message_template where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

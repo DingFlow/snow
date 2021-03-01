@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增消息模板')" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-template-add">
+            <div class="form-group">    
+                <label class="col-sm-2 control-label ">模板编码：</label>
+                <div class="col-sm-10">
+                    <input name="templateCode" class="form-control" type="text" th:value="${templateCode}" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">消息类型：</label>
+                <div class="col-sm-10">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('message_template_type')}">
+                        <input type="radio" th:id="${'templateType_' + dict.dictCode}" name="templateType" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'templateType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">模板名称：</label>
+                <div class="col-sm-10">
+                    <input name="templateName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label is-required">模板主体：</label>
+                <div class="col-sm-10">
+                    <textarea rows="8" cols="20" name="templateBody" class="form-control" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-2 control-label is-required">模板描述：</label>
+                <div class="col-sm-10">
+                    <textarea name="templateDesc" class="form-control" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-2 control-label">消息状态：</label>
+                <div class="col-sm-10">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_notice_status')}">
+                        <input type="radio" th:id="${'templateStatus_' + dict.dictCode}" name="templateStatus" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'templateStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: summernote-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/template"
+
+
+        $("#form-template-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-template-add').serialize());
+            }
+        }
+
+
+    </script>
+</body>
+</html>
