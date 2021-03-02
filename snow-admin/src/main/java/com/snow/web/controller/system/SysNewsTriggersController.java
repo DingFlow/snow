@@ -93,6 +93,7 @@ public class SysNewsTriggersController extends BaseController
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         sysNewsTriggers.setUserId(String.valueOf(sysUser.getUserId()));
+        sysNewsTriggers.setCreateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(sysNewsTriggersService.insertSysNewsTriggers(sysNewsTriggers));
     }
 
