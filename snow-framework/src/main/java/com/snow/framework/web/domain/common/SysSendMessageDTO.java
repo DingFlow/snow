@@ -3,6 +3,7 @@ package com.snow.framework.web.domain.common;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,6 +46,14 @@ public class SysSendMessageDTO implements Serializable {
      */
     private Set CCSet;
 
+    /**
+     * 文件path
+     */
+    private String filePath;
 
+    /**
+     * 邮件发送时间
+     */
+    private Date sentDate;
 
 }

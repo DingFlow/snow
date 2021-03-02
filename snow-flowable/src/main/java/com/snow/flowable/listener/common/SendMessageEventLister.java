@@ -70,8 +70,9 @@ public class SendMessageEventLister extends AbstractEventListener {
     protected void taskCreated(FlowableEngineEntityEvent event) {
         //任务创建可发送短信，邮件通知接收人(代办人)
         log.info("ManagerTaskEventListener----taskCreated任务创建监听：{}",JSON.toJSONString(event));
+        //钉钉通知 TODO 是否开启通知
         sendDingTalkMessage(event);
-        //todo 邮件通知
+        // 邮件通知 todo 是否开启通知
         sendEmailMessage(event);
     }
 
@@ -80,8 +81,6 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendDingTalkMessage(FlowableEngineEntityEvent event){
-        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl)SpringContextUtil.getBean(FlowableUserServiceImpl.class);
-
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
@@ -89,29 +88,19 @@ public class SendMessageEventLister extends AbstractEventListener {
         executor.execute(() ->{
             //根据任务ID获取任务获选人
             TaskEntity entity = (TaskEntity)event.getEntity();
-            Set<IdentityLink> candidates = entity.getCandidates();
-            if(CollectionUtils.isNotEmpty(candidates)){
-                candidates.forEach(t->{
-                    String userId = t.getUserId();
-                    String groupId = t.getGroupId();
+            Set<SysUser> flowCandidates = getFlowCandidates(entity);
+            if(CollectionUtils.isNotEmpty(flowCandidates)){
+                flowCandidates.forEach(t->{
+                    String userId = String.valueOf(t.getUserId());
                     if(!StringUtils.isEmpty(userId)){
                         WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(userId, event);
                         SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
                         applicationContext.publishEvent(syncEventGroup);
                     }
-                    else if(!StringUtils.isEmpty(groupId)) {
-                        List<SysUser> sysUsers = flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
-                        sysUsers.forEach(sysUser->{
-                            WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(String.valueOf(sysUser.getUserId()), event);
-                            SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
-                            applicationContext.publishEvent(syncEventGroup);
-                        });
-                    }else {
-                        log.warn("ManagerTaskEventListener----taskCreated任务创建监听 userId和groupId is all null");
-                    }
                 });
+            }else {
+                log.warn("ManagerTaskEventListener----taskCreated任务创建监听 userId和groupId is all null");
             }
-
         });
         executor.shutdown();
     }
