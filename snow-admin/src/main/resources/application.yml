@@ -69,6 +69,13 @@ spring:
     restart:
       # 热部署开关
       enabled: true
+  mail:
+    host: smtp.126.com
+    username: qimingjin@126.com
+    #开启POP3之后设置的客户端授权码
+    password: JSHBRRRDBNHPXPFB
+    default-encoding: UTF-8
+
 
 # MyBatis
 mybatis:

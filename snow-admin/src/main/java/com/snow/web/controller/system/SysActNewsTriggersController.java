@@ -26,7 +26,7 @@ import com.snow.common.core.page.TableDataInfo;
  * @date 2021-03-02
  */
 @Controller
-@RequestMapping("/system/triggers")
+@RequestMapping("/system/triggers11")
 public class SysActNewsTriggersController extends BaseController
 {
     private String prefix = "system/triggers";

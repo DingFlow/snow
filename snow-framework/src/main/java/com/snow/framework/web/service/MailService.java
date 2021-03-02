@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author: 没用的阿吉
  * @create: 2021-02-27 16:13
  **/
-//@Component
+@Component
 @Slf4j
 public class MailService {
 
