@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -53,6 +54,8 @@ public class SysNewsTriggersController extends BaseController
     public TableDataInfo list(SysNewsTriggers sysNewsTriggers)
     {
         startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysNewsTriggers.setUserId(String.valueOf(sysUser.getUserId()));
         List<SysNewsTriggers> list = sysNewsTriggersService.selectSysNewsTriggersList(sysNewsTriggers);
         return getDataTable(list);
     }
@@ -68,6 +71,7 @@ public class SysNewsTriggersController extends BaseController
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         sysNewsTriggers.setUserId(String.valueOf(sysUser.getUserId()));
+
         List<SysNewsTriggers> list = sysNewsTriggersService.selectSysNewsTriggersList(sysNewsTriggers);
         ExcelUtil<SysNewsTriggers> util = new ExcelUtil<SysNewsTriggers>(SysNewsTriggers.class);
         return util.exportExcel(list, "triggers");
@@ -93,6 +97,13 @@ public class SysNewsTriggersController extends BaseController
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         sysNewsTriggers.setUserId(String.valueOf(sysUser.getUserId()));
+        sysNewsTriggers.setNewsOnOff(null);
+        List<SysNewsTriggers> sysNewsTriggersList = sysNewsTriggersService.selectSysNewsTriggersList(sysNewsTriggers);
+        if(CollectionUtils.isNotEmpty(sysNewsTriggersList)){
+            return AjaxResult.error("该配置已存在，请勿重复添加");
+        }
+        sysNewsTriggers.setNewsOnOff(sysNewsTriggers.getNewsOnOff());
+        sysNewsTriggers.setCreateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(sysNewsTriggersService.insertSysNewsTriggers(sysNewsTriggers));
     }
 
@@ -107,17 +118,6 @@ public class SysNewsTriggersController extends BaseController
         return prefix + "/edit";
     }
 
-    /**
-     * 修改保存消息通知配置
-     */
-    @RequiresPermissions("system:triggers:edit")
-    @Log(title = "消息通知配置", businessType = BusinessType.UPDATE)
-    @PostMapping("/edit")
-    @ResponseBody
-    public AjaxResult editSave(SysNewsTriggers sysNewsTriggers)
-    {
-        return toAjax(sysNewsTriggersService.updateSysNewsTriggers(sysNewsTriggers));
-    }
 
     /**
      * 删除消息通知配置
@@ -129,5 +129,20 @@ public class SysNewsTriggersController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(sysNewsTriggersService.deleteSysNewsTriggersByIds(ids));
+    }
+
+
+    /**
+     * 开启关闭通知
+     */
+    @RequiresPermissions("system:triggers:changeStatus")
+    @Log(title = "开启关闭通知", businessType = BusinessType.UPDATE)
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(SysNewsTriggers sysNewsTriggers)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysNewsTriggers.setUpdateBy(String.valueOf(sysUser.getUserId()));
+        return toAjax(sysNewsTriggersService.updateSysNewsTriggers(sysNewsTriggers));
     }
 }

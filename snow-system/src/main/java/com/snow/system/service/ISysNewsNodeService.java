@@ -21,6 +21,13 @@ public interface ISysNewsNodeService
     public SysNewsNode selectSysNewsNodeById(Integer id);
 
     /**
+     * 查询消息配置节点
+     * @param newsNodeKey 配置节点key
+     * @return
+     */
+    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey);
+
+    /**
      * 查询消息配置节点列表
      * 
      * @param sysNewsNode 消息配置节点

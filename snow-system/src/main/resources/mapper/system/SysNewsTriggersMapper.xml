@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysNewsTriggersVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSysNewsTriggers" parameterType="SysNewsTriggers" useGeneratedKeys="true" keyProperty="id">
         insert into sys_news_triggers
         <trim prefix="(" suffix=")" suffixOverrides=",">
