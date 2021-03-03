@@ -51,10 +51,11 @@
 
         /*消息配置节点-新增-选择父部门树*/
         function selectNodeTree() {
+            var treeId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
             var options = {
                 title: '消息配置节点选择',
                 width: "380",
-                url: prefix + "/selectNodeTree/" + $("#treeId").val(),
+                url: prefix + "/selectNodeTree/" + treeId,
                 callBack: doSubmit
             };
             $.modal.openOptions(options);

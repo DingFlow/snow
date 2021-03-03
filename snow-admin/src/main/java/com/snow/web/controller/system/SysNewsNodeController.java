@@ -1,6 +1,9 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -31,6 +34,8 @@ import com.snow.common.core.domain.Ztree;
 public class SysNewsNodeController extends BaseController
 {
     private String prefix = "system/node";
+
+    private String trggers_prefix = "system/triggers";
 
     @Autowired
     private ISysNewsNodeService sysNewsNodeService;
@@ -71,7 +76,7 @@ public class SysNewsNodeController extends BaseController
     /**
      * 新增消息配置节点
      */
-    @GetMapping("/add/{id}")
+    @GetMapping(value = {"/add/{id}","/add/"})
     public String add(@PathVariable(value = "id", required = false) Long id, ModelMap mmap)
     {
         if (StringUtils.isNotNull(id))
@@ -90,6 +95,12 @@ public class SysNewsNodeController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysNewsNode sysNewsNode)
     {
+        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(sysNewsNode.getNewsNodeKey());
+        if (sysNewsNodeKey!=null) {
+            return AjaxResult.error("该配置节点key已存在");
+        }
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysNewsNode.setCreateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(sysNewsNodeService.insertSysNewsNode(sysNewsNode));
     }
 
@@ -113,6 +124,13 @@ public class SysNewsNodeController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SysNewsNode sysNewsNode)
     {
+        String newsNodeKey = sysNewsNode.getNewsNodeKey();
+        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(newsNodeKey);
+        if (sysNewsNodeKey!=null&&!sysNewsNodeKey.getNewsNodeKey().equals(newsNodeKey)) {
+            return AjaxResult.error("该配置节点key已存在");
+        }
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysNewsNode.setUpdateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(sysNewsNodeService.updateSysNewsNode(sysNewsNode));
     }
 
@@ -150,5 +168,19 @@ public class SysNewsNodeController extends BaseController
     {
         List<Ztree> ztrees = sysNewsNodeService.selectSysNewsNodeTree();
         return ztrees;
+    }
+
+
+    /**
+     * 选择消息触发节点树
+     */
+    @GetMapping(value = { "/selectTriggerTree/{id}", "/selectTriggerTree/" })
+    public String selectTriggerTree(@PathVariable(value = "id", required = false) Long id, ModelMap mmap)
+    {
+        if (StringUtils.isNotNull(id))
+        {
+            mmap.put("sysNewsNode", sysNewsNodeService.selectSysNewsNodeById(id.intValue()));
+        }
+        return trggers_prefix + "/tree";
     }
 }

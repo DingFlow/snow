@@ -62,12 +62,6 @@
                 <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:triggers:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
-                <a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="system:triggers:import">
-                    <i class="fa fa-upload"></i> 导入
-                </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:triggers:export">
-                    <i class="fa fa-download"></i> 导出
-                </a>
             </div>
 
             <div class="col-sm-12 select-table table-striped">
@@ -81,7 +75,7 @@
 <th:block th:include="include :: layout-latest-js" />
 <th:block th:include="include :: ztree-js" />
 <script th:inline="javascript">
-    var editFlag = [[${@permission.hasPermi('system:triggers:edit')}]];
+    var editFlag = [[${@permission.hasPermi('system:triggers:changeStatus')}]];
     var removeFlag = [[${@permission.hasPermi('system:triggers:remove')}]];
     var sysNewsType = [[${@dict.getType('sys_news_type')}]];
     var prefix = ctx + "system/triggers";
@@ -102,7 +96,6 @@
             createUrl: prefix + "/add",
             updateUrl: prefix + "/edit/{id}",
             removeUrl: prefix + "/remove",
-            exportUrl: prefix + "/export",
             modalName: "消息通知配置",
             columns: [{
                 checkbox: true
@@ -163,6 +156,7 @@
         $.tree.init(options);
 
         function zOnClick(event, treeId, treeNode) {
+            console.log(JSON.stringify(treeNode))
             //$.tree.notAllowParents();
             $("#newsNodeId").val(treeNode.id);
             $("#parentId").val(treeNode.pId);
@@ -195,9 +189,9 @@
     }
 
 
-    /* 用户状态显示 */
+    /* 开关状态显示 0--关 */
     function statusTools(row) {
-        if (row.newsOnOff == 1) {
+        if (row.newsOnOff == 0) {
             return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.id + '\')"></i> ';
         } else {
             return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
@@ -207,14 +201,14 @@
     /* 用户管理-停用 */
     function disable(userId) {
         $.modal.confirm("确认要关闭消息通知吗？", function() {
-            $.operate.post(prefix + "/changeStatus", { "id": userId, "newsOnOff": 1 });
+            $.operate.post(prefix + "/changeStatus", { "id": userId, "newsOnOff": 0 });
         })
     }
 
     /* 用户管理启用 */
     function enable(userId) {
         $.modal.confirm("确认要启用消息通知吗？", function() {
-            $.operate.post(prefix + "/changeStatus", { "id": userId, "newsOnOff": 0 });
+            $.operate.post(prefix + "/changeStatus", { "id": userId, "newsOnOff": 1 });
         })
     }
 </script>

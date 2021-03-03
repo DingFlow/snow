@@ -41,7 +41,7 @@ public class NewsTriggerService {
 
 
     /**
-     * 获取钉钉开关
+     * 获取钉钉开关（0--关，1--开）
      * @param nodeKey
      * @return
      */
