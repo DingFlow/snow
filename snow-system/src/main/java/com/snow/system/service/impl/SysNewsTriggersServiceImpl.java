@@ -1,7 +1,10 @@
 package com.snow.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
+import com.snow.system.domain.SysNewsNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.snow.system.mapper.SysNewsTriggersMapper;
@@ -20,6 +23,9 @@ public class SysNewsTriggersServiceImpl implements ISysNewsTriggersService
 {
     @Autowired
     private SysNewsTriggersMapper sysNewsTriggersMapper;
+
+    @Autowired
+    private SysNewsNodeServiceImpl sysNewsNodeService;
 
     /**
      * 查询消息通知配置
@@ -42,7 +48,16 @@ public class SysNewsTriggersServiceImpl implements ISysNewsTriggersService
     @Override
     public List<SysNewsTriggers> selectSysNewsTriggersList(SysNewsTriggers sysNewsTriggers)
     {
-        return sysNewsTriggersMapper.selectSysNewsTriggersList(sysNewsTriggers);
+        List<SysNewsTriggers> sysNewsTriggersList=new ArrayList<>();
+        if(StringUtils.isNotNull(sysNewsTriggers.getNewsNodeId())){
+            SysNewsNode sysNewsNode = sysNewsNodeService.selectSysNewsNodeById(sysNewsTriggers.getNewsNodeId().intValue());
+            sysNewsTriggersList = sysNewsTriggersMapper.selectSysNewsTriggersList(sysNewsTriggers);
+            sysNewsTriggersList.parallelStream().forEach(t->{
+                t.setSysNewsNode(sysNewsNode);
+            });
+        }
+
+        return sysNewsTriggersList;
     }
 
     /**

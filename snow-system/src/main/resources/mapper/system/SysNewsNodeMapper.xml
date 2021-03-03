@@ -42,7 +42,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_news_node p on p.id = t.parent_id
         where t.id = #{id}
     </select>
-        
+
+    <select id="selectSysNewsNodeByKey" parameterType="String" resultMap="SysNewsNodeResult">
+        <include refid="selectSysNewsNodeVo"/>
+        where news_node_key = #{newsNodeKey} and is_delete=0
+    </select>
     <insert id="insertSysNewsNode" parameterType="SysNewsNode" useGeneratedKeys="true" keyProperty="id">
         insert into sys_news_node
         <trim prefix="(" suffix=")" suffixOverrides=",">

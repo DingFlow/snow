@@ -35,6 +35,11 @@ public class SysNewsNodeServiceImpl implements ISysNewsNodeService
         return sysNewsNodeMapper.selectSysNewsNodeById(id);
     }
 
+    @Override
+    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey) {
+        return sysNewsNodeMapper.selectSysNewsNodeByKey(newsNodeKey);
+    }
+
     /**
      * 查询消息配置节点列表
      * 
