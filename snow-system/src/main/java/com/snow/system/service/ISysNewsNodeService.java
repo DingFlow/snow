@@ -25,7 +25,7 @@ public interface ISysNewsNodeService
      * @param newsNodeKey 配置节点key
      * @return
      */
-    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey);
+    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey,Long parentId);
 
     /**
      * 查询消息配置节点列表

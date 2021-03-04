@@ -2,6 +2,7 @@ package com.snow.system.mapper;
 
 import java.util.List;
 import com.snow.system.domain.SysNewsNode;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 消息配置节点Mapper接口
@@ -24,7 +25,7 @@ public interface SysNewsNodeMapper
      * @param newsNodeKey 配置节点key
      * @return
      */
-    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey);
+    public SysNewsNode selectSysNewsNodeByKey(@Param("newsNodeKey") String newsNodeKey,@Param("parentId") Long parentId);
 
     /**
      * 查询消息配置节点列表

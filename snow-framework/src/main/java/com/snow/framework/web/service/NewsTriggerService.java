@@ -19,7 +19,7 @@ import java.util.List;
  * @Description:
  * @date 2021/3/3 17:03
  */
-@Service("newsTrigger")
+@Service
 public class NewsTriggerService {
 
     @Autowired
@@ -34,9 +34,9 @@ public class NewsTriggerService {
      * @param nodeKey
      * @return
      */
-    public boolean getEmailOnOff(String nodeKey)
+    public boolean getEmailOnOff(String parentNodeKey,String nodeKey)
     {
-        return getNewsOnOff(nodeKey,Constants.NEWS_EMAIL_TYPE);
+        return getNewsOnOff(parentNodeKey,nodeKey,Constants.NEWS_EMAIL_TYPE);
     }
 
 
@@ -45,14 +45,18 @@ public class NewsTriggerService {
      * @param nodeKey
      * @return
      */
-    public boolean getDingTalkOnOff(String nodeKey)
+    public boolean getDingTalkOnOff(String parentNodeKey,String nodeKey)
     {
-        return getNewsOnOff(nodeKey,Constants.NEWS_DINGDING_TYPE);
+        return getNewsOnOff(parentNodeKey,nodeKey,Constants.NEWS_DINGDING_TYPE);
     }
 
 
-    private boolean getNewsOnOff(String nodeKey,Integer newsType){
-        SysNewsNode sysNewsNode = sysNewsNodeService.selectSysNewsNodeByKey(nodeKey);
+    private boolean getNewsOnOff(String parentNodeKey,String nodeKey,Integer newsType){
+        SysNewsNode sysNewsNodes=new SysNewsNode();
+        sysNewsNodes.setNewsNodeKey(parentNodeKey);
+        List<SysNewsNode> sysNewsNodeList = sysNewsNodeService.selectSysNewsNodeList(sysNewsNodes);
+
+        SysNewsNode sysNewsNode = sysNewsNodeService.selectSysNewsNodeByKey(nodeKey,sysNewsNodeList.get(0).getId().longValue());
         if(null == sysNewsNode){
             return false;
         }

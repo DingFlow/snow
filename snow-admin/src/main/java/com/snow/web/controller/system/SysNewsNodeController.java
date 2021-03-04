@@ -95,9 +95,9 @@ public class SysNewsNodeController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysNewsNode sysNewsNode)
     {
-        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(sysNewsNode.getNewsNodeKey());
+        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(sysNewsNode.getNewsNodeKey(),sysNewsNode.getParentId());
         if (sysNewsNodeKey!=null) {
-            return AjaxResult.error("该配置节点key已存在");
+            return AjaxResult.error("该父节下配置节点key已存在");
         }
         SysUser sysUser = ShiroUtils.getSysUser();
         sysNewsNode.setCreateBy(String.valueOf(sysUser.getUserId()));
@@ -125,7 +125,7 @@ public class SysNewsNodeController extends BaseController
     public AjaxResult editSave(SysNewsNode sysNewsNode)
     {
         String newsNodeKey = sysNewsNode.getNewsNodeKey();
-        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(newsNodeKey);
+        SysNewsNode sysNewsNodeKey = sysNewsNodeService.selectSysNewsNodeByKey(newsNodeKey,sysNewsNode.getParentId());
         if (sysNewsNodeKey!=null&&!sysNewsNodeKey.getNewsNodeKey().equals(newsNodeKey)) {
             return AjaxResult.error("该配置节点key已存在");
         }

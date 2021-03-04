@@ -36,8 +36,8 @@ public class SysNewsNodeServiceImpl implements ISysNewsNodeService
     }
 
     @Override
-    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey) {
-        return sysNewsNodeMapper.selectSysNewsNodeByKey(newsNodeKey);
+    public SysNewsNode selectSysNewsNodeByKey(String newsNodeKey,Long parentId) {
+        return sysNewsNodeMapper.selectSysNewsNodeByKey(newsNodeKey,parentId);
     }
 
     /**

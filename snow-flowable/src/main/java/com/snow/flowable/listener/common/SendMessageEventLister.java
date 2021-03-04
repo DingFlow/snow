@@ -14,6 +14,7 @@ import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.framework.web.service.MailService;
+import com.snow.framework.web.service.NewsTriggerService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.service.impl.SysUserServiceImpl;
@@ -70,10 +71,19 @@ public class SendMessageEventLister extends AbstractEventListener {
     protected void taskCreated(FlowableEngineEntityEvent event) {
         //任务创建可发送短信，邮件通知接收人(代办人)
         log.info("ManagerTaskEventListener----taskCreated任务创建监听：{}",JSON.toJSONString(event));
-        //钉钉通知 TODO 是否开启通知
-        sendDingTalkMessage(event);
-        // 邮件通知 todo 是否开启通知
-        sendEmailMessage(event);
+        ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(processDefinition.getKey(),FlowableEngineEventType.TASK_CREATED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(processDefinition.getKey(),FlowableEngineEventType.TASK_CREATED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+            sendDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendEmailMessage(event);
+        }
+
     }
 
     /**
@@ -114,32 +124,33 @@ public class SendMessageEventLister extends AbstractEventListener {
         FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
         MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
         ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
+        ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
         //根据任务ID获取任务获选人
         TaskEntity entity = (TaskEntity)event.getEntity();
         Set<SysUser> flowCandidates = getFlowCandidates(entity);
         if(CollectionUtils.isNotEmpty(flowCandidates)){
-            Set<String> emailSet = flowCandidates.stream().map(SysUser::getEmail).collect(Collectors.toSet());
+          //  Set<String> emailSet = flowCandidates.stream().map(SysUser::getEmail).collect(Collectors.toSet());
 
             ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                     .setMaxPoolSize(10)
                     .setWorkQueue(new LinkedBlockingQueue<>(100))
                     .build();
 
-            executor.execute(() ->{
-                emailSet.forEach(t->{
+            executor.execute(() ->
+                flowCandidates.forEach(t->{
                     Map<String,String> map=new HashMap<>();
-                    map.put("toUser",t);
+                    map.put("toUser",t.getUserName());
                     map.put("startUser",getUserInfo(processInstance.getStartUserId()).getUserName());
-                    map.put("processInstance",processInstance.getProcessDefinitionName());
+                    map.put("processInstance",processDefinition.getName());
                     map.put("url","http://localhost/flow/findTasksByUserId");
                     map.put("datetime",DateUtil.formatDateTime(new Date()));
                     SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode("1365961987292536832")
-                            .receiverSet(emailSet)
+                            .receiver(t.getEmail())
                             .paramMap(map)
                             .build();
                     mailService.sendSimpleMail(sysSendMessageDTO);
-                });
-            });
+                })
+            );
             executor.shutdown();
 
         }
@@ -243,5 +254,6 @@ public class SendMessageEventLister extends AbstractEventListener {
         }
         return sysUserSet;
     }
+
 
 }
