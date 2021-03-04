@@ -23,7 +23,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.engine.RepositoryService;
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.event.FlowableProcessStartedEvent;
+import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
@@ -56,7 +60,8 @@ public class SendMessageEventLister extends AbstractEventListener {
     public SendMessageEventLister() {
         super(
                 new HashSet<>(Arrays.asList(
-                        FlowableEngineEventType.TASK_CREATED
+                        FlowableEngineEventType.TASK_CREATED,
+                        FlowableEngineEventType.PROCESS_STARTED
                 )),
                 new HashSet<>(Arrays.asList(
                         FlowDefEnum.SNOW_OA_LEAVE,
@@ -65,8 +70,32 @@ public class SendMessageEventLister extends AbstractEventListener {
     }
 
 
+    /**
+     * 流程开始
+     * @param event
+     */
+    @Override
+    protected void processStarted(FlowableProcessStartedEvent event) {
+        log.info("ManagerTaskEventListener----processStarted流程创建监听：{}",JSON.toJSONString(event));
+        ExecutionEntity execution = (ExecutionEntity)event.getEntity();
 
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(execution.getProcessDefinitionKey(),FlowableEngineEventType.TASK_CREATED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(execution.getProcessDefinitionKey(),FlowableEngineEventType.TASK_CREATED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+          //  sendDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendProcessStartedEmailMessage(event);
+        }
+    }
 
+    /**
+     * 任务创建(待办)
+     * @param event
+     */
     @Override
     protected void taskCreated(FlowableEngineEntityEvent event) {
         //任务创建可发送短信，邮件通知接收人(代办人)
@@ -81,7 +110,7 @@ public class SendMessageEventLister extends AbstractEventListener {
         }
         // 邮件通知
         if(emailOnOff){
-            sendEmailMessage(event);
+            sendTaskCreateEmailMessage(event);
         }
 
     }
@@ -119,7 +148,37 @@ public class SendMessageEventLister extends AbstractEventListener {
      * 发送邮件通知
      * @param event
      */
-    public void sendEmailMessage(FlowableEngineEntityEvent event){
+    public void sendProcessStartedEmailMessage(FlowableProcessStartedEvent event){
+        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+
+            ExecutionEntity execution = (ExecutionEntity)event.getEntity();
+            ProcessInstance processInstance = execution.getProcessInstance();
+            Map<String,String> map=new HashMap<>();
+            map.put("toUser",getUserInfo(processInstance.getStartUserId()).getUserName());
+            map.put("starttime",DateUtil.formatDateTime(processInstance.getStartTime()));
+            map.put("processInstance",processInstance.getProcessDefinitionName());
+            map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("datetime",DateUtil.formatDateTime(new Date()));
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode("1367475870205353984")
+                    .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
+                    .paramMap(map)
+                    .build();
+            mailService.sendSimpleMail(sysSendMessageDTO);
+        });
+        executor.shutdown();
+
+    }
+    /**
+     * 发送邮件通知
+     * @param event
+     */
+    public void sendTaskCreateEmailMessage(FlowableEngineEntityEvent event){
 
         FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
         MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
