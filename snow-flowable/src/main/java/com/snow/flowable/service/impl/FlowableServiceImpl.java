@@ -50,6 +50,7 @@ import org.flowable.engine.task.Comment;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.history.HistoricIdentityLink;
 import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -362,11 +363,30 @@ public class FlowableServiceImpl implements FlowableService {
             runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
             paramMap.put(CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
         }
-
-
-        //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
-        taskService.claim(task.getId(),completeTaskDTO.getUserId());
-        taskService.complete(task.getId(),paramMap,true);
+        // owner不为空说明可能存在委托任务
+        if (!StringUtils.isEmpty(task.getOwner())) {
+            DelegationState delegationState = task.getDelegationState();
+            switch (delegationState) {
+                //委派中
+                case PENDING:
+                    // 被委派人处理完成任务
+                    taskService.resolveTask(task.getId(),paramMap);
+                    break;
+                //委派任务已处理
+               /* case RESOLVED:
+                    System.out.println("委托任务已经完成");
+                    break;*/
+                default:
+                    //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+                    taskService.claim(task.getId(),completeTaskDTO.getUserId());
+                    taskService.complete(task.getId(),paramMap,true);
+                    break;
+            }
+        } else {
+            //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+            taskService.claim(task.getId(),completeTaskDTO.getUserId());
+            taskService.complete(task.getId(),paramMap,true);
+        }
     }
 
 

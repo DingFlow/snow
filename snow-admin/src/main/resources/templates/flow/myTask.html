@@ -42,6 +42,8 @@
      <script th:inline="javascript">
          var prefixFlow = ctx + "flow";
          var todoList = [[${@permission.hasPermi('flow:get:todoList')}]];
+         var transferTask = [[${@permission.hasPermi('flow:process:transferTask')}]];
+
          $(function() {
              var options = {
                  id: "bootstrap-table",
@@ -99,6 +101,8 @@
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
+                             actions.push('<a class="btn btn-primary btn-xs ' + transferTask + '" href="javascript:void(0)" onclick="selectDelegateTaskUser(\''+row.taskId+'\')"><i class="fa fa-tasks"></i>委派</a> ');
+                             actions.push('<a class="btn btn-primary btn-xs ' + transferTask + '" href="javascript:void(0)" onclick="selectTransferTaskUser(\''+row.taskId+'\')"><i class="fa fa-tasks"></i>转办</a> ');
                              actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
                              return actions.join('');
                          }
@@ -108,12 +112,19 @@
          });
 
          function cancelTask(taskId) {
-             console.log(JSON.stringify(taskId));
              var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
              $.modal.openTab("审批", preViewUrl);
          }
 
+         function selectDelegateTaskUser(taskId) {
+             var url = prefixFlow + '/selectUser?taskId='+taskId+'&flag=0';
+             $.modal.open("选择委派用户", url);
+         }
 
+         function selectTransferTaskUser(taskId) {
+             var url = prefixFlow + '/selectUser?taskId='+taskId+'&flag=1';
+             $.modal.open("选择转办用户", url);
+         }
 
      </script>
 </body>

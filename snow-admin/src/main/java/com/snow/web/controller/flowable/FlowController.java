@@ -19,10 +19,7 @@ import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -89,6 +86,7 @@ public class FlowController extends BaseController {
 
         return prefix+"/myTask";
     }
+
     /**
      * 获取我的待办
      */
@@ -101,6 +99,7 @@ public class FlowController extends BaseController {
         PageModel<TaskVO> taskList = flowableTaskService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
         return getFlowDataTable(taskList);
     }
+
     /**
      * 获取所有节点
      * @param processInstanceId
@@ -124,6 +123,7 @@ public class FlowController extends BaseController {
 
         return prefix+"/myStartProcess";
     }
+
     /**
      * 获取我的流程实例
      * @param processInstanceDTO
@@ -173,6 +173,7 @@ public class FlowController extends BaseController {
 
         return prefix+"/myTakePartInProcess";
     }
+
     /**
      * 获取我办结的任务列表
      * @param historicTaskInstanceDTO
@@ -186,5 +187,44 @@ public class FlowController extends BaseController {
         historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
         PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
         return getFlowDataTable(historicTaskInstance);
+    }
+
+    /**
+     * 转办任务
+     * @return
+     */
+    @PostMapping("/transferTask")
+    @RequiresPermissions("flow:process:transferTask")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult transferTask(TransferTaskDTO transferTaskDTO) {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        flowableTaskService.transferTask(transferTaskDTO.getTaskId(),String.valueOf(sysUser.getUserId()),transferTaskDTO.getTargetUserId());
+        return AjaxResult.success();
+    }
+
+    /**
+     * 委派任务
+     * @return
+     */
+    @PostMapping("/delegateTask")
+    @RequiresPermissions("flow:process:delegateTask")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult delegateTask(TransferTaskDTO transferTaskDTO) {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        flowableTaskService.delegateTask(transferTaskDTO.getTaskId(),String.valueOf(sysUser.getUserId()),transferTaskDTO.getTargetUserId());
+        return AjaxResult.success();
+    }
+
+    /**
+     * 选择用户
+     */
+    @GetMapping("/selectUser")
+    public String selectUser(String taskId,Integer flag,ModelMap mmap)
+    {
+        mmap.put("taskId",taskId);
+        mmap.put("flag",flag);
+        return prefix + "/selectUser";
     }
 }

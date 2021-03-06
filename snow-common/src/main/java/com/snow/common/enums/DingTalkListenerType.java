@@ -31,7 +31,7 @@ public enum  DingTalkListenerType {
 
     WORK_RECORD_UPDATE(3,20,"更新待办"),
 
-    ASYNCSEND_V2(10,20,"发送消息")
+    ASYNCSEND_V2(10,20,"发送钉钉消息")
     ;
 
 

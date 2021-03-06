@@ -15,6 +15,7 @@ import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.DingTalkMessageType;
+import com.snow.common.enums.SyncLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.spring.SpringUtils;
@@ -129,7 +130,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
 
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.ASYNCSEND_V2,dingTalkUrl=BaseConstantUrl.ASYNCSEND_V2)
+    @SyncLog(dingTalkListenerType = DingTalkListenerType.ASYNCSEND_V2,dingTalkUrl=BaseConstantUrl.ASYNCSEND_V2,syncLogTpye=SyncLogType.SYNC_SYS)
     public Long sendCommonMessage(SysSendMessageDTO sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ASYNCSEND_V2);

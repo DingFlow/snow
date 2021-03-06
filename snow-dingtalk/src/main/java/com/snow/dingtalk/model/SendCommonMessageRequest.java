@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @create: 2021-03-06 15:54
  **/
 @Data
+@Deprecated
 public class SendCommonMessageRequest implements Serializable {
 
 
