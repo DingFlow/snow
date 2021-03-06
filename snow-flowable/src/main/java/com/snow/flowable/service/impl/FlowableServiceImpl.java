@@ -782,8 +782,11 @@ public class FlowableServiceImpl implements FlowableService {
             AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
             historicTaskInstanceVO.setAppForm(appForm);
             historicTaskInstanceVO.setCompleteTime(t.getEndTime());
-            String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
-            historicTaskInstanceVO.setHandleTaskTime(spendTime);
+            //转办的时候会出现到历史记录里，但是任务还没完结？？？
+            if(null!=t.getEndTime()){
+                String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
+                historicTaskInstanceVO.setHandleTaskTime(spendTime);
+            }
             historicTaskInstanceVO.setTaskId(t.getId());
             historicTaskInstanceVO.setTaskName(t.getName());
             HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
