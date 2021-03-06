@@ -1,6 +1,7 @@
 package com.snow.common.utils;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,8 @@ public class PatternUtils {
         StringBuffer sb = new StringBuffer();
 
         while (m.find()) {
+            if(null==m)
+                continue;
             String group = m.group(1);
             m.appendReplacement(sb, map.get(group));
         }

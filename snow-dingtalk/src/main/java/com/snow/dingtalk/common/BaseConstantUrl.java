@@ -82,6 +82,9 @@ public class BaseConstantUrl {
     public static final String CALL_BACK_FAILED_RESULT = "https://oapi.dingtalk.com/call_back/get_call_back_failed_result";
 
 
-
+    /**
+     * 发送普通消息
+     */
+    public static final String ASYNCSEND_V2="https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2";
 
 }

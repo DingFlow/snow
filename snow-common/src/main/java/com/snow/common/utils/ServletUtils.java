@@ -57,6 +57,9 @@ public class ServletUtils
      */
     public static HttpServletRequest getRequest()
     {
+        if(getRequestAttributes()==null){
+            return null;
+        }
         return getRequestAttributes().getRequest();
     }
 

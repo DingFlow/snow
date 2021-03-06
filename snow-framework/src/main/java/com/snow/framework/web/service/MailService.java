@@ -1,6 +1,5 @@
 package com.snow.framework.web.service;
 
-import cn.hutool.core.thread.ExecutorBuilder;
 import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
@@ -8,10 +7,8 @@ import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.service.ISysMessageTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,8 +19,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @program: snow

@@ -1,5 +1,6 @@
 package com.snow.framework.web.domain.common;
 
+import com.snow.common.enums.DingTalkMessageType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -52,8 +53,20 @@ public class SysSendMessageDTO implements Serializable {
     private String filePath;
 
     /**
-     * 邮件发送时间
+     * 发送时间
      */
     private Date sentDate;
+
+
+    /**
+     * 是否发给所有人
+     */
+    private Boolean toAllUser=false;
+
+
+    /**
+     * 消息类型
+     */
+    private DingTalkMessageType dingTalkMessageType;
 
 }

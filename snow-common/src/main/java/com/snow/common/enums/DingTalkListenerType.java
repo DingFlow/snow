@@ -26,6 +26,12 @@ public enum  DingTalkListenerType {
     CALL_BACK_FAILED_RESULT(23,10, "获取回调失败结果"),
 
     WORK_RECODE_CREATE(1,20, "创建待办"),
+
+    GET_WORK_RECORD_USER(2,20,"获取用户待办"),
+
+    WORK_RECORD_UPDATE(3,20,"更新待办"),
+
+    ASYNCSEND_V2(10,20,"发送消息")
     ;
 
 

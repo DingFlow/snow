@@ -136,4 +136,6 @@ public class Constants
      * 邮件消息类型
      */
     public static final Integer NEWS_EMAIL_TYPE=2;
+
+
 }

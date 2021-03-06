@@ -1,22 +1,9 @@
 package com.snow.dingtalk.service;
 
-import com.alibaba.fastjson.JSON;
-import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiWorkrecordAddRequest;
-import com.dingtalk.api.request.OapiWorkrecordGetbyuseridRequest;
-import com.dingtalk.api.request.OapiWorkrecordUpdateRequest;
-import com.dingtalk.api.response.OapiWorkrecordAddResponse;
 import com.dingtalk.api.response.OapiWorkrecordGetbyuseridResponse;
-import com.dingtalk.api.response.OapiWorkrecordUpdateResponse;
-import com.snow.dingtalk.common.BaseConstantUrl;
-import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.dingtalk.model.WorkrecordGetbyuseridRequest;
-import com.snow.system.service.ISysConfigService;
-import com.taobao.api.ApiException;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -49,4 +36,10 @@ public interface WorkRecodeService  {
      * @return
      */
      Boolean update(String userId,String recordId);
+
+    /**
+     * 钉钉发送消息
+     * @param sysSendMessageDTO
+     */
+    Long sendCommonMessage(SysSendMessageDTO sysSendMessageDTO);
 }

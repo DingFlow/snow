@@ -1,10 +1,14 @@
 package com.snow.flowable.listener.common;
 
+import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ExecutorBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.snow.common.constant.MessageConstants;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkMessageType;
 import com.snow.common.utils.PatternUtils;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.flowable.common.SpringContextUtil;
@@ -22,9 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.event.FlowableProcessStartedEvent;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.Execution;
@@ -61,7 +67,9 @@ public class SendMessageEventLister extends AbstractEventListener {
         super(
                 new HashSet<>(Arrays.asList(
                         FlowableEngineEventType.TASK_CREATED,
-                        FlowableEngineEventType.PROCESS_STARTED
+                        FlowableEngineEventType.PROCESS_STARTED,
+                        FlowableEngineEventType.PROCESS_COMPLETED,
+                        FlowableEngineEventType.TASK_OWNER_CHANGED
                 )),
                 new HashSet<>(Arrays.asList(
                         FlowDefEnum.SNOW_OA_LEAVE,
@@ -84,13 +92,35 @@ public class SendMessageEventLister extends AbstractEventListener {
         boolean emailOnOff = newsTriggerService.getEmailOnOff(execution.getProcessDefinitionKey(),FlowableEngineEventType.TASK_CREATED.name());
         //钉钉通知
         if(dingTalkOnOff){
-          //  sendDingTalkMessage(event);
+           sendProcessStartedDingTalkMessage(event);
         }
         // 邮件通知
         if(emailOnOff){
             sendProcessStartedEmailMessage(event);
         }
     }
+
+    /**
+     * 流程已结束
+     * @param event
+     */
+    protected void processCompleted(FlowableEngineEntityEvent event) {
+        log.info("ManagerTaskEventListener----processCompleted流程创建监听：{}",JSON.toJSONString(event));
+        HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(hisProcessInstance.getProcessDefinitionKey(),FlowableEngineEventType.PROCESS_COMPLETED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(hisProcessInstance.getProcessDefinitionKey(),FlowableEngineEventType.PROCESS_COMPLETED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+            sendProcessCompletedDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendProcessCompletedEmailMessage(event);
+        }
+    }
+
+
 
     /**
      * 任务创建(待办)
@@ -165,7 +195,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             map.put("processInstance",processInstance.getProcessDefinitionName());
             map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
             map.put("datetime",DateUtil.formatDateTime(new Date()));
-            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode("1367475870205353984")
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
                     .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
                     .paramMap(map)
                     .build();
@@ -203,7 +233,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     map.put("processInstance",processDefinition.getName());
                     map.put("url","http://localhost/flow/findTasksByUserId");
                     map.put("datetime",DateUtil.formatDateTime(new Date()));
-                    SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode("1365961987292536832")
+                    SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.TASK_CREATED_CODE)
                             .receiver(t.getEmail())
                             .paramMap(map)
                             .build();
@@ -214,6 +244,109 @@ public class SendMessageEventLister extends AbstractEventListener {
 
         }
 
+    }
+
+
+    /**
+     * 发送钉钉通知
+     * @param event
+     */
+    public void sendProcessStartedDingTalkMessage(FlowableProcessStartedEvent event){
+
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+
+            ExecutionEntity execution = (ExecutionEntity)event.getEntity();
+            ProcessInstance processInstance = execution.getProcessInstance();
+            Map<String,String> map=new HashMap<>();
+            map.put("toUser",getUserInfo(processInstance.getStartUserId()).getUserName());
+            map.put("starttime",DateUtil.formatDateTime(processInstance.getStartTime()));
+            map.put("processInstance",processInstance.getProcessDefinitionName());
+            map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("datetime",DateUtil.formatDateTime(new Date()));
+
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
+                    .receiverSet(Sets.newHashSet(getUserInfo(processInstance.getStartUserId()).getDingUserId()))
+                    .paramMap(map)
+                    .dingTalkMessageType(DingTalkMessageType.TEXT)
+                    .build();
+            SyncEvent syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
+            applicationContext.publishEvent(syncEventGroup);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 流程完结发送邮件通知
+     * @param event
+     */
+    public void sendProcessCompletedEmailMessage(FlowableEngineEntityEvent event){
+        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+            HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+                    .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
+                    .paramMap(map)
+                    .build();
+            mailService.sendSimpleMail(sysSendMessageDTO);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 流程完结发送钉钉通知
+     * @param event
+     */
+    public void sendProcessCompletedDingTalkMessage(FlowableEngineEntityEvent event){
+
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+            HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+                    .receiverSet(Sets.newHashSet(getUserInfo(hisProcessInstance.getStartUserId()).getDingUserId()))
+                    .paramMap(map)
+                    .dingTalkMessageType(DingTalkMessageType.TEXT)
+                    .build();
+            SyncEvent syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
+            applicationContext.publishEvent(syncEventGroup);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 组建流程完结参数
+     * @param hisProcessInstance
+     */
+    private Map<String,String> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance){
+        Map<String,String> map=new HashMap<>();
+        map.put("toUser",getUserInfo(hisProcessInstance.getStartUserId()).getUserName());
+        map.put("starttime",DateUtil.formatDateTime(hisProcessInstance.getStartTime()));
+        map.put("orderNo",hisProcessInstance.getBusinessKey());
+        map.put("processInstance",hisProcessInstance.getProcessDefinitionName());
+        String spendTime = DateUtil.formatBetween(hisProcessInstance.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
+        map.put("time",spendTime);
+        map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+        map.put("datetime",DateUtil.formatDateTime(new Date()));
+        return map;
     }
     /**
      * 组装参数
@@ -271,6 +404,18 @@ public class SendMessageEventLister extends AbstractEventListener {
                 .singleResult();
     }
 
+    /**
+     * 获取历史流程实例
+     * @param processInstanceId
+     * @return
+     */
+    protected HistoricProcessInstance getHisProcessInstance(String processInstanceId) {
+
+        HistoryService historyService = (HistoryService)SpringContextUtil.getBean(HistoryService.class);
+        return historyService.createHistoricProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
+    }
     /**
      * 获取用户信息
      * @param userId
