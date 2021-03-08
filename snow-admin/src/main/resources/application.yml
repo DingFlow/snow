@@ -71,9 +71,9 @@ spring:
       enabled: true
   mail:
     host: smtp.126.com
-    username: qimingjin@126.com
+    username:
     #开启POP3之后设置的客户端授权码
-    password: JSHBRRRDBNHPXPFB
+    password:
     default-encoding: UTF-8
 
 
