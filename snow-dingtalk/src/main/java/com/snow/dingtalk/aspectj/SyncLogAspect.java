@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 /**
  * 操作日志记录处理
@@ -99,8 +101,7 @@ public class SyncLogAspect
 
             // 返回参数
             sysDingtalkSyncLog.setJsonResult(StringUtils.substring(JSON.marshal(jsonResult), 0, 2000));
-
-            sysDingtalkSyncLog.setOperUrl(ServletUtils.getRequest().getRequestURI());
+            Optional.ofNullable(ServletUtils.getRequest()).ifPresent(t->sysDingtalkSyncLog.setOperUrl(ServletUtils.getRequest().getRequestURI()));
             if (e != null)
             {
                 if(e instanceof SyncDataException){
@@ -123,7 +124,8 @@ public class SyncLogAspect
 
             sysDingtalkSyncLog.setMethod(className + "." + methodName + "()");
             // 设置请求方式
-            sysDingtalkSyncLog.setRequestMethod(ServletUtils.getRequest().getMethod());
+            Optional.ofNullable(ServletUtils.getRequest()).ifPresent(t->sysDingtalkSyncLog.setRequestMethod(ServletUtils.getRequest().getMethod()));
+
             // 处理设置注解上的参数
             getControllerMethodDescription(controllerLog,joinPoint, sysDingtalkSyncLog);
             // 保存数据库

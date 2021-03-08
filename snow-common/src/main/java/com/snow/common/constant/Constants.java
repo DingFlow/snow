@@ -125,4 +125,17 @@ public class Constants
      * 钉钉回调失败返回
      */
     public static final String CALL_BACK_FAIL_RETURN="fail";
+
+
+    /**
+     * dingding消息类型
+     */
+    public static final Integer NEWS_DINGDING_TYPE=1;
+
+    /**
+     * 邮件消息类型
+     */
+    public static final Integer NEWS_EMAIL_TYPE=2;
+
+
 }

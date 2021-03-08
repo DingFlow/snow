@@ -72,12 +72,5 @@ public interface FlowableTaskService {
      */
    void delegateTask(String taskId,String curUserId,String targetUserId);
 
-    /**
-     * 挂起或激活流程
-     * @param instanceId
-     * @param suspendState
-     */
-   void suspendOrActiveApply(String instanceId, String suspendState);
-
 
 }

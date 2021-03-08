@@ -7,6 +7,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
+import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -257,6 +258,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     @Override
     public void transferTask(String taskId, String curUserId, String targetUserId) {
         try {
+            //todo 转办记录
             taskService.setOwner(taskId, curUserId);
             taskService.setAssignee(taskId,targetUserId);
         }catch (Exception e) {
@@ -266,20 +268,22 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     }
 
+    /**
+     * 委派：是将任务节点分给其他人处理，等其他人处理好之后，委派任务会自动回到委派人的任务中
+     * @param taskId 任务ID
+     * @param curUserId 当前人ID
+     * @param targetUserId 目标人ID
+     */
     @Override
     public void delegateTask(String taskId, String curUserId, String targetUserId) {
         try {
             taskService.setOwner(taskId, curUserId);
             taskService.delegateTask(taskId,targetUserId);
+
         }catch (Exception e) {
             log.error(e.getMessage(),e.getCause());
             throw new RuntimeException("转办任务失败，请联系管理员");
         }
-    }
-
-    @Override
-    public void suspendOrActiveApply(String instanceId, String suspendState) {
-
     }
 
 

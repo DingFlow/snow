@@ -171,4 +171,11 @@ public interface FlowableService {
     FlowGeneralSituationVO getFlowGeneralSituation(String userId);
 
 
+
+    /**
+     * 挂起或激活流程 （0--激活，1--挂起）
+     * @param instanceId
+     * @param suspendState
+     */
+    void suspendOrActiveProcessInstance(String instanceId, Integer suspendState);
 }

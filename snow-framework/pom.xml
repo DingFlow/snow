@@ -21,6 +21,12 @@
          <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+             <exclusions><!-- 去掉默认配置 -->
+                 <exclusion>
+                     <groupId>org.springframework.boot</groupId>
+                     <artifactId>spring-boot-starter-logging</artifactId>
+                 </exclusion>
+             </exclusions>
         </dependency>
 
         <!-- SpringBoot 拦截器 -->
@@ -88,6 +94,8 @@
             <groupId>com.snow</groupId>
             <artifactId>snow-system</artifactId>
         </dependency>
+
+
 
     </dependencies>
 

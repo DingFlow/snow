@@ -41,10 +41,14 @@
      <script th:inline="javascript">
          var detailFlag = [[${@permission.hasPermi('system:flow:myStartProcessDetail')}]];
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
+         var activeProcessInstanceFlag = [[${@permission.hasPermi('system:flow:activeProcessInstance')}]];
+         var suspendProcessInstanceFlag = [[${@permission.hasPermi('system:flow:suspendProcessInstance')}]];
          var prefixFlow = ctx + "flow";
          $(function() {
              var options = {
                  url: prefixFlow + "/getMyHistoricProcessInstance",
+                 activeProcessInstanceUrl: prefixFlow+"/activeProcessInstance",
+                 suspendProcessInstanceUrl: prefixFlow+"/suspendProcessInstance",
                  modalName: "我发起的流程",
                  striped: true,      //是否显示行间隔色
                  showToggle: false,
@@ -103,6 +107,14 @@
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
+                             var isFinished= row.isFinished;
+                             var processInstanceStatus= row.processInstanceStatus;
+                             if(processInstanceStatus==1&&isFinished==0){
+                                 actions.push('<a class="btn btn-danger btn-xs ' + suspendProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.suspendProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>挂起</a> ');
+                             }
+                             if(processInstanceStatus==2&&isFinished==0){
+                                 actions.push('<a class="btn btn-success btn-xs ' + activeProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.activeProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>激活</a> ');
+                             }
                              actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
                              return actions.join('');
                          }
@@ -118,6 +130,7 @@
 
          function fromDetailUrl(detailUrl) {
              $.modal.openTab("详情", detailUrl);
+
          }
 
      </script>

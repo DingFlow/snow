@@ -70,7 +70,6 @@
         <dependency>
             <groupId>com.snow</groupId>
             <artifactId>snow-framework</artifactId>
-            <version>4.3.1</version>
         </dependency>
 
         <!-- 定时任务-->
@@ -83,21 +82,18 @@
         <dependency>
             <groupId>com.snow</groupId>
             <artifactId>snow-generator</artifactId>
-            <version>4.3.1</version>
         </dependency>
 
         <!--dingtalk-->
         <dependency>
             <groupId>com.snow</groupId>
             <artifactId>snow-dingtalk</artifactId>
-            <version>4.3.1</version>
         </dependency>
 
         <!--工作流-->
         <dependency>
             <groupId>com.snow</groupId>
             <artifactId>snow-flowable</artifactId>
-            <version>4.3.1</version>
         </dependency>
     </dependencies>
 

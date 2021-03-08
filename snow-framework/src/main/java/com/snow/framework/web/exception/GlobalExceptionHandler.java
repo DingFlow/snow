@@ -2,6 +2,7 @@ package com.snow.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.authz.AuthorizationException;
+//import org.flowable.common.engine.api.FlowableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -14,6 +15,8 @@ import com.snow.common.exception.BusinessException;
 import com.snow.common.exception.DemoModeException;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.security.PermissionUtils;
+
+import java.util.Optional;
 
 /**
  * 全局异常处理器
@@ -74,6 +77,21 @@ public class GlobalExceptionHandler
         return AjaxResult.error("服务器错误，请联系管理员");
     }
 
+    /**
+     * 流程异常
+     * @param e
+     * @return
+     */
+    //@ExceptionHandler(FlowableException.class)
+    public AjaxResult flowableException(Exception e)
+    {
+
+        String errMessage=Optional.ofNullable(e.getMessage()).orElse("");
+        if(e.getMessage().contains("")){
+            return AjaxResult.error("服务器错误，请联系管理员");
+        }
+        return AjaxResult.error(errMessage);
+    }
     /**
      * 业务异常
      */

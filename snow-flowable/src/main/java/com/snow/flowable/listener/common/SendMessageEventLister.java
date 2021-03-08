@@ -1,39 +1,48 @@
 package com.snow.flowable.listener.common;
 
+import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ExecutorBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.snow.common.constant.MessageConstants;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkMessageType;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.flowable.common.SpringContextUtil;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.listener.AbstractEventListener;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
+import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.service.MailService;
+import com.snow.framework.web.service.NewsTriggerService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
-import com.snow.system.mapper.SysUserMapper;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
-import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
-import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.event.FlowableProcessStartedEvent;
+import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * @author qimingjin
@@ -48,10 +57,15 @@ public class SendMessageEventLister extends AbstractEventListener {
     @Resource
     private ApplicationContext applicationContext;
 
+
+
     public SendMessageEventLister() {
         super(
                 new HashSet<>(Arrays.asList(
-                        FlowableEngineEventType.TASK_CREATED
+                        FlowableEngineEventType.TASK_CREATED,
+                        FlowableEngineEventType.PROCESS_STARTED,
+                        FlowableEngineEventType.PROCESS_COMPLETED,
+                        FlowableEngineEventType.TASK_OWNER_CHANGED
                 )),
                 new HashSet<>(Arrays.asList(
                         FlowDefEnum.SNOW_OA_LEAVE,
@@ -60,12 +74,71 @@ public class SendMessageEventLister extends AbstractEventListener {
     }
 
 
+    /**
+     * 流程开始
+     * @param event
+     */
+    @Override
+    protected void processStarted(FlowableProcessStartedEvent event) {
+        log.info("ManagerTaskEventListener----processStarted流程创建监听：{}",JSON.toJSONString(event));
+        ExecutionEntity execution = (ExecutionEntity)event.getEntity();
+
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(execution.getProcessDefinitionKey(),FlowableEngineEventType.TASK_CREATED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(execution.getProcessDefinitionKey(),FlowableEngineEventType.TASK_CREATED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+           sendProcessStartedDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendProcessStartedEmailMessage(event);
+        }
+    }
+
+    /**
+     * 流程已结束
+     * @param event
+     */
+    protected void processCompleted(FlowableEngineEntityEvent event) {
+        log.info("ManagerTaskEventListener----processCompleted流程创建监听：{}",JSON.toJSONString(event));
+        HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(hisProcessInstance.getProcessDefinitionKey(),FlowableEngineEventType.PROCESS_COMPLETED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(hisProcessInstance.getProcessDefinitionKey(),FlowableEngineEventType.PROCESS_COMPLETED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+            sendProcessCompletedDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendProcessCompletedEmailMessage(event);
+        }
+    }
+
+
+
+    /**
+     * 任务创建(待办)
+     * @param event
+     */
     @Override
     protected void taskCreated(FlowableEngineEntityEvent event) {
         //任务创建可发送短信，邮件通知接收人(代办人)
         log.info("ManagerTaskEventListener----taskCreated任务创建监听：{}",JSON.toJSONString(event));
-        sendDingTalkMessage(event);
-        //todo 邮件通知
+        ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
+        NewsTriggerService newsTriggerService = (NewsTriggerService)SpringContextUtil.getBean(NewsTriggerService.class);
+        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(processDefinition.getKey(),FlowableEngineEventType.TASK_CREATED.name());
+        boolean emailOnOff = newsTriggerService.getEmailOnOff(processDefinition.getKey(),FlowableEngineEventType.TASK_CREATED.name());
+        //钉钉通知
+        if(dingTalkOnOff){
+            sendDingTalkMessage(event);
+        }
+        // 邮件通知
+        if(emailOnOff){
+            sendTaskCreateEmailMessage(event);
+        }
+
     }
 
     /**
@@ -73,7 +146,6 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendDingTalkMessage(FlowableEngineEntityEvent event){
-        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl)SpringContextUtil.getBean(FlowableUserServiceImpl.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
@@ -81,33 +153,197 @@ public class SendMessageEventLister extends AbstractEventListener {
         executor.execute(() ->{
             //根据任务ID获取任务获选人
             TaskEntity entity = (TaskEntity)event.getEntity();
-            Set<IdentityLink> candidates = entity.getCandidates();
-            if(!CollectionUtils.isEmpty(candidates)){
-                candidates.forEach(t->{
-                    String userId = t.getUserId();
-                    String groupId = t.getGroupId();
+            Set<SysUser> flowCandidates = getFlowCandidates(entity);
+            if(CollectionUtils.isNotEmpty(flowCandidates)){
+                flowCandidates.forEach(t->{
+                    String userId = String.valueOf(t.getUserId());
                     if(!StringUtils.isEmpty(userId)){
                         WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(userId, event);
                         SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
                         applicationContext.publishEvent(syncEventGroup);
                     }
-                    else if(!StringUtils.isEmpty(groupId)) {
-                        List<SysUser> sysUsers = flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
-                        sysUsers.forEach(sysUser->{
-                            WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(String.valueOf(sysUser.getUserId()), event);
-                            SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
-                            applicationContext.publishEvent(syncEventGroup);
-                        });
-                    }else {
-                        log.warn("ManagerTaskEventListener----taskCreated任务创建监听 userId和groupId is all null");
-                    }
                 });
+            }else {
+                log.warn("ManagerTaskEventListener----taskCreated任务创建监听 userId和groupId is all null");
             }
-
         });
         executor.shutdown();
     }
 
+    /**
+     * 发送邮件通知
+     * @param event
+     */
+    public void sendProcessStartedEmailMessage(FlowableProcessStartedEvent event){
+        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+
+            ExecutionEntity execution = (ExecutionEntity)event.getEntity();
+            ProcessInstance processInstance = execution.getProcessInstance();
+            Map<String,String> map=new HashMap<>();
+            map.put("toUser",getUserInfo(processInstance.getStartUserId()).getUserName());
+            map.put("starttime",DateUtil.formatDateTime(processInstance.getStartTime()));
+            map.put("processInstance",processInstance.getProcessDefinitionName());
+            map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("datetime",DateUtil.formatDateTime(new Date()));
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
+                    .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
+                    .paramMap(map)
+                    .build();
+            mailService.sendSimpleMail(sysSendMessageDTO);
+        });
+        executor.shutdown();
+
+    }
+    /**
+     * 发送邮件通知
+     * @param event
+     */
+    public void sendTaskCreateEmailMessage(FlowableEngineEntityEvent event){
+
+        FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
+        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
+        ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
+        //根据任务ID获取任务获选人
+        TaskEntity entity = (TaskEntity)event.getEntity();
+        Set<SysUser> flowCandidates = getFlowCandidates(entity);
+        if(CollectionUtils.isNotEmpty(flowCandidates)){
+          //  Set<String> emailSet = flowCandidates.stream().map(SysUser::getEmail).collect(Collectors.toSet());
+
+            ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                    .setMaxPoolSize(10)
+                    .setWorkQueue(new LinkedBlockingQueue<>(100))
+                    .build();
+
+            executor.execute(() ->
+                flowCandidates.forEach(t->{
+                    Map<String,String> map=new HashMap<>();
+                    map.put("toUser",t.getUserName());
+                    map.put("startUser",getUserInfo(processInstance.getStartUserId()).getUserName());
+                    map.put("processInstance",processDefinition.getName());
+                    map.put("url","http://localhost/flow/findTasksByUserId");
+                    map.put("datetime",DateUtil.formatDateTime(new Date()));
+                    SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.TASK_CREATED_CODE)
+                            .receiver(t.getEmail())
+                            .paramMap(map)
+                            .build();
+                    mailService.sendSimpleMail(sysSendMessageDTO);
+                })
+            );
+            executor.shutdown();
+
+        }
+
+    }
+
+
+    /**
+     * 发送钉钉通知
+     * @param event
+     */
+    public void sendProcessStartedDingTalkMessage(FlowableProcessStartedEvent event){
+
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+
+            ExecutionEntity execution = (ExecutionEntity)event.getEntity();
+            ProcessInstance processInstance = execution.getProcessInstance();
+            Map<String,String> map=new HashMap<>();
+            map.put("toUser",getUserInfo(processInstance.getStartUserId()).getUserName());
+            map.put("starttime",DateUtil.formatDateTime(processInstance.getStartTime()));
+            map.put("processInstance",processInstance.getProcessDefinitionName());
+            map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("datetime",DateUtil.formatDateTime(new Date()));
+
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
+                    .receiverSet(Sets.newHashSet(getUserInfo(processInstance.getStartUserId()).getDingUserId()))
+                    .paramMap(map)
+                    .dingTalkMessageType(DingTalkMessageType.TEXT)
+                    .build();
+            SyncEvent syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
+            applicationContext.publishEvent(syncEventGroup);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 流程完结发送邮件通知
+     * @param event
+     */
+    public void sendProcessCompletedEmailMessage(FlowableEngineEntityEvent event){
+        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+            HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+                    .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
+                    .paramMap(map)
+                    .build();
+            mailService.sendSimpleMail(sysSendMessageDTO);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 流程完结发送钉钉通知
+     * @param event
+     */
+    public void sendProcessCompletedDingTalkMessage(FlowableEngineEntityEvent event){
+
+        ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
+                .setMaxPoolSize(10)
+                .setWorkQueue(new LinkedBlockingQueue<>(100))
+                .build();
+
+        executor.execute(() -> {
+            HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
+            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+
+            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+                    .receiverSet(Sets.newHashSet(getUserInfo(hisProcessInstance.getStartUserId()).getDingUserId()))
+                    .paramMap(map)
+                    .dingTalkMessageType(DingTalkMessageType.TEXT)
+                    .build();
+            SyncEvent syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
+            applicationContext.publishEvent(syncEventGroup);
+        });
+        executor.shutdown();
+
+    }
+
+    /**
+     * 组建流程完结参数
+     * @param hisProcessInstance
+     */
+    private Map<String,String> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance){
+        Map<String,String> map=new HashMap<>();
+        map.put("toUser",getUserInfo(hisProcessInstance.getStartUserId()).getUserName());
+        map.put("starttime",DateUtil.formatDateTime(hisProcessInstance.getStartTime()));
+        map.put("orderNo",hisProcessInstance.getBusinessKey());
+        map.put("processInstance",hisProcessInstance.getProcessDefinitionName());
+        String spendTime = DateUtil.formatBetween(hisProcessInstance.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
+        map.put("time",spendTime);
+        map.put("url","http://localhost/flow/getMyHistoricProcessInstance");
+        map.put("datetime",DateUtil.formatDateTime(new Date()));
+        return map;
+    }
     /**
      * 组装参数
      * @param userId  需要发送通知的人
@@ -115,6 +351,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     public WorkrecordAddRequest initWorkRecordAddRequest(String userId,FlowableEngineEntityEvent event){
+
         FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
         ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
         TaskEntity entity = (TaskEntity)event.getEntity();
@@ -156,12 +393,25 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
+
         RepositoryService repositoryService = (RepositoryService)SpringContextUtil.getBean(RepositoryService.class);
         return repositoryService.createProcessDefinitionQuery()
                 .processDefinitionId(processDefinitionId)
                 .singleResult();
     }
 
+    /**
+     * 获取历史流程实例
+     * @param processInstanceId
+     * @return
+     */
+    protected HistoricProcessInstance getHisProcessInstance(String processInstanceId) {
+
+        HistoryService historyService = (HistoryService)SpringContextUtil.getBean(HistoryService.class);
+        return historyService.createHistoricProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
+    }
     /**
      * 获取用户信息
      * @param userId
@@ -172,6 +422,37 @@ public class SendMessageEventLister extends AbstractEventListener {
         return Optional.ofNullable(sysUserService.selectUserById(Long.parseLong(userId))).orElse(
                 new SysUser(1L,"System","manager4480")
         );
+    }
+
+
+    /**
+     * 根据任务ID获取任务获选人
+     * @param entity
+     * @return
+     */
+    private Set<SysUser> getFlowCandidates(TaskEntity entity ){
+        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl)SpringContextUtil.getBean(FlowableUserServiceImpl.class);
+
+        Set<IdentityLink> candidates = entity.getCandidates();
+        Set<SysUser> sysUserSet=new HashSet<>();
+        if(!CollectionUtils.isEmpty(candidates)){
+            candidates.forEach(t->{
+                String userId = t.getUserId();
+                String groupId = t.getGroupId();
+                if(!StringUtils.isEmpty(userId)){
+                    SysUser userInfo = getUserInfo(userId);
+                    sysUserSet.add(userInfo);
+                }
+                else if(!StringUtils.isEmpty(groupId)) {
+                    List<SysUser> sysUsers = flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
+                    if(org.apache.commons.collections.CollectionUtils.isNotEmpty(sysUsers)){
+                        Set<SysUser> userSet = sysUsers.stream().collect(Collectors.toSet());
+                        sysUserSet.addAll(userSet);
+                    }
+                }
+            });
+        }
+        return sysUserSet;
     }
 
 

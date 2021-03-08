@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysNewsNodeMapper">
+    
+    <resultMap type="SysNewsNode" id="SysNewsNodeResult">
+        <result property="id"    column="id"    />
+        <result property="newsNodeName"    column="news_node_name"    />
+        <result property="newsNodeKey"    column="news_node_key"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectSysNewsNodeVo">
+        select id, news_node_name, news_node_key, parent_id, ancestors, order_num, is_delete, create_by, create_time, update_by, update_time from sys_news_node
+    </sql>
+
+    <select id="selectSysNewsNodeList" parameterType="SysNewsNode" resultMap="SysNewsNodeResult">
+        <include refid="selectSysNewsNodeVo"/>
+        <where>  
+            <if test="newsNodeName != null  and newsNodeName != ''"> and news_node_name like concat('%', #{newsNodeName}, '%')</if>
+            <if test="newsNodeKey != null  and newsNodeKey != ''"> and news_node_key = #{newsNodeKey}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+        order by parent_id
+    </select>
+    
+    <select id="selectSysNewsNodeById" parameterType="Integer" resultMap="SysNewsNodeResult">
+        select t.id, t.news_node_name, t.news_node_key, t.parent_id, t.ancestors, t.order_num, t.is_delete, t.create_by, t.create_time, t.update_by, t.update_time, p.news_node_name as parent_name
+        from sys_news_node t
+        left join sys_news_node p on p.id = t.parent_id
+        where t.id = #{id}
+    </select>
+
+    <select id="selectSysNewsNodeByKey"  resultMap="SysNewsNodeResult">
+        <include refid="selectSysNewsNodeVo"/>
+        where news_node_key = #{newsNodeKey} and parent_id = #{parentId} and is_delete=0
+    </select>
+    <insert id="insertSysNewsNode" parameterType="SysNewsNode" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_news_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="newsNodeName != null and newsNodeName != ''">news_node_name,</if>
+            <if test="newsNodeKey != null">news_node_key,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="ancestors != null">ancestors,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="newsNodeName != null and newsNodeName != ''">#{newsNodeName},</if>
+            <if test="newsNodeKey != null">#{newsNodeKey},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="ancestors != null">#{ancestors},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysNewsNode" parameterType="SysNewsNode">
+        update sys_news_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="newsNodeName != null and newsNodeName != ''">news_node_name = #{newsNodeName},</if>
+            <if test="newsNodeKey != null">news_node_key = #{newsNodeKey},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="ancestors != null">ancestors = #{ancestors},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysNewsNodeById" parameterType="Integer">
+        delete from sys_news_node where id = #{id}
+    </delete>
+
+    <delete id="deleteSysNewsNodeByIds" parameterType="String">
+        delete from sys_news_node where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -22,6 +22,7 @@ public class LocalStorage implements Storage {
     private final Log logger = LogFactory.getLog(LocalStorage.class);
 
     private String storagePath;
+
     private String address;
 
     private Path rootLocation;

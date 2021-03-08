@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysNewsTriggersMapper">
+    
+    <resultMap type="SysNewsTriggers" id="SysNewsTriggersResult">
+        <result property="id"    column="id"    />
+        <result property="newsNodeId"    column="news_node_id"    />
+        <result property="newsType"    column="news_type"    />
+        <result property="newsOnOff"    column="news_on_off"    />
+        <result property="userId"    column="user_id"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysNewsTriggersVo">
+        select id, news_node_id, news_type, news_on_off, user_id, is_delete, create_by, create_time, update_by, update_time from sys_news_triggers
+    </sql>
+
+    <select id="selectSysNewsTriggersList" parameterType="SysNewsTriggers" resultMap="SysNewsTriggersResult">
+        <include refid="selectSysNewsTriggersVo"/>
+        <where>  
+            <if test="newsNodeId != null "> and news_node_id = #{newsNodeId}</if>
+            <if test="newsType != null "> and news_type = #{newsType}</if>
+            <if test="newsOnOff != null "> and news_on_off = #{newsOnOff}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysNewsTriggersById" parameterType="Integer" resultMap="SysNewsTriggersResult">
+        <include refid="selectSysNewsTriggersVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysNewsTriggers" parameterType="SysNewsTriggers" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_news_triggers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="newsNodeId != null">news_node_id,</if>
+            <if test="newsType != null">news_type,</if>
+            <if test="newsOnOff != null">news_on_off,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="newsNodeId != null">#{newsNodeId},</if>
+            <if test="newsType != null">#{newsType},</if>
+            <if test="newsOnOff != null">#{newsOnOff},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysNewsTriggers" parameterType="SysNewsTriggers">
+        update sys_news_triggers
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="newsNodeId != null">news_node_id = #{newsNodeId},</if>
+            <if test="newsType != null">news_type = #{newsType},</if>
+            <if test="newsOnOff != null">news_on_off = #{newsOnOff},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysNewsTriggersById" parameterType="Integer">
+        delete from sys_news_triggers where id = #{id}
+    </delete>
+
+    <delete id="deleteSysNewsTriggersByIds" parameterType="String">
+        delete from sys_news_triggers where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

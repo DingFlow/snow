@@ -5,6 +5,7 @@ import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.dingtalk.service.impl.WorkRecodeServiceImpl;
+import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,9 +27,16 @@ public class WorkRecodeService implements ISyncDingTalkInfo {
         log.info("调用工作通知传入的原始参数:{}",JSON.toJSONString(syncEvent));
         DingTalkListenerType eventType =(DingTalkListenerType) syncEvent.getT();
         Integer code = eventType.getCode();
+        //钉钉创建待办
         if(code.equals(DingTalkListenerType.WORK_RECODE_CREATE.getCode())){
             WorkrecordAddRequest workrecordAddRequest=(WorkrecordAddRequest)syncEvent.getSource();
             workRecodeService.create(workrecordAddRequest);
+        }
+        //钉钉发送普通消息
+        else if(code.equals(DingTalkListenerType.ASYNCSEND_V2.getCode())){
+
+            SysSendMessageDTO sysSendMessageDTO=(SysSendMessageDTO)syncEvent.getSource();
+            workRecodeService.sendCommonMessage(sysSendMessageDTO);
         }
     }
 }

@@ -1164,7 +1164,6 @@ var table = {
             },
             // 发布信息
             deployment: function(id,type) {
-        		console.log("=======>"+type);
                 table.set();
                 $.modal.confirm("确定发布该条" + table.options.modalName + "信息吗？", function() {
                     var url = $.common.isEmpty(id) ? table.options.deploymentUrl : table.options.deploymentUrl.replace("{id}", id);
@@ -1172,6 +1171,34 @@ var table = {
                         $.operate.get(url);
                     } else {
                         var data = { "id": id ,"type":type};
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                });
+
+            },
+            // 激活流程
+            activeProcessInstance: function(id) {
+                table.set();
+                $.modal.confirm("确定激活该条流程信息吗？", function() {
+                    var url = $.common.isEmpty(id) ? table.options.activeFlowUrl : table.options.activeProcessInstanceUrl.replace("{id}", id);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        $.operate.get(url);
+                    } else {
+                        var data = { "id": id };
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                });
+
+            },
+            // 挂起流程
+            suspendProcessInstance: function(id) {
+                table.set();
+                $.modal.confirm("确定挂起该条流程信息吗？", function() {
+                    var url = $.common.isEmpty(id) ? table.options.suspendProcessInstanceUrl : table.options.suspendProcessInstanceUrl.replace("{id}", id);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        $.operate.get(url);
+                    } else {
+                        var data = { "id": id };
                         $.operate.submit(url, "post", "json", data);
                     }
                 });

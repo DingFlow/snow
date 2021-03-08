@@ -16,6 +16,7 @@ import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
+import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.common.enums.FlowStatusEnum;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
@@ -44,12 +45,14 @@ import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.impl.RepositoryServiceImpl;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.*;
+import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Attachment;
 import org.flowable.engine.task.Comment;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.history.HistoricIdentityLink;
 import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -362,11 +365,30 @@ public class FlowableServiceImpl implements FlowableService {
             runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
             paramMap.put(CompleteTaskDTO.IS_START,completeTaskDTO.getIsStart());
         }
-
-
-        //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
-        taskService.claim(task.getId(),completeTaskDTO.getUserId());
-        taskService.complete(task.getId(),paramMap,true);
+        // owner不为空说明可能存在委托任务
+        if (!StringUtils.isEmpty(task.getOwner())) {
+            DelegationState delegationState = task.getDelegationState();
+            switch (delegationState) {
+                //委派中
+                case PENDING:
+                    // 被委派人处理完成任务
+                    taskService.resolveTask(task.getId(),paramMap);
+                    break;
+                //委派任务已处理
+               /* case RESOLVED:
+                    System.out.println("委托任务已经完成");
+                    break;*/
+                default:
+                    //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+                    taskService.claim(task.getId(),completeTaskDTO.getUserId());
+                    taskService.complete(task.getId(),paramMap,true);
+                    break;
+            }
+        } else {
+            //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+            taskService.claim(task.getId(),completeTaskDTO.getUserId());
+            taskService.complete(task.getId(),paramMap,true);
+        }
     }
 
 
@@ -641,7 +663,7 @@ public class FlowableServiceImpl implements FlowableService {
      * 构建查询条件
      * @param processInstanceDTO
      */
-    public HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
+    private HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
         if(!StringUtils.isEmpty(processInstanceDTO.getBusinessKey())){
             historicProcessInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey());
@@ -676,7 +698,7 @@ public class FlowableServiceImpl implements FlowableService {
      * 赋值ProcessInstanceVOs
      * @param processInstanceVOS
      */
-    public void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
+    private void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
         processInstanceVOS.parallelStream().forEach(t->{
 
             Map<String, Object> processVariables = t.getProcessVariables();
@@ -699,6 +721,19 @@ public class FlowableServiceImpl implements FlowableService {
             String startUserId = t.getStartUserId();
             SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
             t.setStartUserName(sysUser.getUserName());
+
+            //流程状态查询 ACT_RU_EXECUTION
+            List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(t.getId()).list();
+            if(CollectionUtils.isEmpty(list)){
+                t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+            }else {
+                Execution execution=list.get(0);
+                if(execution.isSuspended()){
+                    t.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
+                }else {
+                    t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+                }
+            }
         });
     }
 
@@ -766,8 +801,11 @@ public class FlowableServiceImpl implements FlowableService {
             AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
             historicTaskInstanceVO.setAppForm(appForm);
             historicTaskInstanceVO.setCompleteTime(t.getEndTime());
-            String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
-            historicTaskInstanceVO.setHandleTaskTime(spendTime);
+            //转办的时候会出现到历史记录里，但是任务还没完结？？？
+            if(null!=t.getEndTime()){
+                String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
+                historicTaskInstanceVO.setHandleTaskTime(spendTime);
+            }
             historicTaskInstanceVO.setTaskId(t.getId());
             historicTaskInstanceVO.setTaskName(t.getName());
             HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
@@ -928,9 +966,7 @@ public class FlowableServiceImpl implements FlowableService {
         return taskVOList;
     }
 
-    public String getUserNameById(String id){
-       return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
-   }
+
 
     /**
      * 获取流程图像，已执行节点和流程线高亮显示
@@ -1041,6 +1077,16 @@ public class FlowableServiceImpl implements FlowableService {
 
     }
 
+    @Override
+    public void suspendOrActiveProcessInstance(String instanceId, Integer suspendState) {
+        if(suspendState==FlowInstanceEnum.ACTIVATE.getCode()){
+            runtimeService.activateProcessInstanceById(instanceId);
+            //TODO 保存流程记录
+        }else {
+            runtimeService.suspendProcessInstanceById(instanceId);
+        }
+
+    }
     /**
      * 获取高亮的线
      * @param bpmnModel
@@ -1118,4 +1164,10 @@ public class FlowableServiceImpl implements FlowableService {
         }
         return highFlows;
     }
+
+
+    private String getUserNameById(String id){
+        return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
+    }
+
 }

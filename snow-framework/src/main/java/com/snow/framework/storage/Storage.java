@@ -25,10 +25,24 @@ public interface Storage {
 
     Stream<Path> loadAll();
 
+    /**
+     * 获取文件路径
+     * @param keyName
+     * @return
+     */
     Path load(String keyName);
 
+    /**
+     * 下载文件
+     * @param keyName
+     * @return
+     */
     Resource loadAsResource(String keyName);
 
+    /**
+     * 删除
+     * @param keyName
+     */
     void delete(String keyName);
 
     String generateUrl(String keyName);
