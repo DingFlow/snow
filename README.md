@@ -105,8 +105,8 @@ v1.2 2021-03-08
   开源离不开您的参与、支持与鼓励。开源不易，如果您觉得项目对您有帮助，请您动动小手star一下，也是对作者的莫大帮助与支持。
 
 ## 友情链接
-   博客：http://snowblog.shop.csj361.com
-   诺依：http://ruoyi.vip 
+   - 博客：http://snowblog.shop.csj361.com
+   - 诺依：http://ruoyi.vip 
    
 ## 最后，特别感谢诺依系统提供框架
     
