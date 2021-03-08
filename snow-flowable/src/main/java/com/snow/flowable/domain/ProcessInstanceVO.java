@@ -72,6 +72,9 @@ public class ProcessInstanceVO  implements Serializable {
      */
     private String startUserName;
 
+    /**
+     * 开始活动节点id
+     */
     private String startActivityId;
 
     /**
@@ -87,6 +90,9 @@ public class ProcessInstanceVO  implements Serializable {
      */
     private String superProcessInstanceId;
 
+    /**
+     * 租户id
+     */
     private String tenantId;
 
 
@@ -118,6 +124,11 @@ public class ProcessInstanceVO  implements Serializable {
     private Map<String, Object> processVariables;
 
     private String processDefinitionCategory;
+
+    /**
+     * 流程状态（1--激活，2--挂起）
+     */
+    private Integer processInstanceStatus;
 
     public static List<ProcessInstanceVO> warpList(List<HistoricProcessInstance> historicProcessInstanceList){
        return historicProcessInstanceList.stream().map(t->{

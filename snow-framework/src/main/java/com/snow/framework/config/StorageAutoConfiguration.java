@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author qimingjin
- * @Title: 初始化对象
+ * @Title: 文件上传配置类
  * @Description:
  * @date 2021/1/11 11:22
  */

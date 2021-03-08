@@ -16,6 +16,7 @@ import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
+import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.common.enums.FlowStatusEnum;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
@@ -44,6 +45,7 @@ import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.impl.RepositoryServiceImpl;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.*;
+import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Attachment;
 import org.flowable.engine.task.Comment;
@@ -660,7 +662,7 @@ public class FlowableServiceImpl implements FlowableService {
      * 构建查询条件
      * @param processInstanceDTO
      */
-    public HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
+    private HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
         if(!StringUtils.isEmpty(processInstanceDTO.getBusinessKey())){
             historicProcessInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey());
@@ -693,7 +695,7 @@ public class FlowableServiceImpl implements FlowableService {
      * 赋值ProcessInstanceVOs
      * @param processInstanceVOS
      */
-    public void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
+    private void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
         processInstanceVOS.parallelStream().forEach(t->{
 
             Map<String, Object> processVariables = t.getProcessVariables();
@@ -716,6 +718,19 @@ public class FlowableServiceImpl implements FlowableService {
             String startUserId = t.getStartUserId();
             SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
             t.setStartUserName(sysUser.getUserName());
+
+            //流程状态查询 ACT_RU_EXECUTION
+            List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(t.getId()).list();
+            if(CollectionUtils.isEmpty(list)){
+                t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+            }else {
+                Execution execution=list.get(0);
+                if(execution.isSuspended()){
+                    t.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
+                }else {
+                    t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+                }
+            }
         });
     }
     @Override
@@ -947,9 +962,7 @@ public class FlowableServiceImpl implements FlowableService {
         return taskVOList;
     }
 
-    public String getUserNameById(String id){
-       return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
-   }
+
 
     /**
      * 获取流程图像，已执行节点和流程线高亮显示
@@ -1060,6 +1073,16 @@ public class FlowableServiceImpl implements FlowableService {
 
     }
 
+    @Override
+    public void suspendOrActiveProcessInstance(String instanceId, Integer suspendState) {
+        if(suspendState==FlowInstanceEnum.ACTIVATE.getCode()){
+            runtimeService.activateProcessInstanceById(instanceId);
+            //TODO 保存流程记录
+        }else {
+            runtimeService.suspendProcessInstanceById(instanceId);
+        }
+
+    }
     /**
      * 获取高亮的线
      * @param bpmnModel
@@ -1137,4 +1160,10 @@ public class FlowableServiceImpl implements FlowableService {
         }
         return highFlows;
     }
+
+
+    private String getUserNameById(String id){
+        return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
+    }
+
 }

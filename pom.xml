@@ -30,6 +30,8 @@
         <commons.fileupload.version>1.3.3</commons.fileupload.version>
         <poi.version>3.17</poi.version>
         <velocity.version>1.7</velocity.version>
+        <flowable.version>6.4.1</flowable.version>
+        <dingtalk.version>dingtalk-SNAPSHOT</dingtalk.version>
     </properties>
 
     <!-- 依赖声明 -->

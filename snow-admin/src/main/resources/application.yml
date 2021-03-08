@@ -143,6 +143,7 @@ xss:
 swagger:
   # 是否开启swagger
   enabled: true
+
 flowable:
   #关闭定时任务JOB
   async-executor-activate: false
@@ -157,7 +158,7 @@ flowable:
 #上传文件的方式
 sys:
    file:
-     active: aliyun
+     active: local
 
 log4j:
    logger:

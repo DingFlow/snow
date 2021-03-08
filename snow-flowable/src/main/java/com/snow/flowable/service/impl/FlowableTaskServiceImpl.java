@@ -7,6 +7,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
+import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -283,11 +284,6 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
             log.error(e.getMessage(),e.getCause());
             throw new RuntimeException("转办任务失败，请联系管理员");
         }
-    }
-
-    @Override
-    public void suspendOrActiveApply(String instanceId, String suspendState) {
-
     }
 
 

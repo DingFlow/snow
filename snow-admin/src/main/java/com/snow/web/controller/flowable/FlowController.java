@@ -7,6 +7,7 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -217,6 +218,7 @@ public class FlowController extends BaseController {
         return AjaxResult.success();
     }
 
+
     /**
      * 选择用户
      */
@@ -227,4 +229,26 @@ public class FlowController extends BaseController {
         mmap.put("flag",flag);
         return prefix + "/selectUser";
     }
+
+
+    @PostMapping("/activeProcessInstance")
+    @RequiresPermissions("flow:process:activeProcessInstance")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult activeProcessInstance(String id)
+    {
+        flowableService.suspendOrActiveProcessInstance(id,FlowInstanceEnum.ACTIVATE.getCode());
+        return AjaxResult.success();
+    }
+
+    @PostMapping("/suspendProcessInstance")
+    @RequiresPermissions("flow:process:suspendProcessInstance")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult suspendProcessInstance(String id)
+    {
+        flowableService.suspendOrActiveProcessInstance(id,FlowInstanceEnum.SUSPEND.getCode());
+        return AjaxResult.success();
+    }
+
 }
