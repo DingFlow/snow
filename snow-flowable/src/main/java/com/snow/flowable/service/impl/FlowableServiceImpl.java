@@ -221,7 +221,9 @@ public class FlowableServiceImpl implements FlowableService {
 
 
         List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
-            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
+          //  ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).list().get(0);
+
             DeploymentVO deploymentVO = new DeploymentVO();
             BeanUtils.copyProperties(t, deploymentVO);
             deploymentVO.setEngineVersion(processDefinition.getVersion());
