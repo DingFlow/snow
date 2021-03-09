@@ -1,7 +1,6 @@
 package com.snow.flowable.domain;
 
 import com.snow.common.enums.WorkRecordStatus;
-import com.snow.flowable.enums.FlowFinishedStatusEnum;
 import lombok.Data;
 
 

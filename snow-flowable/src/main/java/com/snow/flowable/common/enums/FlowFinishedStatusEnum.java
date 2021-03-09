@@ -1,4 +1,4 @@
-package com.snow.flowable.enums;
+package com.snow.flowable.common.enums;
 
 /**
  * 用户状态

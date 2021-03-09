@@ -110,7 +110,7 @@ v1.2 2021-03-08
 
 ## 友情链接
    - 博客：http://snowblog.shop.csj361.com
-   - 诺依：http://ruoyi.vip 
+   - 若依：http://ruoyi.vip 
    
-## 最后，特别感谢诺依系统提供框架
+## 最后，特别感谢若依系统提供框架
     
