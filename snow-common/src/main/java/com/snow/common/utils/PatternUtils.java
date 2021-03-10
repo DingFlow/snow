@@ -1,5 +1,7 @@
 package com.snow.common.utils;
 
+import org.springframework.util.StringUtils;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -21,20 +23,20 @@ public class PatternUtils {
      * @return
      */
     public static String builderTemplateBody(Map<String,String> map, String templateBody){
-        // 正则匹配 ${xx}
-        Pattern regex = Pattern.compile("\\$\\{(.*?)\\}");
-
-        Matcher m = regex.matcher(templateBody);
-        StringBuffer sb = new StringBuffer();
-
+        String re = "(?<=\\$\\{).*?(?=\\})";
+        Pattern p = Pattern.compile(re);
+        Matcher m = p.matcher(templateBody);
+        String message = templateBody;
         while (m.find()) {
-            if(null==m)
+            String key = m.group();
+            if (StringUtils.isEmpty(key)) {
                 continue;
-            String group = m.group(1);
-            m.appendReplacement(sb, map.get(group));
+            }
+            //如果为空这取null标识
+            String value = Optional.ofNullable(map.get(key)).orElse("null");
+            //todo 可以记录下取到空值的异常情况
+            message = message.replaceAll("\\$\\{" + key + "\\}",  value);
         }
-        m.appendTail(sb);
-
-        return sb.toString();
+        return message;
     }
 }
