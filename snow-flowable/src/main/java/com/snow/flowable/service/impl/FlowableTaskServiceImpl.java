@@ -251,6 +251,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
         Task task=flowableService.getTaskProcessInstanceById(processInstanceId);
         completeTaskDTO.setTaskId(task.getId());
         completeTaskDTO.setIsStart(true);
+        completeTaskDTO.setIsPass(true);
         completeTaskDTO.setUserId(task.getAssignee());
         submitTask(completeTaskDTO);
     }

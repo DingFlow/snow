@@ -9,7 +9,9 @@ package com.snow.flowable.common.enums;
 public enum  FlowDefEnum {
     SNOW_OA_LEAVE("snow_oa_leave", "请假申请流程"),
 
-    PURCHASE_ORDER_PROCESS("purchase_order_process", "采购审批流程");
+    PURCHASE_ORDER_PROCESS("purchase_order_process", "采购审批流程"),
+
+    SNOW_OA_RESIGN_PROCESS("snow_oa_resign", "snow系统离职审批流程");
 
     private final String code;
     private final String info;
