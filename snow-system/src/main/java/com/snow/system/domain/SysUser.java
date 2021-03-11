@@ -10,6 +10,7 @@ import com.snow.common.annotation.Excel.ColumnType;
 import com.snow.common.annotation.Excel.Type;
 import com.snow.common.annotation.Excels;
 import com.snow.common.core.domain.BaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 用户对象 sys_user
@@ -132,7 +133,9 @@ public class SysUser extends BaseEntity
     /**
      * 入职时间，时间戳
      */
-    private Long hiredDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date hiredDate;
     /**
      * 组织邮箱
      */
@@ -446,11 +449,11 @@ public class SysUser extends BaseEntity
         this.position = position;
     }
 
-    public Long getHiredDate() {
+    public Date getHiredDate() {
         return hiredDate;
     }
 
-    public void setHiredDate(Long hiredDate) {
+    public void setHiredDate(Date hiredDate) {
         this.hiredDate = hiredDate;
     }
 

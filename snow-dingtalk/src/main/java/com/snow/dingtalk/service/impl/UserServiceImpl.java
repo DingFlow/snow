@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +38,11 @@ public class UserServiceImpl  extends BaseService implements UserService {
 
     private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
 
+    /**
+     * 添加钉钉用户
+     * @param sysUser
+     * @return
+     */
     @Override
     @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
     public OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser) {
@@ -71,7 +77,11 @@ public class UserServiceImpl  extends BaseService implements UserService {
 
         //req.setExtension("{\"爱好\":\"旅游\",\"年龄\":\"24\"}");
         req.setSeniorMode(false);
-        req.setHiredDate(sysUser.getHiredDate());
+        if(StringUtils.isNotNull(sysUser.getHiredDate())){
+            Date hiredDate= sysUser.getHiredDate();
+            req.setHiredDate(hiredDate.getTime());
+        }
+
         OapiV2UserCreateResponse response = null;
         try {
             response = client.execute(req, getDingTalkToken());
@@ -87,6 +97,11 @@ public class UserServiceImpl  extends BaseService implements UserService {
         }
     }
 
+
+    /**
+     * 删除钉钉用户
+     * @param ids
+     */
     @Override
     @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
     public void deleteUser(String ids) {
