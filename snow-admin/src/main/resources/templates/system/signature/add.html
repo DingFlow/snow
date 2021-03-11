@@ -18,7 +18,7 @@
                 <label class="col-sm-3 control-label">离职类型：</label>
                 <div class="col-sm-8">
                     <select name="resignType" class="form-control m-b" th:with="type=${@dict.getType('sys_resign_type')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{resignType}"></option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                     </select>
                 </div>
             </div>
@@ -53,14 +53,6 @@
                         <input name="resignTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">离职类型：</label>
-                <div class="col-sm-8">
-                    <select name="resignType" class="form-control m-b" th:with="type=${@dict.getType('sys_resign_type')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                    </select>
                 </div>
             </div>
             <div class="form-group">    

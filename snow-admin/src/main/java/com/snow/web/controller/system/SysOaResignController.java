@@ -1,37 +1,33 @@
 package com.snow.web.controller.system;
 
-import java.util.List;
-
+import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.SequenceContants;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.resign.SysOaResignTask;
+import com.snow.common.core.controller.BaseController;
+import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
+import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.domain.resign.SysOaResignForm;
+import com.snow.flowable.domain.resign.SysOaResignTask;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysOaResign;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysOaResignService;
 import com.snow.system.service.ISysSequenceService;
+import com.snow.system.service.impl.SysUserServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import org.springframework.stereotype.Controller;
-import com.snow.system.domain.SysOaResign;
-import com.snow.system.service.ISysOaResignService;
-import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 离职申请单Controller
@@ -56,6 +52,9 @@ public class SysOaResignController extends BaseController
 
     @Autowired
     private FlowableTaskService flowableTaskService;
+
+    @Autowired
+    private SysUserServiceImpl sysUserService;
 
     @RequiresPermissions("system:resign:view")
     @GetMapping()
@@ -186,6 +185,10 @@ public class SysOaResignController extends BaseController
     public String detail(@PathVariable("id") Integer id, ModelMap mmap)
     {
         SysOaResign sysOaResign = sysOaResignService.selectSysOaResignById(id);
+        SysUser sysUser = sysUserService.selectUserById(Long.parseLong(sysOaResign.getApplyPerson()));
+        sysOaResign.setApplyPerson(sysUser.getUserName());
+        SysUser transitionPerson = sysUserService.selectUserById(Long.parseLong(sysOaResign.getTransitionPerson()));
+        sysOaResign.setTransitionPerson(transitionPerson.getUserName());
         mmap.put("sysOaResign", sysOaResign);
         return prefix + "/detail";
     }
@@ -205,6 +208,9 @@ public class SysOaResignController extends BaseController
         sysOaResign.setUpdateBy(String.valueOf(sysUser.getUserId()));
         BeanUtils.copyProperties(sysOaResignTask,sysOaResign);
         int i = sysOaResignService.updateSysOaResign(sysOaResign);
+        sysOaResignTask.setUserId(String.valueOf(sysUser.getUserId()));
+        sysOaResignTask.setIsUpdateBus(true);
+        sysOaResignTask.setIsStart(sysOaResignTask.getIsPass());
         flowableTaskService.submitTask(sysOaResignTask);
         return toAjax(i);
     }

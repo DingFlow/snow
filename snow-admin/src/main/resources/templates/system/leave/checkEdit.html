@@ -9,16 +9,12 @@
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
 		<form class="form-horizontal m" id="signupForm" th:object="${appFrom}">
-			<div class="row">
-				<div class="col-sm-offset-0 col-sm-10">
-					<button type="button" class="btn btn-sm btn-primary" onclick="submitCheckHandler(true)"><i class="fa fa-check"></i>重新申请</button>&nbsp;
-					<button type="button" class="btn btn-sm btn-danger" onclick="submitCheckHandler(false)"><i class="fa fa-remove"></i>删除</button>&nbsp;
-				</div>
-			</div>
-			<br/>
 			<h4 class="form-header h4">请假信息</h4>
 			<input name="id" th:field="*{id}" type="hidden">
+			<input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="${processInstanceId}"/>
 			<input class="form-control" type="hidden"  name="taskId" th:value="${taskId}"/>
+			<div class="form-control" type="hidden"  name="applyPerson" th:field="*{applyPerson}">
+			<div class="form-control" type="hidden"  name="fileUrl" th:field="*{fileUrl}">
 			<div class="form-group">
 				<label class="col-sm-3 control-label">请假单号：</label>
 				<div class="col-sm-8">
@@ -56,31 +52,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">附件：</label>
-				<div class="col-sm-8">
-					<input type="hidden" name="fileUrl" th:field="*{fileUrl}">
-					<div class="file-loading">
-						<input class="form-control file-upload" id="fileUrl" name="file" type="file">
-					</div>
-				</div>
-			</div>
-			<h4 class="form-header h4">填写信息</h4>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">重新申请说明：</label>
-				<div class="col-sm-8">
-					<textarea name="comment" class="form-control" required></textarea>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">审批附件：</label>
-				<div class="col-sm-8">
-
-					<div class="file-loading">
-						<input class="form-control file-upload" id="suggestionFileUrl" name="file" type="file">
-					</div>
-				</div>
-			</div>
+			<th:block th:include="include :: approvalpage" />
 		</form>
 
     </div>
@@ -90,6 +62,12 @@
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
     <script th:inline="javascript">
         var files=new Array();
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            console.log(processInstanceId);
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
 
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
@@ -137,7 +115,6 @@
                         data.push({"name": "files["+i+"].url", "value":files[i].url});
                     }
                 }
-                data.push({"name": "isPass", "value": status});
                 console.log(data);
                 $.operate.saveTab("/system/leave/reStartTask", data);
             }

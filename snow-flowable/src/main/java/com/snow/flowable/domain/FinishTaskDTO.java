@@ -42,6 +42,11 @@ public class FinishTaskDTO implements Serializable {
      */
     private List<FileEntry> files;
 
+    /**
+     * 是否修改业务参数
+     */
+    private Boolean isUpdateBus=false;
+
 
 
     public final static String IS_PASS="isPass";

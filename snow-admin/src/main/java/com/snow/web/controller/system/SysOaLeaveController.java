@@ -9,6 +9,7 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.SequenceContants;
 import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.utils.StringUtils;
@@ -225,34 +226,7 @@ public class SysOaLeaveController extends BaseController
         return toAjax(sysOaLeaveService.deleteSysOaLeaveByIds(ids));
     }
 
-    @Log(title = "主管完成审批", businessType = BusinessType.OTHER)
-    @PostMapping("/managerFinishTask")
-    @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
-    public AjaxResult managerFinishTask(LeaveFinishTaskDTO finishTaskDTO)
 
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        finishTaskDTO.setHr("2");
-        flowableTaskService.submitTask(finishTaskDTO);
-        return AjaxResult.success();
-    }
-
-    /**
-     * hr完成审批
-     */
-    @Log(title = "hr完成审批", businessType = BusinessType.OTHER)
-    @PostMapping("/hrFinishTask")
-    @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
-    public AjaxResult hrFinishTask(LeaveFinishTaskDTO finishTaskDTO)
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        flowableTaskService.submitTask(finishTaskDTO);
-        return AjaxResult.success();
-    }
 
     /**
      * 重新发起申请
@@ -261,6 +235,7 @@ public class SysOaLeaveController extends BaseController
     @PostMapping("/reStartTask")
     @ResponseBody
     @Transactional
+    @RepeatSubmit
     public AjaxResult reStartTask(LeaveRestartTaskDTO finishTaskDTO)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
@@ -269,6 +244,7 @@ public class SysOaLeaveController extends BaseController
         sysOaLeave.setUpdateBy(sysUser.getUserName());
         int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
         finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        finishTaskDTO.setIsUpdateBus(true);
         flowableTaskService.submitTask(finishTaskDTO);
         return AjaxResult.success();
     }

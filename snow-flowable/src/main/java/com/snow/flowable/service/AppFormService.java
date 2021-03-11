@@ -17,4 +17,21 @@ public interface AppFormService {
      * @return
      */
     <A extends AppForm> A getAppFrom(String processInstanceId);
+
+    /**
+     * 根据执行id获取表单数据
+     * @param executionId
+     * @param <A>
+     * @return
+     */
+    <A extends AppForm> A getAppFromByExecutionId(String executionId);
+
+
+    /**
+     * 根据任务id获取表单数据
+     * @param taskId
+     * @param <A>
+     * @return
+     */
+    <A extends AppForm> A getAppFromByTaskId(String taskId);
 }

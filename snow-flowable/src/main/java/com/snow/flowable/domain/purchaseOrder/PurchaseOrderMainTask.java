@@ -1,8 +1,7 @@
 package com.snow.flowable.domain.purchaseOrder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.snow.common.core.domain.BaseEntity;
-import com.snow.flowable.domain.FileEntry;
+import com.snow.flowable.domain.FinishTaskDTO;
 import com.snow.system.domain.PurchaseOrderItem;
 import lombok.Data;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @date 2021/1/13 13:47
  */
 @Data
-public class PurchaseOrderMainTask  extends BaseEntity implements Serializable {
+public class PurchaseOrderMainTask  extends FinishTaskDTO implements Serializable {
     /** id */
     private Integer id;
 
@@ -54,31 +53,10 @@ public class PurchaseOrderMainTask  extends BaseEntity implements Serializable {
 
     private Long isDelete;
 
+    /**
+     * 采购单子表
+     */
     private List<PurchaseOrderItem> purchaseOrderItemList;
 
-    /**
-     * 任务ID
-     */
-    private String taskId;
-    /**
-     * 完成任务人
-     */
-    private String userId;
-
-
-    /**
-     * 是否通过
-     */
-    private Boolean isStart;
-
-    /**
-     * 审批意见
-     */
-    private String comment;
-    /**
-     * 审批节点的相关文件（只在审批节点展示）
-     */
-
-    private List<FileEntry> files;
 
 }

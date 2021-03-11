@@ -47,9 +47,9 @@ public interface FlowableTaskService {
     /**
      * 完成任务
      * @param finishTaskDTO
-     * @param <T>
+     * @param
      */
-    <T extends FinishTaskDTO> void submitTask(T finishTaskDTO);
+    void submitTask(FinishTaskDTO finishTaskDTO);
 
     /**
      * 自动完成任务

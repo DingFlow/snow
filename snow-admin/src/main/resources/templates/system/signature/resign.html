@@ -70,6 +70,7 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:resign:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:resign:remove')}]];
+        var detailFlag = [[${@permission.hasPermi('system:resign:detail')}]];
         var resignTypeDatas = [[${@dict.getType('sys_resign_type')}]];
         var processStatusDatas = [[${@dict.getType('process_status')}]];
         var prefix = ctx + "system/resign";
@@ -81,6 +82,7 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
+                detailUrl: prefix+"/detail/{id}",
                 modalName: "离职申请单",
                 columns: [{
                     checkbox: true
@@ -129,10 +131,11 @@
                         /*if(row.processStatus!=0) {
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="printPur(\'' + row.id + '\')"><i class="fa fa-print"></i>打印</a> ');
                         }*/
+                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
 
                         if(row.processStatus==0) {
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起审批</a> ');
-                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
                         }
 
 

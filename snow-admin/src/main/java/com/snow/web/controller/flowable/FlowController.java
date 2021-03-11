@@ -69,11 +69,11 @@ public class FlowController extends BaseController {
     @RequiresPermissions("system:flow:finishTask")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult finishTask(CompleteTaskDTO completeTaskDTO)
+    public AjaxResult finishTask(FinishTaskDTO finishTaskDTO)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        flowableService.completeTask(completeTaskDTO);
+        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        flowableTaskService.submitTask(finishTaskDTO);
         return AjaxResult.success();
     }
 
