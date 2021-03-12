@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.flowable.domain.FinishTaskDTO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,9 @@ import java.util.Date;
  * @create: 2021-03-10 21:26
  **/
 @Data
-public class SysOaResignTask extends FinishTaskDTO {
+public class SysOaResignTask extends FinishTaskDTO implements Serializable {
+
+    private static final long serialVersionUID = 7481479521011924410L;
     /** id */
     private Integer id;
 
@@ -50,6 +53,11 @@ public class SysOaResignTask extends FinishTaskDTO {
 
     /** 附件 */
     private String fileUrl;
+
+    /** 离职申请人 */
+    private String applyPersonName;
+
+    private String transitionPersonName;
 
     /** 创建者 */
     private String createBy;

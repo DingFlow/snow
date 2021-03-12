@@ -15,6 +15,9 @@ import java.util.Date;
  **/
 @Data
 public class ModelVO implements Serializable {
+
+   private static final long serialVersionUID = 297278952315623267L;
+
    private String id;
 
    private String name;

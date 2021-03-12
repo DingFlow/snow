@@ -38,8 +38,14 @@ public class SysOaResign extends BaseEntity
     private String resignPlaceGo;
 
     /** 交接人 */
-    @Excel(name = "交接人")
+
     private String transitionPerson;
+
+    /**
+     * 交接人名字
+     */
+    @Excel(name = "交接人")
+    private String transitionPersonName;
 
     /** 离职时间 */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -57,6 +63,8 @@ public class SysOaResign extends BaseEntity
     /** 离职申请人 */
     private String applyPerson;
 
+    /** 离职申请人 */
+    private String applyPersonName;
     /** 删除标识（0--正常，1--删除） */
     private Integer isDelete;
 

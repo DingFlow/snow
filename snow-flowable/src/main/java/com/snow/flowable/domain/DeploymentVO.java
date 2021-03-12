@@ -14,6 +14,8 @@ import java.util.Date;
  **/
 @Data
 public class DeploymentVO implements Serializable {
+   private static final long serialVersionUID = 4408144744139924888L;
+
    private String id;
    /**
     * 发布名称

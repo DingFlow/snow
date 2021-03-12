@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
 
 
+    private static final long serialVersionUID = 5264809103731057917L;
     /**
      * 流程执行ID
      */

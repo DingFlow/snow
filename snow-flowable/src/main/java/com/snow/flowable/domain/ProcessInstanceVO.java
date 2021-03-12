@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ProcessInstanceVO  implements Serializable {
 
+    private static final long serialVersionUID = -4961245060557421514L;
     private String id;
     /**
      * 流程定义ID

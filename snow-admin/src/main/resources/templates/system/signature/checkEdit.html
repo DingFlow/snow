@@ -17,7 +17,7 @@
 		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.resignNo}"/>
 		<input name="id" th:value="${appFrom.id}" type="hidden">
 	    <br/>
-		<h2 class="form-header h2" >离职申请信息</h2>
+		<h2 class="form-header h2" >离职审批信息</h2>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">离职单号：</label>
 			<div class="col-sm-8">
@@ -52,8 +52,15 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label">交接人：</label>
-			<div class="col-sm-8">
+			<!--<div class="col-sm-8">
 				<input name="transitionPerson" th:field="*{transitionPerson}" class="form-control" type="text">
+			</div>-->
+			<div class="col-sm-8">
+				<div class="input-group">
+					<input class="form-control" type="hidden" name="transitionPerson"  id="transitionPerson" th:field="*{transitionPerson}">
+					<input class="form-control" type="text" name="transitionPersonName" th:field="*{transitionPersonName}" onclick="selectUserInfo()" id="transitionPersonName" readonly="true">
+					<span class="input-group-addon"><i class="fa fa-search"></i></span>
+				</div>
 			</div>
 		</div>
 		<div class="form-group">
@@ -122,9 +129,23 @@
                         data.push({"name": "files["+i+"].url", "value":files[i].url});
                     }
 				}
-                console.log(data);
                 $.operate.saveTab("/system/resign/restart", data);
             }
+        }
+
+        /*选择用户*/
+        function selectUserInfo() {
+            var url = "/system/resign/selectUser";
+            $.modal.open("选择用户",url,"","",doSubmit);
+        }
+
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+            var iframeWin = layero.find('iframe')[0];
+            iframeWin.contentWindow.submitHandler(index, layero);
+            $("#transitionPerson").val(body.find('#id').val());
+            $("#transitionPersonName").val(body.find('#userName').val());
+            layer.close(index);
         }
     </script>
 </body>

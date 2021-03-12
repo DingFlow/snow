@@ -21,9 +21,10 @@ public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements
     @Autowired
     private FlowableService flowableService;
 
-    private ThreadLocal<T> threadLocal=new ThreadLocal();
+    private ThreadLocal<T> threadLocal = new ThreadLocal();
 
-    private ThreadLocal<DelegateTask> delegateTaskThreadLocal=new ThreadLocal<>();
+    private ThreadLocal<DelegateTask> delegateTaskThreadLocal = new ThreadLocal<>();
+
     @Override
     public void notify(DelegateTask delegateTask) {
         try {
@@ -36,6 +37,7 @@ public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements
     }
 
     protected abstract void processTask();
+
     /**
      * 设置流程节点的变量
      *
@@ -55,41 +57,46 @@ public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements
     protected void setVariableLocal(String key, Object value) {
         getDelegateTask().setVariableLocal(key, value);
     }
+
     /**
      * 根据key获取节点本地变量
+     *
      * @param key
      * @param <V>
      * @return
      */
-    protected <V> V  getVariableLocal(String key){
-       return (V)getDelegateTask().getVariableLocal(key);
+    protected <V> V getVariableLocal(String key) {
+        return (V) getDelegateTask().getVariableLocal(key);
     }
 
     /**
      * 获取流程变量
+     *
      * @param key
      * @param <V>
      * @return
      */
-    protected <V> V  getVariable(String key){
-        return (V)getDelegateTask().getVariable(key);
+    protected <V> V getVariable(String key) {
+        return (V) getDelegateTask().getVariable(key);
     }
 
     protected <V> V getVariable(String key, Class<V> varClass) {
         return getDelegateTask().getVariable(key, varClass);
     }
 
-    protected DelegateTask getDelegateTask(){
-       return delegateTaskThreadLocal.get();
+    protected DelegateTask getDelegateTask() {
+        return delegateTaskThreadLocal.get();
     }
 
     /**
      * 获取审批结果
+     *
      * @return
      */
-    protected Boolean getApprovalResult(){
+    protected Boolean getApprovalResult() {
         return getVariable(FlowConstants.IS_PASS);
     }
+
     /**
      * 流程实例ID
      */
@@ -107,12 +114,14 @@ public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements
 
     /**
      * 获取流程发起人
+     *
      * @return
      */
     protected String getStartUserId() {
         ProcessInstance processInstance = flowableService.getProcessInstanceById(getProcessInstanceId());
         return processInstance.getStartUserId();
     }
+
     /**
      * 获取节点名称
      */

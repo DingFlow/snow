@@ -1,12 +1,9 @@
 package com.snow.flowable.domain;
 
 import lombok.Data;
-import org.flowable.identitylink.api.IdentityLinkInfo;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author qimingjin
@@ -16,44 +13,45 @@ import java.util.Map;
  */
 @Data
 public class Task implements Serializable {
-   private String id;
+    private static final long serialVersionUID = -1281053776739314567L;
 
-    String name;
+    private String id;
 
-    String description;
+    private String name;
 
-    int priority;
+    private String description;
 
-    String owner;
+    private int priority;
 
-    String assignee;
+    private String owner;
 
-    String processInstanceId;
+    private String assignee;
 
-    String executionId;
+    private String processInstanceId;
 
-    String taskDefinitionId;
+    private String executionId;
 
-    String processDefinitionId;
+    private String taskDefinitionId;
 
-    String scopeId;
+    private String processDefinitionId;
 
-
-
-    Date createTime;
-
-    String taskDefinitionKey;
-
-    Date dueDate;
-
-    String category;
-
-    String parentTaskId;
-
-    String tenantId;
-
-    String formKey;
+    private String scopeId;
 
 
-    Date claimTime;
+    private Date createTime;
+
+    private String taskDefinitionKey;
+
+    private Date dueDate;
+
+    private String category;
+
+    private String parentTaskId;
+
+    private String tenantId;
+
+    private String formKey;
+
+
+    private Date claimTime;
 }

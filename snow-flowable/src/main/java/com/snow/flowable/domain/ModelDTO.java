@@ -12,7 +12,10 @@ import java.io.Serializable;
  **/
 @Data
 public class ModelDTO  extends FlowBaseDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+
+    private static final long serialVersionUID = 4595121192334027366L;
+
     protected String id;
 
     protected String category;

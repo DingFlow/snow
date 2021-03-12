@@ -15,7 +15,8 @@ import java.util.Date;
  */
 @Data
 public class HistoricTaskInstanceDTO  extends FlowBaseDTO implements Serializable {
- 
+
+    private static final long serialVersionUID = 4563401089865990999L;
     /**
      * 用户ID
      */

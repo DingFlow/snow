@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 public class FinishTaskDTO implements Serializable {
 
+    private static final long serialVersionUID = -7366987554013643970L;
     /**
      * 任务ID
      */

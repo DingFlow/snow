@@ -14,6 +14,8 @@ import java.util.List;
 @Data
 public class FlowRemoteVO<T> implements Serializable {
 
+   private static final long serialVersionUID = 9031360117101499782L;
+
    private Integer size;
 
    private long total;

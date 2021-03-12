@@ -9,8 +9,12 @@ import java.util.List;
 
 @Data
 public class FileGroup implements Serializable {
+
+    private static final long serialVersionUID = -8173829907939143655L;
+
     @NotEmpty
     private final String category;
+
     @NotNull
     private final List<FileEntry> files;
 }

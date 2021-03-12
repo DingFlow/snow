@@ -14,6 +14,8 @@ import java.util.Map;
  */
 @Data
 public class CompleteTaskDTO implements Serializable {
+
+    private static final long serialVersionUID = -4443825862466752L;
     /**
      * 任务ID
      */

@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Data
 public class PurchaseOrderMainTask  extends FinishTaskDTO implements Serializable {
+    private static final long serialVersionUID = 2308485781202879969L;
     /** id */
     private Integer id;
 

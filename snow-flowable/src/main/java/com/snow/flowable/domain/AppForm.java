@@ -31,17 +31,6 @@ public abstract class AppForm implements Serializable {
 
 
     /**
-     * 业务数据json
-     */
-    @Deprecated
-    private String busVarJson;
-    /**
-     * 当前类的包名称
-     */
-    @Deprecated
-    private String classPackName;
-
-    /**
      * 业务参数URL
      */
     private String busVarUrl;

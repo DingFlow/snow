@@ -37,7 +37,7 @@ public class CustomProcessDiagramCanvas extends DefaultProcessDiagramCanvas {
     }
 
     public CustomProcessDiagramCanvas(int width, int height, int minX, int minY, String imageType,
-            String activityFontName, String labelFontName, String annotationFontName, ClassLoader customClassLoader) {
+                                      String activityFontName, String labelFontName, String annotationFontName, ClassLoader customClassLoader) {
         super(width, height, minX, minY, imageType, activityFontName, labelFontName, annotationFontName,
                 customClassLoader);
     }
@@ -59,14 +59,14 @@ public class CustomProcessDiagramCanvas extends DefaultProcessDiagramCanvas {
     }
 
     public void drawSequenceflow(int[] xPoints, int[] yPoints, boolean conditional, boolean isDefault,
-            boolean highLighted, double scaleFactor, Color color) {
+                                 boolean highLighted, double scaleFactor, Color color) {
         drawConnection(xPoints, yPoints, conditional, isDefault, "sequenceFlow", AssociationDirection.ONE, highLighted,
                 scaleFactor, color);
     }
 
     public void drawConnection(int[] xPoints, int[] yPoints, boolean conditional, boolean isDefault,
-            String connectionType, AssociationDirection associationDirection, boolean highLighted, double scaleFactor,
-            Color color) {
+                               String connectionType, AssociationDirection associationDirection, boolean highLighted, double scaleFactor,
+                               Color color) {
 
         Paint originalPaint = g.getPaint();
         Stroke originalStroke = g.getStroke();
@@ -190,7 +190,7 @@ public class CustomProcessDiagramCanvas extends DefaultProcessDiagramCanvas {
         LABEL_FONT = new Font(labelFontName, Font.ITALIC, 10);
         ANNOTATION_FONT = new Font(annotationFontName, Font.PLAIN, FONT_SIZE);
         //优化加载速度
-        if(flag) {
+        if (flag) {
             return;
         }
         try {
@@ -235,10 +235,10 @@ public class CustomProcessDiagramCanvas extends DefaultProcessDiagramCanvas {
           MESSAGE_CATCH_IMAGE = ImageIO.read(new FileInputStream(baseUrl+"message.png"));
           SIGNAL_THROW_IMAGE = ImageIO.read(new FileInputStream(baseUrl+"signal-throw.png"));
           SIGNAL_CATCH_IMAGE = ImageIO.read(new FileInputStream(baseUrl+"signal.png"));*/
-          flag = true;
+            flag = true;
         } catch (IOException e) {
-          flag = false;
-          LOGGER.warn("Could not load image for process diagram creation: {}", e.getMessage());
+            flag = false;
+            LOGGER.warn("Could not load image for process diagram creation: {}", e.getMessage());
         }
     }
 

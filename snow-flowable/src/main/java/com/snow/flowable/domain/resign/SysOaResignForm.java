@@ -17,6 +17,7 @@ import java.util.Date;
 @Data
 public class SysOaResignForm extends AppForm implements Serializable {
 
+    private static final long serialVersionUID = -9152455611987903487L;
     /** id */
     private Integer id;
 
@@ -35,6 +36,11 @@ public class SysOaResignForm extends AppForm implements Serializable {
     /** 交接人 */
     private String transitionPerson;
 
+    /**
+     * 交接人名字
+     */
+    private String transitionPersonName;
+
     /** 离职时间 */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date resignTime;
@@ -47,6 +53,10 @@ public class SysOaResignForm extends AppForm implements Serializable {
 
     /** 离职申请人 */
     private String applyPerson;
+    /**
+     * 离职人名字
+     */
+    private String applyPersonName;
 
     /** 删除标识（0--正常，1--删除） */
     private Integer isDelete;

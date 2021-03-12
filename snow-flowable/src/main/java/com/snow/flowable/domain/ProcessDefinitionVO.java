@@ -12,6 +12,9 @@ import java.io.Serializable;
  **/
 @Data
 public class ProcessDefinitionVO implements Serializable {
+
+    private static final long serialVersionUID = -1943425916705266957L;
+
     private String id;
 
     private String category;

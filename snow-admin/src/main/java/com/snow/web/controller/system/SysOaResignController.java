@@ -17,7 +17,6 @@ import com.snow.system.domain.SysOaResign;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaResignService;
 import com.snow.system.service.ISysSequenceService;
-import com.snow.system.service.impl.SysUserServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.BeanUtils;
@@ -53,8 +52,6 @@ public class SysOaResignController extends BaseController
     @Autowired
     private FlowableTaskService flowableTaskService;
 
-    @Autowired
-    private SysUserServiceImpl sysUserService;
 
     @RequiresPermissions("system:resign:view")
     @GetMapping()
@@ -158,7 +155,7 @@ public class SysOaResignController extends BaseController
         BeanUtils.copyProperties(newSysOaResign,sysOaResignForm);
         sysOaResignForm.setBusinessKey(sysOaResignForm.getResignNo());
         sysOaResignForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        sysOaResignForm.setBusVarUrl("/system/sysOaResign/detail");
+        sysOaResignForm.setBusVarUrl("/system/resign/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaResignForm);
         //推进任务节点
         flowableTaskService.automaticTask(processInstance.getProcessInstanceId());
@@ -185,10 +182,6 @@ public class SysOaResignController extends BaseController
     public String detail(@PathVariable("id") Integer id, ModelMap mmap)
     {
         SysOaResign sysOaResign = sysOaResignService.selectSysOaResignById(id);
-        SysUser sysUser = sysUserService.selectUserById(Long.parseLong(sysOaResign.getApplyPerson()));
-        sysOaResign.setApplyPerson(sysUser.getUserName());
-        SysUser transitionPerson = sysUserService.selectUserById(Long.parseLong(sysOaResign.getTransitionPerson()));
-        sysOaResign.setTransitionPerson(transitionPerson.getUserName());
         mmap.put("sysOaResign", sysOaResign);
         return prefix + "/detail";
     }
@@ -213,5 +206,14 @@ public class SysOaResignController extends BaseController
         sysOaResignTask.setIsStart(sysOaResignTask.getIsPass());
         flowableTaskService.submitTask(sysOaResignTask);
         return toAjax(i);
+    }
+
+    /**
+     * 选择用户
+     */
+    @GetMapping("/selectUser")
+    public String selectUser(ModelMap mmap)
+    {
+        return prefix + "/selectUser";
     }
 }

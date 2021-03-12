@@ -21,6 +21,9 @@ public class SysOaResignServiceImpl implements ISysOaResignService
     @Autowired
     private SysOaResignMapper sysOaResignMapper;
 
+    @Autowired
+    private SysUserServiceImpl sysUserService;
+
     /**
      * 查询离职申请单
      * 
@@ -30,7 +33,10 @@ public class SysOaResignServiceImpl implements ISysOaResignService
     @Override
     public SysOaResign selectSysOaResignById(Integer id)
     {
-        return sysOaResignMapper.selectSysOaResignById(id);
+        SysOaResign sysOaResign=sysOaResignMapper.selectSysOaResignById(id);
+        sysOaResign.setApplyPersonName(sysUserService.selectUserById(Long.parseLong(sysOaResign.getApplyPerson())).getUserName());
+        sysOaResign.setTransitionPersonName(sysUserService.selectUserById(Long.parseLong(sysOaResign.getTransitionPerson())).getUserName());
+        return sysOaResign;
     }
 
     /**
@@ -42,7 +48,13 @@ public class SysOaResignServiceImpl implements ISysOaResignService
     @Override
     public List<SysOaResign> selectSysOaResignList(SysOaResign sysOaResign)
     {
-        return sysOaResignMapper.selectSysOaResignList(sysOaResign);
+        List<SysOaResign> list=sysOaResignMapper.selectSysOaResignList(sysOaResign);
+
+        list.parallelStream().forEach(t->{
+            t.setApplyPersonName(sysUserService.selectUserById(Long.parseLong(t.getApplyPerson())).getUserName());
+            t.setTransitionPersonName(sysUserService.selectUserById(Long.parseLong(t.getTransitionPerson())).getUserName());
+        });
+        return list;
     }
 
     /**

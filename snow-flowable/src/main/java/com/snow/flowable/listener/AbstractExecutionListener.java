@@ -26,7 +26,7 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
 
     private ThreadLocal<T> appFormLocal = new ThreadLocal<>();
 
-    private ThreadLocal<DelegateExecution> delegateExecutionLocal=new ThreadLocal();
+    private ThreadLocal<DelegateExecution> delegateExecutionLocal = new ThreadLocal();
 
     @Autowired
     private SysUserServiceImpl sysUserService;
@@ -92,12 +92,14 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
     protected <V> V getVariable(String key) {
         return (V) getExecution().getVariable(key);
     }
+
     /**
      * 获取流程节点本地变量
      */
     protected <V> V getVariableLocal(String key) {
         return (V) getExecution().getVariableLocal(key);
     }
+
     /**
      * 流程对应的业务主键
      */
@@ -114,23 +116,25 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
 
     /**
      * 获取流程开始用户
+     *
      * @return
      */
     protected String getStartUserName() {
-        String startUserId =getVariable(FlowConstants.START_USER_ID);
-        log.info("获取到的开始人startUserId:{}",startUserId);
+        String startUserId = getVariable(FlowConstants.START_USER_ID);
+        log.info("获取到的开始人startUserId:{}", startUserId);
         return Optional.ofNullable(sysUserService.selectUserById(Long.parseLong(startUserId)).getUserName()).orElse("");
     }
 
     /**
      * 获取表单数据
+     *
      * @return
      */
-    public  T getAppForms(){
+    public T getAppForms() {
         T t = appFormLocal.get();
-        if(t==null){
+        if (t == null) {
             appFormLocal.set(appFormService.getAppFrom(getProcessInstanceId()));
-            t=appFormLocal.get();
+            t = appFormLocal.get();
         }
         return t;
     }

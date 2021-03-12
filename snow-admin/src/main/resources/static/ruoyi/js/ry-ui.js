@@ -609,6 +609,22 @@ var table = {
             	}
             	return $.common.uniqueFn(rows);
             },
+
+            // 查询表格首列值
+            selectNColumns: function(n) {
+                var rows = $.map($("#" + table.options.id).bootstrapTable('getSelections'), function (row) {
+                    return $.common.getItemField(row, table.options.columns[n].field);
+                });
+                if ($.common.isNotEmpty(table.options.rememberSelected) && table.options.rememberSelected) {
+                    var selectedRows = table.rememberSelecteds[table.options.id];
+                    if($.common.isNotEmpty(selectedRows)) {
+                        rows = $.map(selectedRows, function (row) {
+                            return $.common.getItemField(row, table.options.columns[n].field);
+                        });
+                    }
+                }
+                return $.common.uniqueFn(rows);
+            },
             // 回显数据字典
             selectDictLabel: function(datas, value) {
             	var actions = [];

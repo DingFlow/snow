@@ -21,13 +21,14 @@ import java.util.Map;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title:  flowable 全局配置类
  * @Description:
  * @date 2020/11/18 19:16
  */
 @Configuration
 @Slf4j
 public class FlowableConfig {
+
     @Autowired
     private ICustomProcessDiagramGenerator customProcessDiagramGenerator;
 

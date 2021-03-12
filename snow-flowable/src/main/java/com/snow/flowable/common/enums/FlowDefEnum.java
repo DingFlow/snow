@@ -7,6 +7,7 @@ package com.snow.flowable.common.enums;
  * @date 2020/12/7 15:54
  */
 public enum  FlowDefEnum {
+
     SNOW_OA_LEAVE("snow_oa_leave", "请假申请流程"),
 
     PURCHASE_ORDER_PROCESS("purchase_order_process", "采购审批流程"),

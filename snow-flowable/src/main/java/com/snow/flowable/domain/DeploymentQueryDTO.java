@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class DeploymentQueryDTO extends FlowBaseDTO implements Serializable {
 
+    private static final long serialVersionUID = -2575657191082354869L;
     /**
      * 发布key  模糊
      */
