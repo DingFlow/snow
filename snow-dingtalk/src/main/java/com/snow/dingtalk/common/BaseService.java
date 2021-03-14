@@ -6,18 +6,10 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.constant.Constants;
-import com.snow.common.enums.BusinessStatus;
 import com.snow.common.enums.BusinessType;
-import com.snow.common.enums.DingTalkSyncType;
-import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysDingtalkSyncLog;
 import com.snow.system.domain.SysOperLog;
-import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysOperLogService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import com.snow.system.service.impl.SysOperLogServiceImpl;
@@ -39,7 +31,6 @@ public class BaseService {
 
     private SysOperLogServiceImpl iSysOperLogService=SpringUtils.getBean("sysOperLogServiceImpl");
 
-    private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService=SpringUtils.getBean("sysDingtalkSyncLogServiceImpl");
     /**
      * 获取token
      * @return

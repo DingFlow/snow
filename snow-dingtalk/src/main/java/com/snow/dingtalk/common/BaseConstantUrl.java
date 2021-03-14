@@ -87,4 +87,19 @@ public class BaseConstantUrl {
      */
     public static final String ASYNCSEND_V2="https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2";
 
+
+    /**
+     * 创建公告
+     */
+    public static final String BLACKBOARD_CREATE="https://oapi.dingtalk.com/topapi/blackboard/create";
+
+    /**
+     * 更新公告
+     */
+    public static final String BLACKBOARD_UPDATE="https://oapi.dingtalk.com/topapi/blackboard/update";
+
+    /**
+     * 删除公告
+     */
+    public static final String BLACKBOARD_DELETE="https://oapi.dingtalk.com/topapi/blackboard/delete";
 }
