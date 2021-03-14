@@ -10,6 +10,7 @@
                 <label class="col-sm-3 control-label">父消息节点：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
+                        <input id="parentId" name="parentId" type="hidden" th:value="${sysNewsNode?.id}">
                         <input class="form-control" type="text" onclick="selectNodeTree()" id="treeName" readonly="true" th:value="${sysNewsNode?.newsNodeName}">
                         <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
@@ -63,7 +64,8 @@
 
         function doSubmit(index, layero){
             var body = layer.getChildFrame('body', index);
-               $("#treeId").val(body.find('#treeId').val());
+            console.log(body)
+               $("#parentId").val(body.find('#treeId').val());
                $("#treeName").val(body.find('#treeName').val());
                layer.close(index);
         }

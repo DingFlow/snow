@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Mailbox</title>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iCheck/custom.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <th:block th:include="include :: summernote-css" />
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div class="wrapper wrapper-content gray-bg">
+        <div class="row">
+            <th:block th:include="include :: emailNavPage" />
+            <div class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <!--<div class="pull-right tooltip-demo">
+                    <a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> 草稿</a>
+                    <a href="mailbox.html" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i> 删除</a>
+                </div>-->
+                <h2>
+                    Ding-Flow在线邮件
+                </h2>
+            </div>
+                <div class="mail-box">
+
+
+                <div class="mail-body">
+
+                    <form class="form-horizontal" method="get">
+                        <div class="form-group"><label class="col-sm-2 control-label">收件人:</label>
+
+                            <div class="col-sm-10">
+                                <input class="form-control" type="hidden" name="emailTo"  id="emailTo" required>
+                                <input type="text" class="form-control" onclick="selectUserInfo()" id="emailToName" name="emailToName" readonly="true">
+
+                            </div>
+                        </div>
+                        <div class="form-group"><label class="col-sm-2 control-label">主题:</label>
+
+                            <div class="col-sm-10"><input type="text" class="form-control" id="subject" name="subject"></div>
+                        </div>
+                        </form>
+
+                </div>
+
+                    <div class="mail-text h-200">
+                        <input id="emailContent" name="emailContent" type="hidden">
+                        <div class="summernote">
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="mail-body text-right tooltip-demo">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-primary" data-toggle="tooltip" onclick="sendEmail(0)" data-placement="top" title="Send"><i class="fa fa-reply"></i> 发送</a>
+                        <a href="javascript:void(0)" class="btn btn-warning btn-sm" data-toggle="tooltip" onclick="sendEmail(1)" data-placement="top" title="存为草稿"><i class="fa fa-file-text-o"></i> 草稿</a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+    <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+    <script th:src="@{/ajax/libs/iCheck/icheck.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ajax/libs/layui/layui.js}"></script>
+    <script th:src="@{/ruoyi/js/common.js}"></script>
+    <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+    <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+    <th:block th:include="include :: summernote-js" />
+    <script type="text/javascript">
+        var prefix ="../system/email";
+
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+            $.get(prefix+"/getSysOaEmailData", function(data) {
+                if (data.code == web_status.SUCCESS ) {
+                    var sysOaEmailData=data.data;
+                    console.log(JSON.stringify(sysOaEmailData))
+                    $("#readTotal").text(sysOaEmailData.readTotal);
+                    $("#draftsTotal").text(sysOaEmailData.draftsTotal);
+                }  else if (data.code == web_status.WARNING) {
+                    $.modal.alertWarning(data.msg)
+                }  else {
+                    $.modal.alertError(data.msg);
+                }
+            });
+        });
+        $('.summernote').summernote({
+            placeholder: '请输入公告内容',
+            height : 300,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            }
+        });
+        /*选择用户*/
+        function selectUserInfo() {
+            var url = "/system/resign/selectUser";
+            $.modal.open("选择用户",url,"","",doSubmit);
+        }
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+            var iframeWin = layero.find('iframe')[0];
+            iframeWin.contentWindow.submitHandler(index, layero);
+            $("#emailTo").val(body.find('#id').val());
+            var userName=body.find('#userName').val();
+            $("#emailToName").val(userName+"("+body.find('#email').val()+")");
+
+            layer.close(index);
+        }
+        // 上传文件
+        function sendFile(file, obj) {
+            var data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                type: "POST",
+                url: "common/upload",
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(result) {
+                    if (result.code == web_status.SUCCESS) {
+                        $(obj).summernote('editor.insertImage', result.url, result.fileName);
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                },
+                error: function(error) {
+                    $.modal.alertWarning("图片上传失败。");
+                }
+            });
+        }
+
+        function sendEmail(emailStatus) {
+            var emailLabel= $("input[name='emailLabel']:checked").val();
+
+            if($.common.isEmpty(emailLabel)){
+                $.modal.msgWarning("请选择邮件标签");
+                return false;
+            }
+
+            var emailTo=$("#emailTo").val();
+            if($.common.isEmpty(emailTo)){
+                $.modal.msgWarning("请输入收件人");
+                return false;
+            }
+            var subject=$("#subject").val();
+            if($.common.isEmpty(subject)){
+                $.modal.msgWarning("请输入邮件主题");
+                return false;
+            }
+            var sHTML = $('.summernote').summernote('code');
+            $("#emailContent").val(sHTML);
+            if($.common.isEmpty(sHTML)){
+                $.modal.msgWarning("请输入邮件内容");
+                return false;
+            }
+           $.operate.save(prefix + "/sendSysEmail",{
+               "emailLabel":emailLabel,
+               "emailTo": emailTo,
+               "emailSubject":subject,
+               "emailStatus":emailStatus,
+               "emailContent":$("#emailContent").val()
+           });
+
+        }
+    </script>
+</body>
+
+</html>

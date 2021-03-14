@@ -27,11 +27,11 @@ public class DemoDialogController
     /**
      * 弹层组件
      */
-    @GetMapping("/layer")
+   /* @GetMapping("/layer")
     public String layer()
     {
         return prefix + "/layer";
-    }
+    }*/
 
     /**
      * 表单
@@ -72,9 +72,19 @@ public class DemoDialogController
     /**
      * 表格回传父窗体
      */
-    @GetMapping("/parent")
+    @GetMapping("/layer")
+    public String layer1()
+    {
+        return  "/system/email/mail_compose";
+    }
+
+
+    /**
+     * 表格回传父窗体
+     */
+  /*  @GetMapping("/parent")
     public String parent()
     {
-        return prefix + "/table/parent";
-    }
+        return prefix + "system/email/mail_compose";
+    }*/
 }

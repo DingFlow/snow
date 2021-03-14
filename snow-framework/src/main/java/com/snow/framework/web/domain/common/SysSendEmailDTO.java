@@ -1,6 +1,5 @@
 package com.snow.framework.web.domain.common;
 
-import com.snow.common.enums.DingTalkMessageType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,38 +9,33 @@ import java.util.Set;
 
 /**
  * @program: snow
- * @description 发送信息实体
+ * @description
  * @author: 没用的阿吉
- * @create: 2021-03-01 16:03
+ * @create: 2021-03-12 19:25
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Builder
-public class SysSendMessageDTO implements Serializable {
+public class SysSendEmailDTO implements Serializable {
+    private static final long serialVersionUID = -3505555356014745742L;
 
-
-    private static final long serialVersionUID = 9148998626002082665L;
-    /**
-     * 模板code
-     */
     private String templateByCode;
-
-
     /**
      * 发送人
      */
     private String from;
-    /**
-     * 参数List
-     */
-    private Map<String,String> paramMap;
 
     /**
-     * 接收人
+     * 主题
      */
-    private String receiver;
+    private String subject;
+    /**
+     * 内容
+     */
+    private String content;
+
     /**
      * 接收人set集合
      */
@@ -63,14 +57,8 @@ public class SysSendMessageDTO implements Serializable {
 
 
     /**
-     * 是否发给所有人
+     * 参数List
      */
-    private Boolean toAllUser=false;
-
-
-    /**
-     * 消息类型
-     */
-    private DingTalkMessageType dingTalkMessageType;
+    private Map<String,String> paramMap;
 
 }

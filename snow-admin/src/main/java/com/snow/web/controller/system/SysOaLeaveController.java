@@ -4,7 +4,7 @@ import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
-import com.snow.common.constant.SequenceContants;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
@@ -135,7 +135,7 @@ public class SysOaLeaveController extends BaseController
             return AjaxResult.error("请假结束时间必须大于开始时间");
         }
         //生成请假单
-        String leaveNo = sequenceService.getNewSequenceNo(SequenceContants.OA_LEAVE_SEQUENCE);
+        String leaveNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_LEAVE_SEQUENCE);
         sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
         sysOaLeave.setLeaveNo(leaveNo);
         int i = sysOaLeaveService.insertSysOaLeave(sysOaLeave);

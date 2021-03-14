@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改邮件')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-email-edit" th:object="${sysOaEmail}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">邮件编号：</label>
+                <div class="col-sm-8">
+                    <input name="emailNo" th:field="*{emailNo}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">邮件主题：</label>
+                <div class="col-sm-8">
+                    <input name="emailSubject" th:field="*{emailSubject}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">邮件内容：</label>
+                <div class="col-sm-8">
+                    <textarea name="emailContent" class="form-control">[[*{emailContent}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">收件人：</label>
+                <div class="col-sm-8">
+                    <input name="emailTo" th:field="*{emailTo}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">发件人：</label>
+                <div class="col-sm-8">
+                    <input name="emailFrom" th:field="*{emailFrom}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">发送时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="sendTime" th:value="${#dates.format(sysOaEmail.sendTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">邮件状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_email_status')}">
+                        <input type="radio" th:id="${'emailStatus_' + dict.dictCode}" name="emailStatus" th:value="${dict.dictValue}" th:field="*{emailStatus}">
+                        <label th:for="${'emailStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">邮件标签：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_email_lable')}">
+                        <input type="radio" th:id="${'emailLabel_' + dict.dictCode}" name="emailLabel" th:value="${dict.dictValue}" th:field="*{emailLabel}">
+                        <label th:for="${'emailLabel_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/email";
+        $("#form-email-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-email-edit').serialize());
+            }
+        }
+
+        $("input[name='sendTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

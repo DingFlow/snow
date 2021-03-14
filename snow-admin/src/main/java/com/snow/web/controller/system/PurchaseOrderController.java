@@ -7,19 +7,14 @@ import java.util.List;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.snow.common.annotation.RepeatSubmit;
-import com.snow.common.constant.SequenceContants;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.poi.EasyExcelUtil;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.FinishTaskDTO;
-import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderMainTask;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
-import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
@@ -144,7 +139,7 @@ public class PurchaseOrderController extends BaseController
     @GetMapping("/add")
     public String add(ModelMap mmap)
     {
-        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceContants.OA_PURCHASE_SEQUENCE);
+        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_PURCHASE_SEQUENCE);
         mmap.put("orderNo", newSequenceNo);
         return prefix + "/add";
     }

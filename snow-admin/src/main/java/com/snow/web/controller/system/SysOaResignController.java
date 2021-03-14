@@ -2,7 +2,7 @@ package com.snow.web.controller.system;
 
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
-import com.snow.common.constant.SequenceContants;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
@@ -103,7 +103,7 @@ public class SysOaResignController extends BaseController
     @GetMapping("/add")
     public String add(ModelMap mmap)
     {
-        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceContants.OA_RESIGN_SEQUENCE);
+        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_RESIGN_SEQUENCE);
         mmap.put("resignNo", newSequenceNo);
         return prefix + "/add";
     }

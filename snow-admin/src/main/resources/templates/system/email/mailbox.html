@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>邮件列表</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iCheck/custom.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="#{/css/iCheck/custom.css}" rel="stylesheet">
+    <style type="text/css">
+        #bootstrap-table {border-left: 0px; border-right:0px}
+        #bootstrap-table th{border-left: 0px; border-right: 0px}
+        #bootstrap-table td{border-left: 0px; border-right: 0px}
+    </style>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div class="wrapper wrapper-content gray-bg">
+        <div class="row">
+            <th:block th:include="include :: emailNavPage" />
+            <div class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <form  class="pull-right mail-search select-list" id="formId">
+                    <div class="input-group">
+                        <input type="hidden" name="mailSearchType" th:value="${mailType}" id="mailType" >
+                        <input type="text" class="form-control input-sm" name="emailFrom"  placeholder="Search email">
+                        <div class="input-group-btn">
+                            <a onclick="$.table.search()" class="btn btn-sm btn-primary">
+                                Search
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <h2>
+                    Ding-Flow邮件列表
+                </h2>
+                <div class="mail-tools tooltip-demo m-t-md">
+                    <button th:if="${mailType eq  4}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="left" title="删除" onclick="markDelete()"><i class="fa fa-remove"></i></button>
+                    <button th:if="${mailType eq  6||mailType eq  3}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="标记为已读" onclick="markRead()"><i class="fa fa-eye"></i> </button>
+                    <button th:if="${mailType eq  6||mailType eq  7}" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="标记为重要邮件" onclick="remarkImportant()"><i class="fa fa-star"></i> </button>
+                    <button th:if="${mailType eq  6||mailType eq  3 ||mailType eq  1}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="移到垃圾箱" onclick="remarkTrash()"><i class="fa fa-trash-o"></i> </button>
+
+                </div>
+            </div>
+                <div class="mail-box">
+                <table  id="bootstrap-table" class="table table-hover table-mail table-no-borde">
+                </table>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+    <script th:src="@{/ajax/libs/iCheck/icheck.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ajax/libs/layui/layui.js}"></script>
+    <script th:src="@{/ruoyi/js/common.js}"></script>
+    <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+    <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js?v=20200727}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js?v=20200727}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js?v=20200727}"></script>
+    <!--<th:block th:include="include :: footer" />-->
+    <script>
+        var prefix =  "/system/email";
+        $(document).ready(function(){
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+
+            $.get(prefix+"/getSysOaEmailData", function(data) {
+                if (data.code == web_status.SUCCESS ) {
+                    var sysOaEmailData=data.data;
+                    $("#readTotal").text(sysOaEmailData.readTotal);
+                    $("#draftsTotal").text(sysOaEmailData.draftsTotal);
+                }  else if (data.code == web_status.WARNING) {
+                    $.modal.alertWarning(data.msg)
+                }  else {
+                    $.modal.alertError(data.msg);
+                }
+            });
+        });
+
+        var options = {
+            url: prefix + "/list",
+            rememberSelected: true,
+            modalName: "邮件",
+            showToggle:false,
+            showHeader:false,
+            showSearch:false,
+            showRefresh:false,
+            showColumns:false,
+            queryParams: queryParams,
+            striped:true,
+            height:'30px',
+            columns: [{
+                field: 'state',
+                checkbox: true,
+                formatter: function(value, row, index) {
+                   var isRead= row.isRead;
+                    if(isRead==0){
+                        return { disabled : false}
+                    }else {
+                        return { disabled : true}
+                    }
+                }
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'isRead',
+                    title: '是否已读',
+                    width: 120,
+                    align:'left',
+                    formatter: function(value, row, index) {
+                        if(value==0){
+                            return '<span class="label label-danger pull-right">未读</span>';
+                        }else {
+                            return '<span class="label label-info pull-right">已读</span>';
+                        }
+                    }
+                },
+
+                {
+                    field: 'emailSubject',
+                    title: '邮件主题',
+                    align:'center',
+                    formatter: function(value, row, index) {
+                        console.log(row.id)
+                        return '<a href="/system/email/mailDetail/'+row.id+'">'+value+'</a>';
+                    }
+                },
+                {
+                    field: 'sendTime',
+                    title: '发送时间',
+                    width: 220,
+                    align: 'right'
+                }
+                ]
+        };
+        $.table.init(options);
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            return search;
+        }
+        // 选中数据
+        function markRead(){
+            var arrays = $.table.selectColumns("id");
+            if($.common.isEmpty(arrays)){
+                $.modal.msgWarning("请至少选择一条记录");
+                return false;
+            }
+            $.operate.save(prefix + "/remarkRead",{
+                "ids":arrays.join()
+            });
+        }
+
+        function remarkImportant(){
+            var arrays = $.table.selectColumns("id");
+            if($.common.isEmpty(arrays)){
+                $.modal.msgWarning("请至少选择一条记录");
+                return false;
+            }
+            $.operate.save(prefix + "/remarkImportant",{
+                "ids":arrays.join()
+            });
+            //todo 保存成功后只刷新当前页面
+        }
+
+        function remarkTrash(){
+            var arrays = $.table.selectColumns("id");
+            if($.common.isEmpty(arrays)){
+                $.modal.msgWarning("请至少选择一条记录");
+                return false;
+            }
+            $.operate.save(prefix + "/remarkTrash",{
+                "ids":arrays.join()
+            });
+        }
+
+        function markDelete(){
+            var arrays = $.table.selectColumns("id");
+            if($.common.isEmpty(arrays)){
+                $.modal.msgWarning("请至少选择一条记录");
+                return false;
+            }
+            $.operate.save(prefix + "/markDelete",{
+                "ids":arrays.join()
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>

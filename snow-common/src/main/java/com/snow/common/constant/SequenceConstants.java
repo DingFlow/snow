@@ -6,7 +6,7 @@ package com.snow.common.constant;
  * @Description:
  * @date 2020/11/23 16:39
  */
-public class SequenceContants {
+public class SequenceConstants {
     /**
      *请假单
      */
@@ -22,5 +22,9 @@ public class SequenceContants {
      */
     public static final String OA_RESIGN_SEQUENCE="OA_LZ";
 
+    /**
+     * 邮件编码
+     */
+    public static final String OA_EMAIL_SEQUENCE="OA_YJ";
 
 }

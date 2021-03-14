@@ -63,12 +63,13 @@ public class SendMessageEventLister extends AbstractEventListener {
                 new HashSet<>(Arrays.asList(
                         FlowableEngineEventType.TASK_CREATED,
                         FlowableEngineEventType.PROCESS_STARTED,
-                        FlowableEngineEventType.PROCESS_COMPLETED,
-                        FlowableEngineEventType.TASK_OWNER_CHANGED
+                        FlowableEngineEventType.PROCESS_COMPLETED
+                       // FlowableEngineEventType.TASK_OWNER_CHANGED
                 )),
                 new HashSet<>(Arrays.asList(
                         FlowDefEnum.SNOW_OA_LEAVE,
-                        FlowDefEnum.PURCHASE_ORDER_PROCESS
+                        FlowDefEnum.PURCHASE_ORDER_PROCESS,
+                        FlowDefEnum.SNOW_OA_RESIGN_PROCESS
                 )));
     }
 
@@ -198,7 +199,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
                     .paramMap(map)
                     .build();
-            mailService.sendSimpleMail(sysSendMessageDTO);
+            mailService.sendTemplateSimpleMail(sysSendMessageDTO);
         });
         executor.shutdown();
 
@@ -238,7 +239,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                                 .receiver(t.getEmail())
                                 .paramMap(map)
                                 .build();
-                        mailService.sendSimpleMail(sysSendMessageDTO);
+                        mailService.sendTemplateSimpleMail(sysSendMessageDTO);
                     })
             );
             executor.shutdown();
@@ -302,7 +303,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
                     .paramMap(map)
                     .build();
-            mailService.sendSimpleMail(sysSendMessageDTO);
+            mailService.sendTemplateSimpleMail(sysSendMessageDTO);
         });
         executor.shutdown();
 
