@@ -9,6 +9,8 @@ import com.dingtalk.api.request.OapiBlackboardUpdateRequest;
 import com.dingtalk.api.response.OapiBlackboardCreateResponse;
 import com.dingtalk.api.response.OapiBlackboardDeleteResponse;
 import com.dingtalk.api.response.OapiBlackboardUpdateResponse;
+import com.snow.common.annotation.SyncLog;
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -41,6 +43,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     private SysNoticeMapper sysNoticeService=SpringUtils.getBean(SysNoticeMapper.class);
 
     @Override
+    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_CREATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_CREATE)
     public String createBlackboard(SysNotice sysNotice) {
 
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_CREATE);
@@ -78,8 +81,9 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
+    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_DELETE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_DELETE)
     public void deleteBlackboard(String blackboardId) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DEPARTMENT_DELETE);
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_DELETE);
         OapiBlackboardDeleteRequest req = new OapiBlackboardDeleteRequest();
         req.setBlackboardId(blackboardId);
         req.setOperationUserid("manager4480");
@@ -95,8 +99,9 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
+    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_UPDATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_UPDATE)
     public void updateBlackboard(SysNotice sysNotice) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DEPARTMENT_UPDATE);
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_UPDATE);
         OapiBlackboardUpdateRequest req = new OapiBlackboardUpdateRequest();
         OapiBlackboardUpdateRequest.OapiUpdateBlackboardVo boardVoObj = new OapiBlackboardUpdateRequest.OapiUpdateBlackboardVo();
         boardVoObj.setAuthor("没用的阿吉");
