@@ -214,3 +214,78 @@
 <div th:fragment="jquery.jqprint-0.3.js">
 	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
 </div>
+
+<!--审批页-->
+<div th:fragment="approvalpage">
+	<h4 class="form-header h4">流程图</h4>
+	<div class="vertical-timeline-block" style="margin-left: 10%" >
+		<img  class="imgcode" width="85%"/>
+	</div>
+	<h4 class="form-header h4">填写信息</h4>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">审批结果：</label>
+		<div class="col-sm-8">
+			<div class="radio-box" th:each="dict : ${@dict.getType('process_check_status')}">
+				<input type="radio" th:id="${dict.dictCode}" name="isPass" th:value="${dict.dictValue}" required>
+				<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">审批意见：</label>
+		<div class="col-sm-8">
+			<textarea name="comment" class="form-control"></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">审批附件：</label>
+		<div class="col-sm-8">
+			<div class="file-loading">
+				<input class="form-control file-upload" id="files" name="file" type="file" multiple>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-6 col-sm-10">
+			<button type="button" class="btn btn-sm btn-success" onclick="submitCheckHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+		</div>
+	</div>
+</div>
+
+<div th:fragment="emailNavPage">
+	<div class="col-lg-3">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content mailbox-content">
+				<div class="file-manager">
+					<a class="btn btn-block btn-primary compose-mail" href="/system/email">写邮件</a>
+					<div class="space-25"></div>
+					<h3>文件夹</h3>
+					<ul class="folder-list m-b-md" style="padding: 0">
+						<li><a th:href="@{/system/email/mailbox/6}"> <i class="fa fa-inbox "></i>收件箱<span class="label label-warning pull-right" id="readTotal"></span> </a></li>
+						<li><a th:href="@{/system/email/mailbox/7}"> <i class="fa fa-inbox "></i>发件箱</a></li>
+						<li><a th:href="@{/system/email/mailbox/3}"> <i class="fa fa-certificate"></i> 重要邮件</a></li>
+						<li><a th:href="@{/system/email/mailbox/1}"> <i class="fa fa-file-text-o"></i> 草稿箱 <span class="label label-info pull-right" id="draftsTotal">2</span></a></li>
+						<li><a th:href="@{/system/email/mailbox/4}"> <i class="fa fa-trash-o"></i> 垃圾箱</a></li>
+
+					</ul>
+					<h3>分类</h3>
+					<ul class="category-list" style="padding: 0">
+						<li><a href="#"> <i class="fa fa-circle text-navy"></i> 工作 </a></li>
+						<li><a href="#"> <i class="fa fa-circle text-danger"></i> 文档</a></li>
+						<li><a href="#"> <i class="fa fa-circle text-primary"></i> 社交</a></li>
+						<li><a href="#"> <i class="fa fa-circle text-info"></i> 活动</a></li>
+						<li><a href="#"> <i class="fa fa-circle text-warning"></i> 抄送</a></li>
+					</ul>
+					<h3>邮件标签</h3>
+					<ul class="category-list" style="padding: 0">
+						<div class="i-checks"><label> <input type="radio" value="1" checked=""  name="emailLabel"> <i></i> Work </label></div>
+						<div class="i-checks"><label> <input type="radio" value="2"  name="emailLabel"> <i></i> Documents </label></div>
+						<div class="i-checks"><label> <input type="radio" value="3"  name="emailLabel"> <i></i>Social </label></div>
+						<div class="i-checks"><label> <input type="radio" value="4" name="emailLabel"> <i></i> Advertising </label></div>
+					</ul>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

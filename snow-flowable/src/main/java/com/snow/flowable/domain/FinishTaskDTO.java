@@ -1,13 +1,9 @@
 package com.snow.flowable.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @program: snow
@@ -18,6 +14,7 @@ import java.util.Map;
 @Data
 public class FinishTaskDTO implements Serializable {
 
+    private static final long serialVersionUID = -7366987554013643970L;
     /**
      * 任务ID
      */
@@ -45,6 +42,11 @@ public class FinishTaskDTO implements Serializable {
      * 审批节点的相关文件（只在审批节点展示）
      */
     private List<FileEntry> files;
+
+    /**
+     * 是否修改业务参数
+     */
+    private Boolean isUpdateBus=false;
 
 
 

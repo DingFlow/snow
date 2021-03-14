@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: jsonview-css" />
+
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t"  id="signupForm">
+		<input name="id" th:value="${sysOaResign.id}" type="hidden">
+		<h2 class="form-header h2" align="center" >离职单信息</h2>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">单号：</label>
+			<div class="form-control-static" th:text="${sysOaResign.resignNo}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">离职类型：</label>
+			<div class="form-control-static" th:text="${@dict.getLabel('sys_resign_type',sysOaResign.resignType)}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">标题：</label>
+			<div class="form-control-static" th:text="${sysOaResign.name}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">申请人：</label>
+			<div class="form-control-static" th:text="${sysOaResign.applyPersonName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">交接人：</label>
+			<div class="form-control-static" th:text="${sysOaResign.transitionPersonName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">流程状态：</label>
+			<div class="radio-box" th:each="dict : ${@dict.getType('process_status')}">
+				<input type="radio" th:id="${dict.dictCode}" name="processStatus" th:value="${dict.dictValue}" th:field="${sysOaResign.processStatus}" disabled>
+				<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">离职去向：</label>
+			<div class="form-control-static" th:text="${sysOaResign.resignPlaceGo}">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label">离职时间：</label>
+			<div class="form-control-static" th:text="${#dates.format(sysOaResign.resignTime, 'yyyy-MM-dd')}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">离职理由：</label>
+			<div class="form-control-static" th:text="${sysOaResign.reason}">
+			</div>
+		</div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+	<script src="http://www.jq22.com/jquery/jquery-migrate-1.2.1.min.js"></script>
+	<script th:src="@{/js/jquery.jqprint-0.3.js}"></script>
+    <script th:inline="javascript">
+        function printData(){
+            $("#signupForm").jqprint({
+				debug: false,
+				importCSS: true,
+				printContainer: true,
+				operaSupport: false
+             });
+        };
+
+
+    </script>
+</body>
+</html>

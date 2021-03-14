@@ -14,6 +14,8 @@ import java.util.Map;
 @Data
 public class StartProcessDTO implements Serializable {
 
+   private static final long serialVersionUID = -7725494125601536828L;
+
    private String startUserId;
 
    private String processDefinitionKey;

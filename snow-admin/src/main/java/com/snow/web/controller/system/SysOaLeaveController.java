@@ -1,27 +1,27 @@
 package com.snow.web.controller.system;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.snow.common.constant.SequenceContants;
+import com.snow.common.annotation.Log;
+import com.snow.common.annotation.RepeatSubmit;
+import com.snow.common.constant.SequenceConstants;
+import com.snow.common.core.controller.BaseController;
+import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
 import com.snow.common.enums.WorkRecordStatus;
-import com.snow.common.utils.StringUtils;
-import com.snow.flowable.common.constants.FlowConstants;
-import com.snow.flowable.domain.*;
-import com.snow.flowable.domain.leave.LeaveFinishTaskDTO;
-import com.snow.flowable.domain.leave.LeaveRestartTaskDTO;
+import com.snow.common.utils.poi.ExcelUtil;
+import com.snow.flowable.domain.CompleteTaskDTO;
+import com.snow.flowable.domain.HistoricTaskInstanceDTO;
+import com.snow.flowable.domain.HistoricTaskInstanceVO;
+import com.snow.flowable.domain.leave.LeaveRestartTask;
 import com.snow.flowable.domain.leave.SysOaLeaveForm;
-import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowableServiceImpl;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysOaLeave;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysOaLeaveService;
 import com.snow.system.service.ISysSequenceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -32,14 +32,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import com.snow.system.domain.SysOaLeave;
-import com.snow.system.service.ISysOaLeaveService;
-import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.common.core.page.TableDataInfo;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 请假单Controller
@@ -140,7 +135,7 @@ public class SysOaLeaveController extends BaseController
             return AjaxResult.error("请假结束时间必须大于开始时间");
         }
         //生成请假单
-        String leaveNo = sequenceService.getNewSequenceNo(SequenceContants.OA_LEAVE_SEQUENCE);
+        String leaveNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_LEAVE_SEQUENCE);
         sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
         sysOaLeave.setLeaveNo(leaveNo);
         int i = sysOaLeaveService.insertSysOaLeave(sysOaLeave);
@@ -225,34 +220,7 @@ public class SysOaLeaveController extends BaseController
         return toAjax(sysOaLeaveService.deleteSysOaLeaveByIds(ids));
     }
 
-    @Log(title = "主管完成审批", businessType = BusinessType.OTHER)
-    @PostMapping("/managerFinishTask")
-    @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
-    public AjaxResult managerFinishTask(LeaveFinishTaskDTO finishTaskDTO)
 
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        finishTaskDTO.setHr("2");
-        flowableTaskService.submitTask(finishTaskDTO);
-        return AjaxResult.success();
-    }
-
-    /**
-     * hr完成审批
-     */
-    @Log(title = "hr完成审批", businessType = BusinessType.OTHER)
-    @PostMapping("/hrFinishTask")
-    @ResponseBody
-    @Transactional(rollbackFor = Exception.class)
-    public AjaxResult hrFinishTask(LeaveFinishTaskDTO finishTaskDTO)
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        flowableTaskService.submitTask(finishTaskDTO);
-        return AjaxResult.success();
-    }
 
     /**
      * 重新发起申请
@@ -261,7 +229,8 @@ public class SysOaLeaveController extends BaseController
     @PostMapping("/reStartTask")
     @ResponseBody
     @Transactional
-    public AjaxResult reStartTask(LeaveRestartTaskDTO finishTaskDTO)
+    @RepeatSubmit
+    public AjaxResult reStartTask(LeaveRestartTask finishTaskDTO)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         SysOaLeave sysOaLeave=new SysOaLeave();
@@ -269,7 +238,8 @@ public class SysOaLeaveController extends BaseController
         sysOaLeave.setUpdateBy(sysUser.getUserName());
         int i = sysOaLeaveService.updateSysOaLeave(sysOaLeave);
         finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        finishTaskDTO.setIsUpdateBus(true);
         flowableTaskService.submitTask(finishTaskDTO);
-        return AjaxResult.success();
+        return AjaxResult.success(i);
     }
 }

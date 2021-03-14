@@ -305,10 +305,9 @@ public class FlowableServiceImpl implements FlowableService {
         String startUserId=appForm.getStartUserId();
         //业务参数转成map
         Map<String, Object> paramMap = BeanUtil.beanToMap(appForm);
-        paramMap.remove("busVarJson");
         identityService.setAuthenticatedUserId(startUserId);
+        //保存业务表单参数
         paramMap.put(FlowConstants.APP_FORM,appForm);
-        //paramMap.put(FlowConstants.BUS_VAR,appForm.getBusVarJson());
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(appForm.getFlowDef().getCode(),appForm.getBusinessKey(),paramMap);
 
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
@@ -317,7 +316,11 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
 
-
+    /**
+     * 该方法废弃，不在维护，调用过程中请不要使用此方法
+     * 调用见 com.snow.flowable.service.FlowableTaskService#submitTask(com.snow.flowable.domain.FinishTaskDTO)
+     * @param completeTaskDTO
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void completeTask(CompleteTaskDTO completeTaskDTO) {

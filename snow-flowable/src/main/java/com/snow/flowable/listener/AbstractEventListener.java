@@ -19,8 +19,7 @@ import java.util.Set;
 /**
  * @author qimingjin
  * @Title: 全局事件监听
- * @Description:
- * 每一个类型对应于org.flowable.engine.common.api.delegate.event.FlowableEventType下的一个枚举值。
+ * @Description: 每一个类型对应于org.flowable.engine.common.api.delegate.event.FlowableEventType下的一个枚举值。
  * ENGINE_CREATED：该监听器所附加的process engine已被创建且准备好接受API调用；org.flowable…​FlowableEvent。
  * ENGINE_CLOSED：该监听器所附加的process engine已被关闭且API调用将不可用；org.flowable…​FlowableEvent。
  * ENTITY_CREATED：一个新entity被创建，这个新entity包含在事件中；org.flowable…​FlowableEntityEvent。
@@ -63,7 +62,7 @@ import java.util.Set;
  * MEMBERSHIP_DELETED：用户已从组中删除，该事件包含所涉及的用户和组的ID；org.flowable…​FlowableMembershipEvent。
  * MEMBERSHIPS_DELETED：所有成员都将从一个组中删除，在删除成员之前抛出该事件，因此仍可访问它们。出于性能原因，如果立即删除所有成员，则不会抛出任何单独的MEMBERSHIP_DELETED事件；org.flowable…​FlowableMembershipEvent。
  * 所有ENTITY_开头的事件都与引擎内entity相关，下面的列表显示了为哪些实体分派了哪些实体事件的概述：
- *
+ * <p>
  * ENTITY_CREATED, ENTITY_INITIALIZED, ENTITY_DELETED: Attachment, Comment, Deployment, Execution, Group, IdentityLink, Job, Model, ProcessDefinition, ProcessInstance, Task, User.
  * ENTITY_UPDATED: Attachment, Deployment, Execution, Group, IdentityLink, Job, Model, ProcessDefinition, ProcessInstance, Task, User.
  * ENTITY_SUSPENDED, ENTITY_ACTIVATED: ProcessDefinition, ProcessInstance/Execution, Task.
@@ -71,7 +70,7 @@ import java.util.Set;
  */
 @Slf4j
 @Service
-public  abstract class AbstractEventListener extends AbstractFlowableEventListener {
+public abstract class AbstractEventListener extends AbstractFlowableEventListener {
     /**
      * 需要监听的类型集合
      */
@@ -83,16 +82,17 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
     protected Set<FlowDefEnum> flowDefEnums;
 
 
-    public AbstractEventListener() {}
+    public AbstractEventListener() {
+    }
 
-    public AbstractEventListener(Set<FlowableEngineEventType> types,Set<FlowDefEnum> flowDefEnums) {
+    public AbstractEventListener(Set<FlowableEngineEventType> types, Set<FlowDefEnum> flowDefEnums) {
         this.types = types;
         this.flowDefEnums = flowDefEnums;
     }
 
     @Override
     public void onEvent(FlowableEvent flowableEvent) {
-        if(flowableEvent instanceof FlowableEngineEvent) {
+        if (flowableEvent instanceof FlowableEngineEvent) {
             FlowableEngineEvent flowableEngineEvent = (FlowableEngineEvent) flowableEvent;
             initProcessDefinition(flowableEngineEvent);
         }
@@ -100,28 +100,31 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
 
     /**
      * 初始化监听哪些流程
+     *
      * @param flowableEngineEvent
      */
-    public void initProcessDefinition(FlowableEngineEvent flowableEngineEvent){
+    public void initProcessDefinition(FlowableEngineEvent flowableEngineEvent) {
         ProcessDefinitionEntity processDefinition = getProcessDefinition(flowableEngineEvent);
-        if(flowDefEnums!=null&&processDefinition!=null){
+        if (flowDefEnums != null && processDefinition != null) {
             String key = Optional.ofNullable(processDefinition.getKey()).orElse("");
-            for(FlowDefEnum flowDefEnum:flowDefEnums){
+            for (FlowDefEnum flowDefEnum : flowDefEnums) {
                 //在流程中存在的才监听
-                if(flowDefEnum.getCode().equals(key)){
+                if (flowDefEnum.getCode().equals(key)) {
                     initEngineEventType(flowableEngineEvent);
                 }
             }
         }
 
     }
+
     /**
      * 初始化事件类型
+     *
      * @param flowableEngineEvent
      */
-    public void initEngineEventType(FlowableEngineEvent flowableEngineEvent){
+    public void initEngineEventType(FlowableEngineEvent flowableEngineEvent) {
         FlowableEngineEventType engineEventType = (FlowableEngineEventType) flowableEngineEvent.getType();
-        if(types == null || types.contains(engineEventType)) {
+        if (types == null || types.contains(engineEventType)) {
             switch (engineEventType) {
                 case ENTITY_CREATED:
                     entityCreated((FlowableEngineEntityEvent) flowableEngineEvent);
@@ -269,111 +272,155 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
     }
 
 
-
-
-
-
     @Override
     public boolean isFailOnException() {
         return true;
     }
 
-    protected void entityCreated(FlowableEngineEntityEvent event) {}
+    protected void entityCreated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void entityInitialized(FlowableEngineEntityEvent event) {}
+    protected void entityInitialized(FlowableEngineEntityEvent event) {
+    }
 
-    protected void entityUpdated(FlowableEngineEntityEvent event) {}
+    protected void entityUpdated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void entityDeleted(FlowableEngineEntityEvent event) {}
+    protected void entityDeleted(FlowableEngineEntityEvent event) {
+    }
 
-    protected void entitySuspended(FlowableEngineEntityEvent event) {}
+    protected void entitySuspended(FlowableEngineEntityEvent event) {
+    }
 
-    protected void entityActivated(FlowableEngineEntityEvent event) {}
+    protected void entityActivated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void timerScheduled(FlowableEngineEntityEvent event) {}
+    protected void timerScheduled(FlowableEngineEntityEvent event) {
+    }
 
-    protected void timerFired(FlowableEngineEntityEvent event) {}
+    protected void timerFired(FlowableEngineEntityEvent event) {
+    }
 
-    protected void jobCancelled(FlowableEngineEntityEvent event) {}
+    protected void jobCancelled(FlowableEngineEntityEvent event) {
+    }
 
-    protected void jobExecutionSuccess(FlowableEngineEntityEvent event) {}
+    protected void jobExecutionSuccess(FlowableEngineEntityEvent event) {
+    }
 
-    protected void jobExecutionFailure(FlowableEngineEntityEvent event) {}
+    protected void jobExecutionFailure(FlowableEngineEntityEvent event) {
+    }
 
-    protected void jobRetriesDecremented(FlowableEngineEntityEvent event) {}
+    protected void jobRetriesDecremented(FlowableEngineEntityEvent event) {
+    }
 
-    protected void jobRescheduled(FlowableEngineEntityEvent event) {}
+    protected void jobRescheduled(FlowableEngineEntityEvent event) {
+    }
 
-    protected void custom(FlowableEngineEvent event) {}
+    protected void custom(FlowableEngineEvent event) {
+    }
 
-    protected void engineCreated(FlowableProcessEngineEvent event) {}
+    protected void engineCreated(FlowableProcessEngineEvent event) {
+    }
 
-    protected void engineClosed(FlowableProcessEngineEvent flowableEngineEvent) {}
+    protected void engineClosed(FlowableProcessEngineEvent flowableEngineEvent) {
+    }
 
-    protected void activityStarted(FlowableActivityEvent event) {}
+    protected void activityStarted(FlowableActivityEvent event) {
+    }
 
-    protected void activityCompleted(FlowableActivityEvent event) {}
+    protected void activityCompleted(FlowableActivityEvent event) {
+    }
 
-    protected void activityCancelled(FlowableActivityCancelledEvent event) {}
+    protected void activityCancelled(FlowableActivityCancelledEvent event) {
+    }
 
-    protected void multiInstanceActivityStarted(FlowableMultiInstanceActivityEvent event) {}
+    protected void multiInstanceActivityStarted(FlowableMultiInstanceActivityEvent event) {
+    }
 
-    protected void multiInstanceActivityCompleted(FlowableMultiInstanceActivityCompletedEvent event) {}
+    protected void multiInstanceActivityCompleted(FlowableMultiInstanceActivityCompletedEvent event) {
+    }
 
-    protected void multiInstanceActivityCompletedWithCondition(FlowableMultiInstanceActivityCompletedEvent event) {}
+    protected void multiInstanceActivityCompletedWithCondition(FlowableMultiInstanceActivityCompletedEvent event) {
+    }
 
-    protected void multiInstanceActivityCancelled(FlowableMultiInstanceActivityCancelledEvent event) {}
+    protected void multiInstanceActivityCancelled(FlowableMultiInstanceActivityCancelledEvent event) {
+    }
 
-    protected void activitySignalWaiting(FlowableSignalEvent event) {}
+    protected void activitySignalWaiting(FlowableSignalEvent event) {
+    }
 
-    protected void activitySignaled(FlowableSignalEvent event) {}
+    protected void activitySignaled(FlowableSignalEvent event) {
+    }
 
-    protected void activityCompensate(FlowableActivityEvent event) {}
+    protected void activityCompensate(FlowableActivityEvent event) {
+    }
 
-    protected void activityMessageWaiting(FlowableMessageEvent event) {}
+    protected void activityMessageWaiting(FlowableMessageEvent event) {
+    }
 
-    protected void activityMessageReceived(FlowableMessageEvent event) {}
+    protected void activityMessageReceived(FlowableMessageEvent event) {
+    }
 
-    protected void activityMessageCancelled(FlowableMessageEvent event) {}
+    protected void activityMessageCancelled(FlowableMessageEvent event) {
+    }
 
-    protected void activityErrorReceived(FlowableErrorEvent event) {}
+    protected void activityErrorReceived(FlowableErrorEvent event) {
+    }
 
-    protected void historicActivityInstanceCreated(FlowableEngineEntityEvent event) {}
+    protected void historicActivityInstanceCreated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void historicActivityInstanceEnded(FlowableEngineEntityEvent event) {}
+    protected void historicActivityInstanceEnded(FlowableEngineEntityEvent event) {
+    }
 
-    protected void sequenceFlowTaken(FlowableSequenceFlowTakenEvent event) {}
+    protected void sequenceFlowTaken(FlowableSequenceFlowTakenEvent event) {
+    }
 
-    protected void variableCreated(FlowableVariableEvent event) {}
+    protected void variableCreated(FlowableVariableEvent event) {
+    }
 
-    protected void variableUpdatedEvent(FlowableVariableEvent event) {}
+    protected void variableUpdatedEvent(FlowableVariableEvent event) {
+    }
 
-    protected void variableDeletedEvent(FlowableVariableEvent event) {}
+    protected void variableDeletedEvent(FlowableVariableEvent event) {
+    }
 
-    protected void taskCreated(FlowableEngineEntityEvent event) {}
+    protected void taskCreated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void taskAssigned(FlowableEngineEntityEvent event) {}
+    protected void taskAssigned(FlowableEngineEntityEvent event) {
+    }
 
-    protected void taskCompleted(FlowableEngineEntityEvent event) {}
+    protected void taskCompleted(FlowableEngineEntityEvent event) {
+    }
 
-    protected void processCreated(FlowableEngineEntityEvent event) {}
+    protected void processCreated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void processStarted(FlowableProcessStartedEvent event) {}
+    protected void processStarted(FlowableProcessStartedEvent event) {
+    }
 
-    protected void processCompleted(FlowableEngineEntityEvent event) {}
+    protected void processCompleted(FlowableEngineEntityEvent event) {
+    }
 
-    protected void processCompletedWithTerminateEnd(FlowableEngineEntityEvent event) {}
+    protected void processCompletedWithTerminateEnd(FlowableEngineEntityEvent event) {
+    }
 
-    protected void processCompletedWithErrorEnd(FlowableEngineEntityEvent event) {}
+    protected void processCompletedWithErrorEnd(FlowableEngineEntityEvent event) {
+    }
 
-    protected void processCancelled(FlowableCancelledEvent event) {}
+    protected void processCancelled(FlowableCancelledEvent event) {
+    }
 
-    protected void historicProcessInstanceCreated(FlowableEngineEntityEvent event) {}
+    protected void historicProcessInstanceCreated(FlowableEngineEntityEvent event) {
+    }
 
-    protected void historicProcessInstanceEnded(FlowableEngineEntityEvent event) {}
+    protected void historicProcessInstanceEnded(FlowableEngineEntityEvent event) {
+    }
 
     /**
      * 获取流程执行信息
+     *
      * @param event
      * @return
      */
@@ -391,6 +438,7 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
 
     /**
      * 获取流程定义信息
+     *
      * @param event
      * @return
      */
@@ -407,6 +455,7 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
 
     /**
      * 获取流程执行信息
+     *
      * @param executionId
      * @return
      */
@@ -419,6 +468,7 @@ public  abstract class AbstractEventListener extends AbstractFlowableEventListen
         }
         return null;
     }
+
     @Override
     public boolean isFireOnTransactionLifecycleEvent() {
         return false;

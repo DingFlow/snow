@@ -30,6 +30,10 @@ public class SysSendMessageDTO implements Serializable {
 
 
     /**
+     * 发送人
+     */
+    private String from;
+    /**
      * 参数List
      */
     private Map<String,String> paramMap;

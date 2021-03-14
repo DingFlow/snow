@@ -1,13 +1,10 @@
 package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
-import com.google.common.collect.Maps;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.bean.MyBeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
-import com.snow.flowable.common.enums.FlowDefEnum;
-import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -19,21 +16,22 @@ import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
-import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.history.HistoricIdentityLink;
+import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
-import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +61,9 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     @Autowired
     private SysUserServiceImpl sysUserService;
+
+    @Autowired
+    private AppFormServiceImpl appFormService;
 
     @Override
     public PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
@@ -202,12 +203,13 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
 
     @Override
-    public <T extends FinishTaskDTO> void submitTask(T finishTaskDTO) {
+    public  void submitTask(FinishTaskDTO finishTaskDTO) {
         Task task = this.getTask(finishTaskDTO.getTaskId());
         if(StringUtils.isEmpty(task)){
             log.info("完成任务时，该任务ID:%不存在",finishTaskDTO.getTaskId());
             throw new BusinessException(String.format("该任务ID:%不存在",finishTaskDTO.getTaskId()));
         }
+        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
         ////设置审批人，若不设置则数据表userid字段为null
         Authentication.setAuthenticatedUserId(finishTaskDTO.getUserId());
         if(!StringUtils.isEmpty(finishTaskDTO.getComment())){
@@ -231,18 +233,30 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                     runtimeService.setVariable(task.getExecutionId(),t.getKey(),t.getValue())
             );
         }
-        if(!StringUtils.isEmpty(finishTaskDTO.getIsPass())){
-            runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_PASS,finishTaskDTO.getIsPass());
-            paramMap.put(CompleteTaskDTO.IS_PASS,finishTaskDTO.getIsPass());
+        //修改业务数据的时候流程业务数据重新赋值
+        if(finishTaskDTO.getIsUpdateBus()&&appFrom!=null){
+            MyBeanUtils.copyProperties(finishTaskDTO,appFrom);
+            runtimeService.setVariable(task.getExecutionId(),FlowConstants.APP_FORM,appFrom);
         }
-        if(!StringUtils.isEmpty(finishTaskDTO.getIsStart())){
-            runtimeService.setVariable(task.getExecutionId(),CompleteTaskDTO.IS_START,finishTaskDTO.getIsStart());
-            paramMap.put(CompleteTaskDTO.IS_START,finishTaskDTO.getIsStart());
+        // owner不为空说明可能存在委托任务
+        if (!StringUtils.isEmpty(task.getOwner())) {
+            DelegationState delegationState = task.getDelegationState();
+            switch (delegationState) {
+                //委派中
+                case PENDING:
+                    // 被委派人处理完成任务
+                    taskService.resolveTask(task.getId(),paramMap);
+                    break;
+                default:
+                    taskService.claim(task.getId(),finishTaskDTO.getUserId());
+                    taskService.complete(task.getId(),paramMap,true);
+                    break;
+            }
+        } else {
+            //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+            taskService.claim(task.getId(),finishTaskDTO.getUserId());
+            taskService.complete(task.getId(),paramMap,true);
         }
-
-        //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
-        taskService.claim(task.getId(),finishTaskDTO.getUserId());
-        taskService.complete(task.getId(),paramMap,true);
     }
 
     @Override
@@ -251,6 +265,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
         Task task=flowableService.getTaskProcessInstanceById(processInstanceId);
         completeTaskDTO.setTaskId(task.getId());
         completeTaskDTO.setIsStart(true);
+        completeTaskDTO.setIsPass(true);
         completeTaskDTO.setUserId(task.getAssignee());
         submitTask(completeTaskDTO);
     }

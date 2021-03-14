@@ -5,17 +5,19 @@ import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.AppForm;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title: 请假申请表单
  * @Description:
  * @date 2020/12/7 11:12
  */
 @Data
-public class SysOaLeaveForm extends AppForm {
+public class SysOaLeaveForm extends AppForm implements Serializable {
 
+    private static final long serialVersionUID = -208387201380193517L;
     /** id */
     private Integer id;
 

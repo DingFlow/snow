@@ -1,12 +1,19 @@
 package com.snow.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.system.event.SyncEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import com.snow.common.core.text.Convert;
 import com.snow.system.domain.SysNotice;
 import com.snow.system.mapper.SysNoticeMapper;
 import com.snow.system.service.ISysNoticeService;
+
+import javax.annotation.Resource;
 
 /**
  * 公告 服务层实现
@@ -19,6 +26,9 @@ public class SysNoticeServiceImpl implements ISysNoticeService
 {
     @Autowired
     private SysNoticeMapper noticeMapper;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     /**
      * 查询公告信息
@@ -53,7 +63,12 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     @Override
     public int insertNotice(SysNotice notice)
     {
-        return noticeMapper.insertNotice(notice);
+        notice.setCreateTime(new Date());
+        int i = noticeMapper.insertNotice(notice);
+        //同步钉钉数据
+        SyncEvent syncEvent = new SyncEvent(notice, DingTalkListenerType.BLACKBOARD_CREATE);
+        applicationContext.publishEvent(syncEvent);
+        return i;
     }
 
     /**
@@ -65,6 +80,8 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     @Override
     public int updateNotice(SysNotice notice)
     {
+        SyncEvent syncEvent = new SyncEvent(notice, DingTalkListenerType.BLACKBOARD_UPDATE);
+        applicationContext.publishEvent(syncEvent);
         return noticeMapper.updateNotice(notice);
     }
 
@@ -77,6 +94,7 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     @Override
     public int deleteNoticeByIds(String ids)
     {
+        //删除通知钉钉删除
         return noticeMapper.deleteNoticeByIds(Convert.toStrArray(ids));
     }
 }

@@ -69,11 +69,14 @@ spring:
     restart:
       # 热部署开关
       enabled: true
+  #邮件配置
   mail:
+    #mail主机
     host: smtp.126.com
-    username:
+    #用户名
+    username: qimingjin@126.com
     #开启POP3之后设置的客户端授权码
-    password:
+    password: JSHBRRRDBNHPXPFB
     default-encoding: UTF-8
 
 
@@ -152,13 +155,14 @@ flowable:
   common:
       app:
         idm-url: http://localhost:80
+        #flowable admin默认用户配置
         idm-admin:
             user: admin
             password: test
 #上传文件的方式
 sys:
    file:
-     active: local
+     active: aliyun
 
 log4j:
    logger:

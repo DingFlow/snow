@@ -26,6 +26,7 @@ public class LeaveStartListener extends AbstractExecutionListener<SysOaLeaveForm
 
     protected void process() {
 
+        SysOaLeaveForm appForm = getVariable("appForm");
         String processInstanceId = getProcessInstanceId();
         String businessKey= getBusinessKey();
         SysOaLeave sysOaLeave=new SysOaLeave();

@@ -20,6 +20,7 @@ import java.io.Serializable;
 public class FlowBaseDTO implements Serializable {
 
 
+    private static final long serialVersionUID = 9129209505175724304L;
     /** 当前记录起始索引 */
     private Integer pageNum;
 

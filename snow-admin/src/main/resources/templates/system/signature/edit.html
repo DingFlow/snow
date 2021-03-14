@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('发起离职申请单')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-resign-edit" th:object="${sysOaResign}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">离职单号：</label>
+                <div class="col-sm-8">
+                    <input name="resignNo" th:field="*{resignNo}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">离职类型：</label>
+                <div class="col-sm-8">
+                    <select name="resignType" class="form-control m-b" th:with="type=${@dict.getType('sys_resign_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{resignType}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">离职标题：</label>
+                <div class="col-sm-8">
+                    <input name="name" th:field="*{name}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">离职理由：</label>
+                <div class="col-sm-8">
+                    <textarea name="reason" class="form-control">[[*{reason}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">离职去向：</label>
+                <div class="col-sm-8">
+                    <input name="resignPlaceGo" th:field="*{resignPlaceGo}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">交接人：</label>
+                <div class="col-sm-8">
+                <div class="input-group">
+                    <input class="form-control" type="hidden" name="transitionPerson"  id="transitionPerson" th:field="*{transitionPerson}">
+                    <input class="form-control" type="text" name="transitionPersonName" th:field="*{transitionPersonName}" onclick="selectUserInfo()" id="transitionPersonName" readonly="true">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">离职时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="resignTime" th:value="${#dates.format(sysOaResign.resignTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">附件：</label>
+                <div class="col-sm-8">
+                   <input type="hidden" name="fileUrl" th:field="*{fileUrl}">
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="fileUrl" name="file" type="file">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "system/resign";
+        $("#form-resign-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-resign-edit').serialize());
+            }
+        }
+
+        $("input[name='resignTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").val()
+            $(this).fileinput({
+                'uploadUrl': '/common/upload',
+                initialPreviewAsData: true,
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+        /*选择用户*/
+        function selectUserInfo() {
+            var url = prefix+ "/selectUser";
+            $.modal.open("选择用户",url,"","",doSubmit);
+        }
+
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+            var iframeWin = layero.find('iframe')[0];
+            iframeWin.contentWindow.submitHandler(index, layero);
+            $("#transitionPerson").val(body.find('#id').val());
+            $("#transitionPersonName").val(body.find('#userName').val());
+            layer.close(index);
+        }
+    </script>
+</body>
+</html>

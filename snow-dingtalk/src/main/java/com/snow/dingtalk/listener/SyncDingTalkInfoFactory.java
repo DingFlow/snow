@@ -19,6 +19,7 @@ public class SyncDingTalkInfoFactory  {
 
         DingTalkListenerType dingTalkEnum = (DingTalkListenerType) syncEvent.getT();
         Integer type = dingTalkEnum.getType();
+
         if(type.equals(DingTalkListenerType.DEPARTMENT_CREATE.getType())){
             return  new DepartmentEventService();
         }
@@ -31,7 +32,9 @@ public class SyncDingTalkInfoFactory  {
         else if(type.equals(DingTalkListenerType.WORK_RECODE_CREATE.getType())){
             return new WorkRecodeService();
         }
-
+        else if(type.equals(DingTalkListenerType.BLACKBOARD_CREATE.getType())){
+            return new BlackboardService();
+        }
 
         else {
             throw new RuntimeException("不存在的监听类型");

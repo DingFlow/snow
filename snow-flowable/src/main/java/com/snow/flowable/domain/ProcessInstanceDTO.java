@@ -21,6 +21,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class ProcessInstanceDTO extends FlowBaseDTO implements Serializable {
 
+    private static final long serialVersionUID = 5035187451211518026L;
+
     public String businessKey;
 
     public String deploymentId;
@@ -53,20 +55,25 @@ public class ProcessInstanceDTO extends FlowBaseDTO implements Serializable {
     public String processDefinitionCategory;
 
     public String processDefinitionName;
+
     public Integer processDefinitionVersion;
+
     public Set<String> processInstanceIds;
+
     public String involvedUser;
+
     public Set<String> involvedGroups;
+
     public boolean includeProcessVariables;
+
     public Integer processInstanceVariablesLimit;
-    public boolean withJobException;
-    public String tenantId;
-    public String tenantIdLike;
-    public boolean withoutTenantId;
+
+
     public String name;
+
     public String nameLike;
+
     public String nameLikeIgnoreCase;
-    public String callbackId;
-    public String callbackType;
+
 
 }

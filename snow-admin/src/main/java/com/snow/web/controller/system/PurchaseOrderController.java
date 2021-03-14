@@ -7,18 +7,14 @@ import java.util.List;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.snow.common.annotation.RepeatSubmit;
-import com.snow.common.constant.SequenceContants;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.poi.EasyExcelUtil;
-import com.snow.flowable.domain.CompleteTaskDTO;
-import com.snow.flowable.domain.leave.SysOaLeaveForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderMainTask;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
-import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.PurchaseOrderListener;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
@@ -143,7 +139,7 @@ public class PurchaseOrderController extends BaseController
     @GetMapping("/add")
     public String add(ModelMap mmap)
     {
-        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceContants.OA_PURCHASE_SEQUENCE);
+        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_PURCHASE_SEQUENCE);
         mmap.put("orderNo", newSequenceNo);
         return prefix + "/add";
     }
@@ -219,8 +215,6 @@ public class PurchaseOrderController extends BaseController
         BeanUtils.copyProperties(newPurchaseOrderMain,purchaseOrderForm);
         purchaseOrderForm.setBusinessKey(purchaseOrderMain.getOrderNo());
         purchaseOrderForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-       // purchaseOrderForm.setBusVarJson(JSON.toJSONString(purchaseOrderForm));
-       // purchaseOrderForm.setClassPackName(PurchaseOrderForm.class.getCanonicalName());
         purchaseOrderForm.setBusVarUrl("/system/purchaseOrder/detail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(purchaseOrderForm);
         //推进任务节点
@@ -262,18 +256,17 @@ public class PurchaseOrderController extends BaseController
     @RepeatSubmit
     public AjaxResult restart(PurchaseOrderMainTask purchaseOrderMainTask)
     {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        purchaseOrderMainTask.setUpdateBy(String.valueOf(sysUser.getUserId()));
         PurchaseOrderMain purchaseOrderMain=new PurchaseOrderMain();
+        SysUser sysUser = ShiroUtils.getSysUser();
         BeanUtils.copyProperties(purchaseOrderMainTask,purchaseOrderMain);
+        purchaseOrderMain.setUpdateBy(String.valueOf(sysUser.getUserId()));
         int i = purchaseOrderMainService.updatePurchaseOrderMain(purchaseOrderMain);
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
-        completeTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        completeTaskDTO.setComment(purchaseOrderMainTask.getComment());
-        completeTaskDTO.setIsStart(purchaseOrderMainTask.getIsStart());
-        completeTaskDTO.setFiles(purchaseOrderMainTask.getFiles());
-        completeTaskDTO.setTaskId(purchaseOrderMainTask.getTaskId());
-        flowableService.completeTask(completeTaskDTO);
+
+        //完成任务
+        purchaseOrderMainTask.setUserId(String.valueOf(sysUser.getUserId()));
+        purchaseOrderMainTask.setIsUpdateBus(true);
+        purchaseOrderMainTask.setIsStart(purchaseOrderMainTask.getIsPass());
+        flowableTaskService.submitTask(purchaseOrderMainTask);
         return toAjax(i);
     }
 

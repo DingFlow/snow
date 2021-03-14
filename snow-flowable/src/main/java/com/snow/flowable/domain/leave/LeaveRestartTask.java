@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.flowable.domain.FinishTaskDTO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,9 +14,10 @@ import java.util.Date;
  * @create: 2021-01-13 21:48
  **/
 @Data
-public class LeaveRestartTaskDTO extends FinishTaskDTO {
+public class LeaveRestartTask extends FinishTaskDTO implements Serializable {
 
 
+    private static final long serialVersionUID = 3539680495320060762L;
     /** id */
     private Integer id;
 

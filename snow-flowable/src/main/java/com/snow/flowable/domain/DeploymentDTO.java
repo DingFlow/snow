@@ -12,6 +12,8 @@ import java.io.Serializable;
  */
 @Data
 public class DeploymentDTO implements Serializable {
+
+    private static final long serialVersionUID = -2406490446315149317L;
     /**
      * 租户ID
      */

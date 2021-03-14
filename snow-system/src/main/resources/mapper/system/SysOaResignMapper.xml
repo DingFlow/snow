@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaResignMapper">
+    
+    <resultMap type="SysOaResign" id="SysOaResignResult">
+        <result property="id"    column="id"    />
+        <result property="resignNo"    column="resign_no"    />
+        <result property="name"    column="name"    />
+        <result property="reason"    column="reason"    />
+        <result property="resignPlaceGo"    column="resign_place_go"    />
+        <result property="transitionPerson"    column="transition_person"    />
+        <result property="resignTime"    column="resign_time"    />
+        <result property="resignType"    column="resign_type"    />
+        <result property="processStatus"    column="process_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="applyPerson"    column="apply_person"    />
+        <result property="remark"    column="remark"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="fileUrl"    column="file_url"    />
+    </resultMap>
+
+    <sql id="selectSysOaResignVo">
+        select id, resign_no, name, reason, resign_place_go, transition_person, resign_time, resign_type, process_status, create_by, create_time, update_time, update_by, apply_person, remark, is_delete, file_url from sys_oa_resign
+    </sql>
+
+    <select id="selectSysOaResignList" parameterType="SysOaResign" resultMap="SysOaResignResult">
+        <include refid="selectSysOaResignVo"/>
+        <where>  
+            <if test="resignNo != null  and resignNo != ''"> and resign_no = #{resignNo}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+            <if test="resignPlaceGo != null  and resignPlaceGo != ''"> and resign_place_go = #{resignPlaceGo}</if>
+            <if test="transitionPerson != null  and transitionPerson != ''"> and transition_person = #{transitionPerson}</if>
+            <if test="resignTime != null "> and resign_time = #{resignTime}</if>
+            <if test="resignType != null "> and resign_type = #{resignType}</if>
+            <if test="processStatus != null "> and process_status = #{processStatus}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysOaResignById" parameterType="Integer" resultMap="SysOaResignResult">
+        <include refid="selectSysOaResignVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysOaResign" parameterType="SysOaResign" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_resign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resignNo != null">resign_no,</if>
+            <if test="name != null">name,</if>
+            <if test="reason != null">reason,</if>
+            <if test="resignPlaceGo != null">resign_place_go,</if>
+            <if test="transitionPerson != null">transition_person,</if>
+            <if test="resignTime != null">resign_time,</if>
+            <if test="resignType != null">resign_type,</if>
+            <if test="processStatus != null">process_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="applyPerson != null">apply_person,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="fileUrl != null">file_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resignNo != null">#{resignNo},</if>
+            <if test="name != null">#{name},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="resignPlaceGo != null">#{resignPlaceGo},</if>
+            <if test="transitionPerson != null">#{transitionPerson},</if>
+            <if test="resignTime != null">#{resignTime},</if>
+            <if test="resignType != null">#{resignType},</if>
+            <if test="processStatus != null">#{processStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="applyPerson != null">#{applyPerson},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaResign" parameterType="SysOaResign">
+        update sys_oa_resign
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resignNo != null">resign_no = #{resignNo},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="resignPlaceGo != null">resign_place_go = #{resignPlaceGo},</if>
+            <if test="transitionPerson != null">transition_person = #{transitionPerson},</if>
+            <if test="resignTime != null">resign_time = #{resignTime},</if>
+            <if test="resignType != null">resign_type = #{resignType},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="applyPerson != null">apply_person = #{applyPerson},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+    <update id="updateSysOaResignByResignNo" parameterType="SysOaResign">
+        update sys_oa_resign
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resignNo != null">resign_no = #{resignNo},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="resignPlaceGo != null">resign_place_go = #{resignPlaceGo},</if>
+            <if test="transitionPerson != null">transition_person = #{transitionPerson},</if>
+            <if test="resignTime != null">resign_time = #{resignTime},</if>
+            <if test="resignType != null">resign_type = #{resignType},</if>
+            <if test="processStatus != null">process_status = #{processStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="applyPerson != null">apply_person = #{applyPerson},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+        </trim>
+        where resign_no = #{resignNo}
+    </update>
+
+    <delete id="deleteSysOaResignById" parameterType="Integer">
+        delete from sys_oa_resign where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaResignByIds" parameterType="String">
+        delete from sys_oa_resign where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
