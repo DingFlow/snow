@@ -74,9 +74,9 @@ spring:
     #mail主机
     host: smtp.126.com
     #用户名
-    username: qimingjin@126.com
+    username:
     #开启POP3之后设置的客户端授权码
-    password: JSHBRRRDBNHPXPFB
+    password:
     default-encoding: UTF-8
 
 
@@ -163,13 +163,3 @@ flowable:
 sys:
    file:
      active: aliyun
-
-log4j:
-   logger:
-      org:
-        flowable:
-            task:
-                service:
-                  impl:
-                      persistence:
-                        entity: DEBUG
