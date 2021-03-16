@@ -44,7 +44,7 @@
   <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/c2a24a8fd77e462586137f21f3a5380f.png"/>
 - 3.配置钉钉回调参数
   <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/bbee68c5a1c64092ab4e0fa29d7cdf5d.png"/>
-  钉钉回调需要公网，为了方便提供一个内网穿透工具，详情参考：http://snowblog.shop.csj361.com/post/26
+  钉钉回调需要公网，为了方便提供一个内网穿透工具，详情参考：http://snowblog.shop.csj361.com/post/26  
   
 ## 项目截图
 <table>
@@ -126,7 +126,7 @@ v1.3 2021-03-14
  - QQ群: 577813338
  - 欢迎入群讨论，我们的口号：**借助钉钉，致力于流程，让流程更简单**
  
- - Ding-Flow公众号
+ - Ding-Flow公众号（关注公众号即可获取DingFlow开发手册一份）
  - <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0f39a32c5ffd44069dcbc8c1861bfe54.jpg"/>
    
  
