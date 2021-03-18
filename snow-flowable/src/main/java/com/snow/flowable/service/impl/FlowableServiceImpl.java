@@ -499,7 +499,7 @@ public class FlowableServiceImpl implements FlowableService {
         }
 
         if(!StringUtils.isEmpty(historicTaskInstanceDTO.getTaskDefinitionKey())){
-           historicTaskInstanceQuery.processInstanceId(historicTaskInstanceDTO.getTaskDefinitionKey());
+           historicTaskInstanceQuery.taskDefinitionKey(historicTaskInstanceDTO.getTaskDefinitionKey());
         }
 
         if(!StringUtils.isEmpty(userId)){
