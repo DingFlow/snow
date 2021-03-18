@@ -303,6 +303,27 @@ var table = {
 					return _text;
 				}
 			},
+            changeDateFormat:function(value){
+                var myDate = new Date(value);
+                //获取当前年
+                var year=myDate.getFullYear();
+                //获取当前月
+                var month=myDate.getMonth()+1;
+                month = month < 10 ? "0"+month : month;
+                //获取当前日
+                var date=myDate.getDate();
+                date = date < 10 ? "0"+date : date;
+                //获取当前小时数(0-23)
+                var h=myDate.getHours();  
+                h = h < 10 ? "0"+h : h;
+                //获取当前分钟数(0-59)
+                var m=myDate.getMinutes();    
+                m = m < 10 ? "0"+m : m;
+                var s=myDate.getSeconds();
+                s = s < 10 ? "0"+s : s;
+                var time =year+'-'+month+"-"+date+" "+h+":"+m+":"+s;
+                return time;
+			},
 			// 下拉按钮切换
 			dropdownToggle: function (value) {
 				var actions = [];

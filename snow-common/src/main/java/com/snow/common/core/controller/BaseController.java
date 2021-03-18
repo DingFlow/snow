@@ -132,6 +132,41 @@ public class BaseController
         rspData.setPageSize(list.getPageSize());
         return rspData;
     }
+
+    /**
+     * 利用subList方法进行分页
+     * @param list 分页数据
+     */
+    public TableDataInfo pageBySubList(List list) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageIndex = pageDomain.getPageNum();
+        Integer pageSize = pageDomain.getPageSize();
+        TableDataInfo rspData = new TableDataInfo();
+        int totalCount = list.size();
+        int pageCount = 0;
+        List<String> subList;
+        int m = totalCount % pageSize;
+        if (m > 0) {
+            pageCount = totalCount / pageSize + 1;
+        } else {
+            pageCount = totalCount / pageSize;
+        }
+        if (m == 0) {
+            subList = list.subList((pageIndex - 1) * pageSize, pageSize * (pageIndex));
+        } else {
+            if (pageIndex == pageCount) {
+                subList = list.subList((pageIndex - 1) * pageSize, totalCount);
+            } else {
+                subList = list.subList((pageIndex - 1) * pageSize, pageSize * (pageIndex));
+            }
+        }
+        rspData.setCode(0);
+        rspData.setRows(subList);
+        rspData.setTotal(totalCount);
+        rspData.setPageIndex(pageIndex);
+        rspData.setPageSize(pageSize);
+        return rspData;
+    }
     /**
      * 响应返回结果
      * 
