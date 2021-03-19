@@ -5,8 +5,6 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
-import com.snow.common.core.page.PageDomain;
-import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;

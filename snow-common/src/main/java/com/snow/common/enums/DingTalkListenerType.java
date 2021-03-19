@@ -31,6 +31,18 @@ public enum  DingTalkListenerType {
 
     WORK_RECORD_UPDATE(3,20,"更新待办"),
 
+
+    /**
+     * 审批任务开始、结束、转交。
+     */
+    BPMS_TASK_CHANGE(5,20,"bpms_instance_change"),
+
+    /**
+     *
+     * 审批实例开始、结束。
+     */
+    BPMS_INSTANCE_CHANGE(5,20,"bpms_instance_change"),
+
     ASYNCSEND_V2(10,20,"发送钉钉消息"),
 
 
