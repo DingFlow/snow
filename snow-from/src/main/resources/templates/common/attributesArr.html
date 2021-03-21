@@ -1,0 +1,143 @@
+<style>
+    #ortum_attr_addLine:hover{
+        cursor: pointer;
+    }
+    #ortum_attr_addLine{
+        font-size: 28px;
+        line-height: 35px;
+        color: #bec7d1;
+        vertical-align: middle;
+    }
+    .ModalLabelTable{
+        width: 100%;
+    }
+    #ortum_attr_ModalLabel{
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="modal-header">
+    <h5 class="modal-title" >设置标签属性</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" id="ortum_attr_ModalLabel">
+    <table style="margin:0;" border="1" class="ModalLabelTable">
+        <tbody>
+        <tr style="text-align: center;">
+            <td style="width:50px;">
+                序号
+            </td>
+            <td>
+                <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>属性名
+            </td>
+            <td>
+                <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>属性值
+            </td>
+            <td style="width:100px">
+                操作
+            </td>
+        </tr>
+        <tr class="ortum_order_dataTr" ortum-line="1">
+            <td name="'span'" style="text-align: center;">
+                <span class="ortum_attr_order">1</span>
+            </td>
+            <td name="input">
+                <input type="text" class="form-control ortum_attr_label" >
+            </td>
+            <td name="input" >
+                <input type="text" class="form-control ortum_attr_value" >
+            </td>
+            <td name="button" style="text-align:center">
+                <button type="button" class="btn btn-outline-danger btn-sm ortun_attr_settingDel" style="padding:3px 6px;">删除</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align: center;line-height: 35px;">
+                <span id="ortum_attr_addLine" class="iconfont icon-jiahao ortum_tableAct_icon"></span>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+    <button type="button" class="btn btn-primary" id="ortum_attr_save">保存</button>
+</div>
+
+<script>
+    //绑定删除事件
+    $('#ortum_attr_ModalLabel .ModalLabelTable').on('click','.ortun_attr_settingDel',function(e){
+        //父级
+        let parentTr = $(this).parents('tr').eq(0);
+        //行号
+        let line = $(parentTr).attr('ortum-line');
+        //修改下级行号
+        let nextTr = $(parentTr).nextAll('tr.ortum_order_dataTr');
+        nextTr.each(function(index,item){
+            $(item).attr('ortum-line',line);
+            $(item).find(".ortum_attr_order").eq(0).html(line);
+            line = line*1 + 1;
+        });
+        $(parentTr).remove();
+    })
+
+
+    //新增行
+    $('#ortum_attr_addLine').off('click.add').on('click.add',function(){
+        let order = $(this).parents('tr').eq(0).prev('tr').find('.ortum_attr_order').html();
+        if(!order){
+            order = 0;
+        }
+        order = (order*1 + 1);
+
+        $(this).parents('tr').eq(0).before(`
+            <tr class="ortum_order_dataTr" ortum-line=${order}>
+                <td name="span" style="text-align: center;">
+                    <span class="ortum_attr_order">${order}</span>
+                </td>
+                <td name="input">
+                    <input type="text" class="form-control ortum_attr_label" >
+                </td>
+                <td name="input" >
+                    <input type="text" class="form-control ortum_attr_value" >
+                </td>
+                <td name="button" style="text-align:center">
+                    <button type="button" class="btn btn-outline-danger btn-sm ortun_attr_settingDel" style="padding:3px 6px;">删除</button>
+                </td>
+            </tr>
+        `)
+    });
+
+    require(["global"],function(Global){
+        Global.ortum_attributesArr_setVal && Global.ortum_attributesArr_setVal($('#ortum_attr_ModalLabel .ModalLabelTable'),$('#ortum_attr_addLine'));
+        //置空初始化函数
+        Global.ortum_attributesArr_setVal = null;
+        //保存
+        $('#ortum_attr_save').off('click.save').on('click.save',function(){
+            let newLine = [];
+            $('#ortum_attr_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                let label = $(item).find('.ortum_attr_label').eq(0).val()
+                let value = $(item).find('.ortum_attr_value').eq(0).val()
+                if(label && label.trim()){
+                    newLine.push({
+                        "label":label,
+                        "value":value,
+                    });
+                }
+            });
+            if(Global.ortum_attributesArr_save){
+                Global.ortum_attributesArr_save(newLine);
+            };
+
+            //置空保存函数
+            Global.ortum_attributesArr_save = null;
+            //关闭
+            $('#ortum_top_dialog').modal('toggle')
+        })
+    })
+
+</script>

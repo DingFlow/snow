@@ -1,0 +1,138 @@
+<!DOCTYPE html>  
+<html>  
+<head lang="zh-CN">  
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>  
+    <meta charset="UTF-8">  
+    <title>html5实现网页解锁功能</title>  
+    <style type="text/css">  
+        html, body {  
+            margin: 0;  
+            padding: 0;  
+            width: 100%;  
+            height: 100%;  
+        }  
+    </style>  
+    <script type="text/javascript">  
+        /**  
+         * 半径，画布宽度，画布高度，画布x内边距，画布y内边距  
+         */  
+        var R = 26, canvasWidth = 400, canvasHeight = 320, OffsetX = 30, OffsetY = 30;  
+        var circleArr = [];  
+        function createCirclePoint(diffX, diffY) {  
+            for (var row = 0; row < 3; row++) {  
+                for (var col = 0; col < 3; col++) {  
+                    // 计算圆心坐标  
+                    var Point = {  
+                        X: (OffsetX + col * diffX + ( col * 2 + 1) * R),  
+                        Y: (OffsetY + row * diffY + (row * 2 + 1) * R)  
+                    };  
+                    circleArr.push(Point);  
+                }  
+            }  
+        }  
+        window.onload = function () {  
+            var canvas = document.getElementById("lockCanvas");  
+            canvasWidth = document.body.offsetWidth;//网页可见区域宽  
+            canvas.width = canvasWidth;  
+            canvas.height = canvasHeight;  
+            var cxt = canvas.getContext("2d");  
+            /**  
+             * 每行3个圆  
+             * OffsetX为canvas x方向内边距  
+             * */  
+            var X = (canvasWidth - 2 * OffsetX - R * 2 * 3) / 2;  
+            var Y = (canvasHeight - 2 * OffsetY - R * 2 * 3) / 2;  
+              
+            createCirclePoint(X, Y);  
+              
+            bindEvent(canvas, cxt);  
+            //CW=2*offsetX+R*2*3+2*X  
+            Draw(cxt, circleArr, [],null);  
+        }  
+        function Draw(cxt, circleArr, pwdArr,touchPoint) {  
+            if (pwdArr.length > 0) {  
+                cxt.beginPath();  
+                for (var i = 0; i < pwdArr.length; i++) {  
+                    var pointIndex = pwdArr[i];  
+                    cxt.lineTo(circleArr[pointIndex].X, circleArr[pointIndex].Y);  
+                }  
+                cxt.lineWidth = 10;  
+                cxt.strokeStyle = "#627eed";  
+                cxt.stroke();  
+                cxt.closePath();  
+                if(touchPoint!=null){  
+                    var lastPointIndex=pwdArr[pwdArr.length-1];  
+                    var lastPoint=circleArr[lastPointIndex];  
+                    cxt.beginPath();  
+                    cxt.moveTo(lastPoint.X,lastPoint.Y);  
+                    cxt.lineTo(touchPoint.X,touchPoint.Y);  
+                    cxt.stroke();  
+                    cxt.closePath();  
+                }  
+            }  
+            for (var i = 0; i < circleArr.length; i++) {  
+                var Point = circleArr[i];  
+                cxt.fillStyle = "#627eed";  
+                cxt.beginPath();  
+                cxt.arc(Point.X, Point.Y, R, 0, Math.PI * 2, true);  
+                cxt.closePath();  
+                cxt.fill();  
+                cxt.fillStyle = "#ffffff";  
+                cxt.beginPath();  
+                cxt.arc(Point.X, Point.Y, R - 3, 0, Math.PI * 2, true);  
+                cxt.closePath();  
+                cxt.fill();  
+                if(pwdArr.indexOf(i)>=0){  
+                    cxt.fillStyle = "#627eed";  
+                    cxt.beginPath();  
+                    cxt.arc(Point.X, Point.Y, R -16, 0, Math.PI * 2, true);  
+                    cxt.closePath();  
+                    cxt.fill();  
+                }  
+  
+            }  
+        }  
+          
+        /**  
+         * 计算选中的密码   
+         */  
+        function getSelectPwd(touches,pwdArr){  
+            for (var i = 0; i < circleArr.length; i++) {  
+                var currentPoint = circleArr[i];  
+                var xdiff = Math.abs(currentPoint.X - touches.pageX);  
+                var ydiff = Math.abs(currentPoint.Y - touches.pageY);  
+                var dir = Math.pow((xdiff * xdiff + ydiff * ydiff), 0.5);  
+                if(dir > R || pwdArr.indexOf(i) >= 0)  
+                    continue;  
+                 pwdArr.push(i);  
+                 break;  
+            }  
+        }  
+          
+        /**  
+         * 给画布绑定事件  
+         */  
+        function bindEvent(canvas, cxt) {  
+            var pwdArr = [];  
+            canvas.addEventListener("touchstart", function (e) {  
+                getSelectPwd(e.touches[0],pwdArr);  
+            }, false);  
+            canvas.addEventListener("touchmove", function (e) {  
+                e.preventDefault();  
+                var touches = e.touches[0];  
+                getSelectPwd(touches,pwdArr);  
+                cxt.clearRect(0,0,canvasWidth,canvasHeight);  
+                Draw(cxt,circleArr,pwdArr,{X:touches.pageX,Y:touches.pageY});  
+            }, false);  
+            canvas.addEventListener("touchend", function (e) {  
+                cxt.clearRect(0,0,canvasWidth,canvasHeight);  
+                Draw(cxt,circleArr,pwdArr,null);  
+                alert("密码结果是："+pwdArr.join("->"));  
+                pwdArr=[];  
+            }, false);  
+        }  
+    </script>  
+</head>  
+<body>  
+<canvas id="lockCanvas"></canvas>  
+</body>  
