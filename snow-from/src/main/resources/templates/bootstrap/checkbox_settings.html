@@ -1,0 +1,146 @@
+<style>
+    #ortum_checkbox_addLine:hover{
+        cursor: pointer;
+    }
+    #ortum_checkbox_addLine{
+        font-size: 28px;
+        line-height: 35px;
+        color: #bec7d1;
+        vertical-align: middle;
+    }
+    </style>
+    
+    <div class="modal-header">
+        <h5 class="modal-title" >设置</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" id="ortum_checkbox_ModalLabel">
+        <table style="margin:0;" border="1" class="ModalLabelTable">
+            <tbody>
+                <tr style="text-align: center;">
+                    <td style="width:50px;">
+                        序号
+                    </td>
+                    <td style="width:55px;">
+                        默认值
+                    </td>
+                    <td>
+                        <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>名称
+                    </td>
+                    <td>
+                        <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>值
+                    </td>
+                    <td style="width:100px">
+                        操作
+                    </td>
+                </tr>
+                <tr class="ortum_order_dataTr" ortum-line="1">
+                    <td name="'span'" style="text-align: center;">
+                        <span class="ortum_checkbox_order">1</span>
+                    </td>
+                    <td name="check" style="text-align: center;">
+                        <input type="checkbox" class="ortum_default_checked">
+                    </td>
+                    <td name="input">
+                        <input type="text" class="form-control ortum_checkbox_label" >
+                    </td>
+                    <td name="input" >
+                        <input type="text" class="form-control ortum_checkbox_value" >
+                    </td>
+                    <td name="button" style="text-align:center">
+                        <button type="button" class="btn btn-outline-danger btn-sm ortun_checkbox_settingDel" style="padding:3px 6px;">删除</button>
+                        <button type="button" class="btn btn-outline-info btn-sm ortun_checkbox_settingEditAttr" style="padding:3px 6px;">属性</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align: center;line-height: 35px;">
+                        <!-- <span id="ortum_checkbox_addLine">新增</span> -->
+                        <span id="ortum_checkbox_addLine" class="iconfont icon-jiahao ortum_tableAct_icon"></span>
+                    </td>
+                </tr>
+    
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="ortum_checkbox_save">保存</button>
+    </div>
+    
+    <script>
+        //绑定删除事件
+        $('#ortum_checkbox_ModalLabel .ModalLabelTable').on('click','.ortun_checkbox_settingDel',function(e){
+            //父级
+            let parentTr = $(this).parents('tr').eq(0);
+            //行号
+            let line = $(parentTr).attr('ortum-line');
+            //修改下级行号
+            let nextTr = $(parentTr).nextAll('tr.ortum_order_dataTr');
+            nextTr.each(function(index,item){
+                $(item).attr('ortum-line',line);
+                $(item).find(".ortum_checkbox_order").eq(0).html(line);
+                line = line*1 + 1;
+            });
+            $(parentTr).remove();
+        })
+        //绑定属性编辑
+        $('#ortum_checkbox_ModalLabel .ModalLabelTable').on('click','.ortun_checkbox_settingEditAttr',function(e){
+            require("assist").dangerTip();
+        })
+    
+    
+        //新增行
+        $('#ortum_checkbox_addLine').off('click.add').on('click.add',function(){
+            let order = $(this).parents('tr').eq(0).prev('tr').find('.ortum_checkbox_order').html();
+            order = (order*1 + 1);
+    
+            $(this).parents('tr').eq(0).before(`
+                <tr class="ortum_order_dataTr" ortum-line=${order}>
+                    <td name="span" style="text-align: center;">
+                        <span class="ortum_checkbox_order">${order}</span>
+                    </td>
+                    <td name="check" style="text-align: center;">
+                        <input type="checkbox" class="ortum_default_checked">
+                    </td>
+                    <td name="input">
+                        <input type="text" class="form-control ortum_checkbox_label" >
+                    </td>
+                    <td name="input" >
+                        <input type="text" class="form-control ortum_checkbox_value" >
+                    </td>
+                    <td name="button" style="text-align:center">
+                        <button type="button" class="btn btn-outline-danger btn-sm ortun_checkbox_settingDel" style="padding:3px 6px;">删除</button>
+                        <button type="button" class="btn btn-outline-info btn-sm ortun_checkbox_settingEditAttr" style="padding:3px 6px;">属性</button>
+                    </td>
+                </tr>
+            `)
+        })
+    
+        //保存
+        $('#ortum_checkbox_save').off('click.save').on('click.save',function(){
+            if(!require)return;
+            require(["BootstrapCheckbox"],function(BootstrapCheckbox){
+                let newLine = [];
+                $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                    let label = $(item).find('.ortum_checkbox_label').eq(0).val()
+                    let value = $(item).find('.ortum_checkbox_value').eq(0).val()
+                    let checked = $(item).find('.ortum_default_checked').eq(0).prop('checked')
+                    if(label && value && label.trim() && value.trim()){
+                        newLine.push({
+                            "label":label,
+                            "value":value,
+                            "checked":checked,
+                        })
+                    }
+                })
+                BootstrapCheckbox.setCheckboxItems(newLine);
+                $('#ortum_top_dialog').modal('toggle')
+            })
+        })
+    
+    
+    
+    </script>
+    

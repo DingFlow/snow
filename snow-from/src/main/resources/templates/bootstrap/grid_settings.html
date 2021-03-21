@@ -1,0 +1,93 @@
+<style>
+    #ortum_grid_addLine:hover{
+        cursor: pointer;
+    }
+    #ortum_grid_addLine{
+        font-size: 28px;
+        line-height: 35px;
+        color: #bec7d1;
+        vertical-align: middle;
+    }
+    .ModalLabelTable{
+        width: 100%;
+    }
+</style>
+
+<div class="modal-header">
+    <h5 class="modal-title" >设置</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" id="ortum_grid_ModalLabel">
+    <table style="margin:0;" border="1" class="ModalLabelTable">
+        <tbody>
+        <tr style="text-align: center;">
+            <td style="width:50px;">
+                序号
+            </td>
+            <td>
+                <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>列宽
+            </td>
+        </tr>
+        <tr class="ortum_order_dataTr" ortum-line="1">
+            <td name="'span'" style="text-align: center;">
+                <span class="ortum_grid_order">1</span>
+            </td>
+            <td name="input">
+                <input type="text" class="form-control ortum_grid_colValue" >
+            </td>
+        </tr>
+
+        <tr style="display: none">
+            <td colspan="2" style="text-align: center;line-height: 35px;">
+                <span id="ortum_grid_addLine" class="iconfont icon-jiahao ortum_tableAct_icon"></span>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+    <button type="button" class="btn btn-primary" id="ortum_grid_save">保存</button>
+</div>
+
+<script>
+
+    //新增行
+    $('#ortum_grid_addLine').off('click.add').on('click.add',function(){
+        let order = $(this).parents('tr').eq(0).prev('tr').find('.ortum_grid_order').html();
+        order = (order*1 + 1);
+
+        $(this).parents('tr').eq(0).before(`
+            <tr class="ortum_order_dataTr" ortum-line=${order}>
+
+                <td name="span" style="text-align: center;">
+                    <span class="ortum_grid_order">${order}</span>
+                </td>
+                <td name="input">
+                    <input type="text" class="form-control ortum_grid_colValue" >
+                </td>
+            </tr>
+        `)
+    })
+
+    //保存
+    $('#ortum_grid_save').off('click.save').on('click.save',function(){
+        if(!require)return;
+        require(["BootstrapGrid"],function(BootstrapGrid){
+            let newLine = [];
+            $('#ortum_grid_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                let value = $(item).find('.ortum_grid_colValue').eq(0).val()
+                if(value && value.trim()){
+                    newLine.push({
+                        "classValue":value,
+                    })
+                }
+            })
+            BootstrapGrid.setGridItems(newLine);
+            $('#ortum_top_dialog').modal('toggle')
+        })
+    })
+</script>

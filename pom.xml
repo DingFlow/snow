@@ -230,6 +230,7 @@
         <module>snow-common</module>
         <module>snow-dingtalk</module>
         <module>snow-flowable</module>
+        <module>snow-from</module>
     </modules>
     <packaging>pom</packaging>
 
