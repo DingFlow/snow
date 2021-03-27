@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysDingProcinstMapper">
+    
+    <resultMap type="SysDingProcinst" id="SysDingProcinstResult">
+        <result property="id"    column="ID_"    />
+        <result property="rev"    column="REV_"    />
+        <result property="procInstId"    column="PROC_INST_ID_"    />
+        <result property="businessKey"    column="BUSINESS_KEY_"    />
+        <result property="corpId"    column="CORP_ID_"    />
+        <result property="startTime"    column="START_TIME_"    />
+        <result property="finishTime"    column="FINISH_TIME_"    />
+        <result property="eventType"    column="EVENT_TYPE_"    />
+        <result property="type"    column="TYPE_"    />
+        <result property="title"    column="TITLE_"    />
+        <result property="procCode"    column="PROC_CODE"    />
+        <result property="tenantId"    column="TENANT_ID_"    />
+        <result property="name"    column="NAME_"    />
+        <result property="dingUrl"    column="DING_URL"    />
+        <result property="procResult"    column="PROC_RESULT_"    />
+        <result property="startUserId"    column="START_USER_ID_"    />
+
+    </resultMap>
+
+    <sql id="selectSysDingProcinstVo">
+        select ID_, REV_, PROC_INST_ID_, BUSINESS_KEY_, START_USER_ID_,CORP_ID_, START_TIME_, FINISH_TIME_, EVENT_TYPE_, TYPE_, TITLE_, PROC_CODE, TENANT_ID_, NAME_, DING_URL, PROC_RESULT_ from sys_ding_procinst
+    </sql>
+
+    <select id="selectSysDingProcinstList" parameterType="SysDingProcinst" resultMap="SysDingProcinstResult">
+        <include refid="selectSysDingProcinstVo"/>
+        <where>  
+            <if test="rev != null "> and REV_ = #{rev}</if>
+            <if test="procInstId != null  and procInstId != ''"> and PROC_INST_ID_ = #{procInstId}</if>
+            <if test="businessKey != null  and businessKey != ''"> and BUSINESS_KEY_ = #{businessKey}</if>
+            <if test="corpId != null  and corpId != ''"> and CORP_ID_ = #{corpId}</if>
+            <if test="startTime != null "> and START_TIME_ = #{startTime}</if>
+            <if test="finishTime != null "> and FINISH_TIME_ = #{finishTime}</if>
+            <if test="eventType != null  and eventType != ''"> and EVENT_TYPE_ = #{eventType}</if>
+            <if test="type != null  and type != ''"> and TYPE_ = #{type}</if>
+            <if test="title != null  and title != ''"> and TITLE_ = #{title}</if>
+            <if test="procCode != null  and procCode != ''"> and PROC_CODE = #{procCode}</if>
+            <if test="tenantId != null  and tenantId != ''"> and TENANT_ID_ = #{tenantId}</if>
+            <if test="name != null  and name != ''"> and NAME_ = #{name}</if>
+            <if test="dingUrl != null  and dingUrl != ''"> and DING_URL = #{dingUrl}</if>
+            <if test="procResult != null  and procResult != ''"> and PROC_RESULT_ = #{procResult}</if>
+            <if test="startUserId != null  and startUserId != ''"> and START_USER_ID_ = #{startUserId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDingProcinstById" parameterType="Long" resultMap="SysDingProcinstResult">
+        <include refid="selectSysDingProcinstVo"/>
+        where ID_ = #{id}
+    </select>
+
+    <select id="selectSysDingProcinstByProcInstId" parameterType="String" resultMap="SysDingProcinstResult">
+        <include refid="selectSysDingProcinstVo"/>
+        where PROC_INST_ID_ = #{procInstId}
+    </select>
+    <insert id="insertSysDingProcinst" parameterType="SysDingProcinst" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_ding_procinst
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rev != null">REV_,</if>
+            <if test="procInstId != null and procInstId != ''">PROC_INST_ID_,</if>
+            <if test="businessKey != null">BUSINESS_KEY_,</if>
+            <if test="corpId != null and corpId != ''">CORP_ID_,</if>
+            <if test="startTime != null">START_TIME_,</if>
+            <if test="finishTime != null">FINISH_TIME_,</if>
+            <if test="eventType != null">EVENT_TYPE_,</if>
+            <if test="type != null">TYPE_,</if>
+            <if test="title != null">TITLE_,</if>
+            <if test="procCode != null">PROC_CODE,</if>
+            <if test="tenantId != null">TENANT_ID_,</if>
+            <if test="name != null">NAME_,</if>
+            <if test="dingUrl != null">DING_URL,</if>
+            <if test="procResult != null">PROC_RESULT_,</if>
+            <if test="startUserId != null  and startUserId != ''"> START_USER_ID_,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rev != null">#{rev},</if>
+            <if test="procInstId != null and procInstId != ''">#{procInstId},</if>
+            <if test="businessKey != null">#{businessKey},</if>
+            <if test="corpId != null and corpId != ''">#{corpId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="type != null">#{type},</if>
+            <if test="title != null">#{title},</if>
+            <if test="procCode != null">#{procCode},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="dingUrl != null">#{dingUrl},</if>
+            <if test="procResult != null">#{procResult},</if>
+            <if test="startUserId != null  and startUserId != ''"> #{startUserId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDingProcinst" parameterType="SysDingProcinst">
+        update sys_ding_procinst
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="rev != null">REV_ = #{rev},</if>
+            <if test="procInstId != null and procInstId != ''">PROC_INST_ID_ = #{procInstId},</if>
+            <if test="businessKey != null">BUSINESS_KEY_ = #{businessKey},</if>
+            <if test="corpId != null and corpId != ''">CORP_ID_ = #{corpId},</if>
+            <if test="startTime != null">START_TIME_ = #{startTime},</if>
+            <if test="finishTime != null">FINISH_TIME_ = #{finishTime},</if>
+            <if test="eventType != null">EVENT_TYPE_ = #{eventType},</if>
+            <if test="type != null">TYPE_ = #{type},</if>
+            <if test="title != null">TITLE_ = #{title},</if>
+            <if test="procCode != null">PROC_CODE = #{procCode},</if>
+            <if test="tenantId != null">TENANT_ID_ = #{tenantId},</if>
+            <if test="name != null">NAME_ = #{name},</if>
+            <if test="dingUrl != null">DING_URL = #{dingUrl},</if>
+            <if test="procResult != null">PROC_RESULT_ = #{procResult},</if>
+            <if test="startUserId != null  and startUserId != ''">  START_USER_ID_ = #{startUserId},</if>
+        </trim>
+        where ID_ = #{id}
+    </update>
+
+    <delete id="deleteSysDingProcinstById" parameterType="Long">
+        delete from sys_ding_procinst where ID_ = #{id}
+    </delete>
+
+    <delete id="deleteSysDingProcinstByIds" parameterType="String">
+        delete from sys_ding_procinst where ID_ in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

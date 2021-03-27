@@ -1,14 +1,8 @@
 package com.snow.from.controller;
 
-import cn.hutool.cache.CacheUtil;
-import cn.hutool.cache.impl.TimedCache;
-import com.alibaba.fastjson.JSON;
-import com.snow.common.core.domain.AjaxResult;
-
-import com.snow.from.model.FromInfoDTO;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @program: snow
@@ -123,32 +117,4 @@ public class FromController {
         return "/common/select_settings";
     }
 
-
-
-
-    /**
-     *
-     * 保存表单数据
-     * @param fromInfoDTO
-     * @return
-     */
-    @PostMapping("/saveFromInfo")
-    @ResponseBody
-    public AjaxResult saveFromInfo(@RequestBody FromInfoDTO fromInfoDTO)
-    {
-
-        TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
-        timedCache.put("fromInfoData",JSON.toJSONString(fromInfoDTO));
-        return AjaxResult.success(fromInfoDTO);
-    }
-
-
-    @GetMapping("/getFromInfo")
-    @ResponseBody
-    public AjaxResult getFromInfo()
-    {
-        String f="{\"ortumJson\":[{\"frame\":\"Bootstrap\",\"children\":[],\"componentKey\":\"inputDom\",\"name\":\"input_1616296539862130a\",\"title\":\"名称\",\"html\":\"<div class=\\\"form-group ortum_item ortum_bootstrap_input row\\\" data-frame=\\\"Bootstrap\\\" data-componentkey=\\\"inputDom\\\" ortum_uuid=\\\"3a50665e-ed1f-8dc6-b804-aa6e4fe8a0c3\\\"> <label class=\\\"col-form-label col-2 ortum_display_NONE\\\">名称</label><input type=\\\"text\\\" title=\\\"名称\\\" name=\\\"input_1616296539862130a\\\" class=\\\"form-control col\\\" placeholder=\\\"请输入\\\" autocomplete=\\\"off\\\"></div>\",\"componentProperties\":\"{\\\"data\\\":\\\"{\\\\\\\"id\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"name\\\\\\\":\\\\\\\"input_1616296539862130a\\\\\\\",\\\\\\\"defaultVal\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"verification\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"authority\\\\\\\":\\\\\\\"edit\\\\\\\",\\\\\\\"placeholder\\\\\\\":\\\\\\\"请输入\\\\\\\",\\\\\\\"cssClass\\\\\\\":\\\\\\\"form-control col\\\\\\\",\\\\\\\"hideLabel\\\\\\\":true,\\\\\\\"labelName\\\\\\\":\\\\\\\"名称\\\\\\\",\\\\\\\"title\\\\\\\":\\\\\\\"名称\\\\\\\",\\\\\\\"labelPosition\\\\\\\":\\\\\\\"rowLeft\\\\\\\",\\\\\\\"labelCSS\\\\\\\":\\\\\\\"col-form-label col-2 ortum_display_NONE\\\\\\\",\\\\\\\"onBefore\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"onAfter\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"onClick\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"onBlur\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"onInput\\\\\\\":\\\\\\\"\\\\\\\",\\\\\\\"uuid\\\\\\\":\\\\\\\"3a50665e-ed1f-8dc6-b804-aa6e4fe8a0c3\\\\\\\",\\\\\\\"attributesArr\\\\\\\":\\\\\\\"[\\\\\\\\\\\\\\\"{\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"label\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"autocomplete\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"value\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"off\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}\\\\\\\\\\\\\\\"]\\\\\\\"}\\\",\\\"inputChange\\\":\\\"[\\\\\\\"id\\\\\\\",\\\\\\\"name\\\\\\\",\\\\\\\"defaultVal\\\\\\\",\\\\\\\"verification\\\\\\\",\\\\\\\"placeholder\\\\\\\",\\\\\\\"cssClass\\\\\\\",\\\\\\\"labelName\\\\\\\",\\\\\\\"labelCSS\\\\\\\",\\\\\\\"title\\\\\\\"]\\\",\\\"clickChange\\\":\\\"[\\\\\\\"authority\\\\\\\",\\\\\\\"hideLabel\\\\\\\",\\\\\\\"labelPosition\\\\\\\"]\\\",\\\"purview\\\":\\\"{\\\\\\\"id\\\\\\\":3,\\\\\\\"name\\\\\\\":3,\\\\\\\"defaultVal\\\\\\\":3,\\\\\\\"verification\\\\\\\":3,\\\\\\\"authority\\\\\\\":3,\\\\\\\"placeholder\\\\\\\":3,\\\\\\\"cssClass\\\\\\\":3,\\\\\\\"hideLabel\\\\\\\":3,\\\\\\\"labelName\\\\\\\":3,\\\\\\\"labelPosition\\\\\\\":3,\\\\\\\"labelCSS\\\\\\\":3,\\\\\\\"title\\\\\\\":3}\\\",\\\"dataShowType\\\":\\\"{\\\\\\\"hideLabel\\\\\\\":\\\\\\\"switch\\\\\\\",\\\\\\\"authority\\\\\\\":\\\\\\\"checkbox\\\\\\\",\\\\\\\"labelPosition\\\\\\\":\\\\\\\"checkbox\\\\\\\"}\\\"}\",\"ortumChildren\":null,\"script\":\"\"}],\"ortumSet\":{}}";
-
-        return AjaxResult.success(f);
-    }
 }

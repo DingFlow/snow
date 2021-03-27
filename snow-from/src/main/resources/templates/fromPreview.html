@@ -260,30 +260,8 @@
 
     <script>
 
-
-      //  let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document});
+      let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document});
         //let prevArrJSON = getFormContentJson("id",{id:"ortum_field",win:window.opener.document});
-
-      let prevArrJSON= axios.get("/from/interface/getFromInfo")
-            .then(function (res) {
-               // console.log("=========getFromInfo=========>"+JSON.stringify(res))
-                if(res.data.code==0){
-                    prevArrJSON= JSON.parse(res.data.msg).ortumJson;
-                    console.log("========后端返回的prevArrJSON======="+JSON.stringify(prevArrJSON));
-                    //typeof callback === 'function' && callback.call(window,prevArrJSON);
-
-                    //return prevArrJSON;
-                }else{
-                    Assist.dangerTip(res.data.message)
-                }
-            })
-            .catch(function (error) {
-                if(!error || !error.noShowTip){
-                    Assist.dangerTip("保存失败");
-                }
-                console.error(error);
-            });
-
 
         //这个地方调用接口获取返回的html即可
         console.log("========prevArrJSON======="+JSON.stringify(prevArrJSON));

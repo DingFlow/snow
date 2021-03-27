@@ -1,4 +1,4 @@
-package com.snow.from.model;
+package com.snow.from.domain;
 
 import lombok.Data;
 
@@ -39,6 +39,7 @@ public class FromInfoDTO implements Serializable {
     private String  editor;
 
 
+
     private Date editTime;
 
     /**
@@ -48,10 +49,14 @@ public class FromInfoDTO implements Serializable {
     /**
      * from表单name
      */
-    private Date  formName;
+    private String  formName;
 
     /**
      * 版本号
      */
     private String version;
+
+
+
+    public static String ORTUM_JSON="ortumJson";
 }

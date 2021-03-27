@@ -7,6 +7,8 @@ import com.snow.common.core.page.PageDomain;
 import com.snow.common.core.page.PageModel;
 import com.snow.dingtalk.model.FlowExecuteTaskRequest;
 import com.snow.dingtalk.model.FlowTerminateProcessInstanceRequest;
+import com.snow.dingtalk.model.SaveFlowRequest;
+import com.snow.dingtalk.model.StartFlowRequest;
 
 import java.util.List;
 
@@ -17,6 +19,19 @@ import java.util.List;
  * @create: 2021-03-17 10:23
  **/
 public interface DingOfficialFlowService {
+
+    /**
+     *  创建审批模板
+     * @param saveFlowRequest
+     * @return
+     */
+    String saveProcess(SaveFlowRequest saveFlowRequest);
+
+    /**
+     * 发起审批实例
+     * @return
+     */
+    String startProcessInstance(StartFlowRequest startFlowRequest);
 
     /**
      * 获取当前企业所有可管理的模版
@@ -54,4 +69,12 @@ public interface DingOfficialFlowService {
      * @return
      */
     Boolean terminateProcessInstance(FlowTerminateProcessInstanceRequest flowTerminateProcessInstanceRequest);
+
+
+    void bpmsInstanceChange();
+
+    void bpmsTaskChange();
+
+
+
 }

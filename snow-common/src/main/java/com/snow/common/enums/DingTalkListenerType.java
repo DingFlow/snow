@@ -17,6 +17,8 @@ public enum  DingTalkListenerType {
 
     USER_DELETE(3,1,"user_leave_org"),
 
+    CALL_BACK_CHECK_URL(1,10, "check_url"),
+
     CALL_BACK_REGISTER(1,10, "回调注册"),
 
     CALL_BACK_UPDATE(2,10, "回调更新"),
@@ -35,13 +37,13 @@ public enum  DingTalkListenerType {
     /**
      * 审批任务开始、结束、转交。
      */
-    BPMS_TASK_CHANGE(5,20,"bpms_instance_change"),
+    BPMS_TASK_CHANGE(5,20,"bpms_task_change"),
 
     /**
      *
      * 审批实例开始、结束。
      */
-    BPMS_INSTANCE_CHANGE(5,20,"bpms_instance_change"),
+    BPMS_INSTANCE_CHANGE(6,20,"bpms_instance_change"),
 
     ASYNCSEND_V2(10,20,"发送钉钉消息"),
 

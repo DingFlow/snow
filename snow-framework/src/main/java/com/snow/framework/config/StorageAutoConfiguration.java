@@ -1,5 +1,6 @@
 package com.snow.framework.config;
 
+import com.snow.common.constant.Constants;
 import com.snow.framework.storage.AliyunStorage;
 import com.snow.framework.storage.LocalStorage;
 import com.snow.framework.storage.StorageService;
@@ -42,20 +43,18 @@ public class StorageAutoConfiguration {
     @Bean
     public LocalStorage localStorage() {
         LocalStorage localStorage = new LocalStorage();
-        String address= configService.selectConfigByKey("sys.local.file.address");
-        String path= configService.selectConfigByKey("sys.local.file.path");
+        String address= configService.selectConfigByKey(Constants.LOCAL_ADDRESS);
         localStorage.setAddress(address);
-        localStorage.setStoragePath(path);
         return localStorage;
     }
 
     @Bean
     public AliyunStorage aliyunStorage() {
         AliyunStorage aliyunStorage = new AliyunStorage();
-        String accessKeyId= configService.selectConfigByKey("sys.aliyun.file.accessKeyId");
-        String accessKeySecret= configService.selectConfigByKey("sys.aliyun.file.accessKeySecret");
-        String bucketName= configService.selectConfigByKey("sys.aliyun.file.bucketName");
-        String endpoint= configService.selectConfigByKey("sys.aliyun.file.endpoint");
+        String accessKeyId= configService.selectConfigByKey(Constants.ALIYUN_ACCESSKEYID);
+        String accessKeySecret= configService.selectConfigByKey(Constants.ALIYUN_ACCESSKEYSECRET);
+        String bucketName= configService.selectConfigByKey(Constants.ALIYUN_BUCKETNAME);
+        String endpoint= configService.selectConfigByKey(Constants.ALIYUN_ENDPOINT);
         aliyunStorage.setAccessKeyId(accessKeyId);
         aliyunStorage.setAccessKeySecret(accessKeySecret);
         aliyunStorage.setBucketName(bucketName);

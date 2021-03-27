@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('钉钉运行任务列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                          <!--  <li>
+                                <label>流程实例id：</label>
+                                <input type="text" name="procInstId"/>
+                            </li>-->
+                            <li>
+                                <label>code：</label>
+                                <input type="text" name="procCode"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var todoList = [[${@permission.hasPermi('ding:task:todoList')}]];
+        var prefix = ctx + "ding/task";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "钉钉运行任务",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '任务id',
+                    visible: false
+                },
+                /*{
+                    field: 'sysDingProcinst.businessKey',
+                    title: '业务id'
+                },*/ {
+                        field: 'procCode',
+                        title: '流程code',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value);
+                        }
+                    },
+                {
+                    field: 'sysDingProcinst.title',
+                    title: '流程名称'
+                },
+
+                {
+                    field: 'sysDingProcinst.startUserName',
+                    title: '流程发起人'
+                },
+                {
+                     field: 'sysDingProcinst.startTime',
+                     title: '流程发起时间'
+                },
+                {
+                    field: 'createTime',
+                    title: '任务创建时间'
+                },
+                 {
+                        field: 'createTime',
+                        title: '任务已用时',
+                        formatter: function(value, row, index) {
+
+                            run(value);
+                            return '<label class="success" style="color: red" id="spendTime" ></label>'
+                        }
+                },
+
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelTask(\''+row.id+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+
+        });
+
+        function cancelTask(taskId) {
+            var preViewUrl=prefix+'/toFinishTask?taskId='+taskId;
+            $.modal.openTab("审批", preViewUrl);
+        }
+
+
+        //定时器
+        function run(enddate){
+            //如果enddate为后台传入的Date类型，这里直接转化为毫秒数
+            enddate=new Date(enddate).getTime();
+            //以500毫秒的速度执行（可以避免方法执行速度慢会影响展示效果的情况）0
+            var time = 500;
+            setInterval("dateDif('"+enddate+"')",time);
+        }
+        //计算时间相差
+        function dateDif(enddate){
+            var date = new Date().getTime()-enddate;
+            var days    = date / 1000 / 60 / 60 / 24;
+            var daysRound   = Math.floor(days);
+            var hours    = date/ 1000 / 60 / 60 - (24 * daysRound);
+            var hoursRound   = Math.floor(hours);
+            var minutes   = date / 1000 /60 - (24 * 60 * daysRound) - (60 * hoursRound);
+            var minutesRound  = Math.floor(minutes);
+            var seconds   = date/ 1000 - (24 * 60 * 60 * daysRound) - (60 * 60 * hoursRound) - (60 * minutesRound);
+            var secondsRound  = Math.floor(seconds);
+            var time = (daysRound+"天"+hoursRound +"时"+minutesRound+"分"+secondsRound+"秒");
+            $("#spendTime").text(time);
+        }
+
+    </script>
+</body>
+</html>

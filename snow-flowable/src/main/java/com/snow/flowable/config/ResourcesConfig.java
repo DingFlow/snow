@@ -1,5 +1,6 @@
 package com.snow.flowable.config;
 
+import com.snow.system.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,9 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Autowired
     private CustomHandlerInterceptor customHandlerInterceptor;
 
+    @Autowired
+    private ISysConfigService configService;
+
     /**
      * 默认首页的设置，当输入域名是可以自动跳转到默认指定的网页
      */
@@ -42,8 +46,10 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
+        //获取配置的文件地址
+        String address= configService.selectConfigByKey(Constants.LOCAL_ADDRESS);
         /** 本地文件上传路径 */
-        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + Global.getProfile() + "/");
+        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + address + "/");
 
         /** swagger配置 */
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");

@@ -1,7 +1,9 @@
 package com.snow.framework.storage;
 
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -16,13 +18,15 @@ public interface Storage {
     /**
      * 存储一个文件对象
      *
-     * @param inputStream   文件输入流
-     * @param contentLength 文件长度
-     * @param contentType   文件类型
+     * @param file
      * @param keyName       文件名
      */
-    void store(InputStream inputStream, long contentLength, String contentType, String keyName);
+    void store(String keyName, MultipartFile file);
 
+    /**
+     *
+     * @return
+     */
     Stream<Path> loadAll();
 
     /**

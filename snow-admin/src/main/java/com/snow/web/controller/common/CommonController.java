@@ -77,8 +77,7 @@ public class CommonController
     {
         try
         {
-            String originalFilename = file.getOriginalFilename();
-            SysFile store = storageService.store(file.getInputStream(), file.getSize(), file.getContentType(), originalFilename);
+            SysFile store = storageService.store(file);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileKey",store.getKey());
             ajax.put("fileName", store.getName());

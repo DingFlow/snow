@@ -12,30 +12,57 @@
 </head>
 <body class="white-bg" >
 	<form class="form-horizontal m-t"  id="signupForm">
-		<!--<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
-		<input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
-		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.resignNo}"/>-->
+		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+	    <input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
 		<!--<input name="id" th:value="${appFrom.id}" type="hidden">-->
 	    <br/>
-		<h2 class="form-header h2" >离职审批信息</h2>
+		<h2 class="form-header h2" >审批信息</h2>
 		<div class="row" th:each="form,iterStat : ${formComponentValues}">
-			<div class="col-xs-6 col-sm-8 col-md-offset-1">
-				<label th:text="${form.name}"></label>
-				<span th:text="${form.value}"/>
+			<div class="form-group">
+				<label class="col-sm-3 control-label" th:text="${form.name}">：</label>
+				<div class="col-sm-8">
+					<span class="form-control" th:text="${form.value}"/>
+				</div>
 			</div>
 		</div>
 
     <br/>
-		<th:block th:include="include :: approvalpage" />
+		<!--审批页-->
+		<div th:fragment="approvalpage">
+			<h4 class="form-header h4">填写信息</h4>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">审批结果：</label>
+				<div class="col-sm-8">
+					<div class="radio-box" th:each="dict : ${@dict.getType('process_check_status')}">
+						<input type="radio" th:id="${dict.dictCode}" name="isPass" th:value="${dict.dictValue}" required>
+						<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">审批意见：</label>
+				<div class="col-sm-8">
+					<textarea name="comment" class="form-control"></textarea>
+				</div>
+			</div>
+			<!--<div class="form-group">
+				<label class="col-sm-3 control-label">审批附件：</label>
+				<div class="col-sm-8">
+					<div class="file-loading">
+						<input class="form-control file-upload" id="files" name="file" type="file" multiple>
+					</div>
+				</div>
+			</div>-->
+			<div class="form-group">
+				<div class="col-sm-offset-6 col-sm-10">
+					<button type="button" class="btn btn-sm btn-success" onclick="submitCheckHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+				</div>
+			</div>
+		</div>
 	</form>
     <th:block th:include="include :: footer" />
 	<th:block th:include="include :: bootstrap-fileinput-js"/>
     <script th:inline="javascript">
-        $(function () {
-            var processInstanceId= $("#processInstanceId").val();
-            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
-            $(".imgcode").attr("src", url);
-        });
         var files=new Array();
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
@@ -73,7 +100,7 @@
                     }
 				}
                 console.log(data);
-                $.operate.saveTab("/flow/finishTask", data);
+                $.operate.saveTab("/ding/task/finishTask", data);
             }
         }
     </script>

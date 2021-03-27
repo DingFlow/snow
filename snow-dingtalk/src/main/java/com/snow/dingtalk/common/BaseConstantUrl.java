@@ -108,10 +108,17 @@ public class BaseConstantUrl {
      * 钉钉官方流程
      * *********************************************************/
 
+
+    public static final String SAVE_PROCESS="https://oapi.dingtalk.com/topapi/process/save";
     /**
      * 获取当前企业所有可管理的模版
      */
     public static final String GET_PROCESS_TEMPLATE_MANAGE="https://oapi.dingtalk.com/topapi/process/template/manage/get";
+
+    /**
+     * 发起流程实例
+     */
+    public static final String START_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/processinstance/create";
 
     /**
      * 执行流程

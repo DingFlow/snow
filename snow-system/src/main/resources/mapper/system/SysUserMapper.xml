@@ -187,6 +187,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectUserVo"/>
 		where u.user_id = #{userId}
 	</select>
+
+	<select id="selectUserByDingUserId" parameterType="String" resultMap="SysUserResult">
+		<include refid="selectUserVo"/>
+		where u.ding_user_id = #{dingUserId}
+	</select>
 	
 	<delete id="deleteUserById" parameterType="Long">
  		update sys_user set del_flag = '2' where user_id = #{userId}

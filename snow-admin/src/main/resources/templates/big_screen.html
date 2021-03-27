@@ -41,6 +41,21 @@
 			$(".adduser ul").animate({marginTop:-'.5'*a+'rem'},800)
 		},4300);
 	})
+
+    function current(){
+        var d=new Date(),
+		str='';
+        str +=d.getFullYear()+'年';   //获取当前年份
+        str +=d.getMonth()+1+'月';   //获取当前月份（0——11）
+
+        str +=d.getDate()+'日';
+        str +=d.getHours()+'时';
+        str +=d.getMinutes()+'分';
+        str +=d.getSeconds()+'秒';
+        return str;
+	}
+    setInterval(function(){$("#nowTime").html(current)},1000);
+
 </script>
 <body>
 <div class="loading">
@@ -48,7 +63,7 @@
 </div>
 <div class="head">
 	<h1>Ding-Flow可视化大屏</h1>
-	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span th:text="${date}"></span></div>
+	<div class="weather"><img th:src="@{/images/weather.png}"><span>多云转小雨</span><span id="nowTime"></span></div>
 </div>
 <div class="mainbox">
 	<ul class="clearfix">

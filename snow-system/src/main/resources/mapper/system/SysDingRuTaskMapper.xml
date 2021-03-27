@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysDingRuTaskMapper">
+    
+    <resultMap type="SysDingRuTask" id="SysDingRuTaskResult">
+        <result property="id"    column="ID_"    />
+        <result property="rev"    column="REV_"    />
+        <result property="procInstId"    column="PROC_INST_ID_"    />
+        <result property="procCode"    column="PROC_CODE_"    />
+        <result property="activityId"    column="ACTIVITY_ID_"    />
+        <result property="name"    column="NAME_"    />
+        <result property="parentTaskId"    column="PARENT_TASK_ID_"    />
+        <result property="description"    column="DESCRIPTION_"    />
+        <result property="taskDefKey"    column="TASK_DEF_KEY_"    />
+        <result property="assignee"    column="ASSIGNEE_"    />
+        <result property="createTime"    column="CREATE_TIME_"    />
+        <result property="finishTime"    column="FINISH_TIME_"    />
+        <result property="taskState"    column="TASK_STATE"    />
+        <result property="category"    column="CATEGORY_"    />
+        <result property="suspensionState"    column="SUSPENSION_STATE_"    />
+        <result property="tenantId"    column="TENANT_ID_"    />
+        <result property="formKey"    column="FORM_KEY_"    />
+    </resultMap>
+
+    <sql id="selectSysDingRuTaskVo">
+        select ID_, REV_, PROC_INST_ID_, PROC_CODE_, ACTIVITY_ID_, NAME_, PARENT_TASK_ID_, DESCRIPTION_, TASK_DEF_KEY_, ASSIGNEE_, CREATE_TIME_, FINISH_TIME_, TASK_STATE, CATEGORY_, SUSPENSION_STATE_, TENANT_ID_, FORM_KEY_ from sys_ding_ru_task
+    </sql>
+
+    <select id="selectSysDingRuTaskList" parameterType="SysDingRuTask" resultMap="SysDingRuTaskResult">
+        <include refid="selectSysDingRuTaskVo"/>
+        <where>  
+            <if test="rev != null "> and REV_ = #{rev}</if>
+            <if test="procInstId != null  and procInstId != ''"> and PROC_INST_ID_ = #{procInstId}</if>
+            <if test="procCode != null  and procCode != ''"> and PROC_CODE_ = #{procCode}</if>
+            <if test="activityId != null  and activityId != ''"> and ACTIVITY_ID_ = #{activityId}</if>
+            <if test="name != null  and name != ''"> and NAME_ = #{name}</if>
+            <if test="parentTaskId != null  and parentTaskId != ''"> and PARENT_TASK_ID_ = #{parentTaskId}</if>
+            <if test="description != null  and description != ''"> and DESCRIPTION_ = #{description}</if>
+            <if test="taskDefKey != null  and taskDefKey != ''"> and TASK_DEF_KEY_ = #{taskDefKey}</if>
+            <if test="assignee != null  and assignee != ''"> and ASSIGNEE_ = #{assignee}</if>
+            <if test="createTime != null "> and CREATE_TIME_ = #{createTime}</if>
+            <if test="finishTime != null "> and FINISH_TIME_ = #{finishTime}</if>
+            <if test="taskState != null  and taskState != ''"> and TASK_STATE = #{taskState}</if>
+            <if test="category != null  and category != ''"> and CATEGORY_ = #{category}</if>
+            <if test="suspensionState != null "> and SUSPENSION_STATE_ = #{suspensionState}</if>
+            <if test="tenantId != null  and tenantId != ''"> and TENANT_ID_ = #{tenantId}</if>
+            <if test="formKey != null  and formKey != ''"> and FORM_KEY_ = #{formKey}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDingRuTaskById" parameterType="String" resultMap="SysDingRuTaskResult">
+        <include refid="selectSysDingRuTaskVo"/>
+        where ID_ = #{id}
+    </select>
+        
+    <insert id="insertSysDingRuTask" parameterType="SysDingRuTask">
+        insert into sys_ding_ru_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">ID_,</if>
+            <if test="rev != null">REV_,</if>
+            <if test="procInstId != null">PROC_INST_ID_,</if>
+            <if test="procCode != null">PROC_CODE_,</if>
+            <if test="activityId != null">ACTIVITY_ID_,</if>
+            <if test="name != null">NAME_,</if>
+            <if test="parentTaskId != null">PARENT_TASK_ID_,</if>
+            <if test="description != null">DESCRIPTION_,</if>
+            <if test="taskDefKey != null">TASK_DEF_KEY_,</if>
+            <if test="assignee != null">ASSIGNEE_,</if>
+            <if test="createTime != null">CREATE_TIME_,</if>
+            <if test="finishTime != null">FINISH_TIME_,</if>
+            <if test="taskState != null">TASK_STATE,</if>
+            <if test="category != null">CATEGORY_,</if>
+            <if test="suspensionState != null">SUSPENSION_STATE_,</if>
+            <if test="tenantId != null">TENANT_ID_,</if>
+            <if test="formKey != null">FORM_KEY_,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="rev != null">#{rev},</if>
+            <if test="procInstId != null">#{procInstId},</if>
+            <if test="procCode != null">#{procCode},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="parentTaskId != null">#{parentTaskId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="taskDefKey != null">#{taskDefKey},</if>
+            <if test="assignee != null">#{assignee},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="taskState != null">#{taskState},</if>
+            <if test="category != null">#{category},</if>
+            <if test="suspensionState != null">#{suspensionState},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="formKey != null">#{formKey},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDingRuTask" parameterType="SysDingRuTask">
+        update sys_ding_ru_task
+        <trim prefix="SET" suffixOverrides=",">
+            REV_ = REV_+1,
+            <if test="procInstId != null">PROC_INST_ID_ = #{procInstId},</if>
+            <if test="procCode != null">PROC_CODE_ = #{procCode},</if>
+            <if test="activityId != null">ACTIVITY_ID_ = #{activityId},</if>
+            <if test="name != null">NAME_ = #{name},</if>
+            <if test="parentTaskId != null">PARENT_TASK_ID_ = #{parentTaskId},</if>
+            <if test="description != null">DESCRIPTION_ = #{description},</if>
+            <if test="taskDefKey != null">TASK_DEF_KEY_ = #{taskDefKey},</if>
+            <if test="assignee != null">ASSIGNEE_ = #{assignee},</if>
+            <if test="createTime != null">CREATE_TIME_ = #{createTime},</if>
+            <if test="finishTime != null">FINISH_TIME_ = #{finishTime},</if>
+            <if test="taskState != null">TASK_STATE = #{taskState},</if>
+            <if test="category != null">CATEGORY_ = #{category},</if>
+            <if test="suspensionState != null">SUSPENSION_STATE_ = #{suspensionState},</if>
+            <if test="tenantId != null">TENANT_ID_ = #{tenantId},</if>
+            <if test="formKey != null">FORM_KEY_ = #{formKey},</if>
+        </trim>
+        where ID_ = #{id}
+    </update>
+
+    <delete id="deleteSysDingRuTaskById" parameterType="String">
+        delete from sys_ding_ru_task where ID_ = #{id}
+    </delete>
+
+    <delete id="deleteSysDingRuTaskByIds" parameterType="String">
+        delete from sys_ding_ru_task where ID_ in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

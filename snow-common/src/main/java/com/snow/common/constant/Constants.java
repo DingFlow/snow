@@ -87,6 +87,32 @@ public class Constants
      */
     public static final String SYS_DICT_KEY = "sys_dict:";
 
+
+    /**
+     * 本地文件上传key
+     */
+    public static final String LOCAL_ADDRESS = "sys.local.file.address";
+
+    /**
+     * 阿里云accessKeyId
+     */
+    public static final String ALIYUN_ACCESSKEYID = "sys.aliyun.file.accessKeyId";
+
+    /**
+     * 阿里云accessKeySecret
+     */
+    public static final String ALIYUN_ACCESSKEYSECRET = "sys.aliyun.file.accessKeySecret";
+
+    /**
+     * 阿里云bucketName
+     */
+    public static final String ALIYUN_BUCKETNAME= "sys.aliyun.file.bucketName";
+
+
+    /**
+     * 阿里云endpoint
+     */
+    public static final String ALIYUN_ENDPOINT = "sys.aliyun.file.endpoint";
     /**
      * 资源映射路径 前缀
      */

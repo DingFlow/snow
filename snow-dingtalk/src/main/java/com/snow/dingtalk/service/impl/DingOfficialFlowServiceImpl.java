@@ -5,14 +5,19 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
+import com.snow.common.constant.Constants;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
+import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.model.FlowExecuteTaskRequest;
 import com.snow.dingtalk.model.FlowTerminateProcessInstanceRequest;
+import com.snow.dingtalk.model.SaveFlowRequest;
+import com.snow.dingtalk.model.StartFlowRequest;
 import com.snow.dingtalk.service.DingOfficialFlowService;
+import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,106 @@ import java.util.List;
 @Service
 public class DingOfficialFlowServiceImpl extends BaseService implements DingOfficialFlowService {
 
+    private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
+
+    @Override
+    public String saveProcess(SaveFlowRequest saveFlowRequest) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.SAVE_PROCESS);
+
+        OapiProcessSaveRequest request = new OapiProcessSaveRequest();
+        OapiProcessSaveRequest.SaveProcessRequest saveProcessRequest = new OapiProcessSaveRequest.SaveProcessRequest();
+       // saveProcessRequest.setDisableFormEdit(true);
+        saveProcessRequest.setName(saveFlowRequest.getName());
+        saveProcessRequest.setProcessCode(saveProcessRequest.getProcessCode());
+        saveProcessRequest.setAgentid(Long.parseLong(isysConfigService.selectConfigByKey(Constants.AGENT_ID)));
+        saveProcessRequest.setFakeMode(true);
+
+
+       // List<OapiProcessSaveRequest.FormComponentVo> formComponentList = new ArrayList<>();
+
+        // 注意，每种表单组件，对应的componentName是固定的
+        List<OapiProcessSaveRequest.FormComponentVo> formComponentList = BeanUtils.transformList(saveFlowRequest.getFormComponentList(), OapiProcessSaveRequest.FormComponentVo.class);
+
+
+        /*if(formComponentType.getDingType().equals(FormComponentType.TEXT_FIELD.getDingType())){
+            // 单行文本框
+            OapiProcessSaveRequest.FormComponentVo singleInput = new OapiProcessSaveRequest.FormComponentVo();
+            singleInput.setComponentName(FormComponentType.TEXT_FIELD.getDingType());
+            OapiProcessSaveRequest.FormComponentPropVo singleInputProp = new OapiProcessSaveRequest.FormComponentPropVo();
+
+            singleInputProp.setRequired(saveFlowRequest.getRequired());
+            singleInputProp.setLabel("单行输入框");
+            singleInputProp.setPlaceholder("请输入");
+            singleInputProp.setId("TextField-J78F056R");
+            singleInput.setProps(singleInputProp);
+            formComponentList.add(singleInput);
+        }*/
+
+
+       // 多行文本框
+       /* OapiProcessSaveRequest.FormComponentVo multipleInput = new OapiProcessSaveRequest.FormComponentVo();
+        multipleInput.setComponentName("TextareaField");
+        OapiProcessSaveRequest.FormComponentPropVo multipleInputProp = new OapiProcessSaveRequest.FormComponentPropVo();
+        multipleInputProp.setRequired(true);
+        multipleInputProp.setLabel("多行输入框");
+        multipleInputProp.setPlaceholder("请输入");
+        multipleInputProp.setId("TextareaField-J78F056S");
+        multipleInput.setProps(multipleInputProp);
+        formComponentList.add(multipleInput);*/
+
+
+        // 日期
+   /*     OapiProcessSaveRequest.FormComponentVo dateComponent = new OapiProcessSaveRequest.FormComponentVo();
+        dateComponent.setComponentName("DDDateField");
+        OapiProcessSaveRequest.FormComponentPropVo dateComponentProp = new OapiProcessSaveRequest.FormComponentPropVo();
+        dateComponentProp.setRequired(true);
+        dateComponentProp.setLabel("日期");
+        dateComponentProp.setPlaceholder("请选择");
+        dateComponentProp.setUnit("小时"); // 小时或天
+        dateComponentProp.setId("DDDateField-J8MTJZVE");
+        dateComponent.setProps(dateComponentProp);
+        formComponentList.add(dateComponent);*/
+
+
+        saveProcessRequest.setFormComponentList(formComponentList);
+        request.setSaveProcessRequest(saveProcessRequest);
+
+        try {
+            OapiProcessSaveResponse response = client.execute(request, getDingTalkToken());
+            if (response.getErrcode() != 0) {
+                throw new SyncDataException(JSON.toJSONString(request), response.getErrmsg());
+            }
+            return response.getResult().getProcessCode();
+        } catch (ApiException e) {
+            log.error("创建审批模板saveProcess异常：{}", e.getMessage());
+            throw new SyncDataException(JSON.toJSONString(request), e.getErrMsg());
+        }
+    }
+
+    @Override
+    public String startProcessInstance(StartFlowRequest startFlowRequest) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.START_PROCESS_INSTANCE);
+        OapiProcessinstanceCreateRequest req = new OapiProcessinstanceCreateRequest();
+        req.setProcessCode(startFlowRequest.getProcessCode());
+        req.setOriginatorUserId(startFlowRequest.getOriginatorUserId());
+        req.setDeptId(startFlowRequest.getDeptId());
+        //req.setApprovers("manager01, manager02");
+       // req.setCcList("user2,user3");
+        //req.setCcPosition("START");
+        //组件赋值
+        List<OapiProcessinstanceCreateRequest.FormComponentValueVo> formComponentList = BeanUtils.transformList(startFlowRequest.getFormComponentValueVoList(), OapiProcessinstanceCreateRequest.FormComponentValueVo.class);
+        req.setFormComponentValues(formComponentList);
+        try {
+            OapiProcessinstanceCreateResponse response = client.execute(req, getDingTalkToken());
+            if (response.getErrcode() != 0) {
+                throw new SyncDataException(JSON.toJSONString(req), response.getErrmsg());
+            }
+            return response.getProcessInstanceId();
+        } catch (ApiException e) {
+            log.error("发起审批实例startProcessInstance异常：{}", e.getMessage());
+            throw new SyncDataException(JSON.toJSONString(req), e.getErrMsg());
+        }
+    }
 
     @Override
     public List<OapiProcessTemplateManageGetResponse.ProcessSimpleVO> getProcessTemplateManage(String userId) {
@@ -143,6 +248,16 @@ public class DingOfficialFlowServiceImpl extends BaseService implements DingOffi
             log.error("终止流程terminateProcessInstance异常：{}", e.getMessage());
             throw new SyncDataException(JSON.toJSONString(req), e.getErrMsg());
         }
+    }
+
+    @Override
+    public void bpmsInstanceChange() {
+
+    }
+
+    @Override
+    public void bpmsTaskChange() {
+
     }
 
 }

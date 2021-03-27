@@ -80,6 +80,10 @@ public class CallBackController {
             if(StringUtils.isEmpty(type)){
                 return Constants.CALL_BACK_FAIL_RETURN;
             }
+            //测试回调URL事件，直接返回加密后的success即可
+            if(eventType.equals(DingTalkListenerType.CALL_BACK_CHECK_URL.getInfo())){
+                return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
+            }
             //调用工厂模式异步处理数据
             SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
             ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(type);

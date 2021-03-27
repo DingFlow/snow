@@ -1,46 +1,47 @@
 package com.snow.framework.storage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.snow.common.config.ServerConfig;
+import com.snow.common.constant.Constants;
+import com.snow.common.exception.file.FileNameLengthLimitExceededException;
+import com.snow.common.exception.file.FileSizeLimitExceededException;
+import com.snow.common.exception.file.InvalidExtensionException;
+import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.file.FileUploadUtils;
+import com.snow.common.utils.file.MimeTypeUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
+
 /**
  * @author qimingjin
  * @Title:
  * @Description:
  * @date 2021/1/11 13:20
  */
+@Slf4j
 public class LocalStorage implements Storage {
-    private final Log logger = LogFactory.getLog(LocalStorage.class);
 
-    private String storagePath;
-
+    /**
+     * 本地文件上传地址
+     */
     private String address;
 
-    private Path rootLocation;
 
-    public String getStoragePath() {
-        return storagePath;
-    }
+    @Autowired
+    private ServerConfig serverConfig;
 
-    public void setStoragePath(String storagePath) {
-        this.storagePath = storagePath;
+    /**
+     * 默认大小 50M
+     */
+    public static final long DEFAULT_MAX_SIZE = 50 * 1024 * 1024;
 
-        this.rootLocation = Paths.get(storagePath);
-        try {
-            Files.createDirectories(rootLocation);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
 
     public String getAddress() {
         return address;
@@ -50,61 +51,210 @@ public class LocalStorage implements Storage {
         this.address = address;
     }
 
-    @Override
-    public void store(InputStream inputStream, long contentLength, String contentType, String keyName) {
-        try {
-            Files.copy(inputStream, rootLocation.resolve(keyName), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store file " + keyName, e);
+    /**
+     * 以默认配置进行文件上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws Exception
+     */
+    public  final String upload(MultipartFile file) throws IOException
+    {
+        try
+        {
+            return upload(address, file,null, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+        }
+        catch (Exception e)
+        {
+            throw new IOException(e.getMessage(), e);
         }
     }
+    /**
+     * 根据文件路径上传
+     *
+     * @param file 上传的文件
+     * @return 文件名称
+     * @throws IOException
+     */
+    @Override
+    public void store(String keyName,MultipartFile file) {
+
+        try {
+             String url =address + "/upload";
+             upload(url, file,keyName, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidExtensionException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 生成文件地址URL
+     * @param keyName
+     * @return
+     */
+    @Override
+    public String generateUrl(String keyName) {
+        String url = serverConfig.getUrl()+getPathFileName(address + "/upload",DateUtils.datePath() + "/" +keyName) ;
+        return url;
+    }
+
+
+    /**
+     * 文件上传
+     *
+     * @param baseDir 相对应用的基目录
+     * @param file 上传的文件
+     * @param allowedExtension 上传文件类型
+     * @return 返回上传成功的文件名
+     * @throws FileSizeLimitExceededException 如果超出最大大小
+     * @throws FileNameLengthLimitExceededException 文件名太长
+     * @throws IOException 比如读写文件出错时
+     * @throws InvalidExtensionException 文件校验异常
+     */
+    public  String upload(String baseDir, MultipartFile file,String keyName, String[] allowedExtension)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException, InvalidExtensionException {
+        int fileNameLength = file.getOriginalFilename().length();
+        if (fileNameLength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
+            throw new FileNameLengthLimitExceededException(FileUploadUtils.DEFAULT_FILE_NAME_LENGTH);
+        }
+        //文件大小和格式校验
+        assertAllowed(file, allowedExtension);
+        //编码文件名字
+        String fileName = extractFilename(keyName);
+        //创建file文件
+        File desc = getAbsoluteFile(baseDir, fileName);
+        //上传文件写到服务器上指定的文件
+        file.transferTo(desc);
+        String pathFileName = getPathFileName(baseDir, fileName);
+        return pathFileName;
+    }
+
+    /**
+     * 编码文件名
+     */
+    public static final String extractFilename(String keyName)
+    {
+        return DateUtils.datePath() + "/" + keyName;
+    }
+
+    /**
+     * 创建File文件
+     * @param uploadDir
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    private static final File getAbsoluteFile(String uploadDir, String fileName) throws IOException
+    {
+        File desc = new File(uploadDir + File.separator + fileName);
+
+        if (!desc.exists())
+        {
+            if (!desc.getParentFile().exists())
+            {
+                desc.getParentFile().mkdirs();
+            }
+        }
+        return desc;
+    }
+
+    private  String getPathFileName(String uploadDir, String fileName)
+    {
+        int dirLastIndex = address.length() + 1;
+        String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
+        String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+        return pathFileName;
+    }
+
+
+    /**
+     * 文件大小校验
+     *
+     * @param file 上传的文件
+     * @return
+     * @throws FileSizeLimitExceededException 如果超出最大大小
+     * @throws InvalidExtensionException
+     */
+    public static final void assertAllowed(MultipartFile file, String[] allowedExtension) throws  InvalidExtensionException {
+        long size = file.getSize();
+        if (DEFAULT_MAX_SIZE != -1 && size > DEFAULT_MAX_SIZE) {
+            throw new FileNameLengthLimitExceededException(DEFAULT_MAX_SIZE / 1024 / 1024);
+        }
+
+        String fileName = file.getOriginalFilename();
+        String extension = getExtension(file);
+        if (allowedExtension != null && !isAllowedExtension(extension, allowedExtension))
+        {
+            if (allowedExtension == MimeTypeUtils.IMAGE_EXTENSION) {
+                throw new InvalidExtensionException.InvalidImageExtensionException(allowedExtension, extension, fileName);
+            } else if (allowedExtension == MimeTypeUtils.FLASH_EXTENSION) {
+                throw new InvalidExtensionException.InvalidFlashExtensionException(allowedExtension, extension, fileName);
+            } else if (allowedExtension == MimeTypeUtils.MEDIA_EXTENSION) {
+                throw new InvalidExtensionException.InvalidMediaExtensionException(allowedExtension, extension, fileName);
+            } else if (allowedExtension == MimeTypeUtils.VIDEO_EXTENSION) {
+                throw new InvalidExtensionException(allowedExtension, extension, fileName);
+            } else {
+                throw new InvalidExtensionException(allowedExtension, extension, fileName);
+            }
+        }
+    }
+
+    /**
+     * 判断MIME类型是否是允许的MIME类型
+     *
+     * @param extension
+     * @param allowedExtension
+     * @return
+     */
+    public static final boolean isAllowedExtension(String extension, String[] allowedExtension)
+    {
+        for (String str : allowedExtension)
+        {
+            if (str.equalsIgnoreCase(extension))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取文件名的后缀
+     *
+     * @param file 表单文件
+     * @return 后缀名
+     */
+    public static final String getExtension(MultipartFile file)
+    {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (StringUtils.isEmpty(extension))
+        {
+            extension = MimeTypeUtils.getExtension(file.getContentType());
+        }
+        return extension;
+    }
+
 
     @Override
     public Stream<Path> loadAll() {
-        try {
-            return Files.walk(rootLocation, 1)
-                    .filter(path -> !path.equals(rootLocation))
-                    .map(path -> rootLocation.relativize(path));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read stored files", e);
-        }
-
+        return null;
     }
 
     @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
+    public Path load(String keyName) {
+        return null;
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
-        try {
-            Path file = load(filename);
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                return null;
-            }
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
+    public Resource loadAsResource(String keyName) {
+        return null;
     }
 
     @Override
-    public void delete(String filename) {
-        Path file = load(filename);
-        try {
-            Files.delete(file);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+    public void delete(String keyName) {
 
-    @Override
-    public String generateUrl(String keyName) {
-
-        return address + keyName;
     }
 }

@@ -85,29 +85,6 @@ $("#ortum_exchangeItemBtn").on("click",function(){
             $("#ortum_exchangeA_tempObj").eq(0).replaceWith(Global.ortum_active_item);
             $("#ortum_exchangeB_tempObj").eq(0).replaceWith(Global.ortum_replace_item);
         }
-
-        /*if(activeItemParentDom.hasClass('ortum_bootstrap_td') && replaceItemParentDom.hasClass('ortum_bootstrap_td')){
-            BootstrapTable.sonOrtumItemNew(activeItemParentDom,$(Global.ortum_replace_item));
-            $(Global.ortum_replace_item).remove();//清除被替换组件
-            BootstrapTable.sonOrtumItemNew(replaceItemParentDom,$(Global.ortum_active_item));
-            $(Global.ortum_active_item).remove();//清除替换组件
-        }else if(!activeItemParentDom.hasClass('ortum_bootstrap_td') && replaceItemParentDom.hasClass('ortum_bootstrap_td')){
-            $(Global.ortum_active_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>");
-            $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_replace_item);
-            BootstrapTable.sonOrtumItemNew(replaceItemParentDom,$(Global.ortum_active_item));
-            $(Global.ortum_active_item).remove();//清除被替换组件
-        }else if(activeItemParentDom.hasClass('ortum_bootstrap_td') && !replaceItemParentDom.hasClass('ortum_bootstrap_td')){
-            $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>");
-            $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_active_item)
-            BootstrapTable.sonOrtumItemNew(activeItemParentDom,$(Global.ortum_replace_item));
-            $(Global.ortum_replace_item).remove();//清除被替换组件
-        }else{
-            $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchangeA_tempObj' class='ortum_display_NONE'></div>");
-            $(Global.ortum_active_item).eq(0).before("<div id='ortum_exchangeB_tempObj' class='ortum_display_NONE'></div>");
-            $("#ortum_exchangeA_tempObj").eq(0).replaceWith(Global.ortum_active_item);
-            $("#ortum_exchangeB_tempObj").eq(0).replaceWith(Global.ortum_replace_item);
-        }*/
-
         Global.ortum_replace_item = null;
         Global.ortum_active_item = null;
 
@@ -167,36 +144,9 @@ $(function(){
             }
         })
     });
-})
+});
 
-//getFormContentJson函数的返回值 从数组中获取 name和title数组
-/*function getTitleAndNameFun(arr){
-    let nameArr = [];
-    let titleArr = [];
-    arr.forEach((item,index)=>{
-        if(!item.bindComponentName){//该组件没有绑定组件
-            if(item.name){
-                //只处理form组件
-                if(item.componentKey && require("settings").menuListDataJSON[item.componentKey].sort === "form"){
-                    nameArr.push(item.name)
-                    titleArr.push(item.title)
-                }else if(item.childrenType==="choose"){
-                    nameArr.push(item.name)
-                    titleArr.push(item.title)
-                };
-                if(item.children.length){
-                    let backData = getTitleAndNameFun(item.children);
-                    nameArr = nameArr.concat(backData.nameArr)
-                    titleArr = titleArr.concat(backData.titleArr)
-                }
-            }
-        }
-    })
-    return {
-        titleArr:titleArr,
-        nameArr:nameArr,
-    };
-}*/
+
 
 let showTipSetTime;//定时器
 
@@ -310,7 +260,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             // debugger
 
             let getTitleAndName =  Feature.getTitleAndNameFun(ortumJson)//后端需要的数据
-            console.log("=======后端需要的数据============"+getTitleAndName);
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
 
@@ -319,9 +268,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
             //获取localstore中的信息
             let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
-            //let account = JSON.parse(CATARC_INFO_SYS).account;
-           //let usename = JSON.parse(account).usname;
-            let usename = "阿吉";
             let ajaxJsom = {
                 columnID:nameArr.toString(),
                 columnName:titleArr.toString(),
@@ -331,6 +277,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     ortumSet:ortumSet,
                     ortumCss:ortumCss,
                 }),
+                ortumJson:ortumJson,
                 editor:"ortum",
                // editTime:new Date(),
                 formCode:tableCode,
@@ -345,7 +292,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             }
 
             //有formID时 校验版本号
-            formId  && axios.get("/from/interface/saveFromInfo/"+formId)
+            formId  && axios.get("/from/instance/saveFromInfo/"+formId)
                 .then(function (res) {
                     if(res.data.code==0){
                         if(!res.data.data){
@@ -381,15 +328,16 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 });
             //无formID时 不检查版本号
             console.log("-------ajaxJsom---------------"+JSON.stringify(ajaxJsom));
-            !formId && axios.post("/from/interface/saveFromInfo?_ts="+(new Date()).getTime(),ajaxJsom)
+            !formId && axios.post("/from/instance/saveFromInfo?_ts="+(new Date()).getTime(),ajaxJsom)
                 .then(function(res){
                     //alert(JSON.stringify(res))
                     if(res.data.code==0){
                         Assist.infoTip("保存成功");
+                        closeItem();
                         //切换为编辑
-                        switchTableAct("edit",{formName:res.data.data.formName,formCode:res.data.data.formCode,formId:res.data.data.id,version:res.data.data.version})
+                       // switchTableAct("edit",{formName:res.data.data.formName,formCode:res.data.data.formCode,formId:res.data.data.id,version:res.data.data.version})
                     }else{
-                        Assist.dangerTip(res.data.message);
+                        Assist.dangerTip(res.data.msg);
                     }
                 })
                 .catch(function (error) {
@@ -398,32 +346,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 }).finally(function () {
                     showOrtumLoading(false);
                 });
-            /*ortumReq({
-                "url":"/catarc_infoSys/api/form?_ts=1603870623362",
-                "method":Settings.ortum_tableAct[actWay].way,
-                "header":{
-                    "Content-Type": "application/json; charset=UTF-8",
-                },
-                "data":JSON.stringify(ajaxJsom),
-                "success":(xhr,e)=>{
-                    console.log(xhr)
-                    console.log(e)
-                    if(xhr.status == 200){
-                        let response = JSON.parse(xhr.response);
-                        console.log(response)
-                        response.ok && Assist.infoTip("保存成功")
-                        !response.ok && Assist.dangerTip(response.message)
-                    }else{
-                        Assist.dangerTip("保存失败，状态码为"+xhr.status)
-                    }
-                },
-                "error":(xhr,e)=>{
-                    Assist.dangerTip("网络异常，保存失败");
-                    console.log(xhr)
-                    console.log(e)
-                },
-            })*/
-        })
+        });
         return;
     }
     //编辑js
@@ -551,5 +474,28 @@ window.onbeforeunload = function (e) {
     // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
     return '请确定所做修改已经保存！';
 };
+
+var closeItem = function(dataId){
+    var topWindow = $(window.parent.document);
+    if($.common.isNotEmpty(dataId)){
+        window.parent.$.modal.closeLoading();
+        // 根据dataId关闭指定选项卡
+        $('.menuTab[data-id="' + dataId + '"]', topWindow).remove();
+        // 移除相应tab对应的内容区
+        $('.mainContent .RuoYi_iframe[data-id="' + dataId + '"]', topWindow).remove();
+        return;
+    }
+    var panelUrl = window.frameElement.getAttribute('data-panel');
+    $('.page-tabs-content .active i', topWindow).click();
+    if($.common.isNotEmpty(panelUrl)){
+        $('.menuTab[data-id="' + panelUrl + '"]', topWindow).addClass('active').siblings('.menuTab').removeClass('active');
+        $('.mainContent .RuoYi_iframe', topWindow).each(function() {
+            if ($(this).data('id') == panelUrl) {
+                $(this).show().siblings('.RuoYi_iframe').hide();
+                return false;
+            }
+        });
+    }
+}
 
 

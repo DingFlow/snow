@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t" >
+		<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+			<h3 class="text-center" style="color:#6379bb " th:text="${processInstanceDetail.title}"></h3>
+		<div class="ibox float-e-margins">
+			<h2 class="form-header h2" >流程信息</h2>
+
+			<div class="row">
+				<div class="col-xs-1 col-sm-1"></div>
+				<div class="col-xs-5 col-sm-3">
+					<label class="control-label" >业务编号：</label>
+					<label style="font-size: x-small" class="control-label" th:text="${processInstanceDetail.businessId}"/>
+				</div>
+				<div class="col-xs-6 col-sm-4">
+					<label class="control-label" >申请人：</label>
+					<label class=" control-label" th:text="${applyUserName}"/>
+				</div>
+				<div class="col-xs-6 col-sm-4">
+					<label class="control-label" >所在部门：</label>
+					<label class="c control-label" th:text="${processInstanceDetail.originatorDeptName}"/>
+				</div>
+			</div>
+			<br/>
+			<div class="row ">
+				<div class="col-xs-1 col-sm-1"></div>
+				<div class="col-xs-5 col-sm-3">
+					<label class="control-label" >流程状态：</label>
+					<label class="c control-label" th:text="${@dict.getLabel('ding_proc_status', processInstanceDetail.status)}"/>
+				</div>
+				<div class="col-xs-6 col-sm-4">
+					<label class="control-label" >流程结果：</label>
+					<label style="font-size: x-small" class="control-label" th:text="${@dict.getLabel('ding_proc_result', processInstanceDetail.result)}"/>
+				</div>
+			</div>
+			<br/>
+		</div>
+
+
+			<div class="ibox float-e-margins">
+
+		<h2 class="form-header h2" >表单信息</h2>
+		<div class="row" th:each="form,iterStat : ${formComponentValues}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label" th:text="${form.name}">：</label>
+				<div class="col-sm-8">
+					<span class="form-control" th:text="${form.value}"/>
+				</div>
+			</div>
+		</div>
+
+			</div>
+
+
+				<div class="ibox float-e-margins">
+					<h4 class="form-header h4">任务信息</h4>
+				<div class="row">
+					<div class="col-xs-1 col-sm-1"></div>
+					<div class="col-xs-5 col-sm-3">
+						<label class="control-label" >任务编号：</label>
+						<label style="font-size: x-small" class="control-label" th:text="${tasks.taskid}"/>
+					</div>
+					<div class="col-xs-6 col-sm-4">
+						<label class="control-label" >创建时间：</label>
+						<label class=" control-label" th:text="${#dates.format(tasks.createTime, 'yyyy-MM-dd HH:mm:ss')}"/>
+					</div>
+					<div class="col-xs-6 col-sm-4">
+						<label class="control-label" >完成时间：</label>
+						<label class="control-label" th:text="${#dates.format(tasks.finishTime, 'yyyy-MM-dd HH:mm:ss')}"/>
+					</div>
+				</div>
+					<br/>
+				<div class="row ">
+					<div class="col-xs-1 col-sm-1"></div>
+					<div class="col-xs-5 col-sm-3">
+						<label class="control-label" >任务结果：</label>
+						<label class="control-label" th:text="${@dict.getLabel('ding_task_result', tasks.taskResult)}"/>
+					</div>
+					<div class="col-xs-6 col-sm-4">
+						<label class="control-label" >任务状态：</label>
+						<label  class="control-label" th:text="${@dict.getLabel('ding_task_status', tasks.taskStatus)}"/>
+					</div>
+					<div class="col-xs-6 col-sm-4">
+						<label class="control-label" >任务用时：</label>
+						<label class=" control-label" th:text="${tasks.taskSpendTime}"/>
+					</div>
+				</div>
+					<br/>
+				</div>
+		</div>
+		</div>
+	</form>
+</body>
+</html>

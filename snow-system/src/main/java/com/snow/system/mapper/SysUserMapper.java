@@ -84,6 +84,13 @@ public interface SysUserMapper
     public SysUser selectUserById(Long userId);
 
     /**
+     * 通过用户dingUserId查询用户
+     * @param dingUserId
+     * @return
+     */
+    public SysUser selectUserByDingUserId(String dingUserId);
+
+    /**
      * 通过用户ID删除用户
      * 
      * @param userId 用户ID
