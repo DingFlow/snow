@@ -122,6 +122,7 @@ public class SysFormInstanceController extends BaseController
         sysFormInstance.setUpdateTime(new Date());
         sysFormInstanceService.insertSysFormInstance(sysFormInstance);
 
+
         fieldContentDTOS.stream().forEach(t->{
             SysFormField sysFormField=new SysFormField();
             sysFormField.setFromId(sysFormInstance.getId());
@@ -217,6 +218,10 @@ public class SysFormInstanceController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SysFormInstance sysFormInstance)
     {
+        SysFormInstance sysFormInstanceName = sysFormInstanceService.selectSysFormInstanceByFormCode(sysFormInstance.getFormName());
+        if(StringUtils.isNotNull(sysFormInstanceName)&&!sysFormInstanceName.getFormName().equals(sysFormInstance.getFormName())){
+            return AjaxResult.error(String.format("表单名称:%已存在",sysFormInstance.getFormName()));
+        }
         return toAjax(sysFormInstanceService.updateSysFormInstance(sysFormInstance));
     }
 

@@ -37,6 +37,12 @@
                 columns: [{
                     checkbox: false
                 },
+                    {
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            return $.table.serialNumber(index);
+                        }
+                    },
                 {
                     field: 'iconUrl',
                     title: '图标',
@@ -46,35 +52,14 @@
                 },
                 {
                     field: 'processCode',
-                    title: '模板编号',
-                    formatter: function(value, row, index) {
+                    title: '模板编号'
+                   /* formatter: function(value, row, index) {
                         return $.table.tooltip(value);
-                    }
+                    }*/
                 },
                 {
-                    field: 'flowTitle',
+                    field: 'name',
                     title: '模版名称'
-                },
-
-                {
-                    field: 'isNewProcess',
-                    title: '是否新模版',
-                    formatter: function(value, row, index) {
-                        if(value){
-                            return '是';
-                        }else {
-                            return '否';
-                        }
-
-                    }
-                },
-
-                {
-                    field: 'gmtModified',
-                    title: '修改时间',
-                    formatter: function(value, row, index) {
-                        return $.table.changeDateFormat(value);
-                    }
                 }]
             };
             $.table.init(options);

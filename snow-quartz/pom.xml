@@ -34,7 +34,10 @@
             <groupId>com.snow</groupId>
             <artifactId>snow-framework</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.snow</groupId>
+            <artifactId>snow-dingtalk</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

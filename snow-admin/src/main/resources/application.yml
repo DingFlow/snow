@@ -3,13 +3,11 @@ snow:
   # 名称
   name: snow
   # 版本
-  version: 4.3.1
+  version: 2.0.0
   # 版权年份
   copyrightYear: 2021
   # 实例演示开关
   demoEnabled: true
-  # 文件路径 示例（ Windows配置D:/snow/uploadPath，Linux配置 /home/snow/uploadPath）
-  profile: D:/snow/uploadPath
   # 获取ip地址开关
   addressEnabled: false
 
@@ -162,4 +160,4 @@ flowable:
 #上传文件的方式
 sys:
    file:
-     active: aliyun
+     active: local

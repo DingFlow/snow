@@ -3,10 +3,8 @@ package com.snow.dingtalk.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiV2UserCreateRequest;
-import com.dingtalk.api.request.OapiV2UserDeleteRequest;
-import com.dingtalk.api.response.OapiV2UserCreateResponse;
-import com.dingtalk.api.response.OapiV2UserDeleteResponse;
+import com.dingtalk.api.request.*;
+import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.exception.SyncDataException;
@@ -14,17 +12,21 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
+import com.snow.dingtalk.model.UserListRequest;
 import com.snow.dingtalk.service.UserService;
 import com.snow.system.domain.SysPost;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.snow.system.service.impl.SysPostServiceImpl;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author qimingjin
@@ -38,6 +40,32 @@ public class UserServiceImpl  extends BaseService implements UserService {
 
     private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
 
+    private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
+
+
+    public OapiSnsGetuserinfoBycodeResponse.UserInfo getUserInfoByCode(String authCode) {
+        String appId= isysConfigService.selectConfigByKey("ding.login.appid");
+        String appSecret= isysConfigService.selectConfigByKey("ding.login.appSecret");
+        // 通过临时授权码获取授权用户的个人信息
+        DefaultDingTalkClient client2 = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
+        OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
+        // 通过扫描二维码，跳转指定的redirect_uri后，向url中追加的code临时授权码
+        req.setTmpAuthCode(authCode);
+        OapiSnsGetuserinfoBycodeResponse bycodeResponse = null;
+
+        try {
+            bycodeResponse = client2.execute(req, appId,appSecret);
+            if(bycodeResponse.getErrcode()==0){
+                OapiSnsGetuserinfoBycodeResponse.UserInfo userInfo = bycodeResponse.getUserInfo();
+                return userInfo;
+            }else {
+                throw new SyncDataException(JSON.toJSONString(req),bycodeResponse.getErrmsg());
+            }
+        } catch (ApiException e) {
+            log.error("通过临时授权码获取授权用户的个人信息异常：{}",e.getErrMsg());
+            throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
+        }
+    }
     /**
      * 添加钉钉用户
      * @param sysUser
@@ -61,7 +89,6 @@ public class UserServiceImpl  extends BaseService implements UserService {
         req.setRemark(sysUser.getRemark());
         //部门list
         req.setDeptIdList(JSON.toJSONString(sysUser.getDeptId()));
-        List<OapiV2UserCreateRequest.DeptOrder> list2 = new ArrayList<>();
         //员工在对应的部门中的职位
         List<OapiV2UserCreateRequest.DeptTitle> deptTitleList = new ArrayList<>();
         Long[] postIds = sysUser.getPostIds();
@@ -123,4 +150,76 @@ public class UserServiceImpl  extends BaseService implements UserService {
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
+
+    @Override
+    public OapiV2UserGetResponse.UserGetResponse  getUserByUserId(String userId) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_USER_BY_ID);
+        OapiV2UserGetRequest req = new OapiV2UserGetRequest();
+        req.setUserid(userId);
+        req.setLanguage("zh_CN");
+
+        try {
+            OapiV2UserGetResponse response = client.execute(req, getDingTalkToken());
+            if(response.getErrcode()==0){
+                OapiV2UserGetResponse.UserGetResponse result = response.getResult();
+                log.info("dingTalk根据用户id获取用户详细信息返回：{}",result);
+                return result;
+            }else {
+                throw new SyncDataException(JSON.toJSONString(req),response.getErrmsg());
+            }
+        } catch (ApiException e) {
+            log.error("dingTalk根据用户id获取用户详细信息返回异常：{}",e.getErrMsg());
+            throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
+        }
+    }
+
+    @Override
+    public OapiV2UserListResponse.PageResult getUserInfoByDept(UserListRequest userListRequest) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_USERINFO_BY_DEPT);
+        OapiV2UserListRequest req = new OapiV2UserListRequest();
+        req.setDeptId(userListRequest.getDeptId());
+        req.setCursor(userListRequest.getCursor());
+        req.setSize(userListRequest.getSize());
+        req.setOrderField("modify_desc");
+        req.setContainAccessLimit(false);
+        req.setLanguage("zh_CN");
+
+        try {
+            OapiV2UserListResponse response = client.execute(req, getDingTalkToken());
+            if(response.getErrcode()==0){
+                OapiV2UserListResponse.PageResult result = response.getResult();
+                log.info("dingTalk根据部门获取用户详细信息返回：{}",result);
+                return result;
+            }else {
+                throw new SyncDataException(JSON.toJSONString(req),response.getErrmsg());
+            }
+        } catch (ApiException e) {
+            log.error("dingTalk根据部门获取用户详细信息返回异常：{}",e.getErrMsg());
+            throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
+        }
+    }
+
+
+    @Override
+    public OapiUserGetbyunionidResponse.UserGetByUnionIdResponse  getUserByUnionId(String unionId){
+
+        DingTalkClient clientDingTalkClient = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/user/getbyunionid");
+        OapiUserGetbyunionidRequest request = new OapiUserGetbyunionidRequest();
+        request.setUnionid(unionId);
+        try {
+            OapiUserGetbyunionidResponse  response = clientDingTalkClient.execute(request,getDingTalkToken());
+            if(response.getErrcode()==0){
+                OapiUserGetbyunionidResponse.UserGetByUnionIdResponse result = response.getResult();
+                log.info("getUserByUnionId获取用户详细信息返回：{}",result);
+                return result;
+            }else {
+                throw new SyncDataException(JSON.toJSONString(request),response.getErrmsg());
+            }
+
+        } catch (ApiException e) {
+            log.error("getUserByUnionId获取用户详细信息返回异常：{}",e.getErrMsg());
+            throw new SyncDataException(JSON.toJSONString(request),e.getErrMsg());
+        }
+    }
+
 }

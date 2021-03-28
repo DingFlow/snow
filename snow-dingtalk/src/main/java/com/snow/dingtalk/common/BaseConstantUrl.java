@@ -16,6 +16,17 @@ public class BaseConstantUrl {
      * 删除用户
      */
     public static final String USER_DELETE=  "https://oapi.dingtalk.com/topapi/v2/user/delete";
+
+    /**
+     * 根据id获取用户信息
+     */
+    public static final String GET_USER_BY_ID=  "https://oapi.dingtalk.com/topapi/v2/user/get";
+
+    /**
+     * 根据部门获取用户信息
+     */
+    public static final String GET_USERINFO_BY_DEPT=  "https://oapi.dingtalk.com/topapi/v2/user/list";
+
     /**
      * 获取token url
      */

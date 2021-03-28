@@ -11,18 +11,15 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>流程code：</label>
+                                <label>code：</label>
                                 <input type="text" name="procCode"/>
                             </li>
-
-                            <li>
-                                <label>名称：</label>
-                                <input type="text" name="name"/>
-                            </li>
-
                             <li>
                                 <label>任务结果：</label>
-                                <input type="text" name="taskResult"/>
+                                <select name="taskResult" th:with="type=${@dict.getType('ding_task_result')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
                             </li>
 
 

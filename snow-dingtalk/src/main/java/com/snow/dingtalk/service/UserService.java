@@ -1,6 +1,7 @@
 package com.snow.dingtalk.service;
 
-import com.dingtalk.api.response.OapiV2UserCreateResponse;
+import com.dingtalk.api.response.*;
+import com.snow.dingtalk.model.UserListRequest;
 import com.snow.system.domain.SysUser;
 
 /**
@@ -14,6 +15,12 @@ public interface UserService  {
 
 
     /**
+     * 通过临时授权码获取授权用户的个人信息
+     * @param authCode
+     * @return
+     */
+    OapiSnsGetuserinfoBycodeResponse.UserInfo getUserInfoByCode(String authCode);
+    /**
      * 创建用户
      * @param
      * @return
@@ -26,4 +33,25 @@ public interface UserService  {
      */
     void deleteUser(String ids);
 
+    /**
+     * 根据userid获取用户详情
+     * @param userId
+     * @return
+     */
+    OapiV2UserGetResponse.UserGetResponse  getUserByUserId(String userId);
+
+
+    /**
+     * 获取部门用户详情
+     * @param userListRequest
+     * @return
+     */
+    OapiV2UserListResponse.PageResult getUserInfoByDept(UserListRequest userListRequest);
+
+    /**
+     * 根据unionid获取userid
+     * @param unionId
+     * @return
+     */
+    OapiUserGetbyunionidResponse.UserGetByUnionIdResponse  getUserByUnionId(String unionId);
 }
