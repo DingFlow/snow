@@ -40,6 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="resignType != null "> and resign_type = #{resignType}</if>
             <if test="processStatus != null "> and process_status = #{processStatus}</if>
             <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+            <if test="applyPerson != null  and applyPerson != ''"> and apply_person = #{applyPerson}</if>
+
         </where>
     </select>
     
