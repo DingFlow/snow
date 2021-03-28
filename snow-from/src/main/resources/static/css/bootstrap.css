@@ -1,0 +1,275 @@
+
+.ortum_item{
+    margin:0!important;
+    padding-bottom:0!important;
+    /* padding-bottom:0.8rem!important; */
+}
+.col-form-label{
+    padding-right:0!important;
+    padding-left:0!important;
+}
+/* grid柵格 */
+.ortum_bootstrap_grid > .row > .ortum_boot_col_default:nth-child(2n+1) > .ortum_boot_col_waitInsert{
+    background-color: #cecdcc;
+}
+.ortum_bootstrap_grid > .row > .ortum_boot_col_default:nth-child(2n) > .ortum_boot_col_waitInsert{
+    background-color:#dddddd;
+}
+
+/*控制grid组件的提示样式*/
+.ortum_boot_col_default .ortum_boot_col_waitInsert:only-child{
+    display:flex;
+}
+.ortum_boot_col_waitInsert{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+    color:rgba(166,166,166,0.8);
+    position:absolute;
+    z-index: 0;
+    width: 100%;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ortum_bootstrap_grid{
+    margin: 0!important;
+    padding:0!important;
+    /*overflow-y: hidden;*/
+}
+
+.ortum_boot_col_default{
+    padding-left:0!important;
+    padding-right:0!important;
+}
+/*多行栅格*/
+.ortum_bootstrap_multiGrid > .row > .ortum_boot_col_default:nth-child(2n+1) > .ortum_boot_col_waitInsert{
+    background-color: #cecdcc;
+}
+.ortum_bootstrap_multiGrid > .row > .ortum_boot_col_default:nth-child(2n) > .ortum_boot_col_waitInsert{
+    background-color:#dddddd;
+}
+
+/* input */
+.ortum_boot_input_label_Right{
+    text-align: end;
+    display: block;
+}
+/* rangeInput */
+.form-control-rangeInput{
+    padding: 0!important;
+    min-height: calc(1.5em + .75rem + 2px);
+}
+.ortum_boot_rangeInput_label_Right{
+    text-align: end;
+    display: block;
+}
+
+/* textarea */
+.ortum_boot_textarea_label_Right{
+    text-align: end;
+    display: block;
+}
+/* radio */
+.ortum_bootstrap_radio{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+}
+.ortum_radio_newValue{
+    border:1px solid #ced4da;
+    border-radius: 5px;
+}
+
+
+
+
+/* checkbox */
+.ortum_bootstrap_checkbox{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+}
+
+.ortum_boot_select_label_Right{
+    text-align: end;
+    display: block;
+}
+option:disabled{
+    color: #999999;
+}
+
+/* switch */
+.ortum_bootstrap_switch{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+}
+/* label */
+.ortum_bootstrap_span{
+    color:rgb(255,0,0) !important;
+    font-size:14px;
+    font-weight: 700;
+}
+.ortum_bootstrap_label{
+    height: calc(1.5em + .75rem + 2px);
+}
+.ortum_bootstrap_label_labelCSS{
+    margin-bottom: 0px;
+}
+.ortum_bootstrap_label_cssClass{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* date */
+input::-webkit-datetime-edit-fields-wrapper{
+    display: none;
+}
+input::-webkit-calendar-picker-indicator{
+    width: 100%;
+}
+.ortum_dateDom_includeDiv{
+    position:relative;
+    padding: 0!important;
+}
+.ortum_dateDom_shadowRoot{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity:0;
+    box-sizing: border-box;
+}
+/* table */
+.ortum_bootstrap_tableDom{
+    width: 100%;
+    text-align: center;
+}
+.ortum_bootstrap_tableDom tr{
+    padding: .25rem 0;
+}
+.ortum_bootstrap_thead{
+    font-weight: 700;
+}
+.ortum_bootstrap_thead tr td:last-of-type{
+    position: relative;
+}
+
+.ortum_bootstrap_tbody tr:nth-of-type(2n-1){
+    background-color: #eeeeee;
+}
+.ortum_bootstrap_tbody tr td:last-of-type{
+    position: relative;
+}
+
+.ortum_bootstrap_th{
+    border:1px solid gray;
+}
+.ortum_bootstrap_td{
+    border:1px solid gray;
+    position: relative;
+    min-height: 16px;
+}
+.ortum_table_td_waitInsert{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color:#c3bebe;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index:0;
+}
+.ortum_bootstrap_td_waitInsert{
+    height: 30px;
+    position: relative;
+}
+.ortum_bootstrap_td_waitInsert .ortum_table_td_waitInsert:only-child{
+    display: flex;
+}
+
+
+/* button */
+.ortum_bootstrap_button{
+    margin:auto;
+    text-align: center;
+}
+
+/* iconButton */
+.ortum_bootstrap_iconButton{
+    margin:auto;
+    text-align: center;
+}
+.ortum_iconButton{
+    color: #666666;
+    font-size: 1.5rem!important;
+    cursor: pointer;
+    border: 0px!important;
+    background-color: transparent!important;
+    display: inline!important;
+    padding: 0px!important;
+    height: auto!important;
+    line-height: normal!important;
+}
+/* buttonGroup */
+.ortum_bootstrap_buttonGroup_div{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    min-height: calc(1.5em + .75rem + 2px);
+    box-sizing: border-box;
+    min-width: 50px;
+}
+.ortum_bootstrap_buttonGroup_drop_div{
+    background-color: #dddddd;
+}
+/* h */
+.ortum_bootstrap_hDom{
+    line-height: 1.7rem;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+    background-color: white;
+}
+/* file */
+.custom-file-label{
+    text-align: left;
+}
+.ortum_file_hideName{
+    width: 60px;
+    border-radius:0!important;
+    text-align: center;
+    border-width: 0px;
+}
+.ortum_file_hideName::after{
+    width: 100%!important;
+    border: 0px!important;
+}
+.custom-file{
+    min-width: 60px!important;
+}
+.custom-file-flexGrow{
+    flex-grow: 0!important;
+}
+.custom-file-flexGrow .custom-file-input{
+    overflow: hidden!important;
+}
+/*自定义组件*/
+#ortum_field .ortum_bootstrap_customHtml > div[ortum-id]{
+    min-height: 38px;
+    background-color: #cecdcc;
+}
+

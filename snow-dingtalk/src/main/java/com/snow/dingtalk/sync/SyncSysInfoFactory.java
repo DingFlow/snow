@@ -15,6 +15,8 @@ public class SyncSysInfoFactory {
         Integer type = dingTalkListenerType.getType();
         if(type==DingTalkListenerType.DEPARTMENT_CREATE.getType()){
             return new SyncSysDepartmentService();
+        }else if(type==DingTalkListenerType.BPMS_TASK_CHANGE.getType()){
+            return new SyncFlowService();
         }
         return null;
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增单字段')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-field-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">字段标识：</label>
+                <div class="col-sm-8">
+                    <input name="fieldKey" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">字段名称：</label>
+                <div class="col-sm-8">
+                    <input name="fieldName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">字段类型：</label>
+                <div class="col-sm-8">
+                    <input name="fieldType" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">字段html：</label>
+                <div class="col-sm-8">
+                    <input name="fieldHtml" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">乐观锁版本号：</label>
+                <div class="col-sm-8">
+                    <input name="rev" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">租户ID：</label>
+                <div class="col-sm-8">
+                    <input name="tenantId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">删除标识：</label>
+                <div class="col-sm-8">
+                    <input name="isDelete" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/field"
+        $("#form-field-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-field-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

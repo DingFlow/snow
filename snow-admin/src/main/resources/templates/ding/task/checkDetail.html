@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t"  id="signupForm">
+		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+	    <input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
+		<!--<input name="id" th:value="${appFrom.id}" type="hidden">-->
+	    <br/>
+		<h2 class="form-header h2" >审批信息</h2>
+		<div class="row" th:each="form,iterStat : ${formComponentValues}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label" th:text="${form.name}">：</label>
+				<div class="col-sm-8">
+					<span class="form-control" th:text="${form.value}"/>
+				</div>
+			</div>
+		</div>
+
+    <br/>
+		<!--审批页-->
+		<div th:fragment="approvalpage">
+			<h4 class="form-header h4">填写信息</h4>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">审批结果：</label>
+				<div class="col-sm-8">
+					<div class="radio-box" th:each="dict : ${@dict.getType('process_check_status')}">
+						<input type="radio" th:id="${dict.dictCode}" name="isPass" th:value="${dict.dictValue}" required>
+						<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">审批意见：</label>
+				<div class="col-sm-8">
+					<textarea name="comment" class="form-control"></textarea>
+				</div>
+			</div>
+			<!--<div class="form-group">
+				<label class="col-sm-3 control-label">审批附件：</label>
+				<div class="col-sm-8">
+					<div class="file-loading">
+						<input class="form-control file-upload" id="files" name="file" type="file" multiple>
+					</div>
+				</div>
+			</div>-->
+			<div class="form-group">
+				<div class="col-sm-offset-6 col-sm-10">
+					<button type="button" class="btn btn-sm btn-success" onclick="submitCheckHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+				</div>
+			</div>
+		</div>
+	</form>
+    <th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        var files=new Array();
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").val();
+            $(this).fileinput({
+                'uploadUrl': '/common/upload',
+                initialPreviewAsData: true,
+                allowedFileExtensions: ['jpg', 'gif', 'png',".docx","doc","ppt","pptx","xls","xlsx","vsd","rtf","wps","pdf","txt"],//接收的文件后缀
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+               // $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+
+        <!--提交审核结果-->
+        function submitCheckHandler() {
+            if ($.validate.form()) {
+                var data = $("#signupForm").serializeArray();
+                for(var i=0;i<data.length;i++){
+                    if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                        $.modal.alertError("请填写审批意见");
+                        return false;
+					}
+				}
+				if(files!=null||files!=''){
+                    for(var i=0;i<files.length;i++){
+                        data.push({"name": "files["+i+"].key", "value":files[i].key});
+                        data.push({"name": "files["+i+"].name", "value":files[i].name});
+                        data.push({"name": "files["+i+"].url", "value":files[i].url});
+                    }
+				}
+                console.log(data);
+                $.operate.saveTab("/ding/task/finishTask", data);
+            }
+        }
+    </script>
+</body>
+</html>

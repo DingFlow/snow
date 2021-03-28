@@ -11,7 +11,6 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.system.domain.SysOperLog;
 import com.snow.system.service.impl.SysConfigServiceImpl;
-import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import com.snow.system.service.impl.SysOperLogServiceImpl;
 import com.taobao.api.ApiException;
 

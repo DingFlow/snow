@@ -154,6 +154,11 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUserById(userId);
     }
 
+    @Override
+    public SysUser selectUserByDingUserId(String dingUserId) {
+        return userMapper.selectUserByDingUserId(dingUserId);
+    }
+
     /**
      * 通过用户ID查询用户和角色关联
      * 

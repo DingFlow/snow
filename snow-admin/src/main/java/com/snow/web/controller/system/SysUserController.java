@@ -126,7 +126,7 @@ public class SysUserController extends BaseController
 
         String jobNumber = sysSequenceService.getNewSequenceNo("SNOW");
         mmap.put("jobNumber",jobNumber);
-        mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()&&r.getRoleType()==UserConstants.SYSTEM_ROLE_TYPE).collect(Collectors.toList()));
+        mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()&&r.getRoleType().equals(UserConstants.SYSTEM_ROLE_TYPE)).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostAll());
         return prefix + "/add";
     }
@@ -166,7 +166,7 @@ public class SysUserController extends BaseController
     {
         List<SysRole> roles = roleService.selectRolesByUserId(userId);
         mmap.put("user", userService.selectUserById(userId));
-        mmap.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        mmap.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()&&r.getRoleType().equals(UserConstants.SYSTEM_ROLE_TYPE)).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostsByUserId(userId));
         return prefix + "/edit";
     }

@@ -6,6 +6,7 @@ import com.snow.common.constant.ShiroConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.text.Convert;
+import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
@@ -17,9 +18,7 @@ import com.snow.flowable.service.FlowableService;
 import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysMenuService;
-import com.snow.system.service.ISysOperLogService;
+import com.snow.system.service.*;
 import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
 import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +63,16 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private ISysOperLogService operLogService;
+
+    @Autowired
+    private ISysDingHiTaskService iSysDingHiTaskService;
+
+    @Autowired
+    private ISysDingRuTaskService sysDingRuTaskService;
+
+
+    @Autowired
+    private ISysDingProcinstService iSysDingProcinstService;
 
     // 系统首页
     @GetMapping("/index")
@@ -192,8 +201,6 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/bigScreen")
     public String bigScreen(ModelMap mmap)
     {
-        String date= DateUtil.formatDate(new Date());
-        mmap.put("date",date);
         SysUser user = ShiroUtils.getSysUser();
         //流程概况
         FlowGeneralSituationVO flowGeneralSituation = flowableService.getFlowGeneralSituation(String.valueOf(user.getUserId()));
@@ -217,5 +224,17 @@ public class SysIndexController extends BaseController
         List<ProcessInstanceVO> historicProcessInstanceList = flowableService.getHistoricProcessInstanceList(processInstanceDTO);
         mmap.put("historicProcessInstanceList",historicProcessInstanceList);
         return "big_screen";
+    }
+
+
+    public Integer getMyDingTalkRunTask(){
+        SysUser user = ShiroUtils.getSysUser();
+
+        SysDingRuTask sysDingRuTask=new SysDingRuTask();
+        sysDingRuTask.setAssignee(user.getDingUserId());
+        sysDingRuTask.setTaskState(DingFlowTaskType.RUNNING.getCode());
+        List<SysDingRuTask> sysDingRuTaskList = sysDingRuTaskService.selectSysDingRuTaskList(sysDingRuTask);
+
+        return sysDingRuTaskList.size();
     }
 }

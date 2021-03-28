@@ -187,6 +187,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectUserVo"/>
 		where u.user_id = #{userId}
 	</select>
+
+	<select id="selectUserByDingUserId" parameterType="String" resultMap="SysUserResult">
+		<include refid="selectUserVo"/>
+		where u.ding_user_id = #{dingUserId}
+	</select>
 	
 	<delete id="deleteUserById" parameterType="Long">
  		update sys_user set del_flag = '2' where user_id = #{userId}
@@ -249,7 +254,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="remark != null and remark != ''">remark,</if>
 		<if test="isSenior != null">is_senior,</if>
 		<if test="jobnumber != null">job_number,</if>
-		<if test="workPlace != null">work_place ,</if>
+		<if test="workPlace != null and workPlace != ''">work_place ,</if>
 		<if test="tel != null">tel ,</if>
 		<if test="hiredDate != null">hired_date,</if>
 		<if test="orgEmail != null">org_email,</if>
@@ -275,7 +280,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="jobnumber != null and jobnumber !=''"> #{jobnumber},</if>
 		<if test="workPlace != null and workPlace !=''">#{workPlace},</if>
 		<if test="tel != null and tel!=''">#{tel},</if>
-		<if test="hiredDate != null and hiredDate !='' ">#{hiredDate},</if>
+		<if test="hiredDate != null">#{hiredDate},</if>
 		<if test="orgEmail != null and orgEmail !=''"> #{orgEmail},</if>
 		<if test="dingUserId != null">#{dingUserId},</if>
  			sysdate()

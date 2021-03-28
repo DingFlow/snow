@@ -77,6 +77,13 @@ public interface ISysUserService
     public SysUser selectUserById(Long userId);
 
     /**
+     * 通过用户dingUserId查询用户
+     * @param dingUserId
+     * @return
+     */
+    public SysUser selectUserByDingUserId(String dingUserId);
+
+    /**
      * 通过用户ID查询用户和角色关联
      * 
      * @param userId 用户ID

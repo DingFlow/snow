@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('离职审批单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+
+               <!-- <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:resign:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix ="/ding/officialFlow";
+
+        $(function() {
+            var options = {
+                url: prefix + "/getProcessTemplateManageList",
+                modalName: "钉钉流程模板",
+                columns: [{
+                    checkbox: false
+                },
+                    {
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            return $.table.serialNumber(index);
+                        }
+                    },
+                {
+                    field: 'iconUrl',
+                    title: '图标',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(value);
+                    }
+                },
+                {
+                    field: 'processCode',
+                    title: '模板编号'
+                   /* formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }*/
+                },
+                {
+                    field: 'name',
+                    title: '模版名称'
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

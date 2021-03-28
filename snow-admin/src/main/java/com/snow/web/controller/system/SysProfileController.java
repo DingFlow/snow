@@ -159,7 +159,7 @@ public class SysProfileController extends BaseController
         {
             if (!file.isEmpty())
             {
-                SysFile store = storageService.store(file.getInputStream(), file.getSize(), file.getContentType(), file.getOriginalFilename());
+                SysFile store = storageService.store(file);
                 currentUser.setAvatar(store.getUrl());
                 if (userService.updateUserInfo(currentUser) > 0)
                 {

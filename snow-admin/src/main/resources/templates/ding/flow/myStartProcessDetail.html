@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('我发起的流程详情')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sequence-edit" >
+            <h4 style=" color:#6379bb;">
+                <div class="row ">
+                    <div class="col-xs-6 col-sm-4">
+                        <label class="control-label" >单号：</label>
+                        <label style="font-size: xx-small" class="control-label" th:text="${processInstanceDetail.businessId}"/>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                        <label class="control-label" >标题：</label>
+                        <label class=" control-label" th:text="${processInstanceDetail.title}"/>
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                        <label class="control-label" >所在部门：</label>
+                        <label class="c control-label" th:text="${processInstanceDetail.originatorDeptName}"/>
+                    </div>
+                </div>
+
+
+            </h4>
+
+            <div class="ibox float-e-margins">
+                <h4 class="form-header h4">业务表单</h4>
+                <div class="row" th:each="form,iterStat : ${formComponentValues}">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" th:text="${form.name}">：</label>
+                        <div class="col-sm-8">
+                            <span class="form-control" th:text="${form.value}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <h4 class="form-header h4">操作记录</h4>
+                    <div class="vertical-container light-timeline light-dark">
+                        <div class="vertical-timeline-block" th:each="record,iterStat : ${operationRecords}">
+                            <div class="vertical-timeline-icon navy-bg">
+                                <i class="fa fa-tasks"></i>
+                            </div>
+                            <div class="vertical-timeline-content ">
+                               <!-- <h2 th:text="${record.taskName }"></h2>-->
+                                <br class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4" th:if="${record.operationType} != ''">
+                                        <label  >操作类型：</label>
+                                        <span th:text="${record.operationType}"></span>
+                                    </div>
+                                    <div class="col-md-4" th:if="${record.userid} != null">
+                                        <label >操作人：</label>
+                                        <span th:text="${record.userName}"></span>
+                                    </div>
+                                    <div class="col-md-4" th:if="${record.operationResult} != ''">
+                                        <label >操作结果：</label>
+                                        <span th:text="${record.operationResult}"></span>
+                                    </div>
+                                </div>
+
+                                </br>
+                                <div class="row" >
+                                    <div class="col-md-12" th:if="${record.remark} != null">
+                                        <label>操作评论：</label>
+                                        <label>
+                                            <span th:text="${record.remark}"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                </br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                                <span class="vertical-date">
+                                                <label>操作时间：</label> <small th:text="${#dates.format(record.date, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                                                </span>
+                                    </div>
+                                </div>
+
+                                </br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="ibox float-e-margins form-horizontal">
+                <h4 class="form-header h4">审批节点</h4>
+                <div id="ibox-content">
+                    <div id="vertical-timeline" class="vertical-container light-timeline light-dark">
+                        <div class="vertical-timeline-block" th:each="task,iterStat : ${tasks}">
+                            <div class="vertical-timeline-icon navy-bg">
+                                <i class="fa fa-tasks"></i>
+                            </div>
+                            <div class="vertical-timeline-content ">
+                                <h2 th:text="${task.activityId }"></h2>
+                                <br class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-4" th:if="${task.taskResult} == ''">
+                                                <label  >审批结果：</label>
+                                                <span th:text="${task.taskResult}"></span>
+                                            </div>
+                                            <div class="col-md-4" th:if="${task.taskStatus} != ''">
+                                                <label  >状态：</label>
+                                                <span th:text="${task.taskStatus}"></span>
+                                            </div>
+                                            <div class="col-md-4" th:if="${task.userid} != null">
+                                                    <label >审批人：</label>
+                                                    <span th:text="${task.userName}"></span>
+                                            </div>
+
+                                          <!--  <div class="col-md-4" th:if="${task.handleTaskTime} != null">
+                                                <label>任务历时：</label>
+                                                <label>
+                                                    <span th:text="${task.handleTaskTime}"></span>
+                                                </label>
+                                            </div>-->
+                                        </div>
+                                </br>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <span class="vertical-date">
+                                                <label>任务时间：</label> <small th:text="${#dates.format(task.createTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                                                <label>~</label> <small th:text="${#dates.format(task.finishTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+/*
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
+
+        function getProcessDiagram() {
+            var appId= $("#appId").val();
+            var busVarUrl= $("#busVarUrl").val();
+            $.modal.open('业务单', busVarUrl+"/"+appId);
+
+        }*/
+    </script>
+</body>
+</html>

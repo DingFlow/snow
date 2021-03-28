@@ -16,6 +16,17 @@ public class BaseConstantUrl {
      * 删除用户
      */
     public static final String USER_DELETE=  "https://oapi.dingtalk.com/topapi/v2/user/delete";
+
+    /**
+     * 根据id获取用户信息
+     */
+    public static final String GET_USER_BY_ID=  "https://oapi.dingtalk.com/topapi/v2/user/get";
+
+    /**
+     * 根据部门获取用户信息
+     */
+    public static final String GET_USERINFO_BY_DEPT=  "https://oapi.dingtalk.com/topapi/v2/user/list";
+
     /**
      * 获取token url
      */
@@ -102,4 +113,41 @@ public class BaseConstantUrl {
      * 删除公告
      */
     public static final String BLACKBOARD_DELETE="https://oapi.dingtalk.com/topapi/blackboard/delete";
+
+
+    /**********************************************************
+     * 钉钉官方流程
+     * *********************************************************/
+
+
+    public static final String SAVE_PROCESS="https://oapi.dingtalk.com/topapi/process/save";
+    /**
+     * 获取当前企业所有可管理的模版
+     */
+    public static final String GET_PROCESS_TEMPLATE_MANAGE="https://oapi.dingtalk.com/topapi/process/template/manage/get";
+
+    /**
+     * 发起流程实例
+     */
+    public static final String START_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/processinstance/create";
+
+    /**
+     * 执行流程
+     */
+    public static final String EXECUTE_PROCESSINSTANCE="https://oapi.dingtalk.com/topapi/process/instance/execute";
+
+    /**
+     * 获取审批实例详情
+     */
+    public static final String GET_PROCESSINSTANCE="https://oapi.dingtalk.com/topapi/processinstance/get";
+
+    /**
+     * 终止流程
+     */
+    public static final String TERMINATE_PROCESSINSTANCE="https://oapi.dingtalk.com/topapi/process/instance/terminate";
+
+    /**
+     * 分页获取指定用户可见的审批表单列表
+     */
+    public static final String GET_PROCESSLIST_USERID="https://oapi.dingtalk.com/topapi/process/listbyuserid";
 }
