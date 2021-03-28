@@ -67,7 +67,7 @@
          <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/75db4a86e2224be7bdfd3de6e6cce43b.png"/></td>
     </tr>
     <tr>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/416ffa7c1f1f42f8807a24dc2e63a08d.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8.png"/></td>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0ffee016a6be4d5eb5b5f18a0291353e.png"/></td>
     </tr>
     <tr>
