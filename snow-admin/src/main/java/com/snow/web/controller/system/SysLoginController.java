@@ -39,7 +39,7 @@ public class SysLoginController extends BaseController
     @ResponseBody
     public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe)
     {
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe,"1");
         Subject subject = SecurityUtils.getSubject();
         try
         {

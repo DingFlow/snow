@@ -7,8 +7,10 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.StringUtils;
 import com.snow.dingtalk.service.UserService;
+import com.snow.system.domain.SysSocialUser;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.impl.SysSocialUserServiceImpl;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -39,6 +41,8 @@ public class ThirdOauthController extends BaseController {
     @Autowired
     private SysUserServiceImpl sysUserService;
 
+    @Autowired
+    private SysSocialUserServiceImpl sysSocialUserService;
     /**
      * 跳转钉钉授权页面
      */
@@ -62,8 +66,20 @@ public class ThirdOauthController extends BaseController {
         OapiSnsGetuserinfoBycodeResponse.UserInfo userInfoByCode = userService.getUserInfoByCode(code);
         OapiUserGetbyunionidResponse.UserGetByUnionIdResponse userByUnionId = userService.getUserByUnionId(userInfoByCode.getUnionid());
         SysUser sysUser = sysUserService.selectUserByDingUserId(userByUnionId.getUserid());
+        SysSocialUser sysSocialUser=new SysSocialUser();
+        sysSocialUser.setCode(code);
+        sysSocialUser.setOpenId(userInfoByCode.getOpenid());
+        sysSocialUser.setUnionId(userInfoByCode.getUnionid());
+        sysSocialUser.setSource("DING_TALK");
+        sysSocialUser.setUserId(sysUser.getUserId());
+        sysSocialUser.setAccessToken(userInfoByCode.getUnionid());
+        //sysSocialUserService.deleteSysSocialUserById(1L);
+
         if(StringUtils.isNotNull(sysUser)){
            //todo 登录系统
+            UsernamePasswordToken token = new UsernamePasswordToken(sysUser.getPhonenumber(), sysSocialUser.getUnionId(), false,"2");
+            Subject subject = SecurityUtils.getSubject();
+
         }else {
             return AjaxResult.error("非企业内用户不允许扫码登录");
         }

@@ -109,4 +109,26 @@ public class SysNoticeController extends BaseController
     {
         return toAjax(noticeService.deleteNoticeByIds(ids));
     }
+
+
+    /**
+     * 查看公告详情
+     */
+    @GetMapping("/detail/{noticeId}")
+    public String detail(@PathVariable("noticeId") Long noticeId, ModelMap mmap)
+    {
+        mmap.put("notice", noticeService.selectNoticeById(noticeId));
+        return prefix + "/detail";
+    }
+
+    /**
+     * 根据公告类型查询最新的公告
+     * @param noticeType
+     * @return
+     */
+    @GetMapping("/newNotice/{noticeType}")
+    public String selectNewNoticeByNoticeType(@PathVariable("noticeType") String noticeType, ModelMap mmap){
+        mmap.put("notice", noticeService.selectNewNoticeByNoticeType(noticeType));
+        return prefix + "/detail";
+    }
 }

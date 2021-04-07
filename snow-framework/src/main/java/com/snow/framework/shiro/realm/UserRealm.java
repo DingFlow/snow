@@ -87,6 +87,7 @@ public class UserRealm extends AuthorizingRealm
     {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String username = upToken.getUsername();
+        String loginType = upToken.getHost();
         String password = "";
         if (upToken.getPassword() != null)
         {
@@ -96,6 +97,7 @@ public class UserRealm extends AuthorizingRealm
         SysUser user = null;
         try
         {
+
             user = loginService.login(username, password);
         }
         catch (CaptchaException e)

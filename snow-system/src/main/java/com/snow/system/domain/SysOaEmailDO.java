@@ -1,14 +1,12 @@
 package com.snow.system.domain;
 
-import java.util.Date;
-import java.util.List;
-
-import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 邮件对象 sys_oa_email
@@ -17,7 +15,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @date 2021-03-12
  */
 @Data
-public class SysOaEmail extends BaseEntity
+public class SysOaEmailDO extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -26,15 +24,13 @@ public class SysOaEmail extends BaseEntity
 
     private List idList;
     /** 邮件编号 */
-    @Excel(name = "邮件编号")
+
     private String emailNo;
 
     /** 邮件主题 */
-    @Excel(name = "邮件主题")
     private String emailSubject;
 
     /** 邮件内容 */
-    @Excel(name = "邮件内容")
     private String emailContent;
 
     private String emailTo;
@@ -51,18 +47,15 @@ public class SysOaEmail extends BaseEntity
 
     /** 发送时间 */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "发送时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date sendTime;
 
     /** 邮件类型（0--发，1-收） */
     private Long emailType;
 
     /** 邮件状态（0--普通邮件，1-草稿，2--已发送，3--重要邮件，4--已删除） */
-    @Excel(name = "邮件状态", readConverterExp = "0=--普通邮件，1-草稿，2--已发送，3--重要邮件，4--已删除")
     private Long emailStatus;
 
     /** 邮件标签 */
-    @Excel(name = "邮件标签")
     private Long emailLabel;
 
     /** 所属人id */
@@ -89,5 +82,33 @@ public class SysOaEmail extends BaseEntity
      */
     private String spendTime;
 
-    private SysMessageTransition sysMessageTransition;
+    /** 生产者id */
+
+    private String producerId;
+
+    private SysUser producerUser;
+
+    /** 消费者id */
+    private String consumerId;
+
+    private SysUser consumerUser;
+
+    /** 消息类型 */
+    private String messageType;
+
+    /** 消息外部id */
+    private String messageOutsideId;
+
+    /** 0--正常，1--禁用 */
+    private Long messageStatus;
+
+    /** 0--未读，1--已读 */
+    private Long messageReadStatus;
+
+    private String producerOrConsumerId;
+
+    /**
+     * 排序字段
+     */
+    private String sortField;
 }

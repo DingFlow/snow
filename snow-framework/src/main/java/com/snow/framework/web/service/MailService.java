@@ -173,11 +173,6 @@ public class MailService {
             }
             mailSender.send(message);
         }catch (Exception e){
-            SysOaEmail sysOaEmail=new SysOaEmail();
-            sysOaEmail.setEmailNo(SysSendEmailDTO.getTemplateByCode());
-            sysOaEmail.setIsSuccess(1);
-            sysOaEmail.setErrorInfo(e.getMessage());
-            sysOaEmailService.updateSysOaEmailByEmailNo(sysOaEmail);
             log.error("调用sendSimpleMail发送邮件失败:{}",e.getMessage());
         }
 

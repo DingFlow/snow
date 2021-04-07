@@ -10,20 +10,25 @@ import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.BusinessType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.common.enums.SysEmailSearchType;
+import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.framework.web.domain.common.MessageEventDTO;
 import com.snow.framework.web.domain.common.SysSendEmailDTO;
 import com.snow.framework.web.service.MailService;
-import com.snow.system.domain.SysOaEmail;
-import com.snow.system.domain.SysOaEmailDataVO;
-import com.snow.system.domain.SysUser;
+import com.snow.system.domain.*;
 import com.snow.system.service.ISysOaEmailService;
 import com.snow.system.service.ISysSequenceService;
+import com.snow.system.service.impl.SysMessageTemplateServiceImpl;
+import com.snow.system.service.impl.SysMessageTransitionServiceImpl;
+import com.snow.system.service.impl.SysUserServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -32,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 邮件Controller
@@ -49,7 +55,7 @@ public class SysOaEmailController extends BaseController
     private ISysOaEmailService sysOaEmailService;
 
     @Autowired
-    private MailService mailService;
+    private SysUserServiceImpl sysUserService;
 
     @Autowired
     private ISysSequenceService sequenceService;
@@ -57,6 +63,11 @@ public class SysOaEmailController extends BaseController
     @Value("${spring.mail.username}")
     private String from;
 
+    @Autowired
+    private SysMessageTransitionServiceImpl sysMessageTransitionService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequiresPermissions("system:email:view")
     @GetMapping()
@@ -66,64 +77,69 @@ public class SysOaEmailController extends BaseController
         return prefix + "/mailCompose";
     }
 
+
     /**
      * 查询邮件列表
      */
-    @RequiresPermissions("system:email:list")
-    @PostMapping("/list")
+    @RequiresPermissions("system:email:getMyList")
+    @PostMapping("/getMyList")
     @ResponseBody
-    public TableDataInfo list(SysOaEmail sysOaEmail)
+    public TableDataInfo getMyList(SysOaEmailDO sysOaEmail)
     {
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         Integer mailSearchType = sysOaEmail.getMailSearchType();
+        SysMessageTransition sysMessageTransition=new SysMessageTransition();
+        sysMessageTransition.setMessageStatus(0L);
+        List<SysOaEmailVO> list =Lists.newArrayList();
         switch (mailSearchType){
+            //收件
             case 6:
-                //目前支持单个发
-                sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
-                sysOaEmail.setIsSuccess(0);
+                sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
                 break;
+            //发件
             case 7:
-                sysOaEmail.setEmailFrom(String.valueOf(sysUser.getUserId()));
+                sysMessageTransition.setProducerId(String.valueOf(sysUser.getUserId()));
                 break;
-                //重要
+            //重要(我发件的或者收件的可标记为重要)
             case 3:
-                sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
-                sysOaEmail.setEmailFrom(String.valueOf(sysUser.getUserId()));
+                sysMessageTransition.setProducerOrConsumerId(String.valueOf(sysUser.getUserId()));
                 sysOaEmail.setEmailStatus(3L);
-                List<SysOaEmail> sysOaEmailList = sysOaEmailService.selectImportantEmailList(sysOaEmail);
-                return getDataTable(sysOaEmailList);
-                //草稿
-            case 1:
-                sysOaEmail.setEmailFrom(String.valueOf(sysUser.getUserId()));
-                sysOaEmail.setEmailStatus(1L);
                 break;
-                //垃圾
+            //发消息:草稿状态
+            case 1:
+                sysOaEmail.setBelongUserId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setEmailStatus(1L);
+                list = sysOaEmailService.selectEmailList(sysOaEmail);
+                return getDataTable(list);
+            //收件存在垃圾
             case 4:
-                sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
+                sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
                 sysOaEmail.setEmailStatus(4L);
                 break;
-                default:
+            default:
         }
-        List<SysOaEmail> list = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
+
+        sysOaEmail.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        list=sysOaEmailService.selectEmailList(sysOaEmail);
         return getDataTable(list);
     }
 
     /**
-     * 导出邮件列表
+     * 获取是否已读 true 已读，false 未读
+     * @param outsideId
+     * @return
      */
-    @RequiresPermissions("system:email:export")
-    @Log(title = "邮件", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
+    @GetMapping("/getEmailIsRead/{outsideId}")
     @ResponseBody
-    public AjaxResult export(SysOaEmail sysOaEmail)
-    {
-        List<SysOaEmail> list = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
-        ExcelUtil<SysOaEmail> util = new ExcelUtil<SysOaEmail>(SysOaEmail.class);
-        return util.exportExcel(list, "email");
+    public AjaxResult getEmailIsRead(@PathVariable("outsideId") String outsideId){
+        SysUser sysUser = ShiroUtils.getSysUser();
+        SysMessageTransition sysMessageTransition=new SysMessageTransition();
+        sysMessageTransition.setMessageOutsideId(outsideId);
+        sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
+        sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        return AjaxResult.success(sysMessageTransitionService.getIsRead(sysMessageTransition));
     }
-
-
     /**
      * 修改邮件
      */
@@ -132,7 +148,7 @@ public class SysOaEmailController extends BaseController
     {
         SysOaEmail sysOaEmail = sysOaEmailService.selectSysOaEmailById(id);
         mmap.put("sysOaEmail", sysOaEmail);
-        return prefix + "/edit";
+        return prefix + "/mailComposeEdit";
     }
 
     /**
@@ -180,14 +196,18 @@ public class SysOaEmailController extends BaseController
     public AjaxResult remarkRead(String ids)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        ArrayList<String> idList = Lists.newArrayList(Convert.toStrArray(ids));
-        idList.forEach(t->{
-            SysOaEmail sysOaEmail=new SysOaEmail();
-            sysOaEmail.setId(Long.parseLong(t));
-            sysOaEmail.setIsRead(1L);
-            sysOaEmail.setUpdateBy(String.valueOf(sysUser.getUserId()));
-            sysOaEmailService.updateSysOaEmail(sysOaEmail);
+        SysOaEmail sysOaEmail=new SysOaEmail();
+        sysOaEmail.setIdList(Lists.newArrayList(Convert.toStrArray(ids)));
+        List<SysOaEmail> sysOaEmailList = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
+        sysOaEmailList.forEach(t->{
+            SysMessageTransition sysMessageTransition=new SysMessageTransition();
+            sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
+            sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+            sysMessageTransition.setMessageOutsideId(t.getEmailNo());
+            sysMessageTransition.setMessageReadStatus(1L);
+            sysMessageTransitionService.updateByCondition(sysMessageTransition);
         });
+
         return AjaxResult.success();
     }
 
@@ -215,18 +235,23 @@ public class SysOaEmailController extends BaseController
     }
 
     /**
-     * 标记为
+     * 删除
      * @param ids
      * @return
      */
     @RequiresPermissions("system:email:markDelete")
-    @Log(title = "邮件", businessType = BusinessType.OTHER)
+    @Log(title = "邮件", businessType = BusinessType.DELETE)
     @PostMapping( "/markDelete")
     @ResponseBody
+    @Transactional
     public AjaxResult markDelete(String ids)
     {
         int i = sysOaEmailService.deleteSysOaEmailByIds(ids);
-        return AjaxResult.success(i);
+        SysOaEmail sysOaEmail=new SysOaEmail();
+        sysOaEmail.setIdList(Lists.newArrayList(Convert.toStrArray(ids)));
+        List<SysOaEmail> sysOaEmailList = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
+        int j = sysMessageTransitionService.deleteSysMessageTransitionByOutsideId(sysOaEmailList.stream().map(SysOaEmail::getEmailNo).collect(Collectors.toList()));
+        return AjaxResult.success(j);
     }
 
     /**
@@ -241,29 +266,31 @@ public class SysOaEmailController extends BaseController
     @RepeatSubmit
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult sendSysEmail(SysOaEmail sysOaEmail){
-        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_EMAIL_SEQUENCE);
         SysUser sysUser = ShiroUtils.getSysUser();
-        sysOaEmail.setBelongUserId(String.valueOf(sysUser.getUserId()));
-        //发送人id
-        sysOaEmail.setEmailFrom(String.valueOf(sysUser.getUserId()));
-        sysOaEmail.setCreateBy(String.valueOf(sysUser.getUserId()));
-        sysOaEmail.setUpdateBy(String.valueOf(sysUser.getUserId()));
-        sysOaEmail.setEmailType(0L);
-        sysOaEmail.setEmailNo(newSequenceNo);
-        sysOaEmail.setSendTime(new Date());
-        int i = sysOaEmailService.insertSysOaEmail(sysOaEmail);
+        if(StringUtils.isNotNull(sysOaEmail.getId())){
+            sysOaEmail.setUpdateBy(String.valueOf(sysUser.getUserId()));
+            sysOaEmailService.updateSysOaEmail(sysOaEmail);
+        }else {
+            String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_EMAIL_SEQUENCE);
+            sysOaEmail.setBelongUserId(String.valueOf(sysUser.getUserId()));
+            sysOaEmail.setCreateBy(String.valueOf(sysUser.getUserId()));
+            sysOaEmail.setUpdateBy(String.valueOf(sysUser.getUserId()));
+            sysOaEmail.setEmailNo(newSequenceNo);
+            sysOaEmail.setSendTime(new Date());
+            sysOaEmailService.insertSysOaEmail(sysOaEmail);
+        }
 
+        String newSequenceNo=sysOaEmail.getEmailNo();
         //只有发送状态下才能发送
         if(sysOaEmail.getEmailStatus().intValue()==SysEmailSearchType.COMMON.getCode()){
-            SysSendEmailDTO build = SysSendEmailDTO.builder().from(from)
-                    .subject(sysOaEmail.getEmailSubject())
-                    .content(sysOaEmail.getEmailContent())
-                    .receiverSet(Sets.newHashSet(sysOaEmail.getEmailTo()))
-                    .sentDate(new Date())
-                    .build();
-            mailService.sendHtmlMail(build);
+            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.SEND_EMAIL.getCode());
+            messageEventDTO.setProducerId(String.valueOf(sysUser.getUserId()));
+            messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaEmail.getEmailTo()));
+            messageEventDTO.setMessageEventType(MessageEventType.SEND_EMAIL);
+            messageEventDTO.setMessageOutsideId(newSequenceNo);
+            applicationContext.publishEvent(messageEventDTO);
         }
-        return AjaxResult.success(i);
+        return AjaxResult.success();
     }
 
     /**
@@ -283,15 +310,22 @@ public class SysOaEmailController extends BaseController
     @GetMapping("/mailDetail/{id}")
     public String mailDetail(@PathVariable("id") Long id,ModelMap mmap)
     {
-        //标记为已读
         SysUser sysUser = ShiroUtils.getSysUser();
-        SysOaEmail readSysOaEmail=new SysOaEmail();
-        readSysOaEmail.setId(id);
-        readSysOaEmail.setIsRead(1L);
-        readSysOaEmail.setUpdateBy(String.valueOf(sysUser.getUserId()));
-        sysOaEmailService.updateSysOaEmail(readSysOaEmail);
-
         SysOaEmail sysOaEmail = sysOaEmailService.selectSysOaEmailById(id);
+        SysMessageTransition sysMessageTransition=new SysMessageTransition();
+        sysMessageTransition.setMessageOutsideId(sysOaEmail.getEmailNo());
+        sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        sysMessageTransition.setMessageStatus(0L);
+        List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
+        if(CollectionUtils.isNotEmpty(sysMessageTransitions)){
+            sysOaEmail.setEmailFromUser(sysUserService.selectUserById(Long.parseLong(sysMessageTransitions.get(0).getProducerId())));
+            //sysOaEmail.setEmailToUser(sysMessageTransitions.stream().map(get));
+        }
+        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.MARK_READED.getCode());
+        messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(sysUser.getUserId())));
+        messageEventDTO.setMessageOutsideId(sysOaEmail.getEmailNo());
+        messageEventDTO.setMessageEventType(MessageEventType.SEND_EMAIL);
+        applicationContext.publishEvent(messageEventDTO);
         mmap.put("sysOaEmail", sysOaEmail);
         return prefix + "/mailDetail";
     }
@@ -307,11 +341,11 @@ public class SysOaEmailController extends BaseController
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         SysOaEmail sysOaEmail=new SysOaEmail();
-        sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
+     //   sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
         sysOaEmail.setIsDelete(0L);
         List<SysOaEmail> list = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
         SysOaEmailDataVO.SysOaEmailDataVOBuilder builder = SysOaEmailDataVO.builder();
-        if(CollectionUtils.isNotEmpty(list)){
+        /*if(CollectionUtils.isNotEmpty(list)){
 
 
             long inboxTotal = list.stream().filter(t -> t.getEmailTo().equals(String.valueOf(sysUser.getUserId()))).count();
@@ -342,7 +376,7 @@ public class SysOaEmailController extends BaseController
                     t.getEmailFrom().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.DRAFTS.getCode()).
                     count();
             builder.draftsTotal(draftsTotal);
-        }
+        }*/
         return AjaxResult.success(builder.build());
     }
 

@@ -10,11 +10,34 @@
     <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
     <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
     <th:block th:include="include :: header('请假单列表')" />
+    <style>
+        *{ padding:0; margin:0; font-size:12px}
+        ul,li{ list-style:none;}
+        .box1{ height:35px; background:; overflow:hidden;}
+        .t_news{ height:19px;  color:#fff; padding-left:10px; margin:8px 0; overflow:hidden; position:relative;}
+        .t_news b{ line-height:19px; font-weight:bold; display:inline-block;}
+        .news_li,.swap{ line-height:19px; display:inline-block; position:absolute; top:0; left:72px;}
+        .news_li a,.swap a{ color:#fff;}
+        .swap{top:19px;}
+    </style>
 </head>
 
 <body class="gray-bg">
     <div class="wrapper wrapper-content">
+            <div class="box1">
+                <div class="t_news">
+                    <label style="color: #c9302c"> <i class="fa fa-volume-up "></i></label><b style="color: #0d8ddb">&nbsp;系统公告：</b>
+                    <ul class="news_li">
+                        <li  th:each="notice,iterStat : ${sysNotices}">
+                            &nbsp; &nbsp;&nbsp;<a style="color: #b94a48;margin-left:5px" href="javascript:void(0)" th:onclick="noticeDetail([[${notice.noticeId}]]);">[[${notice.noticeTitle}]]</a>
 
+                            &nbsp; &nbsp; <span style="color: #b94a48">[[${#dates.format(notice.createTime, 'yyyy-MM-dd')}]]</span>
+                        </li>
+                    </ul>
+                    <ul class="swap"></ul>
+                </div>
+            </div>
+        <br/>
         <div class="row">
             <div class="col-sm-3">
                 <div class="ibox float-e-margins">
@@ -127,7 +150,7 @@
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
-    
+
     <th:block th:include="include :: sparkline-js" />
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: select2-js" />
@@ -213,6 +236,35 @@
         function toMyTakePartInProcess() {
             var preViewUrl=prefixFlow+'/toMyTakePartInProcess?';
             $.modal.openTab("我的已办任务", preViewUrl);
+        }
+
+
+    </script>
+    <script type="text/javascript">
+        function b(){
+            t = parseInt(x.css('top'));
+            y.css('top','19px');
+            x.animate({top: t - 19 + 'px'},'slow');	//19为每个li的高度
+            if(Math.abs(t) == h-19){ //19为每个li的高度
+                y.animate({top:'0px'},'slow');
+                z=x;
+                x=y;
+                y=z;
+            }
+            setTimeout(b,3000);//滚动间隔时间 现在是3秒
+        }
+        $(document).ready(function(){
+            $('.swap').html($('.news_li').html());
+            x = $('.news_li');
+            y = $('.swap');
+            h = $('.news_li li').length * 19; //19为每个li的高度
+            setTimeout(b,3000);//滚动间隔时间 现在是3秒
+
+        })
+
+        function noticeDetail(id) {
+            var detailUrl="/system/notice/detail/"+id;
+            $.modal.openTab("公告详情", detailUrl);
         }
     </script>
 </body>

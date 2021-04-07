@@ -9,12 +9,14 @@ import com.google.common.collect.Sets;
 import com.snow.common.constant.MessageConstants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.DingTalkMessageType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.flowable.common.SpringContextUtil;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.listener.AbstractEventListener;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
+import com.snow.framework.web.domain.common.MessageEventDTO;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.framework.web.service.MailService;
 import com.snow.framework.web.service.NewsTriggerService;
@@ -140,6 +142,19 @@ public class SendMessageEventLister extends AbstractEventListener {
         if (emailOnOff) {
             sendTaskCreateEmailMessage(event);
         }
+
+
+        //根据任务ID获取任务获选人
+        TaskEntity entity = (TaskEntity) event.getEntity();
+        Set<SysUser> flowCandidates = getFlowCandidates(entity);
+        if(CollectionUtils.isNotEmpty(flowCandidates)){
+            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.TASK_TODO.getCode());
+            messageEventDTO.setConsumerIds(Sets.newHashSet(flowCandidates.stream().map(t->String.valueOf(t.getUserId())).collect(Collectors.toList())));
+            messageEventDTO.setMessageEventType(MessageEventType.TASK_TODO);
+            messageEventDTO.setMessageOutsideId(entity.getId());
+            applicationContext.publishEvent(messageEventDTO);
+        }
+
 
     }
 

@@ -28,7 +28,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNoticeVo"/>
         where notice_id = #{noticeId}
     </select>
-    
+
+    <select id="selectNewNoticeByNoticeType" parameterType="String" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        where status =0 and notice_type = #{noticeType}
+
+        order by create_time desc
+        limit 0,1
+
+    </select>
+
     <select id="selectNoticeList" parameterType="SysNotice" resultMap="SysNoticeResult">
         <include refid="selectNoticeVo"/>
         <where>
@@ -44,8 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="blackboardId != null and blackboardId != ''">
                 AND blackboard_id = #{blackboardId}
             </if>
-
 		</where>
+        order by create_time desc
     </select>
     
     <insert id="insertNotice" parameterType="SysNotice" keyProperty="noticeId" useGeneratedKeys="true" >

@@ -20,19 +20,21 @@
 <body class="signin">
     <div class="signinpanel">
         <div class="row">
+            <h1>欢迎使用 <strong>DingFLow 后台管理系统</strong></h1>
+        </div>
+        <div class="row">
             <div class="col-sm-7">
                 <div class="signin-info">
                     <div class="logopanel m-b">
-                        <h1><img alt="[ 若依 ]" src="../static/ruoyi.png" th:src="@{/ruoyi.png}"></h1>
+                        <!-- <h1><img alt="[ 若依 ]" src="../static/ruoyi.png" th:src="@{/ruoyi.png}"></h1>-->
                     </div>
                     <div class="m-b"></div>
-                    <h4>欢迎使用 <strong>若依 后台管理系统</strong></h4>
-                    <ul class="m-b">
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> SpringBoot</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Mybatis</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Shiro</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Thymeleaf</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Bootstrap</li>
+
+                    <ul class="m-b-lg">
+                        <li><i class="fa fa-arrow-circle-o-right m-r-lg"></i> flowable设计器集成(内置请假审批流程，采购审批流程，离职审批会签流程)</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-lg"></i> 钉钉与系统基础数据同步</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-lg"></i> 智能化数据大屏</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-lg"></i> 邮件、钉钉模板配置，邮件在线发送</li>
                     </ul>
                     <strong>已经注册过? <a th:href="@{/login}">直接登录&raquo;</a></strong>
                 </div>
@@ -40,7 +42,6 @@
             <div class="col-sm-5">
                 <form id="registerForm" autocomplete="off">
                     <h4 class="no-margins">注册：</h4>
-                    <p class="m-t-md">你若不离不弃，我必生死相依</p>
                     <input type="text"     name="username" class="form-control uname"         placeholder="用户名"   maxlength="20" />
                     <input type="password" name="password" class="form-control pword"         placeholder="密码"     maxlength="20" />
                     <input type="password" name="confirmPassword" class="form-control pword"  placeholder="确认密码" maxlength="20" />
@@ -56,7 +57,7 @@
 					</div>
                     <div class="checkbox-custom" th:classappend="${captchaEnabled==false} ? 'm-t'">
 				        <input type="checkbox" id="acceptTerm" name="acceptTerm"> <label for="acceptTerm">我已阅读并同意</label>
-				        <a href="https://gitee.com/y_project/RuoYi/blob/master/README.md" target="_blank">使用条款</a>
+				        <a href="https://gitee.com/qimingjin/snow" target="_blank">使用条款</a>
 				    </div>
                     <button class="btn btn-success btn-block" id="btnSubmit" data-loading="正在验证注册，请稍后...">注册</button>
                 </form>
@@ -64,7 +65,7 @@
         </div>
         <div class="signup-footer">
             <div class="pull-left">
-                &copy; 2019 All Rights Reserved. RuoYi <br>
+                &copy; 2021 All Rights Reserved. DingFlow <br>
             </div>
         </div>
     </div>

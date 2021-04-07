@@ -42,6 +42,11 @@ public class SysNoticeServiceImpl implements ISysNoticeService
         return noticeMapper.selectNoticeById(noticeId);
     }
 
+    @Override
+    public SysNotice selectNewNoticeByNoticeType(String noticeType) {
+        return noticeMapper.selectNewNoticeByNoticeType(noticeType);
+    }
+
     /**
      * 查询公告列表
      * 

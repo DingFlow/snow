@@ -19,6 +19,13 @@ public interface ISysNoticeService
     public SysNotice selectNoticeById(Long noticeId);
 
     /**
+     * 根据公告类型查询最新的公告
+     * @param noticeType
+     * @return
+     */
+    public SysNotice selectNewNoticeByNoticeType(String noticeType);
+
+    /**
      * 查询公告列表
      * 
      * @param notice 公告信息

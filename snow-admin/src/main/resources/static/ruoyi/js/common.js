@@ -309,6 +309,51 @@ function createMenuItem(dataUrl, menuName) {
     }
     return false;
 }
+/** 创建选项卡 */
+function createNoPanelMenuItem(dataUrl, menuName) {
+    dataIndex = $.common.random(1, 100),
+        flag = true;
+    if (dataUrl == undefined || $.trim(dataUrl).length == 0) return false;
+    var topWindow = $(window.parent.document);
+    // 选项卡菜单已存在
+    $('.menuTab', topWindow).each(function() {
+        if ($(this).data('id') == dataUrl) {
+            if (!$(this).hasClass('active')) {
+                $(this).addClass('active').siblings('.menuTab').removeClass('active');
+                scrollToTab(this);
+                $('.page-tabs-content').animate({ marginLeft: ""}, "fast");
+                // 显示tab对应的内容区
+                $('.mainContent .RuoYi_iframe', topWindow).each(function() {
+                    if ($(this).data('id') == dataUrl) {
+                        $(this).show().siblings('.RuoYi_iframe').hide();
+                        return false;
+                    }
+                });
+            }
+            flag = false;
+            return false;
+        }
+    });
+    // 选项卡菜单不存在
+    if (flag) {
+        var str = '<a href="javascript:;" class="active menuTab" data-id="' + dataUrl + '" >' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        $('.menuTab', topWindow).removeClass('active');
+
+        // 添加选项卡对应的iframe
+        var str1 = '<iframe class="RuoYi_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '"  seamless></iframe>';
+        $('.mainContent', topWindow).find('iframe.RuoYi_iframe').hide().parents('.mainContent').append(str1);
+
+        window.parent.$.modal.loading("数据加载中，请稍后...");
+        $('.mainContent iframe:visible', topWindow).load(function () {
+            window.parent.$.modal.closeLoading();
+        });
+
+        // 添加选项卡
+        $('.menuTabs .page-tabs-content', topWindow).append(str);
+        scrollToTab($('.menuTab.active', topWindow));
+    }
+    return false;
+}
 
 // 滚动到指定选项卡
 function scrollToTab(element) {

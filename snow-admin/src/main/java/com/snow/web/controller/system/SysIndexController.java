@@ -21,6 +21,9 @@ import com.snow.system.domain.*;
 import com.snow.system.service.*;
 import com.snow.system.service.impl.FinanceAlipayFlowServiceImpl;
 import com.snow.system.service.impl.SysDingtalkSyncLogServiceImpl;
+import com.snow.system.service.impl.SysNoticeServiceImpl;
+import com.snow.system.service.impl.SysOaEmailServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -72,7 +75,10 @@ public class SysIndexController extends BaseController
 
 
     @Autowired
-    private ISysDingProcinstService iSysDingProcinstService;
+    private SysOaEmailServiceImpl sysOaEmailService;
+
+    @Autowired
+    private SysNoticeServiceImpl sysNoticeService;
 
     // 系统首页
     @GetMapping("/index")
@@ -94,6 +100,13 @@ public class SysIndexController extends BaseController
         mmap.put("isDefaultModifyPwd", initPasswordIsModify(user.getPwdUpdateDate()));
         mmap.put("isPasswordExpired", passwordIsExpiration(user.getPwdUpdateDate()));
 
+        List<SysOaEmail> myNoReadOaEmailList = sysOaEmailService.getMyNoReadOaEmailList(String.valueOf(user.getUserId()));
+        mmap.put("emailListSize",myNoReadOaEmailList.size());
+        //如果大于三条只取前三条记录
+        if(CollectionUtils.isNotEmpty(myNoReadOaEmailList)&&myNoReadOaEmailList.size()>3){
+            myNoReadOaEmailList=myNoReadOaEmailList.subList(0,3);
+        }
+        mmap.put("emailList",myNoReadOaEmailList);
         // 菜单导航显示风格
         String menuStyle = configService.selectConfigByKey("sys.index.menuStyle");
         // 移动端，默认使左侧导航菜单，否则取默认配置
@@ -123,6 +136,12 @@ public class SysIndexController extends BaseController
         //流程概况
         FlowGeneralSituationVO flowGeneralSituation = flowableService.getFlowGeneralSituation(String.valueOf(sysUser.getUserId()));
         mmap.put("flowGeneralSituation",flowGeneralSituation);
+        SysNotice sysNotice=new SysNotice();
+        sysNotice.setStatus("0");
+        sysNotice.setNoticeType("1");
+        List<SysNotice> sysNotices = sysNoticeService.selectNoticeList(sysNotice);
+        mmap.put("sysNotices",sysNotices);
+
         return "main_v1";
     }
 

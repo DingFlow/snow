@@ -26,7 +26,7 @@
         </div>
         <a th:href="@{/index}">
             <li class="logo hidden-xs">
-                <span class="logo-lg">Ding-Flow</span>
+                <span class="logo-lg">DingFlow</span>
             </li>
          </a>
         <div class="sidebar-collapse">
@@ -88,7 +88,79 @@
                 <ul class="nav navbar-top-links navbar-right welcome-message">
 					<li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="#" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>
 	                <li><a title="全屏显示" href="javascript:void(0)" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏显示</a></li>
-                    <li class="dropdown user-menu">
+
+					<li class="dropdown">
+						<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+							<i class="fa fa-envelope"></i>  <span class="label label-warning">[[${emailListSize}]]</span>
+						</a>
+						<ul class="dropdown-menu dropdown-messages">
+							<li  th:each="emails,iterStat : ${emailList}">
+								<div class="dropdown-messages-box">
+									<a href="#" class="pull-left">
+										<!--<img alt="image" class="img-circle" src="img/a7.jpg">-->
+										<i class="fa fa-envelope"></i>
+									</a>
+									<div class="media-body">
+										<small class="pull-left">[[${emails.spendTime}]]</small>&nbsp;
+										<strong><a href="javascript:void(0)" th:onclick="mailDetail([[${emails.id}]]);">[[${emails.emailFromUser.email}]]</a></strong>发来邮件<br>
+									</div>
+								</div>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<div class="text-center link-block">
+									<a href="javascript:void(0)" th:onclick="mailDetailAll();" th:data-id="@{/system/email/mailbox/6}">
+										<i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</li>
+
+					<li class="dropdown">
+						<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+							<i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+						</a>
+						<ul class="dropdown-menu dropdown-alerts">
+							<li>
+								<a href="mailbox.html">
+									<div>
+										<i class="fa fa-envelope fa-fw"></i> You have 16 messages
+										<span class="pull-right text-muted small">4 minutes ago</span>
+									</div>
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="profile.html">
+									<div>
+										<i class="fa fa-twitter fa-fw"></i> 3 New Followers
+										<span class="pull-right text-muted small">12 minutes ago</span>
+									</div>
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="grid_options.html">
+									<div>
+										<i class="fa fa-upload fa-fw"></i> Server Rebooted
+										<span class="pull-right text-muted small">4 minutes ago</span>
+									</div>
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<div class="text-center link-block">
+									<a href="notifications.html">
+										<strong>See All Alerts</strong>
+										<i class="fa fa-angle-right"></i>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</li>
+
+					<li class="dropdown user-menu">
 						<a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
 							<img th:src="(${user.avatar} == '') ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="user-image">
 							<span class="hidden-xs">[[${#strings.defaultString(user.userName, '-')}]]</span>
@@ -141,8 +213,8 @@
             <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/system/main}"
                     th:src="@{/system/main}" frameborder="0" seamless></iframe>
         </div>
-        <<div th:if="${ignoreFooter}" class="footer">
-            <div class="pull-right">© [[${copyrightYear}]] QJD Copyright </div>
+        <div th:if="${ignoreFooter}" class="footer">
+            <div class="pull-right">© [[${copyrightYear}]] DingFlow Copyright </div>
         </div>
     </div>
     <!--右侧部分结束-->
@@ -216,6 +288,20 @@ function applyPath(url) {
 	}
 }
 
+function mailDetail(id) {
+	layer.open({
+		type : 2,
+		shadeClose : true,
+		title : "查阅邮件",
+		area : ["70%", "80%"],
+		content : ["/system/email/mailDetail/"+id, 'yes']
+	})
+}
+function mailDetailAll(id) {
+	var detailUrl="/system/email/mailbox/6";
+    createNoPanelMenuItem( detailUrl,"在线邮件");
+}
+
 $(function() {
 	if($.common.equals("history", mode) && window.performance.navigation.type == 1) {
 		var url = storage.get('publicPath');
@@ -259,6 +345,17 @@ $(function() {
         });
     }
     $("[data-toggle='tooltip']").tooltip();
+
+    /*公告停留半分钟*/
+	layer.open({
+		type : 2,
+		shadeClose : true,
+		time:30000,
+		title : "公告",
+		area : ["70%", "80%"],
+		content : ["/system/notice/newNotice/"+1, 'yes']
+	})
+
 });
 </script>
 </body>
