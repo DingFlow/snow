@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: jsonview-css" />
+
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t"  id="signupForm">
+		<input name="id" th:value="${sysOaCustomer.id}" type="hidden">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">客户编号：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerNo}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">标题：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">所属行业：</label>
+			<div class="form-control-static" th:text="${@dict.getLabel('sys_industry_type',sysOaCustomer.customerIndustry)}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">详细地址：</label>
+			<div class="form-control-static" >
+				[[${sysOaCustomer.customerProvinceName}]][[${sysOaCustomer.customerCityName}]][[${sysOaCustomer.customerAreaName}]][[${sysOaCustomer.customerAddress}]]
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">客户来源：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerSource}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">客户状态：</label>
+			<div class="form-control-static" th:text="${@dict.getLabel('sys_customer_status',sysOaCustomer.customerStatus)}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">联系人：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerLinkeUser}" >
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">联系电话：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerPhone}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">联系邮箱：</label>
+			<div class="form-control-static" th:text="${sysOaCustomer.customerEmail}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">客户负责人：</label>
+			<div class="form-control-static" th:text="${@user.getName(sysOaCustomer.customerManager)}">
+			</div>
+		</div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+
+</body>
+</html>

@@ -12,7 +12,9 @@ public enum  FlowDefEnum {
 
     PURCHASE_ORDER_PROCESS("purchase_order_process", "采购审批流程"),
 
-    SNOW_OA_RESIGN_PROCESS("snow_oa_resign", "snow系统离职审批流程");
+    SNOW_OA_RESIGN_PROCESS("snow_oa_resign", "snow系统离职审批流程"),
+
+    SNOW_OA_CUSTOMER_ADMITTANCE("snow_oa_customer_admittance","客户准入流程");
 
     private final String code;
     private final String info;

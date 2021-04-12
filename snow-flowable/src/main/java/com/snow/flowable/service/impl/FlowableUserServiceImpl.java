@@ -139,7 +139,9 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     public Set<Long> getFlowGroupByUserId(Long userId) {
         Set<Long> totalFlowGroupDO=Sets.newHashSet();
         List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOByUserId(userId);
+
         if(!CollectionUtils.isEmpty(flowGroupDOS)){
+            totalFlowGroupDO.addAll(flowGroupDOS.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toList()));
             flowGroupDOS.forEach(t->{
                 Set<Long> allSonSysRoleList = getAllSonSysRoleList(t.getRoleId());
                 totalFlowGroupDO.addAll(allSonSysRoleList);

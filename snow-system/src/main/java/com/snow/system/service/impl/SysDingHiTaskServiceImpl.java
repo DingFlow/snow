@@ -1,34 +1,30 @@
 package com.snow.system.service.impl;
 
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
+import com.snow.common.core.text.Convert;
+import com.snow.common.utils.StringUtils;
+import com.snow.system.domain.SysDingHiTask;
+import com.snow.system.domain.SysDingProcinst;
+import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.SysDingHiTaskMapper;
+import com.snow.system.mapper.SysUserMapper;
+import com.snow.system.service.ISysDingHiTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
-import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
-import com.snow.common.utils.DateUtils;
-import com.snow.common.utils.StringUtils;
-import com.snow.system.domain.SysDingProcinst;
-import com.snow.system.domain.SysUser;
-import com.snow.system.mapper.SysDingProcinstMapper;
-import com.snow.system.mapper.SysUserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysDingHiTaskMapper;
-import com.snow.system.domain.SysDingHiTask;
-import com.snow.system.service.ISysDingHiTaskService;
-import com.snow.common.core.text.Convert;
-
-import javax.annotation.Resource;
-
 /**
  * 历史任务Service业务层处理
- * 
+ *
  * @author 没用的阿吉
  * @date 2021-03-24
  */
 @Service
-public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService 
+public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 {
     @Resource
     private SysDingHiTaskMapper sysDingHiTaskMapper;
@@ -42,7 +38,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 查询历史任务
-     * 
+     *
      * @param id 历史任务ID
      * @return 历史任务
      */
@@ -54,7 +50,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 查询历史任务列表
-     * 
+     *
      * @param sysDingHiTask 历史任务
      * @return 历史任务
      */
@@ -82,7 +78,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 新增历史任务
-     * 
+     *
      * @param sysDingHiTask 历史任务
      * @return 结果
      */
@@ -94,7 +90,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 修改历史任务
-     * 
+     *
      * @param sysDingHiTask 历史任务
      * @return 结果
      */
@@ -106,7 +102,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 删除历史任务对象
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
@@ -118,7 +114,7 @@ public class SysDingHiTaskServiceImpl implements ISysDingHiTaskService
 
     /**
      * 删除历史任务信息
-     * 
+     *
      * @param id 历史任务ID
      * @return 结果
      */

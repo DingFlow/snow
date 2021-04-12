@@ -71,7 +71,7 @@ public class SysOaEmailController extends BaseController
 
     @RequiresPermissions("system:email:view")
     @GetMapping()
-    public String email(ModelMap mmap)
+    public String email()
     {
 
         return prefix + "/mailCompose";
@@ -89,38 +89,37 @@ public class SysOaEmailController extends BaseController
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         Integer mailSearchType = sysOaEmail.getMailSearchType();
-        SysMessageTransition sysMessageTransition=new SysMessageTransition();
-        sysMessageTransition.setMessageStatus(0L);
         List<SysOaEmailVO> list =Lists.newArrayList();
         switch (mailSearchType){
             //收件
             case 6:
-                sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setConsumerId(String.valueOf(sysUser.getUserId()));
                 break;
             //发件
             case 7:
-                sysMessageTransition.setProducerId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setProducerId(String.valueOf(sysUser.getUserId()));
                 break;
             //重要(我发件的或者收件的可标记为重要)
             case 3:
-                sysMessageTransition.setProducerOrConsumerId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setProducerOrConsumerId(String.valueOf(sysUser.getUserId()));
                 sysOaEmail.setEmailStatus(3L);
                 break;
             //发消息:草稿状态
             case 1:
-                sysOaEmail.setBelongUserId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setProducerId(String.valueOf(sysUser.getUserId()));
                 sysOaEmail.setEmailStatus(1L);
                 list = sysOaEmailService.selectEmailList(sysOaEmail);
                 return getDataTable(list);
             //收件存在垃圾
             case 4:
-                sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
+                sysOaEmail.setConsumerId(String.valueOf(sysUser.getUserId()));
                 sysOaEmail.setEmailStatus(4L);
                 break;
             default:
         }
 
         sysOaEmail.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        sysOaEmail.setSortField("m.message_read_status asc,o.update_time desc");
         list=sysOaEmailService.selectEmailList(sysOaEmail);
         return getDataTable(list);
     }
@@ -246,13 +245,15 @@ public class SysOaEmailController extends BaseController
     @Transactional
     public AjaxResult markDelete(String ids)
     {
-        int i = sysOaEmailService.deleteSysOaEmailByIds(ids);
+
         SysOaEmail sysOaEmail=new SysOaEmail();
         sysOaEmail.setIdList(Lists.newArrayList(Convert.toStrArray(ids)));
         List<SysOaEmail> sysOaEmailList = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
         int j = sysMessageTransitionService.deleteSysMessageTransitionByOutsideId(sysOaEmailList.stream().map(SysOaEmail::getEmailNo).collect(Collectors.toList()));
+        int i = sysOaEmailService.deleteSysOaEmailByIds(ids);
         return AjaxResult.success(j);
     }
+    
 
     /**
      * 发送邮件
@@ -340,43 +341,44 @@ public class SysOaEmailController extends BaseController
     public AjaxResult getSysOaEmailData()
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        SysOaEmail sysOaEmail=new SysOaEmail();
-     //   sysOaEmail.setEmailTo(String.valueOf(sysUser.getUserId()));
-        sysOaEmail.setIsDelete(0L);
-        List<SysOaEmail> list = sysOaEmailService.selectSysOaEmailList(sysOaEmail);
+        SysOaEmailDO sysOaEmail=new SysOaEmailDO();
+        sysOaEmail.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        List<SysOaEmailVO> list = sysOaEmailService.selectEmailList(sysOaEmail);
         SysOaEmailDataVO.SysOaEmailDataVOBuilder builder = SysOaEmailDataVO.builder();
-        /*if(CollectionUtils.isNotEmpty(list)){
-
-
-            long inboxTotal = list.stream().filter(t -> t.getEmailTo().equals(String.valueOf(sysUser.getUserId()))).count();
+        if(CollectionUtils.isNotEmpty(list)){
+            /**
+             * 收件数
+             */
+            long inboxTotal = list.stream().filter(t -> t.getConsumerId().equals(String.valueOf(sysUser.getUserId()))).count();
             builder.inboxTotal(inboxTotal);
 
-            long sendMailTotal = list.stream().filter(t -> t.getEmailFrom().equals(String.valueOf(sysUser.getUserId()))).count();
+            long sendMailTotal = list.stream().filter(t -> t.getProducerId().equals(String.valueOf(sysUser.getUserId()))).count();
             builder.sendMailTotal(sendMailTotal);
 
             //是否已读，针对的是收件
-            long readTotal = list.stream().filter(t -> (t.getEmailTo().equals(String.valueOf(sysUser.getUserId()))&&t.getIsRead()==0)).count();
+            long readTotal = list.stream().filter(t -> t.getConsumerId().equals(String.valueOf(sysUser.getUserId()))&&t.getMessageReadStatus()==0).count();
             builder.readTotal(readTotal);
 
-            //重要标记：收件或者发件
-            long importantTotal = list.stream().filter(t -> (
-                    t.getEmailTo().equals(String.valueOf(sysUser.getUserId()))||
-                            t.getEmailFrom().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.IMPORTANT.getCode()).
-                    count();
-            builder.importantTotal(importantTotal);
-
-            //垃圾标记，针对收件
+            //垃圾标记，针对收件messageStatus = null
             long trashTotal = list.stream().filter(t -> (
-                    t.getEmailTo().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.TRASH.getCode()).
+                    t.getConsumerId().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.TRASH.getCode()).
                     count();
             builder.trashTotal(trashTotal);
 
             //草稿标记，针对我发件
             long draftsTotal= list.stream().filter(t -> (
-                    t.getEmailFrom().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.DRAFTS.getCode()).
+                    t.getProducerId().equals(String.valueOf(sysUser.getUserId())))&&t.getEmailStatus().intValue()==SysEmailSearchType.DRAFTS.getCode()).
                     count();
             builder.draftsTotal(draftsTotal);
-        }*/
+        }
+        SysOaEmailDO importantSysOaEmail=new SysOaEmailDO();
+        importantSysOaEmail.setMessageType(MessageEventType.SEND_EMAIL.getCode());
+        importantSysOaEmail.setProducerOrConsumerId(String.valueOf(sysUser.getUserId()));
+        List<SysOaEmailVO> importantSysOaEmailList = sysOaEmailService.selectEmailList(importantSysOaEmail);
+        //重要标记：收件或者发件
+        long importantTotal = importantSysOaEmailList.stream().filter(t -> t.getEmailStatus().intValue()==SysEmailSearchType.IMPORTANT.getCode()).
+                count();
+        builder.importantTotal(importantTotal);
         return AjaxResult.success(builder.build());
     }
 

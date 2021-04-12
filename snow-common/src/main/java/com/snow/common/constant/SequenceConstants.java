@@ -27,4 +27,6 @@ public class SequenceConstants {
      */
     public static final String OA_EMAIL_SEQUENCE="OA_YJ";
 
+
+    public static final String OA_CUSTOMER_SEQUENCE="OA_KH";
 }

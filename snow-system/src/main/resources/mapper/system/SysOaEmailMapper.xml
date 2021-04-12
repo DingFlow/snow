@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         select o.id as id,o.email_no as emailNo, email_subject as emailSubject,o.email_content as emialContent,o.send_time as sendTime,o.email_type as emailType,
         o.email_status as emailStatus,o.email_label as emailLabel,
-        m.producer_id as producerId,m.consumer_id as consumerId,m.message_read_status as messageReadStaus
+        m.producer_id as producerId,m.consumer_id as consumerId,m.message_read_status as messageReadStatus
         from  sys_message_transition m left join sys_oa_email o
         on o.email_no =m.message_outside_id
         <where>
@@ -67,15 +67,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     #{item}
                 </foreach>
             </if>
-          <!--  <if test="idList !=null and idList.size() > 0">
-                and	id in
-                <foreach item="item" index="index" collection="idList"  open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>-->
             <if test="emailNo != null  and emailNo != ''"> and o.email_no = #{emailNo}</if>
             <if test="emailSubject != null  and emailSubject != ''"> and o.email_subject like concat ('%', #{emailSubject},'%')</if>
-            <if test="emailContent != null  and emailContent != ''"> and o.email_content = #{emailContent}</if>
+
             <if test="sendTime != null "> and o.send_time = #{sendTime}</if>
             <if test="emailStatus != null "> and o.email_status = #{emailStatus}</if>
             <if test="emailLabel != null "> and o.email_label = #{emailLabel}</if>
