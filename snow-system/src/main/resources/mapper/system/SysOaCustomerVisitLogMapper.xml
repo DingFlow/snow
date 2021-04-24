@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaCustomerVisitLogMapper">
+    
+    <resultMap type="SysOaCustomerVisitLog" id="SysOaCustomerVisitLogResult">
+        <result property="id"    column="id"    />
+        <result property="customerNo"    column="customer_no"    />
+        <result property="visitContent"    column="visit_content"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="visitResult"    column="visit_result"    />
+        <result property="visitUrl"    column="visit_url"    />
+        <result property="acceptUser"    column="accept_user"   typeHandler="com.snow.framework.config.JsonStringArrayTypeHandler"  />
+        <result property="visitTime"    column="visit_time"    />
+        <result property="visitLinkPhone"    column="visit_link_phone"    />
+        <result property="visitLinkUser"    column="visit_link_user"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysOaCustomerVisitLogVo">
+        select id, customer_no, visit_content, visit_type, visit_result, visit_url, accept_user, visit_time, visit_link_phone, visit_link_user, create_by, is_delete, create_time, update_by, update_time from sys_oa_customer_visit_log
+    </sql>
+
+    <select id="selectSysOaCustomerVisitLogList" parameterType="SysOaCustomerVisitLog" resultMap="SysOaCustomerVisitLogResult">
+        <include refid="selectSysOaCustomerVisitLogVo"/>
+        <where>  
+            <if test="customerNo != null  and customerNo != ''"> and customer_no = #{customerNo}</if>
+            <if test="visitContent != null  and visitContent != ''"> and visit_content = #{visitContent}</if>
+            <if test="visitType != null  and visitType != ''"> and visit_type = #{visitType}</if>
+            <if test="visitResult != null  and visitResult != ''"> and visit_result = #{visitResult}</if>
+            <if test="visitUrl != null  and visitUrl != ''"> and visit_url = #{visitUrl}</if>
+            <if test="acceptUser != null  and acceptUser != ''"> and accept_user = #{acceptUser}</if>
+            <if test="visitTime != null "> and visit_time = #{visitTime}</if>
+            <if test="visitLinkPhone != null  and visitLinkPhone != ''"> and visit_link_phone = #{visitLinkPhone}</if>
+            <if test="visitLinkUser != null  and visitLinkUser != ''"> and visit_link_user = #{visitLinkUser}</if>
+        </where>
+        order by visit_time desc
+    </select>
+    
+    <select id="selectSysOaCustomerVisitLogById" parameterType="Long" resultMap="SysOaCustomerVisitLogResult">
+        <include refid="selectSysOaCustomerVisitLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysOaCustomerVisitLog" parameterType="SysOaCustomerVisitLog" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_customer_visit_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">customer_no,</if>
+            <if test="visitContent != null and visitContent != ''">visit_content,</if>
+            <if test="visitType != null">visit_type,</if>
+            <if test="visitResult != null">visit_result,</if>
+            <if test="visitUrl != null">visit_url,</if>
+            <if test="acceptUser != null">accept_user,</if>
+            <if test="visitTime != null">visit_time,</if>
+            <if test="visitLinkPhone != null">visit_link_phone,</if>
+            <if test="visitLinkUser != null">visit_link_user,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">#{customerNo},</if>
+            <if test="visitContent != null and visitContent != ''">#{visitContent},</if>
+            <if test="visitType != null">#{visitType},</if>
+            <if test="visitResult != null">#{visitResult},</if>
+            <if test="visitUrl != null">#{visitUrl},</if>
+            <if test="acceptUser != null">#{acceptUser,typeHandler=com.snow.framework.config.JsonStringArrayTypeHandler},</if>
+            <if test="visitTime != null">#{visitTime},</if>
+            <if test="visitLinkPhone != null">#{visitLinkPhone},</if>
+            <if test="visitLinkUser != null">#{visitLinkUser},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaCustomerVisitLog" parameterType="SysOaCustomerVisitLog">
+        update sys_oa_customer_visit_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">customer_no = #{customerNo},</if>
+            <if test="visitContent != null and visitContent != ''">visit_content = #{visitContent},</if>
+            <if test="visitType != null">visit_type = #{visitType},</if>
+            <if test="visitResult != null">visit_result = #{visitResult},</if>
+            <if test="visitUrl != null">visit_url = #{visitUrl},</if>
+            <if test="acceptUser != null">accept_user = #{acceptUser,typeHandler=com.snow.framework.config.JsonStringArrayTypeHandler},</if>
+            <if test="visitTime != null">visit_time = #{visitTime},</if>
+            <if test="visitLinkPhone != null">visit_link_phone = #{visitLinkPhone},</if>
+            <if test="visitLinkUser != null">visit_link_user = #{visitLinkUser},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysOaCustomerVisitLogById" parameterType="Long">
+        delete from sys_oa_customer_visit_log where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaCustomerVisitLogByIds" parameterType="String">
+        delete from sys_oa_customer_visit_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author: 没用的阿吉
  * @create: 2021-04-11 17:37
  **/
-@Service
+@Service("customerErrorEndListener")
 @Slf4j
 public class CustomerErrorEndListener extends AbstractExecutionListener<SysOaCustomerForm> {
 

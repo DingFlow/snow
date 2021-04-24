@@ -14,6 +14,9 @@ public enum  MessageEventType {
     SEND_EMAIL("SEND_EMAIL", "发送邮件"),
 
     MARK_READED("MARK_READED", "标记已读"),
+
+    SEND_VISIT_LOG("SEND_VISIT_LOG", "发送拜访日志"),
+
     ;
 
 

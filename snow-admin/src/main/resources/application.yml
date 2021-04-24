@@ -9,7 +9,7 @@ snow:
   # 实例演示开关
   demoEnabled: true
   # 获取ip地址开关
-  addressEnabled: false
+  addressEnabled: true
 
 # 开发环境配置
 server:

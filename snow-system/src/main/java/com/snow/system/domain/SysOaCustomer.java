@@ -91,4 +91,9 @@ public class SysOaCustomer extends BaseEntity
     @Excel(name = "删除标识")
     private Long isDelete;
 
+    /**
+     * 0--不是公海，1--公海
+     */
+    private Integer isHighSeas=0;
+
 }

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('离职审批单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="wrapper wrapper-content animated fadeIn">
+         <div class="row m-b-lg ">
+             <div class="col-sm-12">
+                 <div class="tabs-container">
+
+                     <div class="tabs-left">
+                         <ul class="nav nav-tabs">
+                             <li class="active"><a data-toggle="tab" href="#tab-1"> 拜访日志</a>
+                             </li>
+                             <li class=""><a data-toggle="tab" href="#tab-2"> 第二个选项卡</a>
+                             </li>
+                             <li class=""><a data-toggle="tab" href="#tab-3"> 第二个选项卡</a>
+                             </li>
+                             <li class=""><a data-toggle="tab" href="#tab-4"> 第二个选项卡</a>
+                             </li>
+                         </ul>
+                         <div class="tab-content ">
+                             <div id="tab-1" class="tab-pane active">
+                                 <div class="panel-body">
+                                     <div class="ibox float-e-margins">
+                                         <div class="ibox-title">
+                                             <h5>拜访日志</h5>
+                                         </div>
+                                         <div class="ibox-content">
+                                             <table class="table table-striped">
+                                                 <thead>
+                                                 <tr>
+                                                     <th>#</th>
+                                                     <th>数据</th>
+                                                     <th>用户</th>
+                                                     <th>值</th>
+                                                 </tr>
+                                                 </thead>
+                                                 <tbody>
+                                                 <tr>
+                                                     <td>1</td>
+                                                     <td><span class="line">5,3,2,-1,-3,-2,2,3,5,2</span>
+                                                     </td>
+                                                     <td>张三</td>
+                                                     <td class="text-navy"> <i class="fa fa-level-up"></i> 40%</td>
+                                                 </tr>
+                                                 <tr>
+                                                     <td>2</td>
+                                                     <td><span class="line">5,3,9,6,5,9,7,3,5,2</span>
+                                                     </td>
+                                                     <td>李四</td>
+                                                     <td class="text-warning"> <i class="fa fa-level-down"></i> -20%</td>
+                                                 </tr>
+                                                 <tr>
+                                                     <td>3</td>
+                                                     <td><span class="line">1,6,3,9,5,9,5,3,9,6,4</span>
+                                                     </td>
+                                                     <td>王麻子</td>
+                                                     <td class="text-navy"> <i class="fa fa-level-up"></i> 26%</td>
+                                                 </tr>
+                                                 </tbody>
+                                             </table>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div id="tab-2" class="tab-pane">
+                                 <div class="panel-body">
+                                     <strong>栅格系统</strong>
+
+                                     <p>Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。它包含了易于使用的预定义类，还有强大的mixin 用于生成更具语义的布局。</p>
+                                 </div>
+                             </div>
+                             <div id="tab-3" class="tab-pane">
+                                 <div class="panel-body">
+                                     <strong>栅格系统</strong>
+
+                                     <p>Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。它包含了易于使用的预定义类，还有强大的mixin 用于生成更具语义的布局。</p>
+                                 </div>
+                             </div>
+                             <div id="tab-4" class="tab-pane">
+                                 <div class="panel-body">
+                                     <strong>栅格系统</strong>
+
+                                     <p>Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。它包含了易于使用的预定义类，还有强大的mixin 用于生成更具语义的布局。</p>
+                                 </div>
+                             </div>
+                         </div>
+
+                     </div>
+
+                 </div>
+             </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:resign:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:resign:remove')}]];
+        var detailFlag = [[${@permission.hasPermi('system:resign:detail')}]];
+        var resignTypeDatas = [[${@dict.getType('sys_resign_type')}]];
+        var processStatusDatas = [[${@dict.getType('process_status')}]];
+        var prefix = ctx + "system/resign";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailUrl: prefix+"/detail/{id}",
+                modalName: "离职审批单",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'resignNo',
+                    title: '离职单号'
+                },
+                {
+                    field: 'name',
+                    title: '离职标题'
+                },
+
+                {
+                    field: 'transitionPersonName',
+                    title: '交接人'
+                },
+                {
+                    field: 'resignTime',
+                    title: '离职时间'
+                },
+                {
+                    field: 'resignType',
+                    title: '离职类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(resignTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'processStatus',
+                    title: '审批状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(processStatusDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        /*if(row.processStatus!=0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="printPur(\'' + row.id + '\')"><i class="fa fa-print"></i>打印</a> ');
+                        }*/
+                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+
+                        if(row.processStatus==0) {
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起审批</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        }
+
+
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

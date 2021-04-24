@@ -1,5 +1,6 @@
 package com.snow.web.controller.system;
 
+import com.google.common.collect.Sets;
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.SequenceConstants;
@@ -7,6 +8,7 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.domain.customer.DistributeCustomerTask;
@@ -14,16 +16,20 @@ import com.snow.flowable.domain.customer.SysOaCustomerForm;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.framework.web.domain.common.MessageEventDTO;
 import com.snow.system.domain.SysOaCustomer;
+import com.snow.system.domain.SysOaCustomerVisitLog;
 import com.snow.system.domain.SysOaRegion;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaCustomerService;
+import com.snow.system.service.ISysOaCustomerVisitLogService;
 import com.snow.system.service.ISysOaRegionService;
 import com.snow.system.service.ISysSequenceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -58,6 +64,12 @@ public class SysOaCustomerController extends BaseController
     @Autowired
     private FlowableTaskService flowableTaskService;
 
+    @Autowired
+    private ISysOaCustomerVisitLogService sysOaCustomerVisitLogService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @RequiresPermissions("system:customer:view")
     @GetMapping()
     public String customer()
@@ -78,6 +90,35 @@ public class SysOaCustomerController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 查询客户拜访日志列表
+     */
+    @RequiresPermissions("system:customer:visitLogList")
+    @PostMapping("/visitLogList")
+    @ResponseBody
+    public TableDataInfo visitLogList(SysOaCustomerVisitLog sysOaCustomerVisitLog)
+    {
+        startPage();
+        List<SysOaCustomerVisitLog> list = sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogList(sysOaCustomerVisitLog);
+        return getDataTable(list);
+    }
+
+
+    /**
+     * 查询客户列表
+     */
+    @RequiresPermissions("system:customer:myList")
+    @PostMapping("/myList")
+    @ResponseBody
+    public TableDataInfo myList(SysOaCustomer sysOaCustomer)
+    {
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaCustomer.setCustomerManager(String.valueOf(sysUser.getUserId()));
+        sysOaCustomer.setCustomerStatus("ADMITED");
+        List<SysOaCustomer> list = sysOaCustomerService.selectSysOaCustomerList(sysOaCustomer);
+        return getDataTable(list);
+    }
     /**
      * 导出客户列表
      */
@@ -228,7 +269,84 @@ public class SysOaCustomerController extends BaseController
     public String detail(@PathVariable("id") Long id, ModelMap mmap)
     {
         SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerById(id);
+        SysOaCustomerVisitLog sysOaCustomerVisitLog=new SysOaCustomerVisitLog();
+        sysOaCustomerVisitLog.setCustomerNo(sysOaCustomer.getCustomerNo());
+        List<SysOaCustomerVisitLog> sysOaCustomerVisitLogs = sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogList(sysOaCustomerVisitLog);
         mmap.put("sysOaCustomer", sysOaCustomer);
+        mmap.put("sysOaCustomerVisitLogs", sysOaCustomerVisitLogs);
         return prefix + "/detail";
+    }
+
+
+    /**
+     * 新增客户拜访日志
+     */
+    @GetMapping("/visitAdd/{id}")
+    public String visitAdd(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerById(id);
+        mmap.put("sysOaCustomer", sysOaCustomer);
+        return prefix + "/visitAdd";
+    }
+
+    /**
+     * 新增保存客户拜访日志
+     */
+    @RequiresPermissions("system:customer:visitLogAdd")
+    @Log(title = "客户拜访日志", businessType = BusinessType.INSERT)
+    @PostMapping("/visitAdd")
+    @ResponseBody
+    public AjaxResult visitAdd(SysOaCustomerVisitLog sysOaCustomerVisitLog)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysUser.setCreateBy(String.valueOf(sysUser.getUserId()));
+        int i = sysOaCustomerVisitLogService.insertSysOaCustomerVisitLog(sysOaCustomerVisitLog);
+        //加入消息通知
+        if(StringUtils.isNotNull(sysOaCustomerVisitLog.getAcceptUser())){
+            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.SEND_VISIT_LOG.getCode());
+            messageEventDTO.setProducerId(String.valueOf(sysUser.getUserId()));
+            messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaCustomerVisitLog.getAcceptUser()));
+            messageEventDTO.setMessageEventType(MessageEventType.SEND_VISIT_LOG);
+            messageEventDTO.setMessageOutsideId(String.valueOf(sysOaCustomerVisitLog.getId()));
+            applicationContext.publishEvent(messageEventDTO);
+        }
+        return toAjax(i);
+    }
+
+    /**
+     * 修改客户拜访日志
+     */
+    @GetMapping("/visitLogEdit/{id}")
+    public String visitLogEdit(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysOaCustomerVisitLog sysOaCustomerVisitLog = sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogById(id);
+        mmap.put("sysOaCustomerVisitLog", sysOaCustomerVisitLog);
+        return prefix + "/visitLogEdit";
+    }
+
+    /**
+     * 修改保存客户拜访日志
+     */
+    @RequiresPermissions("system:customer:visitLogEdit")
+    @Log(title = "客户拜访日志", businessType = BusinessType.UPDATE)
+    @PostMapping("/visitLogEdit")
+    @ResponseBody
+    public AjaxResult visitLogEditSave(SysOaCustomerVisitLog sysOaCustomerVisitLog)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysUser.setUpdateBy(String.valueOf(sysUser.getUserId()));
+        return toAjax(sysOaCustomerVisitLogService.updateSysOaCustomerVisitLog(sysOaCustomerVisitLog));
+    }
+
+    /**
+     * 删除客户拜访日志
+     */
+    @RequiresPermissions("system:customer:visitLogRemove")
+    @Log(title = "客户拜访日志", businessType = BusinessType.DELETE)
+    @PostMapping( "/visitLogRemove")
+    @ResponseBody
+    public AjaxResult visitLogRemove(String ids)
+    {
+        return toAjax(sysOaCustomerVisitLogService.deleteSysOaCustomerVisitLogByIds(ids));
     }
 }

@@ -52,7 +52,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="customerIndustry != null  and customerIndustry != ''"> and customer_industry = #{customerIndustry}</if>
             <if test="customerManager != null  and customerManager != ''"> and customer_manager = #{customerManager}</if>
             <if test="customerLinkeUser != null  and customerLinkeUser != ''"> and customer_linke_user = #{customerLinkeUser}</if>
+            <if test="isHighSeas == 1"> and (customer_status = 'WAIT_ADMIT' or customer_status='ADMIT_ING') </if>
         </where>
+        order by update_time desc
     </select>
     
     <select id="selectSysOaCustomerById" parameterType="Long" resultMap="SysOaCustomerResult">
