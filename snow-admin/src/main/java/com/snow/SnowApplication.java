@@ -29,11 +29,9 @@ import org.springframework.context.annotation.FilterType;
         }
 )
 @ComponentScan(basePackages = {"com.snow",
-        "org.flowable.ui"
-
-},
-        excludeFilters= @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RemoteAccountResource.class})
-)
+        "org.flowable.ui",
+        "org.jeecg.modules.jmreport"
+}, excludeFilters= @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RemoteAccountResource.class}))
 public class SnowApplication
 {
     public static void main(String[] args)

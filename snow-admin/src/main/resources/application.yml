@@ -31,6 +31,7 @@ logging:
   level:
     com.snow: debug
     org.springframework: warn
+    org.jeecg.modules.jmreport: debug
 
 # 用户配置
 user:
@@ -161,3 +162,18 @@ flowable:
 sys:
    file:
      active: local
+
+minidao:
+  base-package: org.jeecg.modules.jmreport.desreport.dao*
+  db-type: mysql
+  show-sql: true
+#JimuReport[上传配置]
+jeecg :
+  # local|minio|alioss
+  uploadType: local
+  # local
+  path :
+    #文件路径
+    upload: /opt/upload
+
+

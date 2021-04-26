@@ -14,6 +14,7 @@ import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.domain.SysOaCustomer;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysMessageTemplateService;
+import com.snow.system.service.ISysMessageTransitionService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,9 @@ public class SysMessageCenterController extends BaseController
 
     @Autowired
     private ISysMessageTemplateService sysMessageTemplateService;
+    
+    @Autowired
+    private ISysMessageTransitionService sysMessageTransitionService;
 
     @RequiresPermissions("system:messageCenter:view")
     @GetMapping()
@@ -45,8 +49,7 @@ public class SysMessageCenterController extends BaseController
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
         sysMessageTransition.setMessageStatus(0L);
-        //List<SysMessageTemplate> sysMessageTemplates = sysMessageTemplateService.selectSysMessageTemplateList(sysMessageTransition);
-
+        List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
         return prefix + "/messageCenter";
     }
 
