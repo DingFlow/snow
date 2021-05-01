@@ -1,11 +1,13 @@
 package com.snow.web.controller.system;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.config.FlowIdGenerator;
 import com.snow.framework.util.ShiroUtils;
@@ -21,7 +23,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 消息模板Controller
@@ -43,13 +47,26 @@ public class SysMessageCenterController extends BaseController
 
     @RequiresPermissions("system:messageCenter:view")
     @GetMapping()
-    public String messageCenter()
+    public String messageCenter(ModelMap mmap)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
         sysMessageTransition.setMessageStatus(0L);
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
+
+        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+            List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
+            SysMessageTransition.init(visitLogsList);
+            mmap.put("visitLogs",visitLogsList);
+        }
+
+        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+            List<SysMessageTransition> emailList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_EMAIL.getCode())).collect(Collectors.toList());
+            SysMessageTransition.init(emailList);
+            mmap.put("emailList",emailList);
+        }
+
         return prefix + "/messageCenter";
     }
 

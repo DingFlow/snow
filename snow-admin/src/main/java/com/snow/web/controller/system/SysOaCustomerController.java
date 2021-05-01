@@ -349,4 +349,19 @@ public class SysOaCustomerController extends BaseController
     {
         return toAjax(sysOaCustomerVisitLogService.deleteSysOaCustomerVisitLogByIds(ids));
     }
+
+
+
+    /**
+     * 消息详情页
+     */
+    @GetMapping("/messageDetail/{id}")
+    public String messageDetail(@PathVariable("id") Long id)
+    {
+
+        SysOaCustomerVisitLog sysOaCustomerVisitLog=sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogById(id);
+        SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerByCustomerNo(sysOaCustomerVisitLog.getCustomerNo());
+
+        return redirect("/system/customer/detail/"+ sysOaCustomer.getId()) ;
+    }
 }

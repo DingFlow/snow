@@ -1,5 +1,6 @@
 package com.snow.web.controller.system;
 
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.snow.common.annotation.Log;
@@ -312,7 +313,13 @@ public class SysOaEmailController extends BaseController
     public String mailDetail(@PathVariable("id") Long id,ModelMap mmap)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        SysOaEmail sysOaEmail = sysOaEmailService.selectSysOaEmailById(id);
+        SysOaEmail sysOaEmail;
+        if(NumberUtil.isInteger(String.valueOf(id))){
+             sysOaEmail = sysOaEmailService.selectSysOaEmailById(id);
+        }else {
+             sysOaEmail = sysOaEmailService.selectSysOaEmailByEmailNo(String.valueOf(id));
+        }
+
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setMessageOutsideId(sysOaEmail.getEmailNo());
         sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
@@ -330,6 +337,8 @@ public class SysOaEmailController extends BaseController
         mmap.put("sysOaEmail", sysOaEmail);
         return prefix + "/mailDetail";
     }
+
+
 
 
     /**

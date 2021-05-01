@@ -89,6 +89,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysOaEmailVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectSysOaEmailByEmailNo" parameterType="String" resultMap="SysOaEmailResult">
+        <include refid="selectSysOaEmailVo"/>
+        where email_no = #{EmailNo}
+    </select>
         
     <insert id="insertSysOaEmail" parameterType="SysOaEmail" useGeneratedKeys="true" keyProperty="id">
         insert into sys_oa_email

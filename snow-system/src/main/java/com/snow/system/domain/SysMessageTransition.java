@@ -1,11 +1,10 @@
 package com.snow.system.domain;
 
 import com.snow.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 
 /**
  * 消息流转中心对象 sys_message_transition
@@ -55,4 +54,39 @@ public class SysMessageTransition extends BaseEntity
 
 
     private String producerOrConsumerId;
+
+    /**
+     * 跳转URL
+     */
+    private String redirectUrl;
+
+    /**
+     * 图标样式
+     */
+    private String iconClass="fa fa-envelope fa-fw";
+
+    /**
+     * 已用时
+     */
+    private String spendTime;
+
+
+    public static void init(List<SysMessageTransition> sysMessageTransitions){
+        sysMessageTransitions.forEach((t)->{
+            switch (t.getMessageType()){
+                case "SEND_VISIT_LOG":
+                    t.setIconClass("fa fa-twitter fa-fw");
+                    t.setRedirectUrl("/system/customer/messageDetail/"+t.getMessageOutsideId());
+                    break;
+                case "SEND_EMAIL":
+                    t.setIconClass("fa fa-envelope fa-fw");
+                    t.setRedirectUrl("/system/email/mailDetail/"+t.getMessageOutsideId());
+                    break;
+                default:
+                    t.setIconClass("fa fa-twitter fa-fw");
+            }
+
+        });
+
+    }
 }

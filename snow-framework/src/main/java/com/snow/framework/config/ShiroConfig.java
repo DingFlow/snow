@@ -285,9 +285,9 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/third/oauth/**", "anon");
 
         //积木报表排除
-        filterChainDefinitionMap.put("/jmreport/**", "anon");
-        filterChainDefinitionMap.put("/**/*.js.map", "anon");
-        filterChainDefinitionMap.put("/**/*.css.map", "anon");
+       // filterChainDefinitionMap.put("/jmreport/**", "anon");
+        //filterChainDefinitionMap.put("/**/*.js.map", "anon");
+       // filterChainDefinitionMap.put("/**/*.css.map", "anon");
 
         filterChainDefinitionMap.put("/dingTalk/dingFlowRobot", "anon");
         // 退出 logout地址，shiro去清除session

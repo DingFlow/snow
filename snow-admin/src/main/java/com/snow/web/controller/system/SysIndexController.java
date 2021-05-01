@@ -1,5 +1,6 @@
 package com.snow.web.controller.system;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.snow.common.config.Global;
 import com.snow.common.constant.ShiroConstants;
@@ -7,6 +8,7 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
@@ -25,6 +27,7 @@ import com.snow.system.service.impl.SysNoticeServiceImpl;
 import com.snow.system.service.impl.SysOaEmailServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 首页 业务处理
@@ -69,7 +73,7 @@ public class SysIndexController extends BaseController
     private ISysOperLogService operLogService;
 
     @Autowired
-    private ISysDingHiTaskService iSysDingHiTaskService;
+    private ISysMessageTransitionService sysMessageTransitionService;
 
     @Autowired
     private ISysDingRuTaskService sysDingRuTaskService;
@@ -80,6 +84,10 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private SysNoticeServiceImpl sysNoticeService;
+
+    @Value("${is.notice}")
+    private Boolean isNotice;
+
 
     // 系统首页
     @GetMapping("/index")
@@ -101,13 +109,30 @@ public class SysIndexController extends BaseController
         mmap.put("isDefaultModifyPwd", initPasswordIsModify(user.getPwdUpdateDate()));
         mmap.put("isPasswordExpired", passwordIsExpiration(user.getPwdUpdateDate()));
 
+        mmap.put("isNewNotice",isNotice);
         List<SysOaEmail> myNoReadOaEmailList = sysOaEmailService.getMyNoReadOaEmailList(String.valueOf(user.getUserId()));
         mmap.put("emailListSize",myNoReadOaEmailList.size());
         //如果大于三条只取前三条记录
         if(CollectionUtils.isNotEmpty(myNoReadOaEmailList)&&myNoReadOaEmailList.size()>3){
             myNoReadOaEmailList=myNoReadOaEmailList.subList(0,3);
         }
+
         mmap.put("emailList",myNoReadOaEmailList);
+
+
+        SysMessageTransition sysMessageTransition=new SysMessageTransition();
+        sysMessageTransition.setConsumerId(String.valueOf(user.getUserId()));
+        sysMessageTransition.setMessageStatus(0L);
+        sysMessageTransition.setMessageReadStatus(0L);
+        List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
+        //如果大于三条只取前三条记录
+        if(CollectionUtils.isNotEmpty(sysMessageTransitions)&&sysMessageTransitions.size()>5){
+            sysMessageTransitions=sysMessageTransitions.subList(0,5);
+
+        }
+        SysMessageTransition.init(sysMessageTransitions);
+        mmap.put("sysMessageList",sysMessageTransitions);
+        mmap.put("sysMessageSize",sysMessageTransitions.size());
         // 菜单导航显示风格
         String menuStyle = configService.selectConfigByKey("sys.index.menuStyle");
         // 移动端，默认使左侧导航菜单，否则取默认配置

@@ -21,6 +21,8 @@ public interface ISysOaEmailService
      */
     public SysOaEmail selectSysOaEmailById(Long id);
 
+    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+
 
     /**
      * 获取我的收件未读消息

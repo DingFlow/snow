@@ -146,6 +146,10 @@ swagger:
   # 是否开启swagger
   enabled: true
 
+#登录后是否显示最新的公告
+is:
+  notice: true
+
 flowable:
   #关闭定时任务JOB
   async-executor-activate: false

@@ -54,6 +54,13 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
         return sysOaEmail;
     }
 
+    @Override
+    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo) {
+        SysOaEmail sysOaEmail=sysOaEmailMapper.selectSysOaEmailByEmailNo(emailNo);
+        sysOaEmail.setBelongUser(sysUserService.selectUserById(Long.parseLong(sysOaEmail.getBelongUserId())));
+        return sysOaEmail;
+    }
+
 
     @Override
     public List<SysOaEmail> getMyNoReadOaEmailList(String userId){

@@ -1,6 +1,10 @@
 package com.snow.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
 import com.snow.common.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +70,7 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
             sysMessageTransitionList.forEach(t->{
                 t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
                 t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));
+                t.setSpendTime(DateUtil.formatBetween(t.getCreateTime(), new Date(), BetweenFormater.Level.SECOND)+"前");
             });
         }
 

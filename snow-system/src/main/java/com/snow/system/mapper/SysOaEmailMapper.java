@@ -21,6 +21,9 @@ public interface SysOaEmailMapper
      */
     public SysOaEmail selectSysOaEmailById(Long id);
 
+
+    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+
     /**
      * 查询邮件列表
      * 
