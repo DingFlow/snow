@@ -53,110 +53,25 @@ public class SysMessageCenterController extends BaseController
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
         sysMessageTransition.setMessageStatus(0L);
+        sysMessageTransition.setOrderBy("update_time desc");
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
 
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
             SysMessageTransition.init(visitLogsList);
+            long count = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("visitLogCount",count);
             mmap.put("visitLogs",visitLogsList);
         }
 
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> emailList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_EMAIL.getCode())).collect(Collectors.toList());
             SysMessageTransition.init(emailList);
+            long count = emailList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("emailListCount",count);
             mmap.put("emailList",emailList);
         }
 
         return prefix + "/messageCenter";
-    }
-
-    /**
-     * 查询消息模板列表
-     */
-    @RequiresPermissions("system:template:list")
-    @PostMapping("/list")
-    @ResponseBody
-    public TableDataInfo list(SysMessageTemplate sysMessageTemplate)
-    {
-        startPage();
-        List<SysMessageTemplate> list = sysMessageTemplateService.selectSysMessageTemplateList(sysMessageTemplate);
-        return getDataTable(list);
-    }
-
-    /**
-     * 导出消息模板列表
-     */
-    @RequiresPermissions("system:template:export")
-    @Log(title = "消息模板", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    @ResponseBody
-    public AjaxResult export(SysMessageTemplate sysMessageTemplate)
-    {
-        List<SysMessageTemplate> list = sysMessageTemplateService.selectSysMessageTemplateList(sysMessageTemplate);
-        ExcelUtil<SysMessageTemplate> util = new ExcelUtil<SysMessageTemplate>(SysMessageTemplate.class);
-        return util.exportExcel(list, "template");
-    }
-
-    /**
-     * 新增消息模板
-     */
-    @GetMapping("/add")
-    public String add(ModelMap mmap)
-    {
-        FlowIdGenerator flowIdGenerator = new FlowIdGenerator();
-        mmap.put("templateCode", flowIdGenerator.getNextId());
-        return prefix + "/add";
-    }
-
-    /**
-     * 新增保存消息模板
-     */
-    @RequiresPermissions("system:template:add")
-    @Log(title = "消息模板", businessType = BusinessType.INSERT)
-    @PostMapping("/add")
-    @ResponseBody
-    @RepeatSubmit
-    public AjaxResult addSave(SysMessageTemplate sysMessageTemplate)
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        sysMessageTemplate.setCreateBy(String.valueOf(sysUser.getUserId()));
-        return toAjax(sysMessageTemplateService.insertSysMessageTemplate(sysMessageTemplate));
-    }
-
-    /**
-     * 修改消息模板
-     */
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Integer id, ModelMap mmap)
-    {
-        SysMessageTemplate sysMessageTemplate = sysMessageTemplateService.selectSysMessageTemplateById(id);
-        mmap.put("sysMessageTemplate", sysMessageTemplate);
-        return prefix + "/edit";
-    }
-
-    /**
-     * 修改保存消息模板
-     */
-    @RequiresPermissions("system:template:edit")
-    @Log(title = "消息模板", businessType = BusinessType.UPDATE)
-    @PostMapping("/edit")
-    @ResponseBody
-    public AjaxResult editSave(SysMessageTemplate sysMessageTemplate)
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        sysMessageTemplate.setUpdateBy(String.valueOf(sysUser.getUserId()));
-        return toAjax(sysMessageTemplateService.updateSysMessageTemplate(sysMessageTemplate));
-    }
-
-    /**
-     * 删除消息模板
-     */
-    @RequiresPermissions("system:template:remove")
-    @Log(title = "消息模板", businessType = BusinessType.DELETE)
-    @PostMapping( "/remove")
-    @ResponseBody
-    public AjaxResult remove(String ids)
-    {
-        return toAjax(sysMessageTemplateService.deleteSysMessageTemplateByIds(ids));
     }
 }

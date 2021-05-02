@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('离职审批单列表')" />
+    <th:block th:include="include :: header('消息中心')" />
 </head>
 <body class="gray-bg">
      <div class="wrapper wrapper-content animated fadeIn">
@@ -11,9 +11,13 @@
 
                      <div class="tabs-left">
                          <ul class="nav nav-tabs">
-                             <li class="active"><a data-toggle="tab" href="#tab-1"> 拜访日志</a>
+                             <li class="active">
+                                 <a data-toggle="tab" href="#tab-1"> 拜访日志    <span class="label label-info pull-right">[[${visitLogCount}]]</span></a>
+
                              </li>
-                             <li class=""><a data-toggle="tab" href="#tab-2"> 站内邮件</a>
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-2"> 站内邮件   <span class="label label-info pull-right" >[[${emailListCount}]]</span></a>
+
                              </li>
                              <li class=""><a data-toggle="tab" href="#tab-3"> 第二个选项卡</a>
                              </li>
@@ -27,14 +31,25 @@
                                      <div id="vertical-timeline" class="vertical-container light-timeline" th:each="visitLog,iterStat : ${visitLogs}">
                                          <div class="vertical-timeline-block">
                                              <div class="vertical-timeline-icon blue-bg">
-                                                 <i class="fa fa-file-text"></i>
+                                                 <i th:class="${visitLog.iconClass}"></i>
                                              </div>
 
                                              <div class="vertical-timeline-content">
-                                                <label class="badge badge-primary" >  <i class="fa fa-user danger"></i> [[${visitLog.producerUser.userName}]] </label>
+                                                 <p>
+                                                     <label th:switch="${visitLog.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                      <strong th:text="${#dates.format(visitLog.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                <label  >
+                                                      <a class="text-info" href="#"></i> @[[${visitLog.producerUser.userName}]]</a>
+                                                </label>
                                                  <label > 添加一条拜访日志，请及时查看。</label>
-                                                 <label class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${visitLog.spendTime}]]</label>
-                                                 <a  class="btn btn-sm btn-success"> 查看详情 </a>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${visitLog.redirectUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${visitLog.spendTime}]]</small>
+                                                 </p>
                                              </div>
                                              <hr>
                                          </div>
@@ -44,17 +59,28 @@
                              <div id="tab-2" class="tab-pane">
                                  <div class="panel-body">
                                      <h3>站内邮件</h3>
-                                     <div id="vertical-timeline1" class="vertical-container light-timeline" th:each="email,iterStat : ${emailList}">
+                                     <div id="vertical-timeline" class="vertical-container light-timeline" th:each="email,iterStat : ${emailList}">
                                          <div class="vertical-timeline-block">
                                              <div class="vertical-timeline-icon blue-bg">
-                                                 <i class="fa fa-file-text"></i>
+                                                 <i th:class="${email.iconClass}"></i>
                                              </div>
 
                                              <div class="vertical-timeline-content">
-                                                 <label class="badge badge-primary" >  <i class="fa fa-user danger"></i> [[${email.producerUser.userName}]] </label>
+                                                 <p>
+                                                     <label th:switch="${email.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(email.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <label  >
+                                                     <a class="text-info" href="#"></i> @[[${email.producerUser.userName}]]</a>
+                                                 </label>
                                                  <label > 发来一条站内邮件，请及时查看。</label>
-                                                 <label class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${email.spendTime}]]</label>
-                                                 <a class="btn btn-sm btn-success"> 查看详情 </a>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${email.redirectUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${email.spendTime}]]</small>
+                                                 </p>
                                              </div>
                                              <hr>
                                          </div>
@@ -85,83 +111,18 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:resign:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:resign:remove')}]];
-        var detailFlag = [[${@permission.hasPermi('system:resign:detail')}]];
-        var resignTypeDatas = [[${@dict.getType('sys_resign_type')}]];
-        var processStatusDatas = [[${@dict.getType('process_status')}]];
-        var prefix = ctx + "system/resign";
-
-        $(function() {
-            var options = {
-                url: prefix + "/list",
-                createUrl: prefix + "/add",
-                updateUrl: prefix + "/edit/{id}",
-                removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
-                detailUrl: prefix+"/detail/{id}",
-                modalName: "离职审批单",
-                columns: [{
-                    checkbox: true
-                },
-                {
-                    field: 'id',
-                    title: 'id',
-                    visible: false
-                },
-                {
-                    field: 'resignNo',
-                    title: '离职单号'
-                },
-                {
-                    field: 'name',
-                    title: '离职标题'
-                },
-
-                {
-                    field: 'transitionPersonName',
-                    title: '交接人'
-                },
-                {
-                    field: 'resignTime',
-                    title: '离职时间'
-                },
-                {
-                    field: 'resignType',
-                    title: '离职类型',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(resignTypeDatas, value);
-                    }
-                },
-                {
-                    field: 'processStatus',
-                    title: '审批状态',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(processStatusDatas, value);
-                    }
-                },
-                {
-                    title: '操作',
-                    align: 'center',
-                    formatter: function(value, row, index) {
-                        var actions = [];
-                        /*if(row.processStatus!=0) {
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="printPur(\'' + row.id + '\')"><i class="fa fa-print"></i>打印</a> ');
-                        }*/
-                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
-
-                        if(row.processStatus==0) {
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起审批</a> ');
-                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
-                        }
 
 
-                        return actions.join('');
-                    }
-                }]
-            };
-            $.table.init(options);
-        });
+        function messageDetail(url){
+            layer.open({
+                type : 2,
+                shadeClose : true,
+                title : "消息详情",
+                area : ["70%", "80%"],
+                content : [url, 'yes']
+            })
+
+        }
     </script>
 </body>
 </html>

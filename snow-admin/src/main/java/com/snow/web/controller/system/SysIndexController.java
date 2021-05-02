@@ -124,8 +124,9 @@ public class SysIndexController extends BaseController
         sysMessageTransition.setConsumerId(String.valueOf(user.getUserId()));
         sysMessageTransition.setMessageStatus(0L);
         sysMessageTransition.setMessageReadStatus(0L);
+        sysMessageTransition.setOrderBy("update_time desc");
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
-        //如果大于三条只取前三条记录
+        //如果大于五条只取前五条记录
         if(CollectionUtils.isNotEmpty(sysMessageTransitions)&&sysMessageTransitions.size()>5){
             sysMessageTransitions=sysMessageTransitions.subList(0,5);
 

@@ -1,4 +1,3 @@
-/*
 package com.snow.web.controller.system;
 
 import com.snow.common.core.controller.BaseController;
@@ -8,13 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-*/
-/**
+/*
  * @program: snow
  * @description
  * @author: 没用的阿吉
  * @create: 2021-04-27 20:31
- **//*
+ **/
 
 @Controller
 @RequestMapping("/report")
@@ -25,11 +23,10 @@ public class ReportController extends BaseController
     private String prefix = "/jmreport";
 
 
-    */
-/**
+     /*
      * 报表设计器
      * @return
-     *//*
+     **/
 
     @RequiresPermissions("system:jmreport:design")
     @GetMapping("/list")
@@ -39,14 +36,4 @@ public class ReportController extends BaseController
         return redirect(prefix+"/list");
     }
 
-
-
-    @RequiresPermissions("system:jmreport:design")
-    @GetMapping()
-    public String flow()
-    {
-        return redirect(prefix+"/list");
-    }
-
 }
-*/

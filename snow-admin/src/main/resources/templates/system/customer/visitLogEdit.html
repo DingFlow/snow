@@ -11,7 +11,7 @@
             <input name="id" th:field="*{id}" type="hidden">
             <input name="customerNo" th:field="*{customerNo}" type="hidden">
             <div class="form-group">
-                <label class="col-sm-3 control-label">拜访类型：电话拜访，实地拜访：</label>
+                <label class="col-sm-3 control-label">拜访类型：</label>
                 <div class="col-sm-8">
                     <select name="visitType" class="form-control m-b" th:with="type=${@dict.getType('sys_customer_visit_type')}">
                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{visitType}"></option>
@@ -28,15 +28,6 @@
                 <label class="col-sm-3 control-label">拜访结果：</label>
                 <div class="col-sm-8">
                     <textarea name="visitResult" class="form-control">[[*{visitResult}]]</textarea>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">拜访附件URL：</label>
-                <div class="col-sm-8">
-                    <input type="hidden" name="visitUrl" th:field="*{visitUrl}">
-                    <div class="file-loading">
-                        <input class="form-control file-upload" id="visitUrl" name="file" type="file">
-                    </div>
                 </div>
             </div>
             <div class="form-group">    

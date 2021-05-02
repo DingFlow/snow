@@ -5,6 +5,7 @@ import com.snow.flowable.domain.AppForm;
 import com.snow.flowable.service.FlowableService;
 
 import com.snow.flowable.service.impl.AppFormServiceImpl;
+import com.snow.system.domain.SysUser;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.DelegateExecution;
@@ -125,6 +126,15 @@ public abstract class AbstractExecutionListener<T extends AppForm> implements Ex
         return Optional.ofNullable(sysUserService.selectUserById(Long.parseLong(startUserId)).getUserName()).orElse("");
     }
 
+    /**
+     * 获取流程开始用户ID
+     * @return
+     */
+    protected SysUser getStartUserInfo() {
+        String startUserId = getVariable(FlowConstants.START_USER_ID);
+        log.info("获取到的开始人startUserId:{}", startUserId);
+        return sysUserService.selectUserById(Long.parseLong(startUserId));
+    }
     /**
      * 获取表单数据
      *

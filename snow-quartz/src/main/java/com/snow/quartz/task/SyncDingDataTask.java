@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @program: snow
@@ -58,23 +59,26 @@ public class SyncDingDataTask {
         //获取钉钉部门列表
         List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();
         dingTalkDepartmentList.forEach(t->{
-            SysDept sysDept=new SysDept();
             SysDept sysDepts = sysDeptService.selectDeptById(t.getId());
-            if(StringUtils.isNotNull(sysDepts)){
-                sysDept.setDeptId(t.getId());
-                sysDept.setDeptName(t.getName());
-                sysDept.setOrderNum(String.valueOf(t.getId()));
-                sysDept.setParentId(t.getParentid());
-                sysDept.setIsSyncDingTalk(false);
-                sysDeptService.updateDept(sysDept);
-            }else {
+            SysDept sysDept1 = Optional.ofNullable(sysDepts).orElseGet(() -> {
+                SysDept sysDept = new SysDept();
                 sysDept.setDeptId(t.getId());
                 sysDept.setDeptName(t.getName());
                 sysDept.setOrderNum(String.valueOf(t.getId()));
                 sysDept.setParentId(t.getParentid());
                 sysDept.setIsSyncDingTalk(false);
                 sysDeptService.insertDept(sysDept);
-            }
+                return sysDept;
+            });
+            Optional.ofNullable(sysDepts).ifPresent(m->{
+                SysDept sysDept=new SysDept();
+                sysDept.setDeptId(t.getId());
+                sysDept.setDeptName(t.getName());
+                sysDept.setOrderNum(String.valueOf(t.getId()));
+                sysDept.setParentId(t.getParentid());
+                sysDept.setIsSyncDingTalk(false);
+                sysDeptService.updateDept(sysDept);
+            });
         });
     }
 
@@ -111,7 +115,6 @@ public class SyncDingDataTask {
                     insertUser.setPosition(t.getTitle());
                     insertUser.setIsSyncDingTalk(false);
                     sysUserService.updateUser(insertUser);
-                    //更新用户数据
                 }else {
                     SysUser insertUser=new SysUser();
                     insertUser.setUserName(t.getName());

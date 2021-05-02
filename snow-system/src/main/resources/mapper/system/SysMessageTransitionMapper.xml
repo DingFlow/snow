@@ -37,6 +37,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="messageReadStatus != null "> and message_read_status = #{messageReadStatus}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
         </where>
+        <if test="orderBy != null  and orderBy != ''">
+            order by ${orderBy}
+        </if>
     </select>
 
     <select id="selectSysMessageTransitionById" parameterType="Long" resultMap="SysMessageTransitionResult">

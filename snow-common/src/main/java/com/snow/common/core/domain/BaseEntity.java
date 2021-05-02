@@ -39,6 +39,8 @@ public class BaseEntity implements Serializable
 
     /** 请求参数 */
     private Map<String, Object> params;
+
+    private String orderBy;
     /**
      * 是否同步到钉钉
      */
@@ -124,5 +126,13 @@ public class BaseEntity implements Serializable
 
     public void setIsSyncDingTalk(Boolean syncDingTalk) {
         isSyncDingTalk = syncDingTalk;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
     }
 }

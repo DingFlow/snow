@@ -1,5 +1,6 @@
 package com.snow.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
@@ -50,6 +51,7 @@ public class SysLogininfor extends BaseEntity
 
     /** 访问时间 */
     @Excel(name = "访问时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date loginTime;
 
     public Long getInfoId()

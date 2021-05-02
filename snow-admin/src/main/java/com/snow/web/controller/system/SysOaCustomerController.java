@@ -358,10 +358,15 @@ public class SysOaCustomerController extends BaseController
     @GetMapping("/messageDetail/{id}")
     public String messageDetail(@PathVariable("id") Long id)
     {
-
+        SysUser sysUser = ShiroUtils.getSysUser();
         SysOaCustomerVisitLog sysOaCustomerVisitLog=sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogById(id);
         SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerByCustomerNo(sysOaCustomerVisitLog.getCustomerNo());
-
+        //已读监听
+        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.MARK_READED.getCode());
+        messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(sysUser.getUserId())));
+        messageEventDTO.setMessageOutsideId(String.valueOf(id));
+        messageEventDTO.setMessageEventType(MessageEventType.SEND_VISIT_LOG);
+        applicationContext.publishEvent(messageEventDTO);
         return redirect("/system/customer/detail/"+ sysOaCustomer.getId()) ;
     }
 }

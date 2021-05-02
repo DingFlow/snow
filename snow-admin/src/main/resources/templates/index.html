@@ -110,7 +110,7 @@
 							<li>
 								<div class="text-center link-block">
 									<a href="javascript:void(0)" th:onclick="mailDetailAll();" th:data-id="@{/system/email/mailbox/6}">
-										<i class="fa fa-envelope"></i> <strong>Read All Messages</strong>
+										<i class="fa fa-envelope"></i> <strong>前往站内邮件</strong>
 									</a>
 								</div>
 							</li>
@@ -123,13 +123,18 @@
 						</a>
 						<ul class="dropdown-menu dropdown-alerts">
 							<li th:each="sysMessages,iterStat:${sysMessageList}" class="mt5">
-								<a th:href="${sysMessages.redirectUrl}" class="menuItem">
-									<div>
-										<i th:class="${sysMessages.iconClass}"></i>[[${sysMessages.producerUser.userName}]]发送来一条消息<span class="pull-right text-muted small">[[${sysMessages.spendTime}]]</span>
-									</div>
+								<a href="javascript:void(0)" th:onclick="messageDetail([[${sysMessages.redirectUrl}]]);">
+									<i th:class="${sysMessages.iconClass}"></i>[[${sysMessages.producerUser.userName}]]发送来一条消息<span class="pull-right text-muted small">[[${sysMessages.spendTime}]]</span>
 								</a>
 							</li>
 							<li class="divider"></li>
+							<li>
+								<div class="text-center link-block">
+									<a href="javascript:void(0)" th:onclick="messageDetailAll();" th:data-id="@{/system/messageCenter}">
+										<i class="fa fa-location-arrow"></i> <strong>前往消息中心</strong>
+									</a>
+								</div>
+							</li>
 						</ul>
 					</li>
 
@@ -270,9 +275,26 @@ function mailDetail(id) {
 		content : ["/system/email/mailDetail/"+id, 'yes']
 	})
 }
-function mailDetailAll(id) {
+
+function messageDetail(url){
+	layer.open({
+		type : 2,
+		shadeClose : true,
+		title : "消息详情",
+		area : ["70%", "80%"],
+		content : [url, 'yes']
+	})
+
+}
+
+function mailDetailAll() {
 	var detailUrl="/system/email/mailbox/6";
     createNoPanelMenuItem( detailUrl,"在线邮件");
+}
+
+function messageDetailAll(){
+	var detailUrl="/system/messageCenter";
+	createNoPanelMenuItem( detailUrl,"消息中心");
 }
 
 $(function() {

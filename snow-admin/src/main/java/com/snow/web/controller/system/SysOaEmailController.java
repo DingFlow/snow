@@ -310,14 +310,14 @@ public class SysOaEmailController extends BaseController
      * 邮件详情
      */
     @GetMapping("/mailDetail/{id}")
-    public String mailDetail(@PathVariable("id") Long id,ModelMap mmap)
+    public String mailDetail(@PathVariable("id") String id,ModelMap mmap)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
         SysOaEmail sysOaEmail;
-        if(NumberUtil.isInteger(String.valueOf(id))){
-             sysOaEmail = sysOaEmailService.selectSysOaEmailById(id);
+        if(NumberUtil.isLong(id)){
+             sysOaEmail = sysOaEmailService.selectSysOaEmailById(Long.parseLong(id));
         }else {
-             sysOaEmail = sysOaEmailService.selectSysOaEmailByEmailNo(String.valueOf(id));
+             sysOaEmail = sysOaEmailService.selectSysOaEmailByEmailNo(id);
         }
 
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
