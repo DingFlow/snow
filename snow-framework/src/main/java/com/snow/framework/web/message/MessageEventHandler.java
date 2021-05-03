@@ -3,8 +3,7 @@ package com.snow.framework.web.message;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.web.domain.common.MessageEventDTO;
 import com.snow.framework.web.message.consumer.SysMarkReadedStrategy;
-import com.snow.framework.web.message.producer.SysSendEmailStrategy;
-import com.snow.framework.web.message.producer.SysSendVisitLogStrategy;
+import com.snow.framework.web.message.producer.SendMessageCenterStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -34,13 +33,11 @@ public class MessageEventHandler implements ApplicationListener<MessageEventDTO>
                 messageEventContext.setMessageEventTypeStrategy(new TaskTodoStrategy());
                 break;
             case "SEND_EMAIL":
-                messageEventContext.setMessageEventTypeStrategy(new SysSendEmailStrategy());
+            case "SEND_VISIT_LOG":
+                messageEventContext.setMessageEventTypeStrategy(new SendMessageCenterStrategy());
                 break;
             case "MARK_READED":
                 messageEventContext.setMessageEventTypeStrategy(new SysMarkReadedStrategy());
-                break;
-            case "SEND_VISIT_LOG":
-                messageEventContext.setMessageEventTypeStrategy(new SysSendVisitLogStrategy());
                 break;
             default:
 
@@ -50,4 +47,5 @@ public class MessageEventHandler implements ApplicationListener<MessageEventDTO>
         //执行
         messageEventContext.messageHandle(messageEvent);
     }
+
 }

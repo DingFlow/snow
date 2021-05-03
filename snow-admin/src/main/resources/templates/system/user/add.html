@@ -296,7 +296,7 @@
         /*用户管理-新增-选择部门树*/
         function selectDeptTree() {
         	var treeId = $("#treeId").val();
-        	var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        	var deptId = $.common.isEmpty(treeId) ? "1" : $("#treeId").val();
         	var url = ctx + "system/dept/selectDeptTree/" + deptId;
 			var options = {
 				title: '选择部门',
