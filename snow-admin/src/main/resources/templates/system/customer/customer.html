@@ -31,14 +31,6 @@
                                                      <label>客户名称：</label>
                                                      <input type="text" name="customerName" id="seasCustomerName"/>
                                                  </li>
-
-                                                 <li>
-                                                     <label>客户状态：</label>
-                                                     <select name="customerStatus" id="seasCustomerStatus" th:with="type=${@dict.getType('sys_customer_status')}">
-                                                         <option value="">所有</option>
-                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                                     </select>
-                                                 </li>
                                                  <li>
                                                      <label>所属行业：</label>
                                                      <select name="customerIndustry"  id="seasCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
@@ -48,7 +40,7 @@
                                                  </li>
                                                  <li>
                                                      <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId3','bootstrap-table3')"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId3','bootstrap-table3')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                                  </li>
                                              </ul>
                                          </div>
@@ -78,30 +70,27 @@
                          <div id="tab-2" class="tab-pane">
                              <div class="panel-body">
                                  <div class="col-sm-12 search-collapse">
-                                     <form id="formId1">
+                                     <form id="myformId">
                                          <div class="select-list">
                                              <ul>
                                                  <li>
                                                      <label>客户编号：</label>
-                                                     <input type="text" name="customerNo"/>
+                                                     <input type="text" name="customerNo" id="myCustomerNo"/>
                                                  </li>
                                                  <li>
                                                      <label>客户名称：</label>
-                                                     <input type="text" name="customerName"/>
+                                                     <input type="text" name="customerName" id="myCustomerName"/>
                                                  </li>
-
-
                                                  <li>
                                                      <label>所属行业：</label>
-                                                     <select name="customerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                     <select name="customerIndustry" id="myCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
                                                          <option value="">所有</option>
                                                          <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                      </select>
                                                  </li>
-
                                                  <li>
-                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId1','table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('myformId','bootstrap-table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('myformId','bootstrap-table1')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                                  </li>
                                              </ul>
                                          </div>
@@ -126,25 +115,25 @@
                                              <ul>
                                                  <li>
                                                      <label>客户编号：</label>
-                                                     <input type="text" name="customerNo"/>
+                                                     <input type="text" name="customerNo" id="blackCustomerNo"/>
                                                  </li>
                                                  <li>
                                                      <label>客户名称：</label>
-                                                     <input type="text" name="customerName"/>
+                                                     <input type="text" name="customerName" id="blackCustomerName"/>
                                                  </li>
 
 
                                                  <li>
                                                      <label>所属行业：</label>
-                                                     <select name="customerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                     <select name="customerIndustry"   id="blackCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
                                                          <option value="">所有</option>
                                                          <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                      </select>
                                                  </li>
 
                                                  <li>
-                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId2','table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId2','bootstrap-table2')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId2','bootstrap-table2')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                                  </li>
                                              </ul>
                                          </div>
@@ -178,9 +167,7 @@
 
         var visitTypeDatas = [[${@dict.getType('sys_customer_visit_type')}]];
         var prefix = ctx + "system/customer";
-
         $(function() {
-
             var options = {
                 id:"bootstrap-table3",
                 url: prefix + "/list",
@@ -191,9 +178,7 @@
                 exportUrl: prefix + "/export",
                 modalName: "客户",
                 toolbar: "toolbar1",
-                queryParams:{
-                    "isHighSeas":1
-                },
+                queryParams:queryParams,
                 columns: [{
                     checkbox: true
                 },
@@ -252,8 +237,17 @@
                 }]
             };
             $.table.init(options);
+            function queryParams(params) {
+                var search = $.table.queryParams(params);
+                search["isHighSeas"]=1
+                search.customerNo = $("#seasCustomerNo").val();
+                search.customerName = $("#seasCustomerName").val();
+                search.customerIndustry = $("#seasCustomerIndustry").val();
+                console.log("=======公海查询=======>"+JSON.stringify(search))
+                return search;
 
-            $("#bootstrap-table").bootstrapTable('destroy');
+            }
+
 
             var options1 = {
                 id: "bootstrap-table1",
@@ -261,6 +255,7 @@
                 createUrl: prefix + "/visitAdd/{id}",
                 detailUrl: prefix + "/detail/{id}",
                 toolbar: "toolbar2",
+                queryParams:queryParamMy,
                 detailView: true,
                 onExpandRow : function(index, row, $detail) {
                     initChildTable(index, row, $detail);
@@ -327,7 +322,15 @@
                     }]
             };
             $.table.init(options1);
+            function queryParamMy(params) {
+                var search = $.table.queryParams(params);
+                search.customerNo = $("#myCustomerNo").val();
+                search.customerName = $("#myCustomerName").val();
+                search.customerIndustry = $("#myCustomerIndustry").val();
+                console.log("==========我的客户查询====>"+JSON.stringify(search))
+                return search;
 
+            }
             var options2 = {
                 id: "bootstrap-table2",
                 url: prefix + "/list",
@@ -336,7 +339,7 @@
                 detailUrl: prefix + "/detail/{id}",
                 exportUrl: prefix + "/export",
                 modalName: "客户",
-                queryParams:{"customerStatus":"BLACKLIST"},
+                queryParams: queryParam,
                 columns: [{
                     checkbox: true
                 },
@@ -393,8 +396,22 @@
                             return actions.join('');
                         }
                     }]
+
             };
             $.table.init(options2);
+
+            function queryParam(params) {
+                var search = $.table.queryParams(params);
+                search["customerStatus"]="BLACKLIST"
+                search.customerNo = $("#blackCustomerNo").val();
+                search.customerName = $("#blackCustomerName").val();
+                search.customerIndustry = $("#blackCustomerIndustry").val();
+                console.log("==========黑名单查询====>"+JSON.stringify(search))
+                return search;
+
+            }
+
+
         });
 
         initChildTable = function(index, row, $detail) {

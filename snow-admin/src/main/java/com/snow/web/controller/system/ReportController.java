@@ -29,7 +29,7 @@ public class ReportController extends BaseController
      **/
 
     @RequiresPermissions("system:jmreport:design")
-    @GetMapping("/list")
+    @GetMapping("/design")
     public String reportDesign()
     {
 

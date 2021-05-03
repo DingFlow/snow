@@ -50,7 +50,7 @@ public class CustomerStartListener extends AbstractExecutionListener<SysOaCustom
             Long parentId = sysDept.getParentId();
             SysUser sysUser1=new SysUser();
             sysUser1.setDeptId(parentId);
-            List<SysUser> sysUsers = sysUserService.selectUserList(sysUser);
+            List<SysUser> sysUsers = sysUserService.selectUserList(sysUser1);
             if(CollectionUtils.isEmpty(sysUsers)){
                 setVariable("customerManager",1);
             }else {
