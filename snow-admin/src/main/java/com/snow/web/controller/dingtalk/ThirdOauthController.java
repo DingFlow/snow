@@ -88,7 +88,7 @@ public class ThirdOauthController extends BaseController {
      * 回调结果
      */
     @SuppressWarnings("unchecked")
-    @GetMapping("/auth/callback/{source}")
+    @GetMapping("/dingTalkLogin")
     public Object callbackAuth(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request)
     {
 
@@ -146,7 +146,7 @@ public class ThirdOauthController extends BaseController {
     /**
      * 检查是否授权
      */
-    @PostMapping("/auth/checkAuthUser")
+    @PostMapping("/checkAuthUser")
     @ResponseBody
     public AjaxResult checkAuthUser(SysAuthUser authUser)
     {
@@ -162,7 +162,7 @@ public class ThirdOauthController extends BaseController {
     /**
      * 取消授权
      */
-    @PostMapping("/auth/unlock")
+    @PostMapping("/unlock")
     @ResponseBody
     public AjaxResult unlockAuth(SysAuthUser authUser)
     {
