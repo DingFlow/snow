@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.Filter;
 
+import com.snow.common.constant.Constants;
 import com.snow.framework.shiro.realm.UserRealm;
 import com.snow.framework.shiro.session.OnlineSessionDAO;
 import com.snow.framework.shiro.session.OnlineSessionFactory;
@@ -175,6 +176,7 @@ public class ShiroConfig
     public UserRealm userRealm(EhCacheManager cacheManager)
     {
         UserRealm userRealm = new UserRealm();
+        userRealm.setAuthorizationCacheName(Constants.SYS_AUTH_CACHE);
         userRealm.setCacheManager(cacheManager);
         return userRealm;
     }

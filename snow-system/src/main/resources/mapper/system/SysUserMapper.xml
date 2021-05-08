@@ -55,6 +55,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="dataScope"    column="data_scope"     />
 		<result property="status"       column="role_status"    />
 	</resultMap>
+
+	<resultMap id="SysAuthUserResult" type="SysAuthUser">
+		<id     property="authId"       column="auth_id"        />
+		<result property="uuid"         column="uuid"           />
+		<result property="userId"       column="user_id"        />
+		<result property="loginName"    column="login_name"     />
+		<result property="userName"     column="user_name"      />
+		<result property="avatar"       column="avatar"         />
+		<result property="email"        column="email"          />
+		<result property="source"       column="source"         />
+		<result property="createTime"   column="create_time"    />
+	</resultMap>
 	
 	<sql id="selectUserVo">
         select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.pwd_update_date, u.create_time, u.remark,
@@ -286,5 +298,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			sysdate()
  		)
 	</insert>
-	
+
+	<select id="selectAuthUserListByUserId" parameterType="Long" resultMap="SysAuthUserResult">
+		select auth_id, uuid, user_id, login_name, user_name, avatar, email, source, create_time
+		from sys_auth_user where user_id = #{userId}
+	</select>
+
+	<select id="selectAuthUserByUuid" parameterType="String" resultMap="SysUserResult">
+		select b.user_id as user_id, b.login_name as login_name, b.password as password
+		from sys_auth_user a left join sys_user b on a.user_id = b.user_id
+		where a.uuid = #{uuid} and b.del_flag = '0'
+	</select>
+
+	<select id="checkAuthUser" parameterType="SysAuthUser" resultType="int">
+		select count(1) from sys_auth_user where user_id=#{userId} and source=#{source} limit 1
+	</select>
+
+	<insert id="insertAuthUser" parameterType="SysAuthUser">
+		insert into sys_auth_user(
+		<if test="uuid != null and uuid != ''">uuid,</if>
+		<if test="userId != null and userId != 0">user_id,</if>
+		<if test="loginName != null and loginName != ''">login_name,</if>
+		<if test="userName != null and userName != ''">user_name,</if>
+		<if test="avatar != null and avatar != ''">avatar,</if>
+		<if test="email != null and email != ''">email,</if>
+		<if test="source != null and source != ''">source,</if>
+		create_time
+		)values(
+		<if test="uuid != null and uuid != ''">#{uuid},</if>
+		<if test="userId != null and userId != 0">#{userId},</if>
+		<if test="loginName != null and loginName != ''">#{loginName},</if>
+		<if test="userName != null and userName != ''">#{userName},</if>
+		<if test="avatar != null and avatar != ''">#{avatar},</if>
+		<if test="email != null and email != ''">#{email},</if>
+		<if test="source != null and source != ''">#{source},</if>
+		sysdate()
+		)
+	</insert>
+
+	<delete id="deleteAuthUser" parameterType="Long">
+		delete from sys_auth_user where auth_id = #{authId}
+	</delete>
+
 </mapper> 

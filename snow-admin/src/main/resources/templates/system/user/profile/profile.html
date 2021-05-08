@@ -55,6 +55,7 @@
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#user_info" data-toggle="tab" aria-expanded="true">基本资料</a></li>
                             <li><a href="#modify_password" data-toggle="tab" aria-expanded="false">修改密码</a></li>
+                            <li><a href="#third_party_binding" data-toggle="tab" aria-expanded="false">第三方帐号绑定</a></li>
                         </ul>
                         <div class="tab-content">
                             <!--用户信息-->
@@ -131,6 +132,44 @@
                                     </div>
                                 </form>
                             </div>
+
+                            <!--绑定第三方账号登录-->
+                            <div class="tab-pane" id="third_party_binding">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-12 select-table table-striped">
+                                                <table id="bootstrap-table"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div id="git-user-binding">
+                                                <h4 class="provider-desc">你可以绑定以下第三方帐号用于DingFlow系统</h4>
+                                                <div id="authlist" class="user-bind">
+                                                    <a class="third-app" href="#" onclick="authUrl('gitee');" title="使用 Gitee 账号授权登录">
+                                                        <div class="git-other-login-icon"><img th:src="@{/img/gitee.svg}"></div>
+                                                        <span class="app-name">Gitee</span></a>
+
+                                                    <a class="third-app" href="#" onclick="authUrl('github');" title="使用 GitHub 账号授权登录">
+                                                        <div class="git-other-login-icon"><img th:src="@{/img/github.svg}"></div>
+                                                        <span class="app-name">Github</span></a>
+
+                                                    <a class="third-app" href="#" title="功能开发中...">
+                                                        <div class="git-other-login-icon"><img th:src="@{/img/weixin.svg}"></div>
+                                                        <span class="app-name">WeiXin</span></a>
+
+                                                    <a class="third-app" href="#" title="功能开发中...">
+                                                        <div class="git-other-login-icon"><img th:src="@{/img/qq.svg}"></div>
+                                                        <span class="app-name">QQ</span></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -287,6 +326,91 @@
 	        	$.operate.saveModal(ctx + "system/user/profile/resetPwd", $('#form-user-resetPwd').serialize());
 	        }
 	    }
+
+        // 第三方授权列表
+        $(function() {
+            var auths = [[${auths}]]
+            var options = {
+                data: auths,
+                sidePagination: "client",
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                pagination: false,
+                columns: [{
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                    {
+                        field: 'source',
+                        title: '绑定账号平台'
+                    },
+                    {
+                        field: 'avatar',
+                        title: '头像',
+                        formatter: function(value, row, index) {
+                            return $.table.imageView(value);
+                        }
+                    },
+                    {
+                        field: 'loginName',
+                        title: '账号'
+                    },
+                    {
+                        field: 'createTime',
+                        title: '绑定时间'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="unlockAuth(this, \'' + row.authId + '\', \'' + row.source + '\')"><i class="fa fa-remove"></i>解除绑定</a>');
+                            return actions.join('');
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        // 解除绑定
+        function unlockAuth(obj, authId, source) {
+            $.modal.confirm("您确定要解除" + source + "的账号绑定吗？", function() {
+                $.ajax({
+                    type: "post",
+                    url: ctx + "auth/unlock",
+                    data: { "authId": authId },
+                    success: function(r) {
+                        if (r.code == web_status.SUCCESS) {
+                            $(obj).parents("tr").remove();
+                            $.modal.msgSuccess("解绑成功");
+                        } else {
+                            $.modal.msgError(r.msg);
+                        }
+                    }
+                });
+            });
+        }
+
+        // 第三方登录授权
+        function authUrl(source) {
+            $.ajax({
+                type: "post",
+                url: ctx + "auth/checkAuthUser",
+                data: { "source": source },
+                success: function(r) {
+                    if (r.code == web_status.SUCCESS) {
+                        var  url =  ctx + "auth/" + source;
+                        top.location.href =url;
+                    } else {
+                        $.modal.msgError(r.msg);
+                    }
+                }
+            });
+        }
 	</script>
 </body>
 </html>

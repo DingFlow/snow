@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.snow.common.enums.DingTalkListenerType;
-import com.snow.system.domain.SysUserPost;
-import com.snow.system.domain.SysUserRole;
+import com.snow.system.domain.*;
 import com.snow.system.event.SyncEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,6 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.security.Md5Utils;
-import com.snow.system.domain.SysPost;
-import com.snow.system.domain.SysRole;
-import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.SysPostMapper;
 import com.snow.system.mapper.SysRoleMapper;
 import com.snow.system.mapper.SysUserMapper;
@@ -542,5 +538,16 @@ public class SysUserServiceImpl implements ISysUserService
     public int changeStatus(SysUser user)
     {
         return userMapper.updateUser(user);
+    }
+
+    /**
+     * 根据用户编号查询授权列表
+     *
+     * @param userId 登录账户
+     * @return 授权列表
+     */
+    public List<SysAuthUser> selectAuthUserListByUserId(Long userId)
+    {
+        return userMapper.selectAuthUserListByUserId(userId);
     }
 }

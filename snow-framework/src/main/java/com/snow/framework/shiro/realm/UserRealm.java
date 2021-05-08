@@ -2,6 +2,9 @@ package com.snow.framework.shiro.realm;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.snow.framework.shiro.auth.LoginType;
+import com.snow.framework.shiro.auth.UserToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -14,6 +17,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
@@ -85,9 +89,9 @@ public class UserRealm extends AuthorizingRealm
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
     {
-        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+        UserToken upToken = (UserToken) token;
         String username = upToken.getUsername();
-        String loginType = upToken.getHost();
+        LoginType loginType = upToken.getType();
         String password = "";
         if (upToken.getPassword() != null)
         {
@@ -98,7 +102,12 @@ public class UserRealm extends AuthorizingRealm
         try
         {
 
-            user = loginService.login(username, password);
+            if(LoginType.PASSWORD.equals(loginType)){
+                user = loginService.login(username, password);
+            }else if(LoginType.NOPASSWD.equals(loginType)){
+                user = loginService.login(username);
+            }
+
         }
         catch (CaptchaException e)
         {
@@ -139,5 +148,20 @@ public class UserRealm extends AuthorizingRealm
     public void clearCachedAuthorizationInfo()
     {
         this.clearCachedAuthorizationInfo(SecurityUtils.getSubject().getPrincipals());
+    }
+
+    /**
+     * 清理所有用户授权信息缓存
+     */
+    public void clearAllCachedAuthorizationInfo()
+    {
+        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+        if (cache != null)
+        {
+            for (Object key : cache.keys())
+            {
+                cache.remove(key);
+            }
+        }
     }
 }
