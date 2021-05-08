@@ -32,7 +32,7 @@ public class DepartmentEventService implements ISyncDingTalkInfo {
             DepartmentCreateRequest departmentDTO = DepartmentCreateRequest.builder()
                     .name(sysDept.getDeptName())
                     .order(sysDept.getOrderNum())
-                    .parentid(sysDept.getParentName())
+                    .parentid(String.valueOf(sysDept.getParentId()))
                     .build();
             departmentService.createDepartment(departmentDTO);
         }else if(code.equals(DingTalkListenerType.DEPARTMENT_UPDATE.getCode())){
