@@ -1,6 +1,12 @@
 package com.snow.dingtalk.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.dingtalktodo_1_0.Client;
+import com.aliyun.dingtalktodo_1_0.models.CreateTodoTaskHeaders;
+import com.aliyun.dingtalktodo_1_0.models.CreateTodoTaskRequest;
+import com.aliyun.tea.TeaException;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyun.teautil.models.RuntimeOptions;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
@@ -33,6 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+
 
 /**
  * @author qimingjin
@@ -74,6 +83,45 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
 
     }
 
+
+    public void createV2() throws Exception {
+        Config config = new Config();
+        config.protocol = "https";
+        config.regionId = "central";
+        Client client = new com.aliyun.dingtalktodo_1_0.Client(config);
+        CreateTodoTaskHeaders createTodoTaskHeaders = new CreateTodoTaskHeaders();
+        createTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl detailUrl = new CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl()
+                .setAppUrl("dingtalk://dingtalkclient/action/open_mini_app?miniAppId={0}&ddMode=push&page=pages%2ftask-detail%2ftask-detail%3ftaskId%3d{1}")
+                .setPcUrl("https://todo.dingtalk.com/ding-portal/detail/task/{0}");
+        CreateTodoTaskRequest createTodoTaskRequest = new CreateTodoTaskRequest()
+                .setSourceId("isv_dingtalkTodo1")
+                .setSubject("接入钉钉待办")
+                .setCreatorId("PUoiinWIpa2yH2ymhiiGiP6g")
+                .setDescription("应用可以调用该接口发起一个钉钉待办任务，该待办事项会出现在钉钉客户端“待办”页面，需要注意的是，通过开放接口发起的待办，目前仅支持直接跳转ISV应用详情页（ISV在调该接口时需传入自身应用详情页链接）。")
+                .setDueTime(1617675000000L)
+                .setExecutorIds(Arrays.asList(
+                        "PUoiinWIpa2yH2ymhiiGiP6g"
+                ))
+                .setParticipantIds(Arrays.asList(
+                        "PUoiinWIpa2yH2ymhiiGiP6g"
+                ))
+                .setDetailUrl(detailUrl);
+        try {
+            client.createTodoTaskWithOptions("PUoiinWIpa2yH2ymhiiGiP6g", createTodoTaskRequest, createTodoTaskHeaders, new RuntimeOptions());
+        } catch (TeaException err) {
+            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                // err 中含有 code 和 message 属性，可帮助开发定位问题
+            }
+
+        } catch (Exception _err) {
+            TeaException err = new TeaException(_err.getMessage(), _err);
+            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                // err 中含有 code 和 message 属性，可帮助开发定位问题
+            }
+
+        }
+    }
     /**
      * 根据用户ID获取待办
      * @param workrecordGetbyuseridRequest

@@ -2,6 +2,12 @@ package com.snow.dingtalk.common;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
+import com.aliyun.dingtalkoauth2_1_0.Client;
+import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenRequest;
+import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenResponse;
+import com.aliyun.tea.TeaException;
+import com.aliyun.teaopenapi.models.Config;
+import com.aliyun.teautil.Common;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
@@ -25,6 +31,8 @@ import java.util.Date;
 public class BaseService {
 
     public static final String TOKEN="dingtalk_token";
+
+    public static final String TOKENV2="dingtalk_token_V2";
 
     private SysConfigServiceImpl sysConfigService=SpringUtils.getBean("sysConfigServiceImpl");
 
@@ -63,6 +71,38 @@ public class BaseService {
             return timedCache.get(TOKEN);
         }
 
+    }
+
+    public String getDingTalkTokenV2(){
+        //创建缓存，缓存默认是7100S
+        TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
+        if(StringUtils.isEmpty(timedCache.get(TOKENV2))) {
+            Config config = new Config();
+            config.protocol = "https";
+            config.regionId = "central";
+            try {
+                Client client = new Client(config);
+                GetAccessTokenRequest getAccessTokenRequest = new GetAccessTokenRequest()
+                        .setAppKey(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY))
+                        .setAppSecret(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET));
+                try {
+                    GetAccessTokenResponse accessToken = client.getAccessToken(getAccessTokenRequest);
+                    timedCache.put(TOKENV2,accessToken.getBody().getAccessToken());
+                    return accessToken.getBody().getAccessToken();
+                } catch (Exception exception) {
+                    TeaException err = new TeaException(exception.getMessage(), exception);
+                    if (!Common.empty(err.code) && !Common.empty(err.message)) {
+                        // err 中含有 code 和 message 属性，可帮助开发定位问题
+                        syncDingTalkErrorOperLog(BaseConstantUrl.GET_TOKEN_URL,err.getMessage(),"getDingTalkToken()", com.alibaba.fastjson.JSON.toJSONString(getAccessTokenRequest));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }else {
+            return timedCache.get(TOKEN);
+        }
     }
 
     /**
