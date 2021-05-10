@@ -1,6 +1,8 @@
 package com.snow.web.controller.system;
 
+import com.snow.common.core.page.TableDataInfo;
 import com.snow.framework.storage.StorageService;
+import com.snow.system.domain.SysAuthUser;
 import com.snow.system.domain.SysFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,8 @@ import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysUserService;
+
+import java.util.List;
 
 /**
  * 个人信息 业务处理
@@ -55,9 +59,18 @@ public class SysProfileController extends BaseController
     {
         SysUser user = ShiroUtils.getSysUser();
         mmap.put("user", user);
+        mmap.put("auths", userService.selectAuthUserListByUserId(user.getUserId()));
         mmap.put("roleGroup", userService.selectUserRoleGroup(user.getUserId()));
         mmap.put("postGroup", userService.selectUserPostGroup(user.getUserId()));
         return prefix + "/profile";
+    }
+
+    @PostMapping("/list")
+    @ResponseBody
+    public TableDataInfo getAuthUserList(){
+        SysUser user = ShiroUtils.getSysUser();
+        List<SysAuthUser> sysAuthUsers = userService.selectAuthUserListByUserId(user.getUserId());
+        return getDataTable(sysAuthUsers);
     }
 
     @GetMapping("/checkPassword")

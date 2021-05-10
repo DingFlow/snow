@@ -167,7 +167,7 @@ public interface SysUserMapper
     /**
      * 根据用户编号查询授权列表
      *
-     * @param loginName 登录账户
+     * @param userId 登录账户
      * @return 授权列表
      */
     public List<SysAuthUser> selectAuthUserListByUserId(Long userId);

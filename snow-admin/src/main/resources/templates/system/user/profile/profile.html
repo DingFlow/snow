@@ -148,14 +148,9 @@
                                             <div id="git-user-binding">
                                                 <h4 class="provider-desc">你可以绑定以下第三方帐号用于DingFlow系统</h4>
                                                 <div id="authlist" class="user-bind">
-                                                    <a class="third-app" href="#" onclick="authUrl('gitee');" title="使用 Gitee 账号授权登录">
-                                                        <div class="git-other-login-icon"><img th:src="@{/img/gitee.svg}"></div>
+                                                    <a class="third-app" href="javascript:void(0)"   th:onclick="authUrl('dingtalk');" title="使用 DingTalk 账号授权登录">
+                                                        <div class="git-other-login-icon"><img th:src="@{/img/dingding.jpg}"></div>
                                                         <span class="app-name">DingTalk</span></a>
-
-                                                   <!-- <a class="third-app" href="#" onclick="authUrl('github');" title="使用 GitHub 账号授权登录">
-                                                        <div class="git-other-login-icon"><img th:src="@{/img/github.svg}"></div>
-                                                        <span class="app-name">Github</span></a>
--->
                                                     <a class="third-app" href="#" title="功能开发中...">
                                                         <div class="git-other-login-icon"><img th:src="@{/img/weixin.svg}"></div>
                                                         <span class="app-name">WeiXin</span></a>
@@ -329,9 +324,8 @@
 
         // 第三方授权列表
         $(function() {
-            var auths = [[${auths}]]
             var options = {
-                data: auths,
+                url:"/system/user/profile/list",
                 sidePagination: "client",
                 showSearch: false,
                 showRefresh: false,
@@ -374,6 +368,8 @@
                     }]
             };
             $.table.init(options);
+
+
         });
 
         // 解除绑定
@@ -381,7 +377,7 @@
             $.modal.confirm("您确定要解除" + source + "的账号绑定吗？", function() {
                 $.ajax({
                     type: "post",
-                    url: ctx + "/third/oauth/unlock",
+                    url: "/third/oauth/unlock",
                     data: { "authId": authId },
                     success: function(r) {
                         if (r.code == web_status.SUCCESS) {

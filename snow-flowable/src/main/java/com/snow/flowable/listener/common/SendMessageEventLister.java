@@ -145,7 +145,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
 
         //根据任务ID获取任务获选人
-        TaskEntity entity = (TaskEntity) event.getEntity();
+    /*    TaskEntity entity = (TaskEntity) event.getEntity();
         Set<SysUser> flowCandidates = getFlowCandidates(entity);
         if(CollectionUtils.isNotEmpty(flowCandidates)){
             MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.TASK_TODO.getCode());
@@ -153,7 +153,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             messageEventDTO.setMessageEventType(MessageEventType.TASK_TODO);
             messageEventDTO.setMessageOutsideId(entity.getId());
             applicationContext.publishEvent(messageEventDTO);
-        }
+        }*/
 
 
     }

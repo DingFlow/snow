@@ -73,37 +73,33 @@ public class ThirdOauthController extends BaseController {
     {
         String appId= iSysConfigService.selectConfigByKey("ding.login.appid");
         String appSecret= iSysConfigService.selectConfigByKey("ding.login.appSecret");
-        String url="http://workflow.vaiwan.com/third/oauth/dingTalkLogin";
+        String redirectUri= iSysConfigService.selectConfigByKey("ding.login.redirectUri");
 
         AuthRequest authRequest = new AuthDingTalkRequest(AuthConfig.builder()
                 .clientId(appId)
                 .clientSecret(appSecret)
-                .redirectUri(url)
+                .redirectUri(redirectUri)
                 .build());
         String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
         ServletUtils.getResponse().sendRedirect(authorizeUrl);
     }
 
     /**
-     * 回调结果
+     * 钉钉回调
      */
     @SuppressWarnings("unchecked")
     @GetMapping("/dingTalkLogin")
-    public Object callbackAuth(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request)
+    public Object callbackAuth(AuthCallback callback, HttpServletRequest request)
     {
 
-        if (StringUtils.isEmpty(source))
-        {
-            return new ModelAndView("error/unauth");
-        }
-
+        String source="dingtalk";
         String appId= iSysConfigService.selectConfigByKey("ding.login.appid");
         String appSecret= iSysConfigService.selectConfigByKey("ding.login.appSecret");
-        String url="http://workflow.vaiwan.com/third/oauth/dingTalkLogin";
+        String redirectUri= iSysConfigService.selectConfigByKey("ding.login.redirectUri");
         AuthRequest authRequest = new AuthDingTalkRequest(AuthConfig.builder()
                 .clientId(appId)
                 .clientSecret(appSecret)
-                .redirectUri(url)
+                .redirectUri(redirectUri)
                 .build());
         AuthResponse<AuthUser> response = authRequest.login(callback);
         if (response.ok())
@@ -121,7 +117,7 @@ public class ThirdOauthController extends BaseController {
                 authUser.setUuid(source + response.getData().getUuid());
                 authUser.setUserId(ShiroUtils.getUserId());
                 authUser.setUserName(response.getData().getNickname());
-                authUser.setLoginName(response.getData().getUsername());
+                authUser.setLoginName(ShiroUtils.getLoginName());
                 authUser.setEmail(response.getData().getEmail());
                 authUser.setSource(source);
                 userMapper.insertAuthUser(authUser);

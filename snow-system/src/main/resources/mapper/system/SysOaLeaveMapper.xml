@@ -40,7 +40,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="processInstanceId != null  and processInstanceId != ''"> and process_instance_id = #{processInstanceId}</if>
             <if test="applyPerson != null  and applyPerson != ''"> and apply_person = #{applyPerson}</if>
             <if test="createTime != null"> and create_time = #{createTime}</if>
+
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectSysOaLeaveById" parameterType="Integer" resultMap="SysOaLeaveResult">

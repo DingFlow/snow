@@ -17,15 +17,15 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">请假理由：</label>
                 <div class="col-sm-8">
-                    <textarea name="reason" class="form-control"></textarea>
+                    <textarea name="reason" class="form-control" required></textarea>
                 </div>
             </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">开始时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="startTime" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" class="datetime-input form-control" name="startTime" placeholder="开始时间" required/>
+                      <!--  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
                     </div>
                 </div>
             </div>
@@ -33,8 +33,9 @@
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="endTime" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                       <!-- <input name="endTime" class="form-control" placeholder="yyyy-MM-dd mm:hh:ss" type="text" required>-->
+                        <input type="text" class="datetime-input form-control" name="endTime"  placeholder="结束时间" required/>
+                    <!--    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
                     </div>
                 </div>
             </div>

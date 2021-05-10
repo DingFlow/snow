@@ -2,6 +2,7 @@ package com.snow.web.controller.system;
 
 import java.util.List;
 
+import com.snow.common.core.page.TableDataInfo;
 import com.snow.system.domain.RegionTreeVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class SysOaRegionController extends BaseController
     @GetMapping()
     public String region()
     {
-        return prefix + "/region";
+        return prefix + "/area";
     }
 
     /**
@@ -50,10 +51,18 @@ public class SysOaRegionController extends BaseController
     @RequiresPermissions("system:region:list")
     @PostMapping("/list")
     @ResponseBody
-    public List<SysOaRegion> list(SysOaRegion sysOaRegion)
+    public TableDataInfo list(SysOaRegion sysOaRegion)
     {
-        List<SysOaRegion> list = sysOaRegionService.selectSysOaRegionList(sysOaRegion);
-        return list;
+        startPage();
+        if(StringUtils.isEmpty(sysOaRegion.getName())){
+            List<SysOaRegion> list = sysOaRegionService.selectSysOaRegionList(sysOaRegion);
+            return getDataTable(list);
+        }else {
+            SysOaRegion sysOaRegionName=new SysOaRegion();
+            sysOaRegionName.setName(sysOaRegion.getName());
+            List<SysOaRegion> list = sysOaRegionService.selectSysOaRegionList(sysOaRegionName);
+            return getDataTable(list);
+        }
     }
 
     /**
@@ -73,7 +82,7 @@ public class SysOaRegionController extends BaseController
     /**
      * 新增地区
      */
-    @GetMapping(value = { "/add/{code}", "/add/" })
+    @GetMapping(value = { "/add/{code}", "/add" })
     public String add(@PathVariable(value = "code", required = false) Long code, ModelMap mmap)
     {
         if (StringUtils.isNotNull(code))

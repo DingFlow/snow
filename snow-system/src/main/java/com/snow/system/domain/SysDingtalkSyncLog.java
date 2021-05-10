@@ -33,7 +33,7 @@ public class SysDingtalkSyncLog extends BaseEntity
     private String title;
 
     /** 模块类型（0其它 1用户 2部门 3角色 10回调） */
-    @Excel(name = "模块类型", readConverterExp = "0=其它,1=用户,2=部门,3=角色,1=0回调")
+    @Excel(name = "模块类型", readConverterExp = "0=其它,1=用户,2=部门,3=角色,1=回调")
     private Integer moduleType;
 
     /** 业务类型（0其它 1新增 2修改 3删除） */

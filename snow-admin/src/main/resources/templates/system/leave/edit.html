@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('修改请假单')" />
+    <th:block th:include="include :: header('发起请假申请')" />
     <th:block th:include="include :: datetimepicker-css" />
     <th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
@@ -18,22 +18,22 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">请假名称：</label>
                 <div class="col-sm-8">
-                    <input name="name" th:field="*{name}" class="form-control" type="text">
+                    <input name="name" th:field="*{name}" class="form-control" type="text" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-3 control-label">请假理由：</label>
                 <div class="col-sm-8">
-                    <textarea name="reason" class="form-control">[[*{reason}]]</textarea>
+                    <textarea name="reason" class="form-control" required>[[*{reason}]]</textarea>
                 </div>
             </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">开始时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="startTime" id="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="startTime" id="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd HH:mm:ss')}" class=" datetime-input form-control" placeholder="yyyy-MM-dd" type="text" required>
+
                     </div>
                 </div>
             </div>
@@ -41,8 +41,7 @@
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="endTime" id="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}"  class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="endTime" id="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}"  class="datetime-input form-control" placeholder="结束时间" type="text" required>
                     </div>
                 </div>
             </div>
@@ -59,7 +58,7 @@
                 <div class="col-sm-8">
                     <input type="hidden" name="fileUrl" th:field="*{fileUrl}">
                     <div class="file-loading">
-                        <input class="form-control file-upload" id="fileUrl" name="file" type="file">
+                        <input class="form-control file-upload" id="fileUrl"  name="file" type="file">
                     </div>
                 </div>
             </div>
@@ -108,6 +107,8 @@
             $(this).fileinput('_initFileActions');
         });
 
+
+
         function formatBetweenTime(date1,date2) {
             var date3 = date2.getTime() - date1.getTime() //时间差的毫秒数
             console.log(date3)
@@ -131,15 +132,10 @@
     <script th:inline="javascript">
         $('#endTime').blur(function () {
             var startTime =$("#startTime").val();
-            console.log(startTime)
             var endTime = $("#endTime").val();
-            console.log(endTime)
-
             var formatBetweenTime1 = formatBetweenTime(new Date(startTime),new Date(endTime));
             $("#leaveTime").val(formatBetweenTime1);
         });
-
-
     </script>
 </body>
 </html>

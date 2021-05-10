@@ -32,12 +32,14 @@
                 <div class="col-sm-8">
                     <div id="element_id">
                         <select class="province  form-control m-b" name="customerProvinceCode">
-                            <!--<option th:field="*{customerProvinceName}"></option>-->
+                            <option th:value="${sysOaCustomer.customerProvinceCode}" selected>[[${sysOaCustomer.customerProvinceName}]]</option>
                         </select>
                         <select class="city  form-control m-b" name="customerCityCode">
-                          <!--  <option th:field="*{customerCityName}"></option>-->
+                            <option th:value="${sysOaCustomer.customerCityCode}" selected>[[${sysOaCustomer.customerCityName}]]</option>
                         </select>
-                        <select class="area  form-control m-b" name="customerAreaCode" th:value="${sysOaCustomer.customerAreaName}"></select>
+                        <select class="area  form-control m-b" name="customerAreaCode" >
+                            <option th:value="${sysOaCustomer.customerAreaCode}" selected>[[${sysOaCustomer.customerAreaName}]]</option>
+                        </select>
                     </div>
                 </div>
             </div>

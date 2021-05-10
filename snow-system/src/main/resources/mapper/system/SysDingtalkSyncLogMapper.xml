@@ -47,7 +47,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="operTime != null "> and oper_time = #{operTime}</if>
             <if test="logType != null "> and log_type = #{logType}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(oper_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(oper_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
         </where>
+        order by   oper_time desc
     </select>
     
     <select id="selectSysDingtalkSyncLogById" parameterType="Long" resultMap="SysDingtalkSyncLogResult">
