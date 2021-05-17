@@ -19,8 +19,10 @@ import com.taobao.api.ApiException;
 import com.taobao.api.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @program: snow
@@ -52,7 +54,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
             }
         } catch (ApiException e) {
             e.printStackTrace();
-            log.error("钉钉创建部门createDepartment异常：{}",e.getMessage());
+            log.error("@@钉钉创建部门createDepartment异常：{}",e.getMessage());
             throw new SyncDataException(JSON.toJSONString(request),e.getErrMsg());
         }
     }
@@ -74,7 +76,10 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         req.setLanguage("zh_CN");
         req.setAutoAddUser(false);
         //部门主管列表
-        req.setDeptManagerUseridList(sysDept.getLeader());
+        if(!CollectionUtils.isEmpty(sysDept.getLeader())){
+            req.setDeptManagerUseridList(sysDept.getLeader().stream().map(String::valueOf).collect(Collectors.joining(",")));
+        }
+
         try {
             OapiV2DepartmentUpdateResponse rsp = client.execute(req, getDingTalkToken());
             if(rsp.getErrcode()==0){

@@ -30,12 +30,17 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label">负责人：</label>
+				<label class="col-sm-3 control-label">部门负责人：</label>
 				<div class="col-sm-8">
-					<input class="form-control" type="text" name="leader" th:field="*{leader}">
+					<div class="input-group">
+				<!--	<input class="form-control" type="text" name="leader" th:field="*{leader}">-->
+					<input class="form-control" type="hidden" name="leader"  id="leader" required>
+					<input class="form-control" type="text" name="leaderName" onclick="selectUserInfo()" th:field="*{leader}" id="leaderName" readonly="true">
+					<span class="input-group-addon"><i class="fa fa-search"></i></span>
+					</div>
 				</div>
 			</div>
-			<div class="form-group">
+	<!--		<div class="form-group">
 				<label class="col-sm-3 control-label">联系电话：</label>
 				<div class="col-sm-8">
 					<input class="form-control" type="text" name="phone" th:field="*{phone}">
@@ -46,7 +51,7 @@
 				<div class="col-sm-8">
 					<input class="form-control" type="text" name="email" th:field="*{email}">
 				</div>
-			</div>
+			</div>-->
 			<div class="form-group">
 				<label class="col-sm-3 control-label">部门状态：</label>
 				<div class="col-sm-8">
@@ -135,6 +140,22 @@
 	   			$("#treeName").val(body.find('#treeName').val());
 	   			layer.close(index);
 			}
+		}
+
+		/*选择用户*/
+		function selectUserInfo() {
+			var deptId=$("#deptId").val();
+			var url = "/system/dept/selectUser/"+deptId;
+			$.modal.open("选择用户",url,"","",doSubmitOne);
+		}
+
+		function doSubmitOne(index, layero){
+			var body = layer.getChildFrame('body', index);
+			var iframeWin = layero.find('iframe')[0];
+			iframeWin.contentWindow.submitHandler(index, layero);
+			$("#leader").val(body.find('#dingUserId').val());
+			$("#leaderName").val(body.find('#userName').val());
+			layer.close(index);
 		}
 	</script>
 </body>

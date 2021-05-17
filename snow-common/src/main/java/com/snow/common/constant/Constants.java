@@ -163,5 +163,9 @@ public class Constants
      */
     public static final Integer NEWS_EMAIL_TYPE=2;
 
+    /**
+     * DingFlow标识
+     */
+    public static final String Ding_Flow="DingFlow";
 
 }

@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="parentId" column="parent_id"   />
 		<result property="deptName" column="dept_name"   />
 		<result property="orderNum" column="order_num"   />
-		<result property="leader"   column="leader"      />
+		<result property="leader"   column="leader"  typeHandler="com.snow.framework.config.JsonStringListTypeHandler"     />
 		<result property="status"   column="dept_status" />
 	</resultMap>
 	

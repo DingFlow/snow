@@ -4,10 +4,16 @@ import com.snow.common.enums.ProcessStatus;
 import com.snow.flowable.domain.resign.SysOaResignForm;
 import com.snow.flowable.listener.AbstractExecutionListener;
 import com.snow.system.domain.SysOaResign;
+import com.snow.system.domain.SysUser;
+import com.snow.system.service.impl.SysDeptServiceImpl;
 import com.snow.system.service.impl.SysOaResignServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @program: snow
@@ -22,6 +28,9 @@ public class SignatureStartListener extends AbstractExecutionListener<SysOaResig
     @Autowired
     private SysOaResignServiceImpl sysOaResignService;
 
+    @Autowired
+    private SysDeptServiceImpl sysDeptService;
+
     @Override
     protected void process() {
         //获取交接人
@@ -34,5 +43,14 @@ public class SignatureStartListener extends AbstractExecutionListener<SysOaResig
         //设置交际人参数
         setVariable(SysOaResignForm.TRANSITION_PERSON,variable);
         sysOaResignService.updateSysOaResignByResignNo(sysOaResign);
+
+        //设置部门主管
+        List<SysUser> deptLeaderList = sysDeptService.selectLeadsByUserId(getStartUserInfo().getUserId());
+        if(CollectionUtils.isEmpty(deptLeaderList)){
+            //管理员id
+            setVariable("deptLeader",1);
+        }else {
+            setVariable("deptLeader",deptLeaderList.stream().map(s->String.valueOf(s.getUserId())).collect(Collectors.toList()));
+        }
     }
 }

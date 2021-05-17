@@ -200,4 +200,14 @@ public class SysDeptController extends BaseController
         List<Ztree> ztrees = deptService.roleDeptTreeData(role);
         return ztrees;
     }
+
+
+    /**
+     * 选择用户
+     */
+    @GetMapping("/selectUser/{deptId}")
+    public String selectUser(@PathVariable(value = "deptId")Long deptId, ModelMap mmap) {
+        mmap.put("deptId",deptId);
+        return prefix + "/selectUser";
+    }
 }

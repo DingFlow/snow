@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.snow.common.core.domain.BaseEntity;
 
+import java.util.List;
+
 /**
  * 部门表 sys_dept
  * 
@@ -19,6 +21,11 @@ public class SysDept extends BaseEntity
 
     /** 部门ID */
     private Long deptId;
+
+    /**
+     * 钉钉部门id
+     */
+    private Long newDeptId;
 
     /** 父部门ID */
     private Long parentId;
@@ -33,7 +40,7 @@ public class SysDept extends BaseEntity
     private String orderNum;
 
     /** 负责人 */
-    private String leader;
+    private List<String> leader;
 
     /** 联系电话 */
     private String phone;
@@ -104,12 +111,12 @@ public class SysDept extends BaseEntity
         this.orderNum = orderNum;
     }
 
-    public String getLeader()
+    public List<String> getLeader()
     {
         return leader;
     }
 
-    public void setLeader(String leader)
+    public void setLeader(List<String> leader)
     {
         this.leader = leader;
     }

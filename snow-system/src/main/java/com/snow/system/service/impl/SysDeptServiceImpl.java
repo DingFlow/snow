@@ -6,7 +6,9 @@ import java.util.List;
 
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysDept;
+import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +22,7 @@ import com.snow.common.utils.StringUtils;
 import com.snow.system.domain.SysRole;
 import com.snow.system.mapper.SysDeptMapper;
 import com.snow.system.service.ISysDeptService;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 
@@ -33,6 +36,9 @@ public class SysDeptServiceImpl implements ISysDeptService
 {
     @Autowired
     private SysDeptMapper deptMapper;
+
+    @Autowired
+    private SysUserServiceImpl sysUserService;
 
     @Resource
     private ApplicationContext applicationContext;
@@ -68,7 +74,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     /**
      * 查询部门管理树（排除下级）
      * 
-     * @param deptId 部门ID
+     * @param dept 部门ID
      * @return 所有部门信息
      */
     @Override
@@ -203,7 +209,7 @@ public class SysDeptServiceImpl implements ISysDeptService
 
     /**
      * 新增保存部门信息
-     * 
+     *  先同步到钉钉，在根据钉钉同步数据回来
      * @param dept 部门信息
      * @return 结果
      */
@@ -217,12 +223,13 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new BusinessException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
+        int d=deptMapper.insertDept(dept);
         if(dept.getIsSyncDingTalk()){
             //同步钉钉数据
             SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
             applicationContext.publishEvent(syncEvent);
         }
-        return deptMapper.insertDept(dept);
+        return d;
     }
 
     /**
@@ -245,12 +252,13 @@ public class SysDeptServiceImpl implements ISysDeptService
             updateDeptChildren(dept.getDeptId(), newAncestors, oldAncestors);
         }
         int result = deptMapper.updateDept(dept);
+
         if (UserConstants.DEPT_NORMAL.equals(dept.getStatus()))
         {
             // 如果该部门是启用状态，则启用该部门的所有上级部门
             updateParentDeptStatus(dept);
         }
-        if(dept.getIsSyncDingTalk()){
+        if(dept.getIsSyncDingTalk()) {
             //同步钉钉数据
             SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_UPDATE);
             applicationContext.publishEvent(syncEvent);
@@ -331,5 +339,20 @@ public class SysDeptServiceImpl implements ISysDeptService
             return UserConstants.DEPT_NAME_NOT_UNIQUE;
         }
         return UserConstants.DEPT_NAME_UNIQUE;
+    }
+
+
+    @Override
+    public List<SysUser> selectLeadsByUserId(Long userId) {
+        List<SysUser> sysUserList= Lists.newArrayList();
+        SysUser sysUser = sysUserService.selectUserById(userId);
+        SysDept sysDept = selectDeptById(sysUser.getDeptId());
+        if(!CollectionUtils.isEmpty(sysDept.getLeader())){
+            sysDept.getLeader().forEach(t->{
+                SysUser sysUser1 = sysUserService.selectUserByDingUserId(t);
+                sysUserList.add(sysUser1);
+            });
+        }
+        return sysUserList;
     }
 }
