@@ -122,9 +122,7 @@ public class SysOaLeaveController extends BaseController
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult addSave(SysOaLeave sysOaLeave)
-
     {
-
         SysUser sysUser = ShiroUtils.getSysUser();
         Date endTime = sysOaLeave.getEndTime();
         Date startTime = sysOaLeave.getStartTime();
@@ -136,11 +134,10 @@ public class SysOaLeaveController extends BaseController
         String leaveNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_LEAVE_SEQUENCE);
         sysOaLeave.setCreateBy(String.valueOf(sysUser.getUserId()));
         sysOaLeave.setLeaveNo(leaveNo);
+        sysOaLeave.setApplyPerson(sysUser.getUserName());
         int i = sysOaLeaveService.insertSysOaLeave(sysOaLeave);
         return toAjax(i);
     }
-
-
 
     /**
      * 修改请假单
