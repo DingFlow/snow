@@ -171,7 +171,7 @@ public class SysOaLeaveController extends BaseController
         BeanUtils.copyProperties(sysOaLeave,sysOaLeaveForm);
         sysOaLeaveForm.setBusinessKey(newSysOaLeave.getLeaveNo());
         sysOaLeaveForm.setStartUserId(String.valueOf(sysUser.getUserId()));
-        sysOaLeaveForm.setBusVarUrl("/system/leave/detail");
+        sysOaLeaveForm.setBusVarUrl("/system/leave/leaveDetail");
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(sysOaLeaveForm);
         //提交
         CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
@@ -184,7 +184,7 @@ public class SysOaLeaveController extends BaseController
     }
 
     /**
-     * 请假单详情
+     * 请假单详情 带审批信息
      */
     @RequiresPermissions("system:leave:detail")
     @GetMapping("/detail/{id}")
@@ -203,6 +203,20 @@ public class SysOaLeaveController extends BaseController
         return prefix + "/detail";
     }
 
+    /***
+     * 详情不带审批信息的
+     * @param id
+     * @param mmap
+     * @return
+     */
+    @RequiresPermissions("system:leave:detail")
+    @GetMapping("/leaveDetail/{id}")
+    public String leaveDetail(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        SysOaLeave sysOaLeave = sysOaLeaveService.selectSysOaLeaveById(id);
+        mmap.put("sysOaLeave", sysOaLeave);
+        return prefix + "/detail";
+    }
     /**
      * 删除请假单
      */

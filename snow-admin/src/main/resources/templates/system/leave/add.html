@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">请假理由：</label>
                 <div class="col-sm-8">
-                    <textarea name="reason" class="form-control" required></textarea>
+                    <textarea name="reason" class="form-control" rows="5" required></textarea>
                 </div>
             </div>
             <div class="form-group">    
@@ -25,7 +25,6 @@
                 <div class="col-sm-8">
                     <div class="input-group date">
                         <input type="text" class="datetime-input form-control" name="startTime" placeholder="开始时间" required/>
-                      <!--  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
                     </div>
                 </div>
             </div>
@@ -33,9 +32,7 @@
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                       <!-- <input name="endTime" class="form-control" placeholder="yyyy-MM-dd mm:hh:ss" type="text" required>-->
                         <input type="text" class="datetime-input form-control" name="endTime"  placeholder="结束时间" required/>
-                    <!--    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>-->
                     </div>
                 </div>
             </div>
@@ -82,7 +79,7 @@
             maxFileCount: 1,
             autoReplace: true
         }).on('fileuploaded', function (event, data, previewId, index) {
-            $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+            $("input[name='" + event.currentTarget.id + "']").val(data.response.fileKey)
         }).on('fileremoved', function (event, id, index) {
             $("input[name='" + event.currentTarget.id + "']").val('')
         })

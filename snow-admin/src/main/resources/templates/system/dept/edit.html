@@ -35,7 +35,7 @@
 					<div class="input-group">
 				<!--	<input class="form-control" type="text" name="leader" th:field="*{leader}">-->
 					<input class="form-control" type="hidden" name="leader"  id="leader" required>
-					<input class="form-control" type="text" name="leaderName" onclick="selectUserInfo()" th:field="*{leader}" id="leaderName" readonly="true">
+					<input class="form-control" type="text" name="leaderName" onclick="selectUserInfo()" th:value="${dept.leader}" id="leaderName" readonly="true">
 					<span class="input-group-addon"><i class="fa fa-search"></i></span>
 					</div>
 				</div>
