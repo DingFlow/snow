@@ -123,4 +123,18 @@ public class SysFileController extends BaseController
     {
         return toAjax(sysFileService.deleteSysFileByIds(ids));
     }
+
+
+    /**
+     * 根据file key查询文件信息
+     * @param fileKey
+     * @return
+     */
+    @PostMapping( "/getFileInfoByKey")
+    @ResponseBody
+    public AjaxResult getFileInfoByKey(String fileKey)
+    {
+        SysFile sysFile = sysFileService.selectSysFileByKey(fileKey);
+        return AjaxResult.success(sysFile);
+    }
 }

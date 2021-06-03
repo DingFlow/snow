@@ -43,6 +43,13 @@
 			<div class="form-control-static" th:text="${appFrom.applyPerson}">
 			</div>
 		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">附件：</label>
+			<div class="form-control-static">
+				<input type="hidden" name="fileUrl" id="fileKey" th:value="${appFrom.fileUrl}">
+				<a   id="fileName"></a>
+			</div>
+		</div>
 		<th:block th:include="include :: approvalpage" />
 	</form>
     </div>
@@ -59,13 +66,15 @@
 
 	    $(function() {
 	    	var reason = [[${appFrom.reason}]];
-	    	console.log(reason);
 	    	if ($.common.isNotEmpty(reason) && reason.length < 2000) {
                 $("#reason").text(reason);
 	    	} else {
 	    		$("#reason").text(reason);
 	    	}
-
+	    	var filekey=$("#fileKey").val()
+			var data= $.common.getFileByKey(filekey);
+			$('#fileName').attr('href',"../../../common/download?fileKey="+filekey);
+			$("#fileName").text(data.name);
 	    });
 
 

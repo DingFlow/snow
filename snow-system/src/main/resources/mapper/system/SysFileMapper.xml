@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSysFileByKey" parameterType="String" resultMap="SysFileResult">
         <include refid="selectSysFileVo"/>
-        where key = #{key}
+        where file_key = #{key}
     </select>
 
     <insert id="insertSysFile" parameterType="SysFile" useGeneratedKeys="true" keyProperty="id">

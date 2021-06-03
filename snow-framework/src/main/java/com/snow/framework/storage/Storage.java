@@ -30,11 +30,11 @@ public interface Storage {
     Stream<Path> loadAll();
 
     /**
-     * 获取文件路径
+     * 下载文件
      * @param keyName
      * @return
      */
-    Path load(String keyName);
+    void load(String keyName);
 
     /**
      * 下载文件

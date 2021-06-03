@@ -1832,6 +1832,20 @@ var table = {
                 });
                 return resultData;
             },
+            getFileByKey: function(fileKey) {
+                $.ajaxSettings.async = false;
+                var resultData='';
+                $.post("/system/file/getFileInfoByKey", {"fileKey":fileKey}, function(result) {
+                    if (result.code == web_status.SUCCESS) {
+                        resultData=result.data;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                });
+                return resultData;
+            },
         }
     });
 })(jQuery);

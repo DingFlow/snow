@@ -84,8 +84,8 @@ public class StorageService {
         return storage.loadAll();
     }
 
-    public Path load(String keyName) {
-        return storage.load(keyName);
+    public void load(String keyName) {
+         storage.load(keyName);
     }
 
     public Resource loadAsResource(String keyName) {

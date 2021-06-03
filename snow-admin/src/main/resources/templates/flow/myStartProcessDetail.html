@@ -10,7 +10,16 @@
 
             <input name="busVarUrl"  id="busVarUrl"  th:value="${busVarUrl}" type="hidden" >
             <input name="appId"  id="appId"  th:value="${appId}" type="hidden" >
-
+            <div class="ibox float-e-margins" id="busPage">
+                <h4 class="form-header h4">业务数据</h4>
+                <p>
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <a class="btn btn-info btn-large" href="javascript:void(0)" onclick="getProcessDiagram()"><i class="fa fa-eye"></i>获取业务单</a>
+                    </div>
+                </div>
+                </p>
+            </div>
             <div class="ibox float-e-margins">
                 <h4 class="form-header h4">流程图</h4>
                 <div class="vertical-timeline-block" >
@@ -97,7 +106,6 @@
                                             <label>附件：</label>
                                             <label th:if="${attachment.url} ne ''">
                                                 <a th:href="${attachment.url}" target="_blank"><span th:text="${attachment.name}"></span></a>
-
                                             </label>
                                         </div>
                                     </div>
@@ -107,20 +115,6 @@
                         </div>
                     </div>
                 </div>
-            <div class="ibox float-e-margins">
-                <h4 class="form-header h4">业务数据</h4>
-                <p>
-                <div class="row">
-                    <div class="col-sm-offset-1 col-sm-10">
-                        <a class="btn btn-info btn-large" href="javascript:void(0)" onclick="getProcessDiagram()"><i class="fa fa-eye"></i>获取业务单</a>
-                    </div>
-                </div>
-                </p>
-
-
-            </div>
-
-
         </form>
     </div>
     <th:block th:include="include :: footer" />
@@ -136,7 +130,6 @@
             var appId= $("#appId").val();
             var busVarUrl= $("#busVarUrl").val();
             $.modal.open('业务单', busVarUrl+"/"+appId);
-
         }
     </script>
 </body>

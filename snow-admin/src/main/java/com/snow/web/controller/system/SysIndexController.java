@@ -6,6 +6,7 @@ import com.snow.common.config.Global;
 import com.snow.common.constant.ShiroConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.MessageEventType;
@@ -13,9 +14,7 @@ import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
-import com.snow.flowable.domain.FlowGeneralSituationVO;
-import com.snow.flowable.domain.ProcessInstanceDTO;
-import com.snow.flowable.domain.ProcessInstanceVO;
+import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
@@ -168,8 +167,20 @@ public class SysIndexController extends BaseController
         sysNotice.setNoticeType("1");
         List<SysNotice> sysNotices = sysNoticeService.selectNoticeList(sysNotice);
         mmap.put("sysNotices",sysNotices);
-
-        return "main_v1";
+        if(CollectionUtil.isNotEmpty(sysNotices)&&sysNotices.size()>4){
+            mmap.put("sysNoticeList",sysNotices.subList(0,4));
+        }else {
+            mmap.put("sysNoticeList",sysNotices);
+        }
+        mmap.put("sysNoticeListSize",sysNotices.size());
+        HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
+        historicTaskInstanceDTO.setPageNum(1);
+        historicTaskInstanceDTO.setPageSize(4);
+        historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
+        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
+        mmap.put("historicTaskInstanceList",historicTaskInstance.getPagedRecords());
+        mmap.put("historicTaskInstanceSize",historicTaskInstance.getPagedRecords().size());
+        return "main";
     }
 
     // 锁定屏幕

@@ -7,6 +7,7 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.file.FileUtils;
 import com.snow.framework.storage.StorageService;
 import com.snow.system.domain.SysFile;
+import com.snow.system.service.impl.SysFileServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.file.Path;
 
 /**
  * 通用请求处理
@@ -34,33 +36,18 @@ public class CommonController
     @Autowired
     private StorageService storageService;
 
+
     /**
      * 通用下载请求
      * 
-     * @param fileName 文件名称
-     * @param delete 是否删除
+     * @param fileKey 文件名称
      */
     @GetMapping("common/download")
-    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
+    public void fileDownload(String fileKey ,HttpServletResponse response, HttpServletRequest request)
     {
         try
         {
-            if (!FileUtils.isValidFilename(fileName))
-            {
-                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
-            }
-            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
-            String filePath = Global.getDownloadPath() + fileName;
-
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader("Content-Disposition",
-                    "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, realFileName));
-            FileUtils.writeBytes(filePath, response.getOutputStream());
-            if (delete)
-            {
-                FileUtils.deleteFile(filePath);
-            }
+           storageService.load(fileKey);
         }
         catch (Exception e)
         {
