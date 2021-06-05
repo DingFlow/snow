@@ -2,13 +2,13 @@
 spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
+        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://localhost:3306/snow?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
-                username: root
-                password: root
+                url: jdbc:sqlserver://localhost:1433;SelectMethod=cursor;DatabaseName=snow
+                username: sa
+                password: Aa123456
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -31,7 +31,7 @@ spring:
             # 配置一个连接在池中最大生存的时间，单位是毫秒
             maxEvictableIdleTimeMillis: 900000
             # 配置检测连接是否有效
-            validationQuery: SELECT 1 FROM DUAL
+            validationQuery: SELECT 1
             testWhileIdle: true
             testOnBorrow: false
             testOnReturn: false

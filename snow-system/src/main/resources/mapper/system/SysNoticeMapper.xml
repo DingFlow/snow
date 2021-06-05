@@ -30,11 +30,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectNewNoticeByNoticeType" parameterType="String" resultMap="SysNoticeResult">
-        <include refid="selectNoticeVo"/>
+       select top 1 *
+		from sys_notice
         where status =0 and notice_type = #{noticeType}
 
         order by create_time desc
-        limit 0,1
+
 
     </select>
 
@@ -75,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="blackboardId != null and blackboardId != ''">#{blackboardId},</if>
- 			sysdate()
+ 			GETDATE()
 		)
     </insert>
 	 
@@ -88,7 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null and status != ''">status = #{status}, </if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
             <if test="blackboardId != null and blackboardId != ''">blackboard_id=#{blackboardId},</if>
- 			update_time = sysdate()
+ 			update_time = GETDATE()
         </set>
         where notice_id = #{noticeId}
     </update>

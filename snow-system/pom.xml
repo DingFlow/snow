@@ -27,6 +27,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
         </dependency>
+
+        <!-- SqlServer驱动包 -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>7.4.1.jre8</version>
+        </dependency>
     </dependencies>
 
 </project>
