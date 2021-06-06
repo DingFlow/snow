@@ -36,7 +36,10 @@
 26. **表单设计器：DingFlow可在线设计表单**
 ## 在线体验
   暂未开放数据库，有需要的可以加群，项目可用于搭建流程平台商业化
-- QQ群: **577813338**
+  **地址：http://dingflow.xyz:9527/login**
+- QQ群:   
+-  **技术一群：577813338**<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=HBdPBdyf"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Flop Mine" title="DingFlow"></a>
+-  **技术二群：473942262**
 - 超级管理员： admin/admin123  
 - 普通管理员： yuanyb/admin123
 - 钉钉管理员： ry/admin123    
@@ -55,7 +58,7 @@
             <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/a5b69fa27ba147a89efc229d90e1d27e.png"/></td>
     </tr>
     <tr>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/694936c6e1b34af4a9c2525bf25156ba.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/2bfbd71d08604780aae173307e7446df.png"/></td>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/102a95b10c5b4094ae9eea060ed3d0c4.png"/></td>
     </tr>
     <tr>
@@ -153,10 +156,9 @@ V1.6 2021-05-17
    
 ## 未来规划
  - 1.0 表单设计器与流程结合
- - 2.0 系统端可发起钉钉流程
- - 3.0 钉钉同步数据失败后，手工重试
- - 4.0 记录消息通知轨迹
- - 5.0 钉钉机器人集成
+ - 2.0 接入企业微信
+ - 3.0 记录消息通知轨迹
+ - 4.0 丰富业务流程
  
 ## 交流群
  - QQ群: 577813338
@@ -172,7 +174,7 @@ V1.6 2021-05-17
 ## 友情链接
    - 博客：http://snowblog.shop.csj361.com
    - 若依：http://ruoyi.vip 
-   - 在线文档：http://47.114.7.28:3000
+   - 在线文档：http://dingflow.xyz:3000
    
 ## 最后，特别感谢若依系统提供框架
     
