@@ -167,15 +167,15 @@ public class SysIndexController extends BaseController
         sysNotice.setNoticeType("1");
         List<SysNotice> sysNotices = sysNoticeService.selectNoticeList(sysNotice);
         mmap.put("sysNotices",sysNotices);
-        if(CollectionUtil.isNotEmpty(sysNotices)&&sysNotices.size()>4){
-            mmap.put("sysNoticeList",sysNotices.subList(0,4));
+        if(CollectionUtil.isNotEmpty(sysNotices)&&sysNotices.size()>5){
+            mmap.put("sysNoticeList",sysNotices.subList(0,5));
         }else {
             mmap.put("sysNoticeList",sysNotices);
         }
         mmap.put("sysNoticeListSize",sysNotices.size());
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setPageNum(1);
-        historicTaskInstanceDTO.setPageSize(4);
+        historicTaskInstanceDTO.setPageSize(5);
         historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
         PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
         mmap.put("historicTaskInstanceList",historicTaskInstance.getPagedRecords());
