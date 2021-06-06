@@ -14,7 +14,7 @@ snow:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 80
+  port: 9527
   servlet:
     # 应用的访问路径
     context-path: /
@@ -165,7 +165,7 @@ flowable:
 #上传文件的方式
 sys:
    file:
-     active: local
+     active: aliyun
 
 minidao:
   base-package: org.jeecg.modules.jmreport.desreport.dao*
