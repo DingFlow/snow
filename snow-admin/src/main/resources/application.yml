@@ -165,7 +165,7 @@ flowable:
 #上传文件的方式
 sys:
    file:
-     active: aliyun
+     active: local
 
 minidao:
   base-package: org.jeecg.modules.jmreport.desreport.dao*
