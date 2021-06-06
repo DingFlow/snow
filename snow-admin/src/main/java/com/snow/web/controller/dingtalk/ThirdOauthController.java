@@ -1,5 +1,6 @@
 package com.snow.web.controller.dingtalk;
 
+import com.snow.common.constant.Constants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.ServletUtils;
@@ -15,6 +16,7 @@ import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
+import me.zhyd.oauth.request.AuthAlipayRequest;
 import me.zhyd.oauth.request.AuthDingTalkRequest;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.request.AuthWeChatEnterpriseRequest;
@@ -54,19 +56,24 @@ public class ThirdOauthController extends BaseController {
      * @param source
      * @throws IOException
      */
-    @GetMapping("/toDingPage/{source}")
+    @GetMapping("/toPage/{source}")
     @ResponseBody
     public void renderAuth(@PathVariable("source") String source) throws IOException
     {
         AuthRequest authRequest =null;
                 switch (source){
-            case "dingtalk":
-                authRequest= getDingTalkAuthRequest();
-                break;
-            case "weChart":
-                authRequest=getWeChatAuthRequest();
-                break;
-        }
+                   case "dingtalk":
+                       authRequest= getDingTalkAuthRequest();
+                       break;
+
+                   case "weChart":
+                       authRequest=getWeChatAuthRequest();
+                       break;
+
+                   case "alipay":
+                        authRequest = getAlipayAuthRequest();
+                        break;
+                }
 
         String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
         ServletUtils.getResponse().sendRedirect(authorizeUrl);
@@ -97,6 +104,18 @@ public class ThirdOauthController extends BaseController {
     }
 
 
+    /**
+     * 支付宝登录
+     * @param callback
+     * @param request
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @GetMapping("/alipayLogin")
+    public Object alipayLogin(AuthCallback callback, HttpServletRequest request)
+    {
+        return thirdLogin("alipay",getAlipayAuthRequest(),callback);
+    }
 
     /**
      * 检查是否授权
@@ -144,11 +163,26 @@ public class ThirdOauthController extends BaseController {
      * @return
      */
     private AuthRequest getWeChatAuthRequest() {
+        String clientId= iSysConfigService.selectConfigByKey("wechart.login.clientId");
+        String appSecret= iSysConfigService.selectConfigByKey("wechart.login.appSecret");
+        String redirectUri= iSysConfigService.selectConfigByKey("wechart.login.redirectUri");
+        String agentId= iSysConfigService.selectConfigByKey("wechart.login.agentId");
         return new AuthWeChatEnterpriseRequest(AuthConfig.builder()
-                .clientId("ww2354bcd694497bd8")
-                .clientSecret("EzODWvC9zdPJJS4KnCNVENB3UhSiYCbmr9UrFpOM9dQ")
-                .redirectUri("http://workflow.vaiwan.com/third/oauth/weChartLogin")
-                .agentId("1000002")
+                .clientId(clientId)
+                .clientSecret(appSecret)
+                .redirectUri(redirectUri)
+                .agentId(agentId)
+                .build());
+    }
+
+    private AuthRequest getAlipayAuthRequest() {
+        String appId= iSysConfigService.selectConfigByKey("alipay.login.appId");
+        String redirectUri= iSysConfigService.selectConfigByKey("alipay.login.redirectUri");
+        return new AuthAlipayRequest(AuthConfig.builder()
+                .clientId(appId)
+                .clientSecret(Constants.ALIPAY_RSA_PRIVATE_KEY)
+                .alipayPublicKey(Constants.ALIPAY_PUBLIC_KEY)
+                .redirectUri(redirectUri)
                 .build());
     }
 
