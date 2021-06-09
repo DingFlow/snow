@@ -6,21 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>DingFlow | 借助钉钉，致力于流程，让流程更简单</title>
-
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/animate.css}" rel="stylesheet"/>
     <link th:href="@{/css/style.css}" rel="stylesheet"/>
     <link th:href="@{/css/skins.css}" rel="stylesheet"/>
     <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
 </head>
-
-<body class="top-navigation">
-
-    <div id="wrapper">
-        <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom white-bg">
-        <nav class="navbar navbar-static-top" role="navigation">
+<body class="top-navigation" style="overflow: hidden">
+    <div id="wrapper row border-bottom white-bg">
+        <nav class="navbar-default navbar-static-top" role="navigation">
             <div class="navbar-header">
                 <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
                     <i class="fa fa-reorder"></i>
@@ -28,27 +24,16 @@
                 <a href="#" class="navbar-brand">DingFlow</a>
             </div>
             <div class="navbar-collapse collapse" id="navbar">
-                <ul class="nav navbar-nav" >
-                    <li>
-                        <div class="user-panel">
-                            <a class="menuItem noactive" title="个人中心" th:href="@{/system/user/profile}">
-                                <div class="hide" th:text="个人中心"></div>
-                                <div class="pull-left image">
-                                    <img th:src="(${user.avatar} == '') ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="img-circle" alt="User Image">
-                                </div>
-                            </a>
-                            <div class="pull-left info">
-                                <p>[[${user.loginName}]]</p>
-                                <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
-                                <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i> 注销</a>
-                            </div>
-                        </div>
-                    </li>
+            <!-- 顶部栏 -->
+            <div id="navMenu">
+                <!-- <ul class="nav navbar-toolbar nav-tabs navbar-left ">-->
+                <!--<ul class="nav navbar-toolbar nav-tabs navbar-left hidden-xs">-->
+                <ul class="nav navbar-nav navbar-top-links  navbar-left " >
                     <li class="active">
                         <a aria-expanded="false" role="button" th:href="@{/front/index}"> 返回官网 </a>
                     </li>
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button"  data-toggle="dropdown" th:class="@{${menu.url != '' && menu.url != '#'} ? ${menu.target}} dropdown-toggle" th:href="@{${menu.url == ''} ? |#| : ${menu.url}}">
+                    <li class="dropdown" th:each="menu : ${menus}">
+                        <a aria-expanded="false" role="button"  data-toggle="dropdown" th:class="@{${menu.url != '' && menu.url != '#'} ? ${menu.target}}" th:href="@{${menu.url == ''} ? |#| : ${menu.url}}">
                             <i class="fa fa-bar-chart-o" th:class="${menu.icon}"></i>
                             <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
                             <span th:class="${menu.url == '' || menu.url == '#'} ? |fa arrow|"></span>
@@ -71,466 +56,71 @@
                         </ul>
                     </li>
                 </ul>
-             <!--   <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a aria-expanded="false" role="button" th:href="@{/front/index}"> 返回官网 </a>
-                    </li>
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 菜单 <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 菜单 <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                        </ul>
-                    </li>
+                <!-- 右侧栏 -->
+                <ul class="nav navbar-top-links navbar-right welcome-message">
+                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="#" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>
+                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="#" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
 
-
-                </ul>-->
-                <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="login.html">
-                            <i class="fa fa-sign-out"></i> 注销
+                    <li class="dropdown user-menu">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+                            <img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="user-image">
+                            <span class="hidden-xs">[[${#strings.defaultString(user.userName, '-')}]]</span>
                         </a>
+                        <ul class="dropdown-menu">
+                            <li class="mt5">
+                                <a th:href="@{/system/user/profile}" class="menuItem">
+                                    <i class="fa fa-user"></i> 个人中心</a>
+                            </li>
+                            <li>
+                                <a onclick="resetPwd()">
+                                    <i class="fa fa-key"></i> 修改密码</a>
+                            </li>
+                            <li>
+                                <a onclick="switchSkin()">
+                                    <i class="fa fa-dashboard"></i> 切换主题</a>
+                            </li>
+                            <li>
+                                <a onclick="toggleMenu()">
+                                    <i class="fa fa-toggle-off"></i> 左侧菜单</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a th:href="@{logout}">
+                                    <i class="fa fa-sign-out"></i> 退出登录</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
+            </div>
         </nav>
-        </div>
-        <div class="wrapper wrapper-content">
-            <div class="container">
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <span class="label label-success pull-right">月</span>
-                            <h5>浏览量</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <h1 class="no-margins">386,200</h1>
-                            <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
-                            <small>总计浏览量</small>
-                        </div>
+            <!--标签页-->
+            <div class="row content-tabs">
+                <button class="roll-nav roll-left tabLeft">
+                    <i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs menuTabs">
+                    <div class="page-tabs-content">
+                        <a href="javascript:;" class="active menuTab" th:data-id="@{/system/main}">首页</a>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <span class="label label-info pull-right">年</span>
-                            <h5>订单</h5>
-                        </div>
-                        <div class="ibox-content">
-                                    <h1 class="no-margins">80,800</h1>
-                                    <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i></div>
-                                    <small>新订单</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <span class="label label-primary pull-right">今天</span>
-                            <h5>访问人次</h5>
-                        </div>
-                        <div class="ibox-content">
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h1 class="no-margins">$ 406,420</h1>
-                                    <div class="font-bold text-navy">44% <i class="fa fa-level-up"></i> <small>增长较快</small></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h1 class="no-margins">206,120</h1>
-                                    <div class="font-bold text-navy">22% <i class="fa fa-level-up"></i> <small>增长较慢</small></div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <h5>月收入</h5>
-                            <div class="ibox-tools">
-                                <span class="label label-primary">2015.02 更新</span>
-                            </div>
-                        </div>
-                        <div class="ibox-content no-padding">
-                            <div class="flot-chart m-t-lg" style="height: 55px;">
-                                <div class="flot-chart-content" id="flot-chart1"></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-content">
-                                <div>
-                                        <span class="pull-right text-right">
-                                        <small>在过去的一个月销售的平均值: <strong>山东</strong></small>
-                                            <br/>
-                                            所有销售: 162,862
-                                        </span>
-                                    <h3 class="font-bold no-margins">
-                                        半年收入利润率
-                                    </h3>
-                                    <small>市场部.</small>
-                                </div>
-
-                                <div class="m-t-sm">
-
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div>
-                                            <canvas id="lineChart" height="114"></canvas>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <ul class="stat-list m-t-lg">
-                                                <li>
-                                                    <h2 class="no-margins">2,346</h2>
-                                                    <small>总订单</small>
-                                                    <div class="progress progress-mini">
-                                                        <div class="progress-bar" style="width: 48%;"></div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <h2 class="no-margins ">4,422</h2>
-                                                    <small>最近一个月订单</small>
-                                                    <div class="progress progress-mini">
-                                                        <div class="progress-bar" style="width: 60%;"></div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="m-t-md">
-                                    <small class="pull-right">
-                                        <i class="fa fa-clock-o"> </i>
-                                        2017.12.12 更新
-                                    </small>
-                                    <small>
-                                        <strong>销售分析:</strong> 这个价值随着时间的推移而改变，上个月达到5万美元以上。
-                                    </small>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-title">
-                                <span class="label label-warning pull-right">数据发生变化</span>
-                                <h5>用户活动</h5>
-                            </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">访问页面 / 浏览量</small>
-                                        <h4>236 321.80</h4>
-                                    </div>
-
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">% 新访客</small>
-                                        <h4>46.11%</h4>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">最后一周</small>
-                                        <h4>432.021</h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">访问页面 / 浏览量</small>
-                                        <h4>643 321.10</h4>
-                                    </div>
-
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">% 新访客</small>
-                                        <h4>92.43%</h4>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">最后一周</small>
-                                        <h4>564.554</h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">访问页面 / 浏览量</small>
-                                        <h4>436 547.20</h4>
-                                    </div>
-
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">% 新访客</small>
-                                        <h4>150.23%</h4>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <small class="stats-label">最后一周</small>
-                                        <h4>124.990</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-lg-12">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-title">
-                                <h5>自定义响应表格 </h5>
-                                <div class="ibox-tools">
-                                    <a class="collapse-link">
-                                        <i class="fa fa-chevron-up"></i>
-                                    </a>
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <i class="fa fa-wrench"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-user">
-                                        <li><a href="#">配置选项 1</a>
-                                        </li>
-                                        <li><a href="#">配置选项 2</a>
-                                        </li>
-                                    </ul>
-                                    <a class="close-link">
-                                        <i class="fa fa-times"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="ibox-content">
-                                <div class="row">
-                                    <div class="col-sm-9 m-b-xs">
-                                        <div data-toggle="buttons" class="btn-group">
-                                            <label class="btn btn-sm btn-white"> <input type="radio" id="option1" name="options"> 天 </label>
-                                            <label class="btn btn-sm btn-white active"> <input type="radio" id="option2" name="options"> 周 </label>
-                                            <label class="btn btn-sm btn-white"> <input type="radio" id="option3" name="options"> 月 </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="input-group"><input type="text" placeholder="搜索" class="input-sm form-control"> <span class="input-group-btn">
-                                        <button type="button" class="btn btn-sm btn-primary"> 搜索</button> </span></div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr>
-
-                                            <th>#</th>
-                                            <th>项目 </th>
-                                            <th>名称 </th>
-                                            <th>电话 </th>
-                                            <th>公司 </th>
-                                            <th>完成度 </th>
-                                            <th>任务</th>
-                                            <th>时间</th>
-                                            <th>行动</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">0.52/1.561</span></td>
-                                            <td>20%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">6,9</span></td>
-                                            <td>40%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">3,1</span></td>
-                                            <td>75%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">4,9</span></td>
-                                            <td>18%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">6,9</span></td>
-                                            <td>40%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">0.52/1.561</span></td>
-                                            <td>20%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">4,9</span></td>
-                                            <td>18%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">0.52/1.561</span></td>
-                                            <td>20%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">6,9</span></td>
-                                            <td>40%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">3,1</span></td>
-                                            <td>75%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">4,9</span></td>
-                                            <td>18%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">6,9</span></td>
-                                            <td>40%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">0.52/1.561</span></td>
-                                            <td>20%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>王者农药</td>
-                                            <td>天美工作室</td>
-                                            <td>(86) 1234 5678</td>
-                                            <td>企鹅公司</td>
-                                            <td><span class="pie">4,9</span></td>
-                                            <td>18%</td>
-                                            <td>2017.11.11</td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+                </nav>
+                <button class="roll-nav roll-right tabRight">
+                    <i class="fa fa-forward"></i>
+                </button>
+                <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
             </div>
 
-        </div>
-        <div class="footer">
-            <div class="pull-right">
-                <strong>108wan.Com</strong>
-            </div>
-            <div>
-                <strong>Copyright</strong> 网豫游戏后台UI框架 &copy; 2017-2018
-            </div>
-        </div>
+            <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
 
-        </div>
-        </div>
+            <div class="row mainContent" id="content-main" th:style="${#bools.isFalse(ignoreFooter)} ? |height: calc(100% - 91px)|">
+                <iframe class="RuoYi_iframe" name="iframe0" width="98%" height="98%" th:data-id="@{/system/main}"
+                        th:src="@{/system/main}" frameborder="0" seamless></iframe>
+            </div>
 
+            <div th:if="${ignoreFooter}" class="footer">
+                <div class="pull-right">© [[${copyrightYear}]] QJD Copyright </div>
+            </div>
+        </div>
 
 
     <!-- 全局js -->
@@ -555,80 +145,131 @@
     <!-- ChartJS-->
     <script th:src="@{/js/echarts.min.js}"></script>
 
-    <script>
-        $(document).ready(function() {
+        <script th:inline="javascript">
+            window.history.forward(1);
+            var ctx = [[@{/}]];
+
+            // 皮肤缓存
+            var skin = storage.get("skin");
+            // history（表示去掉地址的#）否则地址以"#"形式展示
+            var mode = "history";
+            // 历史访问路径缓存
+            var historyPath = storage.get("historyPath");
+            // 是否页签与菜单联动
+            var isLinkage = true;
+
+            // 本地主题优先，未设置取系统配置
+            if($.common.isNotEmpty(skin)){
+                $("body").addClass(skin.split('|')[0]);
+                $("body").addClass(skin.split('|')[1]);
+            } else {
+                $("body").addClass([[${sideTheme}]]);
+                $("body").addClass([[${skinName}]]);
+            }
+
+            /* 用户管理-重置密码 */
+            function resetPwd() {
+                var url = ctx + 'system/user/profile/resetPwd';
+                $.modal.open("重置密码", url, '770', '380');
+            }
 
 
-            var d1 = [[1262304000000, 6], [1264982400000, 3057], [1267401600000, 20434], [1270080000000, 31982], [1272672000000, 26602], [1275350400000, 27826], [1277942400000, 24302], [1280620800000, 24237], [1283299200000, 21004], [1285891200000, 12144], [1288569600000, 10577], [1291161600000, 10295]];
-            var d2 = [[1262304000000, 5], [1264982400000, 200], [1267401600000, 1605], [1270080000000, 6129], [1272672000000, 11643], [1275350400000, 19055], [1277942400000, 30062], [1280620800000, 39197], [1283299200000, 37000], [1285891200000, 27000], [1288569600000, 21000], [1291161600000, 17000]];
+            /** 刷新时访问路径页签 */
+            function applyPath(url) {
+                $('a[href$="' + decodeURI(url) + '"]').click();
+                if (!$('a[href$="' + url + '"]').hasClass("noactive")) {
+                    $('a[href$="' + url + '"]').parent("li").addClass("selected").parents("li").addClass("active").end().parents("ul").addClass("in");
+                }
+            }
 
-            var data1 = [
-                { label: "Data 1", data: d1, color: '#17a084'},
-                { label: "Data 2", data: d2, color: '#127e68' }
-            ];
-            $.plot($("#flot-chart1"), data1, {
-                xaxis: {
-                    tickDecimals: 0
-                },
-                series: {
-                    lines: {
-                        show: true,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 1
-                            }, {
-                                opacity: 1
-                            }]
-                        },
-                    },
-                    points: {
-                        width: 0.1,
-                        show: false
-                    },
-                },
-                grid: {
-                    show: false,
-                    borderWidth: 0
-                },
-                legend: {
-                    show: false,
+            function mailDetail(id) {
+                layer.open({
+                    type : 2,
+                    shadeClose : true,
+                    title : "查阅邮件",
+                    area : ["70%", "80%"],
+                    content : ["/system/email/mailDetail/"+id, 'yes']
+                })
+            }
+
+            function messageDetail(url){
+                layer.open({
+                    type : 2,
+                    shadeClose : true,
+                    title : "消息详情",
+                    area : ["70%", "80%"],
+                    content : [url, 'yes']
+                })
+
+            }
+
+            function mailDetailAll() {
+                var detailUrl="/system/email/mailbox/6";
+                createNoPanelMenuItem( detailUrl,"在线邮件");
+            }
+
+            function messageDetailAll(){
+                var detailUrl="/system/messageCenter";
+                createNoPanelMenuItem( detailUrl,"消息中心");
+            }
+
+            $(function() {
+                if($.common.equals("history", mode) && window.performance.navigation.type == 1) {
+                    var url = storage.get('publicPath');
+                    if ($.common.isNotEmpty(url)) {
+                        applyPath(url);
+                    }
+                } else {
+                    var hash = location.hash;
+                    if ($.common.isNotEmpty(hash)) {
+                        var url = hash.substring(1, hash.length);
+                        applyPath(url);
+                    }else {
+                        if($.common.equals("history", mode)) {
+                            storage.set('publicPath', "");
+                        }
+                    }
+                }
+                /* 初始密码提示 */
+                if([[${isDefaultModifyPwd}]]) {
+                    layer.confirm("您的密码还是初始密码，请修改密码！", {
+                        icon: 0,
+                        title: "安全提示",
+                        btn: ['确认'	, '取消'],
+                        offset: ['30%']
+                    }, function (index) {
+                        resetPwd();
+                        layer.close(index);
+                    });
+                }
+
+                /* 过期密码提示 */
+                if([[${isPasswordExpired}]]) {
+                    layer.confirm("您的密码已过期，请尽快修改密码！", {
+                        icon: 0,
+                        title: "安全提示",
+                        btn: ['确认'	, '取消'],
+                        offset: ['30%']
+                    }, function (index) {
+                        resetPwd();
+                        layer.close(index);
+                    });
+                }
+                $("[data-toggle='tooltip']").tooltip();
+
+                if([[${isNewNotice}]]){
+                    /*公告停留半分钟*/
+                    layer.open({
+                        type : 2,
+                        shadeClose : true,
+                        time:30000,
+                        title : "公告",
+                        area : ["70%", "80%"],
+                        content : ["/system/notice/newNotice/"+1, 'yes']
+                    })
                 }
             });
-
-            var lineData = {
-                labels: ["一月", "二月", "三月", "四月", "五月", "六月", "七月"],
-                datasets: [
-                    {
-                        label: "示例数据集1",
-                        backgroundColor: "rgba(26,179,148,0.5)",
-                        borderColor: "rgba(26,179,148,0.7)",
-                        pointBackgroundColor: "rgba(26,179,148,1)",
-                        pointBorderColor: "#fff",
-                        data: [48, 48, 60, 39, 56, 37, 30]
-                    },
-                    {
-                        label: "示例数据集2",
-                        backgroundColor: "rgba(220,220,220,0.5)",
-                        borderColor: "rgba(220,220,220,1)",
-                        pointBackgroundColor: "rgba(220,220,220,1)",
-                        pointBorderColor: "#fff",
-                        data: [65, 59, 40, 51, 36, 25, 40]
-                    }
-                ]
-            };
-
-            var lineOptions = {
-                responsive: true
-            };
-
-
-            var ctx = document.getElementById("lineChart").getContext("2d");
-            new Chart(ctx, {type: 'line', data: lineData, options:lineOptions});
-
-        });
-    </script>
-
+        </script>
 </body>
 
 </html>
