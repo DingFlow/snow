@@ -28,7 +28,50 @@
                 <a href="#" class="navbar-brand">DingFlow</a>
             </div>
             <div class="navbar-collapse collapse" id="navbar">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav" >
+                    <li>
+                        <div class="user-panel">
+                            <a class="menuItem noactive" title="个人中心" th:href="@{/system/user/profile}">
+                                <div class="hide" th:text="个人中心"></div>
+                                <div class="pull-left image">
+                                    <img th:src="(${user.avatar} == '') ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="img-circle" alt="User Image">
+                                </div>
+                            </a>
+                            <div class="pull-left info">
+                                <p>[[${user.loginName}]]</p>
+                                <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+                                <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i> 注销</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <a aria-expanded="false" role="button" th:href="@{/front/index}"> 返回官网 </a>
+                    </li>
+                    <li class="dropdown">
+                        <a aria-expanded="false" role="button"  data-toggle="dropdown" th:class="@{${menu.url != '' && menu.url != '#'} ? ${menu.target}} dropdown-toggle" th:href="@{${menu.url == ''} ? |#| : ${menu.url}}">
+                            <i class="fa fa-bar-chart-o" th:class="${menu.icon}"></i>
+                            <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
+                            <span th:class="${menu.url == '' || menu.url == '#'} ? |fa arrow|"></span>
+                        </a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li><a href="">菜单</a></li>
+                            <li th:each="cmenu : ${menu.children}">
+                                <a th:if="${#lists.isEmpty(cmenu.children)}" th:class="${cmenu.target == ''} ? |menuItem| : ${cmenu.target}" th:utext="${cmenu.menuName}" th:href="@{${cmenu.url}}">二级菜单</a>
+                                <a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">[[${cmenu.menuName}]]<span class="fa arrow"></span></a>
+                                <ul th:if="${not #lists.isEmpty(cmenu.children)}" class="nav nav-third-level">
+                                    <li th:each="emenu : ${cmenu.children}">
+                                        <a th:if="${#lists.isEmpty(emenu.children)}" th:class="${emenu.target == ''} ? |menuItem| : ${emenu.target}" th:text="${emenu.menuName}" th:href="@{${emenu.url}}">三级菜单</a>
+                                        <a th:if="${not #lists.isEmpty(emenu.children)}" href="#">[[${emenu.menuName}]]<span class="fa arrow"></span></a>
+                                        <ul th:if="${not #lists.isEmpty(emenu.children)}" class="nav nav-four-level">
+                                            <li th:each="fmenu : ${emenu.children}"><a th:if="${#lists.isEmpty(fmenu.children)}" th:class="${fmenu.target == ''} ? |menuItem| : ${fmenu.target}" th:text="${fmenu.menuName}" th:href="@{${fmenu.url}}">四级菜单</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+             <!--   <ul class="nav navbar-nav">
                     <li class="active">
                         <a aria-expanded="false" role="button" th:href="@{/front/index}"> 返回官网 </a>
                     </li>
@@ -50,26 +93,9 @@
                             <li><a href="">菜单</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 菜单 <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 菜单 <span class="caret"></span></a>
-                        <ul role="menu" class="dropdown-menu">
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                            <li><a href="">菜单</a></li>
-                        </ul>
-                    </li>
 
-                </ul>
+
+                </ul>-->
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
                         <a href="login.html">

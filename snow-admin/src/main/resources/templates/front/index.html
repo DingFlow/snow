@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,7 +38,8 @@
                         <li><a class="page-scroll" href="#testimonials">获奖</a></li>
                         <li><a class="page-scroll" href="#pricing">价格</a></li>
                         <li><a class="page-scroll" href="#contact">联系</a></li>
-                        <li><a class="page-scroll" th:href="@{/front/login}">登录</a></li>
+                        <li shiro:guest=""><a class="page-scroll" th:href="@{/front/login}">登录</a></li>
+                        <li shiro:user=""><a class="page-scroll" th:href="@{/front/main}">我的主页</a></li>
                     </ul>
                 </div>
             </div>

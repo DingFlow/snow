@@ -3,6 +3,11 @@ package com.snow.web.controller.front;
 import com.snow.common.config.Global;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.utils.ServletUtils;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysMenu;
+import com.snow.system.domain.SysUser;
+import com.snow.system.service.impl.SysMenuServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -21,7 +27,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/front")
 public class FrontIndexController extends BaseController {
 
+    @Autowired
+    private SysMenuServiceImpl sysMenuService;
+
     private String prefix = "/front";
+
+
     // 前台首页
     @GetMapping("/index")
     public String index(ModelMap mmap){
@@ -56,9 +67,14 @@ public class FrontIndexController extends BaseController {
      */
     @GetMapping("/main")
     public String main(ModelMap mmap){
-
+        SysUser sysUser = ShiroUtils.getSysUser();
+        mmap.put("user", sysUser);
         mmap.put("version", Global.getVersion());
         mmap.put("copyrightYear", Global.getCopyrightYear());
+
+        // 根据用户id取出菜单
+        List<SysMenu> menus = sysMenuService.selectMenusByUser(sysUser);
+        mmap.put("menus", menus);
         return prefix + "/main";
     }
 }
