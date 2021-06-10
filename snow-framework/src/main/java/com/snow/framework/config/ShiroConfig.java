@@ -291,13 +291,12 @@ public class ShiroConfig
         //filterChainDefinitionMap.put("/**/*.js.map", "anon");
        // filterChainDefinitionMap.put("/**/*.css.map", "anon");
 
-        filterChainDefinitionMap.put("/front/**", "anon");
         filterChainDefinitionMap.put("/dingTalk/dingFlowRobot", "anon");
         // 退出 logout地址，shiro去清除session
         filterChainDefinitionMap.put("/logout", "logout");
-        // 不需要拦截的访问
+        // 不需要拦截的访问 -需要过 captchaValidate拦截
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
-
+        filterChainDefinitionMap.put("/front/index", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
         // 系统权限列表
