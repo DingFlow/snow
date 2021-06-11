@@ -22,11 +22,10 @@
 		<result property="updateTime"     column="update_time"    />
 		<result property="updateBy"       column="update_by"      />
 		<result property="remark"         column="remark"         />
-		<result property="menuSource"     column="menu_source" />
 	</resultMap>
 
 	<sql id="selectMenuVo">
-        select menu_id, menu_name, parent_id, order_num, url, target, menu_type, visible,is_refresh, ifnull(perms,'') as perms, icon, create_by, create_time,menu_source
+        select menu_id, menu_name, parent_id, order_num, url, target, menu_type, visible,is_refresh, ifnull(perms,'') as perms, icon, create_by, create_time
 		from sys_menu
     </sql>
 
@@ -143,7 +142,6 @@
 			<if test="icon !=null and icon != ''">icon = #{icon},</if>
 			<if test="remark != null">remark = #{remark},</if>
 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-			<if test="menuSource != null">menu_source=#{menuSource},</if>
 			update_time = sysdate()
 		</set>
 		where menu_id = #{menuId}
@@ -164,7 +162,6 @@
 		<if test="icon != null and icon != ''">icon,</if>
 		<if test="remark != null and remark != ''">remark,</if>
 		<if test="createBy != null and createBy != ''">create_by,</if>
-		<if test="menuSource != null">menu_source,</if>
 		create_time
 		)values(
 		<if test="menuId != null and menuId != 0">#{menuId},</if>
@@ -180,7 +177,6 @@
 		<if test="icon != null and icon != ''">#{icon},</if>
 		<if test="remark != null and remark != ''">#{remark},</if>
 		<if test="createBy != null and createBy != ''">#{createBy},</if>
-		<if test="menuSource != null">#{menuSource},</if>
 		sysdate()
 		)
 	</insert>

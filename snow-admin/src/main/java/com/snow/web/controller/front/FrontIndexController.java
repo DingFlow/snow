@@ -77,4 +77,18 @@ public class FrontIndexController extends BaseController {
         mmap.put("menus", menus);
         return prefix + "/main";
     }
+
+    /**
+     * 前端home主页
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/home")
+    public String home(ModelMap mmap){
+        SysUser sysUser = ShiroUtils.getSysUser();
+        mmap.put("user", sysUser);
+        mmap.put("version", Global.getVersion());
+        mmap.put("copyrightYear", Global.getCopyrightYear());
+        return prefix + "/home";
+    }
 }

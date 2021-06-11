@@ -52,10 +52,6 @@ public class SysMenu extends BaseEntity
     /** 菜单图标 */
     private String icon;
 
-    /**
-     * 菜单来源0--后端，1--前端
-     */
-    private Integer menuSource;
 
     /** 子菜单 */
     private List<SysMenu> children = new ArrayList<SysMenu>();
@@ -195,13 +191,6 @@ public class SysMenu extends BaseEntity
     {
         this.children = children;
     }
-    public Integer getMenuSource() {
-        return menuSource;
-    }
-
-    public void setMenuSource(Integer menuSource) {
-        this.menuSource = menuSource;
-    }
 
     @Override
     public String toString() {
@@ -220,7 +209,7 @@ public class SysMenu extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
-            .append("remark", getRemark()).append("menuSource", getMenuSource())
+            .append("remark", getRemark())
             .toString();
     }
 }
