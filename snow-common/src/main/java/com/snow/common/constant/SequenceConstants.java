@@ -23,6 +23,11 @@ public class SequenceConstants {
     public static final String OA_RESIGN_SEQUENCE="OA_LZ";
 
     /**
+     * FAQ单
+     */
+    public static final String OA_FAQ_SEQUENCE="OA_FAQ";
+
+    /**
      * 邮件编码
      */
     public static final String OA_EMAIL_SEQUENCE="OA_YJ";

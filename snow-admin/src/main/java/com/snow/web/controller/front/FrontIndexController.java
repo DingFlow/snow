@@ -91,4 +91,5 @@ public class FrontIndexController extends BaseController {
         mmap.put("copyrightYear", Global.getCopyrightYear());
         return prefix + "/home";
     }
+
 }

@@ -231,8 +231,9 @@ public class SysUserController extends BaseController
         SysUser user = userService.selectUserById(userId);
         // 获取用户所属的角色列表
         List<SysRole> roles = roleService.selectRolesByUserId(userId);
+        List<SysRole> newRoles = roles.stream().filter(t -> t.getRoleType() == 1).collect(Collectors.toList());
         mmap.put("user", user);
-        mmap.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        mmap.put("roles", SysUser.isAdmin(userId) ? newRoles : newRoles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         return prefix + "/authRole";
     }
 

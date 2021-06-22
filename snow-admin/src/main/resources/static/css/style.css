@@ -4919,6 +4919,13 @@ dd.project-people {
     display: block;
 }
 
+.faq-question-status {
+    font-size: 12px;
+    font-weight: 500;
+    color: #5bc0de;
+    display: block;
+}
+
 .faq-question:hover {
     color: #179d82;
 }

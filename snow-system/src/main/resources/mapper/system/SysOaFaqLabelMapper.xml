@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaFaqLabelMapper">
+    
+    <resultMap type="SysOaFaqLabel" id="SysOaFaqLabelResult">
+        <result property="id"    column="id"    />
+        <result property="faqNo"    column="faq_no"    />
+        <result property="faqLabel"    column="faq_label"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysOaFaqLabelVo">
+        select id,faq_no, faq_label, create_time, create_by, update_by, update_time, is_delete from sys_oa_faq_label
+    </sql>
+
+    <select id="selectSysOaFaqLabelList" parameterType="SysOaFaqLabel" resultMap="SysOaFaqLabelResult">
+        <include refid="selectSysOaFaqLabelVo"/>
+        <where>
+             is_delete=0
+            <if test="faqLabel != null  and faqLabel != ''"> and faq_label = #{faqLabel}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+
+    <select id="selectSysOaFaqLabelById" parameterType="integer" resultMap="SysOaFaqLabelResult">
+        <include refid="selectSysOaFaqLabelVo"/>
+        where id = #{id} and is_delete=0
+    </select>
+
+    <select id="selectSysOaFaqLabelByFaqNo" parameterType="String" resultMap="SysOaFaqLabelResult">
+        <include refid="selectSysOaFaqLabelVo"/>
+        where faq_no = #{faqNo} and is_delete=0
+    </select>
+        
+    <insert id="insertSysOaFaqLabel" parameterType="SysOaFaqLabel">
+        insert into sys_oa_faq_label
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="faqNo != null">faq_no,</if>
+            <if test="faqLabel != null and faqLabel != ''">faq_label,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="faqNo != null">#{faqNo},</if>
+            <if test="faqLabel != null and faqLabel != ''">#{faqLabel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaFaqLabel" parameterType="SysOaFaqLabel">
+        update sys_oa_faq_label
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="faqLabel != null and faqLabel != ''">faq_label = #{faqLabel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysOaFaqLabelByFaqNo" parameterType="String">
+        update sys_oa_faq_label set is_delete=1 where faq_no = #{faqNo}
+    </delete>
+
+
+</mapper>
