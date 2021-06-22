@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.*;
 import com.snow.system.event.SyncEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,9 +285,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
-        //查询出当前所有的系统角色，然后删除
         List<SysUserRole> sysUserRoles = userRoleMapper.selectUserRoleByUserId(userId);
-        List<SysRole> sysRoles= Lists.newArrayList();
         if(CollectionUtil.isNotEmpty(sysUserRoles)){
             sysUserRoles.forEach(t->{
                 SysRole sysRole = roleMapper.selectRoleById(t.getRoleId());
@@ -300,7 +298,7 @@ public class SysUserServiceImpl implements ISysUserService
             });
         }
 
-       // userRoleMapper.deleteUserRoleByUserId(userId);
+        // userRoleMapper.deleteUserRoleByUserId(userId);
         insertUserRole(userId, roleIds);
     }
 

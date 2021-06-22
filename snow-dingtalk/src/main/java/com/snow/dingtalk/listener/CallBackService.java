@@ -37,7 +37,7 @@ public class CallBackService implements ISyncDingTalkInfo {
             callBackServiceImpl.updateCallBack((DingtalkCallBack) syncEvent.getSource());
         }
         else if(code.equals(DingTalkListenerType.CALL_BACK_DELETE.getCode())){
-            callBackServiceImpl.deleteCallBack((DingtalkCallBack) syncEvent.getSource());
+            callBackServiceImpl.deleteCallBack();
         }
 
 

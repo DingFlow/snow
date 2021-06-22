@@ -74,7 +74,7 @@ public class CallBackController {
             String eventType = callBackContent.getString(EVENT_TYPE);
             DingTalkListenerType type = DingTalkListenerType.getType(eventType);
             if(StringUtils.isEmpty(type)){
-                return Constants.CALL_BACK_FAIL_RETURN;
+                return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
             }
             //测试回调URL事件，直接返回加密后的success即可
             if(eventType.equals(DingTalkListenerType.CALL_BACK_CHECK_URL.getInfo())){
