@@ -1,0 +1,84 @@
+package com.snow.framework.web.service;
+
+import cn.hutool.core.util.ObjectUtil;
+import com.snow.common.utils.PatternUtils;
+import com.snow.common.utils.StringUtils;
+import com.snow.framework.util.FreemarkUtils;
+import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.system.domain.SysMessageTemplate;
+import com.snow.system.domain.SysMessageTransition;
+import com.snow.system.service.ISysMessageTemplateService;
+import com.snow.system.service.ISysMessageTransitionService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Set;
+
+/**
+ * @author qimingjin
+ * @Title:
+ * @Description:
+ * @date 2021/6/29 16:33
+ */
+@Component
+@Slf4j
+public class InnerMessageService {
+
+    @Resource
+    private ISysMessageTemplateService sysMessageTemplateService;
+
+    @Resource
+    private ISysMessageTransitionService sysMessageTransitionService;
+
+    /**
+     * 发送站内信息
+     * @param sysSendMessageDTO
+     */
+    public void sendInnerMessage(SysSendMessageDTO sysSendMessageDTO) {
+        SysMessageTransition message = new SysMessageTransition();
+        SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
+        if(ObjectUtil.isNull(sysMessageTemplate)){
+            log.error("@发送站内信是模板code不正确...");
+            throw new RuntimeException("模板code不正确");
+        }
+        Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
+        try {
+
+            message.setProducerId(sysSendMessageDTO.getFrom());
+
+            message.setTemplateCode(sysMessageTemplate.getTemplateCode());
+            //组装参数消息体
+            String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
+
+            if(StringUtils.isNotEmpty(sysMessageTemplate.getPcUrl())){
+                String pcUrl = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getPcUrl(), sysSendMessageDTO.getParamMap());
+                message.setPcUrl(pcUrl);
+            }
+
+            if(StringUtils.isNotEmpty(sysMessageTemplate.getAppUrl())){
+                String appUrl = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getAppUrl(), sysSendMessageDTO.getParamMap());
+                message.setAppUrl(appUrl);
+            }
+            message.setMessageContent(messageContext);
+            message.setMessageStatus(0L);
+            message.setIconClass(sysMessageTemplate.getIconClass());
+        }catch (Exception e){
+            log.error("调用sendSimpleMail发送邮件失败:{}",e.getMessage());
+            message.setMessageStatus(1L);
+        }
+        if(ObjectUtil.isNotNull(sysSendMessageDTO.getReceiver())){
+            message.setConsumerId(sysSendMessageDTO.getReceiver());
+            sysMessageTransitionService.insertSysMessageTransition(message);
+        }
+
+        if(!StringUtils.isEmpty(receiverSet)){
+            receiverSet.forEach(t->{
+                message.setConsumerId(t);
+                sysMessageTransitionService.insertSysMessageTransition(message);
+            });
+        }
+    }
+}

@@ -39,6 +39,9 @@ public class AfterSignUserTaskCmd extends AbstractDynamicInjectionCmd implements
 
    private String taskId;
 
+   //表单fromKey
+   private String fromKey;
+
 
     @Override
     public Void execute(CommandContext commandContext) {
@@ -80,12 +83,14 @@ public class AfterSignUserTaskCmd extends AbstractDynamicInjectionCmd implements
         addUserTask.setId(id);
         addUserTask.setName(signUserTaskBuilder.getName());
         addUserTask.setAssignee(signUserTaskBuilder.getAssignee());
+        addUserTask.setFormKey(fromKey);
         process.addFlowElement(addUserTask);
         signUserTaskBuilder.setDynamicTaskId(id);
 
         String flowId = "sequenceFlow-"+CommandContextUtil.getProcessEngineConfiguration(commandContext).getIdGenerator().getNextId();
         SequenceFlow newSequenceFlow = this.createSequenceFlow(addUserTask.getId(),currentTaskOutSequenceFlow.getTargetFlowElement().getId());
         newSequenceFlow.setId(flowId);
+        //newSequenceFlow.set
         process.addFlowElement(newSequenceFlow);
 
         activity.setOutgoingFlows(Collections.singletonList(newSequenceFlow));

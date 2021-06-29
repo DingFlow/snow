@@ -17,39 +17,56 @@ public class SysMessageTransition extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** null */
+    /** id */
     private Long id;
 
     /** 生产者id */
-    @Excel(name = "生产者id")
     private String producerId;
 
     private SysUser producerUser;
 
     /** 消费者id */
-    @Excel(name = "消费者id")
     private String consumerId;
 
     private SysUser consumerUser;
 
     /** 消息类型 */
-    @Excel(name = "消息类型")
     private String messageType;
 
     /** 消息外部id */
-    @Excel(name = "消息外部id")
     private String messageOutsideId;
+    /**
+     * 模板code
+     */
+    private String templateCode;
+
+    /**
+     * 消息内容
+     */
+    private String messageContent;
+
+    /**
+     * 消息展示1app端 2pc端 3官网 4后台
+     */
+    private String messageShow;
+
+    /**
+     * 消息pc端url
+     */
+    private String pcUrl;
+
+    /**
+     * 消息app端url
+     */
+    private String appUrl;
 
     /** 0--正常，1--禁用 */
-    @Excel(name = "0--正常，1--禁用")
     private Long messageStatus;
 
     /** 0--未读，1--已读 */
-    @Excel(name = "0--未读，1--已读")
     private Long messageReadStatus;
 
     /** 0--正常，1--删除 */
-    @Excel(name = "0--正常，1--删除")
     private Long isDelete;
 
 

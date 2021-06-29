@@ -36,7 +36,7 @@ public class SysSendMessageDTO implements Serializable {
     /**
      * 参数List
      */
-    private Map<String,String> paramMap;
+    private Map<String,Object> paramMap;
 
     /**
      * 接收人
@@ -45,7 +45,7 @@ public class SysSendMessageDTO implements Serializable {
     /**
      * 接收人set集合
      */
-    private Set receiverSet;
+    private Set<String> receiverSet;
     /**
      * 抄送人
      */
@@ -72,5 +72,15 @@ public class SysSendMessageDTO implements Serializable {
      * 消息类型
      */
     private DingTalkMessageType dingTalkMessageType;
+
+    /**
+     * pc端url
+     */
+    private String pcUrl;
+
+    /**
+     * app端url
+     */
+    private String appUrl;
 
 }
