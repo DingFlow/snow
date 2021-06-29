@@ -11,10 +11,7 @@ import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.flowable.config.FlowIdGenerator;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysMessageTemplate;
-import com.snow.system.domain.SysMessageTransition;
-import com.snow.system.domain.SysOaCustomer;
-import com.snow.system.domain.SysUser;
+import com.snow.system.domain.*;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.ISysMessageTransitionService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -73,5 +70,22 @@ public class SysMessageCenterController extends BaseController
         }
 
         return prefix + "/messageCenter";
+    }
+
+    @GetMapping("/website")
+    public String websiteMessageCenter(SysMessageTransition sysMessageTransition,ModelMap mmap)
+    {
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
+        sysMessageTransition.setMessageShow(1);
+        sysMessageTransition.setOrderBy("update_time desc");
+        List<SysMessageTransition> list = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(0);
+        rspData.setRows(list);
+        TableDataInfo dataTable = getDataTable(list);
+        mmap.put("dataTable",dataTable);
+        return "front/message/message_center";
     }
 }

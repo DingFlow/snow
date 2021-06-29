@@ -12,6 +12,11 @@ public class UserConstants
      */
     public static final String SYS_USER = "SYS_USER";
 
+    /**
+     * 系统标识IDkey
+     */
+    public static final String  SYS_ADMIN_ID_KEY = "sys.admin.id";
+
     /** 正常状态 */
     public static final String NORMAL = "0";
 
@@ -104,6 +109,7 @@ public class UserConstants
     public static final Integer SYSTEM_ROLE_TYPE = 1;
     public static final Integer FLOW_ROLE_TYPE = 2;
 
+
     /**
      * 手机号码格式限制
      */
@@ -118,4 +124,10 @@ public class UserConstants
      * 前台退出
      */
     public static final String FRONT_LOGIN_OUT_URL = "/front/index";
+
+    /**
+     * 官网角色
+     */
+    public static final Long FRONT_ROLE_TYPE_ID = 118L;
+
 }

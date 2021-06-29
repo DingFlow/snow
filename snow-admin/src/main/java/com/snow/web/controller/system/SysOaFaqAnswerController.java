@@ -147,4 +147,44 @@ public class SysOaFaqAnswerController extends BaseController
     {
         return toAjax(sysOaFaqAnswerService.deleteSysOaFaqAnswerByFaqId(id));
     }
+
+    /**
+     * 详情faq问题答案
+     */
+    @GetMapping("/detail/{id}")
+    @RequiresPermissions("system:answer:detail")
+    public String detail(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        SysOaFaqAnswer sysOaFaqAnswer = sysOaFaqAnswerService.selectSysOaFaqAnswerById(id);
+        mmap.put("sysOaFaqAnswer", sysOaFaqAnswer);
+        return prefix + "/detail";
+    }
+
+
+
+    /**
+     * 修改faq问题答案
+     */
+    @GetMapping("/myedit")
+    public String myedit(Integer id, ModelMap mmap)
+    {
+        SysOaFaqAnswer sysOaFaqAnswer = sysOaFaqAnswerService.selectSysOaFaqAnswerById(id);
+        mmap.put("sysOaFaqAnswer", sysOaFaqAnswer);
+        return prefix + "/myedit";
+    }
+
+    /**
+     * 修改保存faq问题答案
+     */
+    @RequiresPermissions("system:answer:myedit")
+    @Log(title = "faq问题答案", businessType = BusinessType.UPDATE)
+    @PostMapping("/myedit")
+    @ResponseBody
+    public AjaxResult myEditSave(SysOaFaqAnswer sysOaFaqAnswer)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaFaqAnswer.setUpdateBy(String.valueOf(sysUser.getUserId()));
+        return toAjax(sysOaFaqAnswerService.updateSysOaFaqAnswer(sysOaFaqAnswer));
+    }
+
 }

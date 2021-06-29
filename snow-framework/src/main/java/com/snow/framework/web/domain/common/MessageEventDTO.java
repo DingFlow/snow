@@ -1,10 +1,13 @@
 package com.snow.framework.web.domain.common;
 
+import com.snow.common.enums.DingTalkMessageType;
 import com.snow.common.enums.MessageEventType;
 import lombok.Data;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,10 +30,36 @@ public class MessageEventDTO extends ApplicationEvent implements Serializable {
 
     /** 消息外部id */
     private String messageOutsideId;
+
+
+    private String templateCode;
+
+
+    /**
+     * 发送人
+     */
+    private String from;
+    /**
+     * 参数map
+     */
+    private Map<String,Object> paramMap;
+
+
+    /**
+     * pc端url
+     */
+    private String pcUrl;
+
+    /**
+     * app端url
+     */
+    private String appUrl;
     /**
      * 事件类型
      */
     private MessageEventType messageEventType;
+
+    private Integer messageShow;
 
     public MessageEventDTO(Object source) {
         super(source);

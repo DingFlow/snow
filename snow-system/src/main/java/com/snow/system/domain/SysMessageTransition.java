@@ -48,7 +48,7 @@ public class SysMessageTransition extends BaseEntity
     /**
      * 消息展示1app端 2pc端 3官网 4后台
      */
-    private String messageShow;
+    private Integer messageShow;
 
     /**
      * 消息pc端url

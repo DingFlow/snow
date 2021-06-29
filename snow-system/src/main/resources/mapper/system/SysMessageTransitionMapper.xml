@@ -44,8 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="messageStatus != null "> and message_status = #{messageStatus}</if>
             <if test="messageReadStatus != null "> and message_read_status = #{messageReadStatus}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
-            <if test="message_show != null "> and message_show = #{messageShow}</if>
-            <if test="template_code != null and templateCode != ''"> and template_code = #{templateCode}</if>
+            <if test="messageShow != null "> and message_show = #{messageShow}</if>
+            <if test="templateCode != null and templateCode != ''"> and template_code = #{templateCode}</if>
         </where>
         <if test="orderBy != null  and orderBy != ''">
             order by ${orderBy}

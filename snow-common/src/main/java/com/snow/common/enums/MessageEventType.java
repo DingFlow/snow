@@ -17,6 +17,7 @@ public enum  MessageEventType {
 
     SEND_VISIT_LOG("SEND_VISIT_LOG", "发送拜访日志"),
 
+    REGISTER_ACCOUNT_SUCCESS("REGISTER_ACCOUNT_SUCCESS", "成功注册账户"),
     ;
 
 

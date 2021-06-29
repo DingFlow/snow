@@ -15,6 +15,7 @@ import java.util.Set;
  * 发送消息到消息中心策略
  */
 @Component
+@Deprecated
 public class SendMessageCenterStrategy  implements MessageEventStrategy {
     @Resource
     private ISysMessageTransitionService messageTransitionService= SpringUtils.getBean(ISysMessageTransitionService.class);

@@ -50,24 +50,9 @@
                 <ul class="nav navbar-top-links navbar-right welcome-message">
                     <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="#" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
                     <li class="dropdown">
-                        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <a class="dropdown-toggle count-info"  th:href="@{/system/messageCenter/website}">
                             <i class="fa fa-bell"></i>  <span class="label label-primary">[[${sysMessageSize}]]</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-alerts">
-                            <li th:each="sysMessages,iterStat:${sysMessageList}" class="mt5">
-                                <a href="javascript:void(0)" th:onclick="messageDetail([[${sysMessages.redirectUrl}]]);">
-                                    <i th:class="${sysMessages.iconClass}"></i>[[${sysMessages.producerUser.userName}]]发送来一条消息<span class="pull-right text-muted small">[[${sysMessages.spendTime}]]</span>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <div class="text-center link-block">
-                                    <a href="javascript:void(0)" th:onclick="messageDetailAll();" th:data-id="@{/system/messageCenter}">
-                                        <i class="fa fa-location-arrow"></i> <strong>前往消息中心</strong>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
                     </li>
                     <li class="dropdown user-menu">
                         <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
@@ -76,7 +61,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li class="mt5">
-                                <a th:href="@{/system/user/profile}" class="menuItem">
+                                <a th:href="@{/front/user/profile}" class="menuItem">
                                     <i class="fa fa-user"></i> 个人中心</a>
                             </li>
                             <li>
@@ -98,8 +83,8 @@
     <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
 
     <div class="row mainContent" id="content-main" th:style="${#bools.isFalse(ignoreFooter)} ? |height: calc(100% - 91px)|">
-        <iframe class="RuoYi_iframe"  name="iframe0" width="90%" height="100%" th:data-id="@{/system/home}"
-                th:src="@{/system/home}" frameborder="0" seamless></iframe>
+        <iframe class="RuoYi_iframe"  name="iframe0" width="100%" height="100%" th:data-id="@{/front/home}"
+                th:src="@{/front/home}" frameborder="0" seamless></iframe>
     </div>
     <div class="footer">
         <div class="pull-right">© [[${copyrightYear}]] DingFlow Copyright </div>

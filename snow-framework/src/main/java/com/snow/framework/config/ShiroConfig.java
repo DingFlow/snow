@@ -286,10 +286,10 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/dingTalk/dingTalkCallBack", "anon");
         filterChainDefinitionMap.put("/third/oauth/**", "anon");
 
-        //积木报表排除
-       // filterChainDefinitionMap.put("/jmreport/**", "anon");
-        //filterChainDefinitionMap.put("/**/*.js.map", "anon");
-       // filterChainDefinitionMap.put("/**/*.css.map", "anon");
+        //注册校验
+        filterChainDefinitionMap.put("/system/user/checkLoginNameUnique", "anon");
+        filterChainDefinitionMap.put("/system/user/checkPhoneUnique", "anon");
+        filterChainDefinitionMap.put("/system/user/checkEmailUnique", "anon");
 
         filterChainDefinitionMap.put("/dingTalk/dingFlowRobot", "anon");
         // 退出 logout地址，shiro去清除session
@@ -299,6 +299,9 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/front/index", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+        //前端注册
+        filterChainDefinitionMap.put("/front/register", "anon,captchaValidate");
+
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 

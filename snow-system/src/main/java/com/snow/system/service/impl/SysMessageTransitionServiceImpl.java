@@ -65,6 +65,7 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
     @Override
     public List<SysMessageTransition> selectSysMessageTransitionList(SysMessageTransition sysMessageTransition)
     {
+        sysMessageTransition.setMessageStatus(0L);
         List<SysMessageTransition> sysMessageTransitionList= sysMessageTransitionMapper.selectSysMessageTransitionList(sysMessageTransition);
         if(CollectionUtils.isNotEmpty(sysMessageTransitionList)){
             sysMessageTransitionList.forEach(t->{

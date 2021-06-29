@@ -1,7 +1,9 @@
 package com.snow.framework.web.service;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.StringUtils;
+import com.snow.framework.util.FreemarkUtils;
 import com.snow.framework.web.domain.common.SysSendEmailDTO;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysMessageTemplate;
@@ -26,7 +28,7 @@ import java.util.Set;
 
 /**
  * @program: snow
- * @description
+ * @description 发送email邮件
  * @author: 没用的阿吉
  * @create: 2021-02-27 16:13
  **/
@@ -51,6 +53,10 @@ public class MailService {
      */
     public void sendTemplateSimpleMail(SysSendMessageDTO sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
+        if(ObjectUtil.isNull(sysMessageTemplate)){
+            log.error("@发送站内信是模板code不正确...");
+            throw new RuntimeException("模板code不正确");
+        }
         Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
         Set<String> ccSet = sysSendMessageDTO.getCCSet();
         try {
@@ -60,7 +66,8 @@ public class MailService {
                 message.setTo(sysSendMessageDTO.getReceiver());
             }
             message.setSubject(sysMessageTemplate.getTemplateName());
-            message.setText(PatternUtils.builderTemplateBody(sysSendMessageDTO.getParamMap(),sysMessageTemplate.getTemplateBody()));
+            String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
+            message.setText(messageContext);
             if(CollectionUtils.isNotEmpty(receiverSet)){
                 message.setTo(receiverSet.toArray(new String[0]));
             }
@@ -99,7 +106,8 @@ public class MailService {
             if(CollectionUtils.isNotEmpty(ccSet)){
                 helper.setCc(ccSet.toArray(new String[0]));
             }
-            helper.setText(PatternUtils.builderTemplateBody(sysSendMessageDTO.getParamMap(),sysMessageTemplate.getTemplateBody()), true);
+            String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
+            helper.setText(messageContext,true);
             helper.setFrom(from);
             if(null != sysSendMessageDTO.getSentDate()){
                 helper.setSentDate(sysSendMessageDTO.getSentDate());
@@ -127,7 +135,8 @@ public class MailService {
                 helper.setTo(sysSendMessageDTO.getReceiver());
             }
             helper.setSubject(sysMessageTemplate.getTemplateName());
-            helper.setText(PatternUtils.builderTemplateBody(sysSendMessageDTO.getParamMap(),sysMessageTemplate.getTemplateBody()), true);
+            String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
+            helper.setText(messageContext, true);
             helper.setFrom(from);
             if (CollectionUtils.isNotEmpty(sysSendMessageDTO.getReceiverSet())) {
                 helper.setTo(receiverSet.toArray(new String[0]));
@@ -153,6 +162,7 @@ public class MailService {
      * 发送邮件
      * @param SysSendEmailDTO
      */
+    @Deprecated
     public void sendHtmlMail(SysSendEmailDTO SysSendEmailDTO) {
         Set<String> receiverSet = SysSendEmailDTO.getReceiverSet();
         Set<String> ccSet = SysSendEmailDTO.getCCSet();

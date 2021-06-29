@@ -35,6 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="answerLikes != null "> and answer_likes = #{answerLikes}</if>
             <if test="answerRidicule != null "> and answer_ridicule = #{answerRidicule}</if>
             <if test="adoptTime != null "> and adopt_time = #{adoptTime}</if>
+            <if test="createBy != null">and create_by = #{createBy}</if>
         </where>
     </select>
 

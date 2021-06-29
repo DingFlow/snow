@@ -59,6 +59,8 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:faq:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:faq:remove')}]];
+        var editAnswerFlag = [[${@permission.hasPermi('system:answer:edit')}]];
+        var removeAnswerFlag = [[${@permission.hasPermi('system:answer:remove')}]];
         var faqTypeDatas = [[${@dict.getType('sys_faq_type')}]];
         var faqStatuseDatas = [[${@dict.getType('sys_faq_status')}]];
         var faqAnserAdoptStatusDatas = [[${@dict.getType('sys_faq_anser_adopt_status')}]];
@@ -184,8 +186,8 @@
                         align: 'center',
                         formatter: function(value, row, index) {
                             var actions = [];
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="editAnswer(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="removeAnswer(\''+row.id+'\')"><i class="fa fa-remove"></i>删除</a>');
+                            actions.push('<a class="btn btn-success btn-xs ' + editAnswerFlag + '" href="javascript:void(0)" onclick="editAnswer(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeAnswerFlag + '" href="javascript:void(0)" onclick="removeAnswer(\''+row.id+'\')"><i class="fa fa-remove"></i>删除</a>');
                             return actions.join('');
                         }
                     }]

@@ -1,12 +1,15 @@
 package com.snow.framework.web.service;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.snow.common.constant.Constants;
+import com.snow.common.constant.UserConstants;
 import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.FreemarkUtils;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.domain.SysMessageTransition;
+import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.ISysMessageTransitionService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,7 @@ import java.util.Set;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title: 站内信
  * @Description:
  * @date 2021/6/29 16:33
  */
@@ -33,6 +36,8 @@ public class InnerMessageService {
     @Resource
     private ISysMessageTransitionService sysMessageTransitionService;
 
+    @Resource
+    private ISysConfigService configService;
     /**
      * 发送站内信息
      * @param sysSendMessageDTO
@@ -46,9 +51,10 @@ public class InnerMessageService {
         }
         Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
         try {
-
-            message.setProducerId(sysSendMessageDTO.getFrom());
-
+            //如果生产者为空，则取系统管理员id
+            if(ObjectUtil.isEmpty(sysSendMessageDTO.getFrom())){
+                message.setProducerId(configService.selectConfigByKey(UserConstants.SYS_ADMIN_ID_KEY));
+            }
             message.setTemplateCode(sysMessageTemplate.getTemplateCode());
             //组装参数消息体
             String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
@@ -65,8 +71,11 @@ public class InnerMessageService {
             message.setMessageContent(messageContext);
             message.setMessageStatus(0L);
             message.setIconClass(sysMessageTemplate.getIconClass());
+            if(ObjectUtil.isNotNull(sysSendMessageDTO.getMessageEventType())){
+                message.setMessageType(sysSendMessageDTO.getMessageEventType().getCode());
+            }
+            message.setMessageShow(sysSendMessageDTO.getMessageShow());
         }catch (Exception e){
-            log.error("调用sendSimpleMail发送邮件失败:{}",e.getMessage());
             message.setMessageStatus(1L);
         }
         if(ObjectUtil.isNotNull(sysSendMessageDTO.getReceiver())){

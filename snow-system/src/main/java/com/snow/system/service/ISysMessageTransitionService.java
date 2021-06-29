@@ -73,4 +73,6 @@ public interface ISysMessageTransitionService
 
 
     public int deleteSysMessageTransitionByOutsideId(List outsideIdList);
+
+
 }

@@ -28,7 +28,9 @@ public class SysOaFaqAnswerServiceImpl implements ISysOaFaqAnswerService {
 
     @Override
     public SysOaFaqAnswer selectSysOaFaqAnswerById(Integer id) {
-        return sysOaFaqAnswerMapper.selectSysOaFaqAnswerById(id);
+        SysOaFaqAnswer sysOaFaqAnswer=sysOaFaqAnswerMapper.selectSysOaFaqAnswerById(id);
+        sysOaFaqAnswer.setSysOaFaq(sysOaFaqMapper.selectSysOaFaqByFaqNo(sysOaFaqAnswer.getFaqNo()));
+        return sysOaFaqAnswer;
     }
 
     /**
