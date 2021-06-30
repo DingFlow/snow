@@ -87,6 +87,11 @@ public class SysMessageTransition extends BaseEntity
      */
     private String spendTime;
 
+    /**
+     * 模板
+     */
+    private SysMessageTemplate sysMessageTemplate;
+
 
     public static void init(List<SysMessageTransition> sysMessageTransitions){
         sysMessageTransitions.forEach((t)->{

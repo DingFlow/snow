@@ -42,52 +42,40 @@
 
                 <div class="faq-item" th:each="sysMessageTransition,iterStat : ${dataTable.rows}">
                     <div class="row">
-                        <div class="col-md-7">
-                            <a data-toggle="collapse" th:href="'faq.html#'+${sysMessageTransition.id}" class="faq-question" th:text="${sysMessageTransition.templateCode}"></a>
-                            <small> <i class="fa fa-clock-o"></i> <label class="control-label" th:text="${#dates.format(sysMessageTransition.createTime, 'yyyy-MM-dd HH:mm:ss')}"/></small>
+                        <div class="col-md-8">
+
+                            <a data-toggle="collapse" th:href="'faq.html#'+${sysMessageTransition.id}" class="faq-question" ><span th:text="${iterStat.index+1}"></span>、[[${sysMessageTransition.sysMessageTemplate.templateName}]]</a>
+
 
                         </div>
-                       <!-- <div class="col-md-3">
-                            <span class="small font-bold" th:text="${@dict.getLabel('sys_faq_type', sysOaFaq.faqSource)}"></span>
+                        <div class="col-md-3">
+                            <small> <i class="fa fa-clock-o"></i> <label class="control-label" th:text="${#dates.format(sysMessageTransition.createTime, 'yyyy-MM-dd HH:mm:ss')}"/></small>
+                            <!--<span class="small font-bold" th:text="${@dict.getLabel('sys_faq_type', sysOaFaq.faqSource)}"></span>
                             <div class="tag-list" th:each="sysOaFaqLabel,iterStat : ${sysOaFaq.sysOaFaqLabelList}">
                                 <span class="tag-item" th:text="${sysOaFaqLabel.faqLabel}"></span>
-                            </div>
-                        </div>-->
-                      <!--  <div class="col-md-2 text-right">
-                            <label th:switch="${sysOaFaq.faqStatus}">
-                                <h4  class="faq-question-status badge badge-primary"  th:case="3">已完结</h4>
+                            </div>-->
+                        </div>
+                       <div class="col-md-1 text-right">
+                            <label th:switch="${sysMessageTransition.messageReadStatus}">
+                                <h4  class="faq-question-status badge badge-danger"  th:case="0">未读</h4>
+                                <h4  class="faq-question-status badge badge-primary"  th:case="0">已读</h4>
                             </label>
-                        </div>-->
+                        </div>
                     </div>
                     <div class="row" >
                         <div class="col-sm-12">
                             <div th:id="${sysMessageTransition.id}" class="panel-collapse collapse faq-answer">
-                                    <div class="row">
+                                  <!--  <div class="row">
                                         <div class="col-md-7">
                                             <small class="faq-question-status"><i class="fa fa-comments-o"></i> <span th:text="${@user.getName(sysMessageTransition.createBy)}"></span> 于<span th:text="${#dates.format(sysMessageTransition.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>回复了您：</small>
                                         </div>
-                                  <!--      <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==0}">
-                                            <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal"  data-target="#isAdoptAnswer" th:data-whatever="${sysOaFaqAnswer.faqNo}"  th:data-id="${sysOaFaqAnswer.id}"><i class="fa fa-pencil"></i>&nbsp;&nbsp;<span class="bold">采纳打分</span></button>
-                                        </div>
-                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==1}">
-                                            <span class="badge badge-warning"><span th:text="${sysOaFaqAnswer.answerFraction}"></span>分</span>
-                                            <span class="badge badge-primary">已被采纳</span>
-                                        </div>
-                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==2}">
-                                            <span class="badge badge-success">未被采纳</span>
-                                        </div>-->
-                                    </div>
+                                    </div>-->
                                     <div class="row">
                                         <div class="col-md-10">
                                             <p th:text="${sysMessageTransition.messageContent}">
                                             </p>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <h5  style="font-size:15px;color:#379bb;border-bottom:1px solid #ddd;margin:8px 10px 25px 10px;padding-bottom:5px"></h5>
-                                    </div>
-
                             </div>
                         </div>
                     </div>
