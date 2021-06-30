@@ -1,11 +1,13 @@
 package com.snow.web.controller.system;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.collect.Lists;
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.core.text.Convert;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.poi.ExcelUtil;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 消息模板Controller
+ * 消息中心
  * 
  * @author qimingjin
  * @date 2021-02-27
@@ -72,6 +74,12 @@ public class SysMessageCenterController extends BaseController
         return prefix + "/messageCenter";
     }
 
+    /**
+     * 前端消息中心
+     * @param sysMessageTransition
+     * @param mmap
+     * @return
+     */
     @GetMapping("/website")
     public String websiteMessageCenter(SysMessageTransition sysMessageTransition,ModelMap mmap)
     {
@@ -79,7 +87,7 @@ public class SysMessageCenterController extends BaseController
         SysUser sysUser = ShiroUtils.getSysUser();
         sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
         sysMessageTransition.setMessageShow(1);
-        sysMessageTransition.setOrderBy("update_time desc");
+        sysMessageTransition.setOrderBy("create_time desc");
         List<SysMessageTransition> list = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
         TableDataInfo rspData = new TableDataInfo();
         rspData.setCode(0);
@@ -87,5 +95,28 @@ public class SysMessageCenterController extends BaseController
         TableDataInfo dataTable = getDataTable(list);
         mmap.put("dataTable",dataTable);
         return "front/message/message_center";
+    }
+
+
+    /**
+     * 标记为已读
+     * @param id
+     * @return
+     */
+    @PostMapping( "/remarkRead")
+    @ResponseBody
+    public AjaxResult remarkRead(Long id)
+    {
+        SysMessageTransition oldSysMessageTransition = sysMessageTransitionService.selectSysMessageTransitionById(id);
+        if(oldSysMessageTransition.getMessageReadStatus()==1){
+            return AjaxResult.success();
+        }
+        SysUser sysUser = ShiroUtils.getSysUser();
+        SysMessageTransition sysMessageTransition=new SysMessageTransition();
+        sysMessageTransition.setId(id);
+        sysMessageTransition.setMessageReadStatus(1L);
+        sysMessageTransition.setUpdateBy(String.valueOf(sysUser.getUserId()));
+        int i = sysMessageTransitionService.updateSysMessageTransition(sysMessageTransition);
+        return AjaxResult.success(i);
     }
 }

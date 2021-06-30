@@ -44,7 +44,7 @@
                     <div class="row">
                         <div class="col-md-8">
 
-                            <a data-toggle="collapse" th:href="'faq.html#'+${sysMessageTransition.id}" class="faq-question" ><span th:text="${iterStat.index+1}"></span>、[[${sysMessageTransition.sysMessageTemplate.templateName}]]</a>
+                            <a data-toggle="collapse" th:href="'faq.html#'+${sysMessageTransition.id}" class="faq-question" th:onclick="markRead([[${sysMessageTransition.id}]])" ><span th:text="${iterStat.index+1}"></span>、[[${sysMessageTransition.sysMessageTemplate.templateName}]]</a>
 
 
                         </div>
@@ -57,8 +57,8 @@
                         </div>
                        <div class="col-md-1 text-right">
                             <label th:switch="${sysMessageTransition.messageReadStatus}">
-                                <h4  class="faq-question-status badge badge-danger"  th:case="0">未读</h4>
-                                <h4  class="faq-question-status badge badge-primary"  th:case="0">已读</h4>
+                                <h4  class="messageReadStatus badge badge-danger"  th:case="0">未读</h4>
+                                <h4  class="messageReadStatus badge badge-primary"  th:case="1">已读</h4>
                             </label>
                         </div>
                     </div>
@@ -83,33 +83,6 @@
 
             </div>
             <div id="footPage" style="text-align: center;"></div>
-
-            <div class="modal fade" id="isAdoptAnswer" tabindex="-1" role="dialog"  aria-labelledby="exampleModalLabel">
-                <div class="modal-dialog">
-                    <div class="modal-content animated fadeIn">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title text-primary">采纳打分</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="faqNo" class="control-label">编号:</label>
-                                <input type="text" class="form-control " id="faqNo" name="faqNo" readonly>
-                            </div>
-                            <input type="hidden" class="form-control" id="answerId" name="id">
-                            <div class="form-group">
-                                <label for="faqNo" class="control-label">打分:</label>
-                                <input type="text" class="js-range-answerFraction" name="answerFraction"  value="0" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-                            <button type="button" class="btn btn-primary" onclick="saveAnswerFraction()">打分</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <script th:src="@{/js/jquery.min.js}"></script>
@@ -131,28 +104,7 @@
                 simpleLoad(btn,true);
                 simpleLoad(btn,false)
             });
-            $(".js-range-answerFraction").ionRangeSlider({
-                type: "single",
-                min: 0,
-                max: 10,
-                step:1, //步长，也可以设置为小数
-                postfix:"分",
-                onStart: function (data) {//回调
-                },
-                onChange: function (data) {
-                },
-                onFinish: function (data) { //拖动结束回调
-                    $(".js-range-answerFraction").val(data.fromNumber);
-                    console.log('onFinish：'+JSON.stringify(data))
-                },
-                onUpdate: function (data) {
-                    console.log('onUpdate：'+JSON.stringify(data))
-                }
-
-            });
         });
-
-
         function simpleLoad(btn,state){
             if(state){
                 btn.children().addClass("fa-spin");btn.contents().last().replaceWith("Loading")
@@ -160,41 +112,23 @@
                 setTimeout(function(){btn.children().removeClass("fa-spin");btn.contents().last().replaceWith(" Refresh")},2000)
             }
         };
-        $('#isAdoptAnswer').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // 触发事件的按钮
-            var faqNo = button.data('whatever')
-            var id = button.data('id')
-            $("#answerId").val(id);
-            $("#faqNo").val(faqNo);
-        });
 
-        function saveAnswerFraction(){
-            var answerFraction= $(".js-range-answerFraction").val();
-            var faqNo= $("#faqNo").val();
-            var id=$("#answerId").val();
-            if(answerFraction=="0"){
-                $.modal.msgWarning("请先拖动打分滑块进行打分后再提交！");
-                return false;
-            }
+
+        function markRead(id){
             var config = {
-                url: "/front/faq/answerFraction",
+                url: "/system/messageCenter/remarkRead",
                 type: "post",
                 dataType: "json",
                 data: {
-                    "answerFraction": parseFloat(answerFraction),
-                    "faqNo":faqNo,
                     "id":id
-                },
-                beforeSend: function () {
-                    $.modal.loading("正在处理中，请稍后...");
                 },
                 success: function(result) {
                     if (typeof callback == "function") {
                         callback(result);
                     }
                     if (result.code == web_status.SUCCESS) {
-                        $.modal.alertSuccess(result.msg);
-                        location.reload();
+                        $(".messageReadStatus badge badge-primary").show();
+                        $(".messageReadStatus badge badge-danger").hide();
                     } else if (result.code == web_status.WARNING) {
                         $.modal.alertWarning(result.msg)
                     } else {
@@ -205,7 +139,6 @@
             };
             $.ajax(config)
         }
-
         layui.use('laypage', function(){
             var laypage = layui.laypage;
             laypage.render({
