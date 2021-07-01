@@ -106,7 +106,6 @@
             <h2>系统模块</h2>
             <p> 用户管理：用户是系统操作者，该功能主要完成系统用户配置并能实现钉钉用户数据同步。</p>
             <p> 部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限并能实现钉钉部门数据同步。</p>
-            <p> 岗位管理：配置系统用户所属担任职务。</p>
             <p> 菜单管理：配置系统菜单，操作权限，按钮权限标识等。</p>
             <p> 角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。</p>
             <p> 字典管理：对系统中经常使用的一些较为固定的数据进行维护。</p>
@@ -114,21 +113,25 @@
         </div>
         <div class="col-sm-3">
             <h2>流程模块</h2>
-            <p>流程模型：集成flowable流程设计器，在线一键发布</p>
+            <p>流程模型管理：集成flowable流程设计器，在线一键发布</p>
             <p>流程消息管理：通过邮件、钉钉发送待办，已办，办结节点信息</p>
             <p>流程组管理：结合系统角色，设计流程节点代办人</p>
-            <p>采购流程：主子表设计，结合导入功能融合流程使整个采购流程透明化</p>
-
+            <p>采购流程管理：主子表设计，结合导入功能融合流程使整个采购流程透明化</p>
             <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
         </div>
         <div class="col-sm-3">
             <h2>钉钉模块</h2>
-            <p></p>
+            <p>回调事件管理：无需钉钉开发者后台配置回调事件，可直接在系统注册钉钉回调事件和路径</p>
+            <p>用户数据同步：系统用户数据与钉钉用户数据打通，定时双向同步</p>
+            <p>部门数据同步：系统部门数据与钉钉部门数据打通，定时双向同步</p>
+            <p>通知数据同步：系统发送通知后，实时同步到钉钉系统通知</p>
             <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
         </div>
         <div class="col-sm-3">
             <h2>消息模块</h2>
-            <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
+            <p>流程消息管理：各流程按需配置消息通知方式，可选钉钉和邮件</p>
+            <p>消息模板管理：DingFlow消息是由消息模板统一配置，可随时更改通知内容，支持freeMark式参数化配置</p>
+            <p>消息中心管理：统一消息中心管理消息，让你使用起来不在迷茫无措</p>
             <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
         </div>
     </div>
@@ -174,15 +177,15 @@
     <div class="row">
         <div class="col-lg-12 text-center">
             <div class="navy-line"></div>
-            <h1>发现伟大的功能</h1>
-            <p>描述描述描述描述</p>
+            <h1>系统简介</h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
         </div>
     </div>
     <div class="row features-block">
         <div class="col-lg-6 features-text wow fadeInLeft">
-            <small>INSPINIA</small>
-            <h2>完美设计</h2>
-            <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
+            <!--<small>DingFlow</small>-->
+            <h2>DingFlow</h2>
+            <p>  DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意，念及雪之人便有了Snow。后来 在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段， 虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
             <a href="" class="btn btn-primary">学到更多</a>
         </div>
         <div class="col-lg-6 text-right wow fadeInRight">
@@ -204,7 +207,7 @@
             <div class="col-sm-4 wow fadeInLeft">
                 <div class="team-member">
                     <img th:src="@{/img/landing/avatar3.jpg}" class="img-responsive img-circle img-small" alt="">
-                    <h4><span class="navy">小明</span> 设计师</h4>
+                    <h4><span class="navy">阿西</span> 后端开发工程师</h4>
                     <p>这个家伙很懒，什么都没有留下！</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
@@ -219,7 +222,7 @@
             <div class="col-sm-4">
                 <div class="team-member wow zoomIn">
                     <img th:src="@{/img/landing/avatar1.jpg}" class="img-responsive img-circle" alt="">
-                    <h4><span class="navy">小明</span> 设计师</h4>
+                    <h4><span class="navy">阿吉</span> 后端开发工程师</h4>
                     <p>这个家伙很懒，什么都没有留下！</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
@@ -234,7 +237,7 @@
             <div class="col-sm-4 wow fadeInRight">
                 <div class="team-member">
                     <img th:src="@{/img/landing/avatar2.jpg}" class="img-responsive img-circle img-small" alt="">
-                    <h4><span class="navy">小明</span> 设计师</h4>
+                    <h4><span class="navy">阿衰</span> web前端开发工程师</h4>
                     <p>这个家伙很懒，什么都没有留下！</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
@@ -290,7 +293,7 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="navy-line"></div>
-                <h1>我们的工作流</h1>
+                <h1>版本发布公告</h1>
                 <p>描述描述描述 </p>
             </div>
         </div>
