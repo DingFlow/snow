@@ -42,6 +42,7 @@
                         <li><a class="page-scroll" href="#team">团队</a></li>
                         <li><a class="page-scroll" href="#testimonials">获奖</a></li>
                         <li><a class="page-scroll" href="#pricing">价格</a></li>
+                        <li><a class="page-scroll" href="http://dingflow.xyz:3000" target="_blank">在线文档</a></li>
                         <li><a class="page-scroll" href="#contact">联系</a></li>
                         <li shiro:guest=""><a  data-toggle="modal" class="page-scroll"   href="#modal-form">登录</a></li>
                         <li shiro:user=""><a class="page-scroll" th:href="@{/front/main}">我的主页</a></li>
@@ -294,7 +295,7 @@
             <div class="col-lg-12 text-center">
                 <div class="navy-line"></div>
                 <h1>版本发布公告</h1>
-                <p>描述描述描述 </p>
+                <!--<p>描述描述描述 </p>-->
             </div>
         </div>
         <div class="row features-block">
@@ -307,17 +308,15 @@
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>V1.6 2021-05-17</h2>
-                            <p> 1. 集成钉钉扫码登录功能 </p>
-                            <p> 2. 新增省市区管理 </p>
-                            <p> 3. 优化部门管理，支持部门修改和删除钉钉数据双向同步，解决新增添加两次数据
-                                   新增根据用户查询部门主管接口 </p>
-                            <p> 4. 优化请假流程和离职流程，让流程更贴近业务。
-                                  上级部门主管审批：由当前申请人的直接上级主管审批，不在是流程组配置 </p>
-                            <p> 5. 优化部分界面和查询方式 </p>
-                            <p> 6. 修复部分jar冲突，解决流程报错和部分页面报错 </p>                                                                                                                                                                  修复部分jar冲突，解决流程报错和部分页面报错 </br>
+                            <h2>V1.6 2021-07-04</h2>
+                            <p> 1. 集成微信、支付宝扫码登录功能 </p>
+                            <p> 2. 新增DingFlow官网 </p>
+                            <p> 3. 官网注册、登录功能</p>
+                            <p> 4. 新增官网FAQ管理：登录官网可在线提FAQ </p>
+                            <p> 5. 重构钉钉回调注册管理 </p>
+                            <p> 6. 重构消息中心模块,支持站内信 </p>
                             <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
-                            <span class="vertical-date"> 今天 <br/> <small>12月24日</small> </span>
+                            <span class="vertical-date"> <!--今天 <br/>--> <small>2021年07月04日</small> </span>
                         </div>
                     </div>
 
@@ -327,20 +326,17 @@
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>V1.5 2021-05-05</h2>
-                            <p>
-                            <p> 1. 集成开源积木报表</p>
-                                可在线设计各类报表（表格类报表和图表类报表) </p>
-                            <p> 2. 新增业务管理模块</p>
-                                新增客户准入流程，添加客户流入客户公海，发起准入流程，准入客户进入客户私海，可业务员拜访跟进，未准入客户进入黑名单
-                                原数据大屏并入业务管理
-                                3.0 新增消息中心
-                                4.0 在线邮件更改为站内邮件，不在调用邮件发送功能，便于系统内用户沟通，跟进业务
-                                5.0 修复流程父角色查询所属子角色异常情况
-                                6.0 修复添加用户时部门树筛选异常
-                                7.0 新增Snow社区在线文档（地址见友情链接）/p>
+                            <h2>V1.6 2021-05-17</h2>
+                            <p> 1. 集成钉钉扫码登录功能 </p>
+                            <p> 2. 新增省市区管理 </p>
+                            <p> 3. 优化部门管理，支持部门修改和删除钉钉数据双向同步，解决新增添加两次数据
+                                新增根据用户查询部门主管接口 </p>
+                            <p> 4. 优化请假流程和离职流程，让流程更贴近业务。
+                                上级部门主管审批：由当前申请人的直接上级主管审批，不在是流程组配置 </p>
+                            <p> 5. 优化部分界面和查询方式 </p>
+                            <p> 6. 修复部分jar冲突，解决流程报错和部分页面报错 </p>
                             <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
-                            <span class="vertical-date"> 明天 <br/> <small>12月26日</small> </span>
+                            <span class="vertical-date"> <!--明天 <br/> --><small>2021年05月17日</small> </span>
                         </div>
                     </div>
 
@@ -350,20 +346,19 @@
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>V1.4 2021-03-28</h2>
-                            <p>
-                                1.0 集成钉钉流程管理
-                                钉钉端发起流程，可在系统查收待办、已办、处理待办、查看我发起流程详情情况。
-                                2.0 新增表单管理
-                                集成表单在线设计器，可在线设计表单
-                                3.0 新增钉钉部门与系统部门定时同步任务
-                                4.0 新增钉钉用户与系统用户定时同步任务
-                                5.0 修复本地图片上传异常情况
-                                6.0 修复系统审批跳转审批详情页异常情况
-                                7.0 修复请假单和离职申请单查看权限问题
-                                8.0 升级钉钉jar包﻿﻿</p>
+                            <h2>V1.5 2021-05-05</h2>
+                            <p> 1. 集成开源积木报表</p>
+                            可在线设计各类报表（表格类报表和图表类报表) </p>
+                            <p> 2. 新增业务管理模块
+                               新增客户准入流程，添加客户流入客户公海，发起准入流程，准入客户进入客户私海，可业务员拜访跟进，未准入客户进入黑名单
+                               原数据大屏并入业务管理 </p>
+                            <p> 3. 新增消息中心 </p>
+                            <p> 4. 在线邮件更改为站内邮件，不在调用邮件发送功能，便于系统内用户沟通，跟进业务 </p>
+                            <p> 5. 修复流程父角色查询所属子角色异常情况 </p>
+                            <p> 6. 修复添加用户时部门树筛选异常 </p>
+                            <p> 7. 新增Snow社区在线文档（地址见友情链接）</p>
                             <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
-                            <span class="vertical-date"> 星期一 <br/> <small>12月02日</small> </span>
+                            <span class="vertical-date"> <!--星期一 <br/>--> <small>2021年05月05日</small> </span>
                         </div>
                     </div>
 
@@ -388,7 +383,7 @@
                     <i>"这个后台程序真心不错！"</i>
                 </div>
                 <small>
-                    <strong>2017年12月12日 - 小明</strong>
+                    <strong>2021年07月03日 - 阿里巴巴</strong>
                 </small>
             </div>
         </div>
