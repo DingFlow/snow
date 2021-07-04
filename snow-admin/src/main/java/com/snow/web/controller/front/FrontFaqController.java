@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class FrontFaqController extends BaseController {
 
 
-    private String prefix = "/front/faq";
+    private String prefix = "front/faq";
 
     @Autowired
     private ISysOaFaqService sysOaFaqService;

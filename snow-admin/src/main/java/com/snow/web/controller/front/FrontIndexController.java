@@ -55,7 +55,7 @@ public class FrontIndexController extends BaseController {
     @Autowired
     private SysNoticeServiceImpl sysNoticeService;
 
-    private String prefix = "/front";
+    private String prefix = "front";
 
 
     // 前台首页
