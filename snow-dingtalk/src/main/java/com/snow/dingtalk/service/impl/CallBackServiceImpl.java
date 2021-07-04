@@ -75,7 +75,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
 
     @Override
     @SyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
-    public void deleteCallBack(DingtalkCallBack dingtalkCallBack) {
+    public void deleteCallBack() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_CALL_BACK);
         OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();
         request.setHttpMethod("GET");

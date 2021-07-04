@@ -14,6 +14,15 @@
                     <input name="templateCode" th:field="*{templateCode}" class="form-control" type="text" readonly>
                 </div>
             </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">消息类型：</label>
+                <div class="col-sm-10">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('message_template_type')}">
+                        <input type="radio" th:id="${'templateType_' + dict.dictCode}" name="templateType" th:value="${dict.dictValue}" th:field="*{templateType}">
+                        <label th:for="${'templateType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-2 control-label">模板名称：</label>
                 <div class="col-sm-10">
@@ -33,12 +42,27 @@
                     <textarea name="templateDesc" class="form-control" required>[[*{templateDesc}]]</textarea>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-2 control-label">消息类型：</label>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">pc端url：</label>
                 <div class="col-sm-10">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('message_template_type')}">
-                        <input type="radio" th:id="${'templateType_' + dict.dictCode}" name="templateType" th:value="${dict.dictValue}" th:field="*{templateType}">
-                        <label th:for="${'templateType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    <input name="pcUrl" class="form-control" th:field="*{pcUrl}"  type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label ">app端url：</label>
+                <div class="col-sm-10">
+                    <input name="appUrl" class="form-control"  th:field="*{appUrl}"  type="text" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">图标：</label>
+                <div class="col-sm-10">
+                    <input id="icon" name="iconClass" class="form-control" th:field="*{iconClass}"  type="text" placeholder="选择图标">
+                    <div class="ms-parent" style="width: 100%;">
+                        <div class="icon-drop animated flipInX" style="display: none;max-height:200px;overflow-y:auto">
+                            <div data-th-include="system/menu/icon"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,6 +92,20 @@
                 $.operate.save(prefix + "/edit", $('#form-template-edit').serialize());
             }
         }
+        $(function() {
+            $("#icon").focus(function() {
+                $(".icon-drop").show();
+            });
+            $("#form-template-edit").click(function(event) {
+                var obj = event.srcElement || event.target;
+                if (!$(obj).is("input[name='iconClass']")) {
+                    $(".icon-drop").hide();
+                }
+            });
+            $(".icon-drop").find(".ico-list i").on("click", function() {
+                $('#icon').val($(this).attr('class'));
+            });
+        });
     </script>
 </body>
 </html>

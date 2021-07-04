@@ -2,10 +2,12 @@ package com.snow.system.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
 
     @Autowired
     private SysUserServiceImpl sysUserService;
+
+    @Autowired
+    private SysMessageTemplateServiceImpl sysMessageTemplateService;
 
     /**
      * 查询消息流转中心
@@ -65,12 +70,14 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
     @Override
     public List<SysMessageTransition> selectSysMessageTransitionList(SysMessageTransition sysMessageTransition)
     {
+        sysMessageTransition.setMessageStatus(0L);
         List<SysMessageTransition> sysMessageTransitionList= sysMessageTransitionMapper.selectSysMessageTransitionList(sysMessageTransition);
         if(CollectionUtils.isNotEmpty(sysMessageTransitionList)){
             sysMessageTransitionList.forEach(t->{
                 t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
                 t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));
                 t.setSpendTime(DateUtil.formatBetween(t.getCreateTime(), new Date(), BetweenFormater.Level.SECOND)+"前");
+                Optional.ofNullable(t.getTemplateCode()).ifPresent( m-> t.setSysMessageTemplate(sysMessageTemplateService.getSysMessageTemplateByCode(t.getTemplateCode())));
             });
         }
 

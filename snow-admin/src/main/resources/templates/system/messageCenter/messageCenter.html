@@ -42,11 +42,8 @@
                                                      </label>
                                                       <strong th:text="${#dates.format(visitLog.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
                                                  </p>
-                                                <label  >
-                                                      <a class="text-info" href="#"></i> @[[${visitLog.producerUser.userName}]]</a>
-                                                </label>
-                                                 <label > 添加一条拜访日志，请及时查看。</label>
-                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${visitLog.redirectUrl}]]);"> 查看详情 </a>
+                                                 <label > [[${visitLog.messageContent}]]</label>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${visitLog.pcUrl}]]);"> 查看详情 </a>
                                                  <p>
                                                      <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${visitLog.spendTime}]]</small>
                                                  </p>

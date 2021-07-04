@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>DingFlow | 借助钉钉，致力于流程，让流程更简单</title>
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link th:href="@{favicon.ico}" rel="shortcut icon"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+</head>
+<body class="top-navigation fixed-sidebar full-height-layout" style="overflow: hidden" >
+<div id="wrapper row border-bottom white-bg" style="height: 100%" >
+    <!--顶部菜单栏-->
+    <nav class="navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-header">
+            <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                <i class="fa fa-reorder"></i>
+            </button>
+            <a href="#" class="navbar-brand">DingFlow</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar">
+            <!-- 顶部栏 -->
+            <div id="navMenu">
+                <ul class="nav navbar-nav navbar-top-links  navbar-left " >
+                    <li class="active">
+                        <a aria-expanded="false" role="button" th:href="@{/front/index}"> 返回官网 </a>
+                    </li>
+                    <li class="dropdown" th:each="menu : ${menus}">
+                        <a aria-expanded="false" role="button"  data-toggle="dropdown" th:class="@{${menu.url != '' && menu.url != '#'} ? ${menu.target}}" th:href="@{${menu.url == ''} ? |#| : ${menu.url}}">
+                            <i class="fa fa-bar-chart-o" th:class="${menu.icon}"></i>
+                            <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
+                        </a>
+                        <ul role="menu" class="dropdown-menu">
+                            <li th:each="cmenu : ${menu.children}">
+                                <a th:if="${#lists.isEmpty(cmenu.children)}" th:class="${cmenu.target == ''} ? |menuItem| : ${cmenu.target}" th:utext="${cmenu.menuName}" th:href="@{${cmenu.url}}">二级菜单</a>
+                                <a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">[[${cmenu.menuName}]]</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- 顶部菜单右侧栏 -->
+                <ul class="nav navbar-top-links navbar-right welcome-message">
+                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="#" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle count-info menuItem"  th:href="@{/system/messageCenter/website}">
+                            <i class="fa fa-bell"></i>  <span class="label label-danger">[[${sysMessageSize}]]</span>
+                        </a>
+                    </li>
+                    <li class="dropdown user-menu">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+                            <img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="user-image">
+                            <span class="hidden-xs">[[${#strings.defaultString(user.userName, '-')}]]</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="mt5">
+                                <a th:href="@{/front/user/profile}" class="menuItem">
+                                    <i class="fa fa-user"></i> 个人中心</a>
+                            </li>
+                            <li>
+                                <a onclick="resetPwd()">
+                                    <i class="fa fa-key"></i> 修改密码</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a th:href="@{/logout}">
+                                    <i class="fa fa-sign-out"></i> 退出登录</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
+
+    <div class="row mainContent" id="content-main" th:style="${#bools.isFalse(ignoreFooter)} ? |height: calc(100% - 91px)|">
+        <iframe class="RuoYi_iframe"  name="iframe0" width="100%" height="100%" th:data-id="@{/front/home}"
+                th:src="@{/front/home}" frameborder="0" seamless></iframe>
+    </div>
+    <div class="footer">
+        <div class="pull-right">© [[${copyrightYear}]] DingFlow Copyright </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<script th:src="@{/js/jquery.contextMenu.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+<script th:src="@{/ruoyi/js/common.js}"></script>
+<script th:src="@{/ruoyi/index.js}"></script>
+<script th:src="@{/ajax/libs/fullscreen/jquery.fullscreen.js}"></script>
+<script th:src="@{/js/resize-tabs.js}"></script>
+    <script th:inline="javascript">
+        window.history.forward(1);
+        var ctx = [[@{/}]];
+
+        // history（表示去掉地址的#）否则地址以"#"形式展示
+        var mode = "history";
+        // 历史访问路径缓存
+        var historyPath = storage.get("historyPath");
+        // 是否页签与菜单联动
+        var isLinkage = true;
+
+
+
+        /* 用户管理-重置密码 */
+        function resetPwd() {
+            var url = ctx + 'system/user/profile/resetPwd';
+            $.modal.open("重置密码", url, '770', '380');
+        }
+
+
+        /** 刷新时访问路径页签 */
+        function applyPath(url) {
+            $('a[href$="' + decodeURI(url) + '"]').click();
+            if (!$('a[href$="' + url + '"]').hasClass("noactive")) {
+                $('a[href$="' + url + '"]').parent("li").addClass("selected").parents("li").addClass("active").end().parents("ul").addClass("in");
+            }
+        }
+
+        function messageDetail(url){
+            layer.open({
+                type : 2,
+                shadeClose : true,
+                title : "消息详情",
+                area : ["70%", "80%"],
+                content : [url, 'yes']
+            })
+
+        }
+
+        function messageDetailAll(){
+            var detailUrl="/system/messageCenter";
+            createNoPanelMenuItem( detailUrl,"消息中心");
+        }
+
+        $(function() {
+            if($.common.equals("history", mode) && window.performance.navigation.type == 1) {
+                var url = storage.get('publicPath');
+                if ($.common.isNotEmpty(url)) {
+                    applyPath(url);
+                }
+            } else {
+                var hash = location.hash;
+                if ($.common.isNotEmpty(hash)) {
+                    var url = hash.substring(1, hash.length);
+                    applyPath(url);
+                }else {
+                    if($.common.equals("history", mode)) {
+                        storage.set('publicPath', "");
+                    }
+                }
+            }
+            /* 初始密码提示 */
+            if([[${isDefaultModifyPwd}]]) {
+                layer.confirm("您的密码还是初始密码，请修改密码！", {
+                    icon: 0,
+                    title: "安全提示",
+                    btn: ['确认'	, '取消'],
+                    offset: ['30%']
+                }, function (index) {
+                    resetPwd();
+                    layer.close(index);
+                });
+            }
+
+            /* 过期密码提示 */
+            if([[${isPasswordExpired}]]) {
+                layer.confirm("您的密码已过期，请尽快修改密码！", {
+                    icon: 0,
+                    title: "安全提示",
+                    btn: ['确认'	, '取消'],
+                    offset: ['30%']
+                }, function (index) {
+                    resetPwd();
+                    layer.close(index);
+                });
+            }
+            $("[data-toggle='tooltip']").tooltip();
+
+            if([[${isNewNotice}]]){
+                /*公告停留半分钟*/
+                layer.open({
+                    type : 2,
+                    shadeClose : true,
+                    time:30000,
+                    title : "公告",
+                    area : ["70%", "80%"],
+                    content : ["/system/notice/newNotice/"+1, 'yes']
+                })
+            }
+        });
+    </script>
+</body>
+
+</html>

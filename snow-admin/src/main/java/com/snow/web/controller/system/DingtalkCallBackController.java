@@ -3,10 +3,13 @@ package com.snow.web.controller.system;
 import java.util.List;
 
 import com.dingtalk.api.response.OapiCallBackGetCallBackFailedResultResponse;
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.dingtalk.service.impl.CallBackServiceImpl;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.system.event.SyncEvent;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +26,8 @@ import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.common.core.page.TableDataInfo;
 
+import javax.annotation.Resource;
+
 /**
  * 回调事件Controller
  * 
@@ -37,6 +42,9 @@ public class DingtalkCallBackController extends BaseController
 
     @Autowired
     private IDingtalkCallBackService dingtalkCallBackService;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     @RequiresPermissions("system:back:view")
     @GetMapping()
@@ -91,7 +99,21 @@ public class DingtalkCallBackController extends BaseController
     public AjaxResult addSave(DingtalkCallBack dingtalkCallBack)
     {
         dingtalkCallBack.setCreateBy(ShiroUtils.getLoginName());
+        dingtalkCallBack.setIsSyncDingTalk(false);
         return toAjax(dingtalkCallBackService.insertDingtalkCallBack(dingtalkCallBack));
+    }
+
+    @RequiresPermissions("system:back:register")
+    @Log(title = "注册", businessType = BusinessType.INSERT)
+    @GetMapping("/register")
+    @ResponseBody
+    public AjaxResult register(Long id)
+    {
+        DingtalkCallBack dingtalkCallBack = dingtalkCallBackService.selectDingtalkCallBackById(id);
+        // 同步到dingding
+        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
+        applicationContext.publishEvent(syncEvent);
+        return AjaxResult.success();
     }
 
     /**

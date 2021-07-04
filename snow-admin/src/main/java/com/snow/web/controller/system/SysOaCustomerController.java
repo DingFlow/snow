@@ -1,8 +1,11 @@
 package com.snow.web.controller.system;
 
+import cn.hutool.core.date.DateUtil;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.snow.common.annotation.Log;
 import com.snow.common.annotation.RepeatSubmit;
+import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -36,6 +39,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 客户Controller
@@ -303,11 +307,20 @@ public class SysOaCustomerController extends BaseController
         int i = sysOaCustomerVisitLogService.insertSysOaCustomerVisitLog(sysOaCustomerVisitLog);
         //加入消息通知
         if(StringUtils.isNotNull(sysOaCustomerVisitLog.getAcceptUser())){
+            SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerByCustomerNo(sysOaCustomerVisitLog.getCustomerNo());
             MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.SEND_VISIT_LOG.getCode());
             messageEventDTO.setProducerId(String.valueOf(sysUser.getUserId()));
             messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaCustomerVisitLog.getAcceptUser()));
             messageEventDTO.setMessageEventType(MessageEventType.SEND_VISIT_LOG);
             messageEventDTO.setMessageOutsideId(String.valueOf(sysOaCustomerVisitLog.getId()));
+            messageEventDTO.setMessageShow(2);
+            Map<String,Object> map= Maps.newHashMap();
+            map.put("userName",sysUser.getUserName());
+            map.put("nowTime", DateUtil.now());
+            map.put("enterprice",sysOaCustomer.getCustomerName());
+            map.put("id",sysOaCustomerVisitLog.getId());
+            messageEventDTO.setParamMap(map);
+            messageEventDTO.setTemplateCode(MessageConstants.CUSTOMER_VISIT_LOG_CODE);
             applicationContext.publishEvent(messageEventDTO);
         }
         return toAjax(i);

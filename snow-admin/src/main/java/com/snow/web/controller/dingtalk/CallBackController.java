@@ -8,20 +8,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
-import com.snow.dingtalk.common.EventNameEnum;
 import com.snow.dingtalk.sync.ISyncSysInfo;
 import com.snow.dingtalk.sync.SyncSysInfoFactory;
 import com.snow.system.domain.DingtalkCallBack;
 import com.snow.system.service.impl.DingtalkCallBackServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +74,7 @@ public class CallBackController {
             String eventType = callBackContent.getString(EVENT_TYPE);
             DingTalkListenerType type = DingTalkListenerType.getType(eventType);
             if(StringUtils.isEmpty(type)){
-                return Constants.CALL_BACK_FAIL_RETURN;
+                return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
             }
             //测试回调URL事件，直接返回加密后的success即可
             if(eventType.equals(DingTalkListenerType.CALL_BACK_CHECK_URL.getInfo())){
@@ -96,6 +92,8 @@ public class CallBackController {
             return Constants.CALL_BACK_FAIL_RETURN;
         }
     }
+
+
 
     /**
      * 接收钉钉dingFlow机器人消息

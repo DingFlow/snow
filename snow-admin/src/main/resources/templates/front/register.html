@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>DingFlow</title>
+    <meta name="description" content="DingFlow">
+
+    <link href="../static/css/steps/jquery.steps.css" th:href="@{/css/steps/jquery.steps.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <!-- 360浏览器急速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">label.error{position:inherit}.ui.horizontal.divider::before,.ui.horizontal.divider::after{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaAAAAACCAYAAACuTHuKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1OThBRDY4OUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1OThBRDY4QUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjU5OEFENjg3Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU5OEFENjg4Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+VU513gAAADVJREFUeNrs0DENACAQBDBIWLGBJQby/mUcJn5sJXQmOQMAAAAAAJqt+2prAAAAAACg2xdgANk6BEVuJgyMAAAAAElFTkSuQmCC")}.ui.horizontal.divider::after{background-position:left 1em top 50%}.ui.horizontal.divider::before,.ui.horizontal.divider::after{content:'';display:table-cell;position:relative;top:50%;width:50%;background-repeat:no-repeat}.ui.horizontal.divider::before{background-position:right 1em top 50%}.ui.horizontal.list{display:inline-block;font-size:0}ul.ui.list:last-child,ol.ui.list:last-child,.ui.list:last-child{margin-bottom:0;padding-bottom:0}ul.ui.list,ol.ui.list,.ui.list{list-style-type:none;margin:1em 0;padding:0}.login-oauth__list{display:-webkit-box!important;display:-ms-flexbox!important;display:flex!important;-webkit-box-pack:center!important;-ms-flex-pack:center!important;justify-content:center!important}.login-login-oauth__container{margin-top:20px}.ui.horizontal.login-login__oauth-title{font-weight:normal}.ui.divider{margin:1.4rem 0rem;line-height:1;height:0;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,0.85);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}.ui.horizontal.divider{display:table;white-space:nowrap;height:auto;margin:'';line-height:1;text-align:center}.ui.horizontal.list>.item:first-child,.ui.horizontal.list>.item:last-child{padding-top:.3em;padding-bottom:.3em}.ui.horizontal.list>.item:first-child{margin-left:0!important;padding-left:0!important}.login-oauth__list>.item{margin-left:40px!important}.ui.list .item a>img{width:32px;height:32px}</style>
+
+</head>
+<body id="page-top" class="landing-page no-skin-config">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <th:block th:include="include :: front-header" />
+    <div class="row" style="margin-top: 50px">
+        <h1 style="text-align: center">欢迎注册 <strong>DingFlow 账户</strong></h1>
+    </div>
+    <div class="row" style="margin-top: 50px">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h2>
+                        请按步骤完成注册：
+                    </h2>
+                    <form id="form" action="#" class="wizard-big">
+                        <h1>账户</h1>
+                        <fieldset>
+                            <h2>账户信息</h2>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>登录名 *</label>
+                                        <input id="loginName" name="loginName" type="text" class="form-control required">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>密码 *</label>
+                                        <input id="password" name="password" type="password" class="form-control required">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>确认密码 *</label>
+                                        <input id="confirm" name="confirm" type="password" class="form-control required">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="text-center">
+                                        <div style="margin-top: 20px">
+                                            <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12" style="height: 100px">
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+                        <h1>个人资料</h1>
+                        <fieldset>
+                            <h2>个人资料信息</h2>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>姓名 *</label>
+                                        <input id="userName" name="userName" type="text" class="form-control required">
+                                    </div>
+                                </div>
+                             <!--   <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>性别 *</label>
+                                        <div class="radio-box">
+                                            <input type="radio" id="radio1"  checked name="sex" value="0">
+                                            <label for="radio1">男</label>
+                                        </div>
+                                        <div class="radio-box">
+                                            <input type="radio" id="radio2"  name="sex" value="1">
+                                            <label for="radio2">女</label>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>手机号 *</label>
+                                        <input id="phonenumber" name="phonenumber" type="text" class="form-control required">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>邮箱 *</label>
+                                        <input id="email" name="email" type="text" class="form-control required email">
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <h1>警告</h1>
+                        <fieldset>
+                            <div class="text-center" style="margin-top: 120px">
+                                <h2>你是火星人 :-)</h2>
+                            </div>
+                        </fieldset>
+
+                        <h1>完成</h1>
+                        <fieldset style="overflow:scroll;">
+                            <h2>DingFlow许可协议</h2>
+                            <p class="desc">
+                                请您在注册DingFlow前认真阅读并理解以下协议:
+                            </p>
+                            <div class="install-txt">
+                                <p  class="text-center">版权所有 &copy; 2015-2021,DingFlow保留所有权利。</p>
+                                <p>
+                                    &nbsp;&nbsp;非常感谢您使用DingFlow系统，DingFlow是一款基于Java 8并使用SpringBoot进行构建的中小企业内部管理系统，
+                                    系统默认使用MySQL数据库，内置Markdown文本编辑器，是一款小巧，易用的国产内部企业管理系统，现已开放全部源代码，源码地址:
+                                    <a href="https://gitee.com/qimingjin/snow" target="_blank">https://gitee.com/qimingjin/snow</a>
+                                </p>
+                                <h5 class="text-blue text-bold">一、许可</h5>
+                                <p>&nbsp;&nbsp;1.1 如果您是个人用户，可将本软件用于非商业用途，而不必支付软件授权许可费，商业网站则需获得DingFlow商业授权，
+                                    例如：政府单位、教育机构、协会团体、企业、以赢利为目的的站点等。<br>
+                                    &nbsp;&nbsp;1.2 您可以在本协议的许可范围内，修改DingFlow源代码和界面风格以适应您的要求。<br>
+                                    &nbsp;&nbsp;1.3 您拥有使用本软件构建的网站全部内容所有权，并独立承担与这些内容的相关法律义务。<br>
+                                    &nbsp;&nbsp;1.4 在获得商业授权之后，您可以将本软件用于商业用途。<br>
+                                </p>
+                                <h5 class="text-blue text-bold">二、约束和限制</h5>
+                                <p>
+                                    &nbsp;&nbsp; 2.1 任何在使用了DingFlow的非盈利网站主页上必须加上DingFlow官方网址(http://dingflow.xyz:9527/front/index/)的链接。<br>
+                                    &nbsp;&nbsp; 2.2 在未获取商业授权之前。任何单位和个人均不得将本“软件”用于商业用途（包括但不限于企业网站、政府单位网站、经营性网站、以盈利为目的的网站）
+                                    和任何非个人所有的项目中。<br>
+                                    &nbsp;&nbsp; 2.3 任何非盈利的个人、单位或组织可自行在本软件的基础上进行二次开发，而无需获取任何授权许可。<br>
+                                </p>
+                                <h5 class="text-blue text-bold">三、测试版（Beta）</h5>
+                                <p>&nbsp;&nbsp; 3.1 测试版“软件”其性能和兼容性均未能达到最终稳定版本级别，将来也存在对“软件”进行重大改进的可能，其仅供测试“软件”使用，请勿用于正式生产环境。</p>
+                                <h5 class="text-blue text-bold">四、免责声明</h5>
+                                <p>
+                                    &nbsp;&nbsp; 4.1 用户完全自愿使用本软件，您必须了解使用本软件的风险，且愿意承担使用本软件的风险。<br>
+                                    &nbsp;&nbsp; 4.2  任何情况下，我们不就因使用或不能使用本软件所发生的特殊的、意外的、
+                                    非直接或间接的损失承担赔偿责任（包括但不限于，资料损失，资料执行不精确，或因由您或第三人承担的损失，
+                                    或本程序无法与其他程序运作等）。即使已经被事先告知该损害发生的可能性。
+                                </p>
+                                <p class="text-danger text-bold">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input required" id="agree" name="agree" value="1" >
+                                    <label class="custom-control-label font-weight-normal text-primary" for="agree">勾选并同意以上协议</label>
+                                </div>
+                                </p>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<th:block th:include="include :: front-footer" />
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+
+<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<!-- 验证插件 -->
+<script src="../static/js/plugins/staps/jquery.steps.min.js" th:src="@{/js/plugins/staps/jquery.steps.min.js}"></script>
+<script src="../static/ajax/libs/validate/jquery.validate.min.js" th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script src="../static/ajax/libs/validate/messages_zh.min.js" th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script src="../static/ajax/libs/layer/layer.min.js" th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script src="../static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.3.1}"></script>
+    <script>
+        $(document).ready(function(){
+         var icon = "<i class='fa fa-times-circle'></i> ";
+         $("#form").steps({
+             bodyTag:"fieldset",
+             transitionEffect: "slideLeft", //设置滑动方向
+             enableCancelButton:false,
+             stepsOrientation: "vertical",
+             //当滑动时的事件，点击上一步下一步时触发
+            onStepChanging:function(event,currentIndex,newIndex){
+                if(currentIndex>newIndex){
+                    return true
+                }if(newIndex===3&&Number($("#age").val())<18){
+                    return false
+                }
+                var form=$(this);
+                if(currentIndex<newIndex){
+                    $(".body:eq("+newIndex+") label.error",form).remove();
+                    $(".body:eq("+newIndex+") .error",form).removeClass("error")
+                }
+                form.validate().settings.ignore=":disabled,:hidden";
+                return form.valid()
+            },
+             //当完成以后触发
+            onStepChanged:function(event,currentIndex,priorIndex){
+               /* if(currentIndex===2&&Number($("#age").val())>=18){
+                    $(this).steps("next")
+                }
+                if(currentIndex===2&&priorIndex===3){
+                    $(this).steps("previous")
+                }*/
+
+            },
+             //当点击完成是触发
+            onFinishing:function(event,currentIndex){
+                var form=$(this);
+                form.validate().settings.ignore=":disabled";
+                return form.valid()
+            },
+            onFinished:function(event,currentIndex){
+               // var form=$(this);
+                //提交数据
+               // form.submit()
+                if ($.validate.form()) {
+                    register();
+                }
+            }
+         }).validate({
+                errorPlacement: function(error,element){
+                    element.before(error)
+                },
+                onkeyup: false,
+                rules:{
+                    loginName:{
+                        required:true,
+                        minlength: 3,
+                        remote: {
+                            url: "/system/user/checkLoginNameUnique",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "loginName": function() {
+                                    return $.common.trim($("#loginName").val());
+                                }
+                            },
+                            dataFilter: function (data, type) {
+                                return $.validate.unique(data);
+                            }
+                        }
+                    },
+                    password: {
+                        required: true,
+                        minlength: 5
+                    },
+                    confirm:{
+                        required: true,
+                        equalTo:"#password"
+                    },
+                    phonenumber:{
+                        required:true,
+                        remote: {
+                            url:  "/system/user/checkPhoneUnique",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "phonenumber": function() {
+                                    return $.common.trim($("#phonenumber").val());
+                                }
+                            },
+                            dataFilter: function (data, type) {
+                                return $.validate.unique(data);
+                            }
+                        }
+                    },
+                    email:{
+                        required:true,
+                        email:true,
+                        remote: {
+                            url: ctx + "system/user/checkEmailUnique",
+                            type: "post",
+                            dataType: "json",
+                            data: {
+                                "email": function() {
+                                    return $.common.trim($("#email").val());
+                                }
+                            },
+                            dataFilter: function (data, type) {
+                                return $.validate.unique(data);
+                            }
+                        }
+                    }
+                },
+             messages: {
+                 loginName: {
+                     required: icon + "请输入登录名",
+                     minlength: icon + "用户名不能小于3个字符",
+                     remote: "用户名已经存在"
+                 },
+                 password: {
+                     required: icon + "请输入您的密码",
+                     minlength: icon + "密码不能小于5个字符",
+                 },
+                 confirm: {
+                     required: icon + "请再次输入您的密码",
+                     equalTo: icon + "两次密码输入不一致"
+                 },
+                 phonenumber:{
+                     required: icon +"请输入手机号码",
+                     remote:icon + "手机号码已经存在"
+                 },
+                 email: {
+                     required:icon + "请输入邮箱",
+                     remote: icon +"Email已经存在"
+                 }
+             }
+            })
+        });
+
+        function register(){
+            var config = {
+                url: "/front/register",
+                type: "post",
+                dataType: "json",
+                data:$('#form').serialize(),
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍后...");
+                },
+                success: function(result) {
+                    if (typeof callback == "function") {
+                        callback(result);
+                    }
+                    if (result.code == web_status.SUCCESS) {
+                        $.modal.alertSuccess("注册成功，即将跳转首页！");
+                        setTimeout(function(){
+                            location.href ='/front/index';
+                        }, 100);
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config)
+        }
+
+    </script>
+</body>
+</html>

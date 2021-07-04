@@ -95,12 +95,14 @@ public class DingtalkCallBackServiceImpl implements IDingtalkCallBackService
             dingtalkCallBackEvent.setEventName(t);
             String addressBook = sysDictDataServiceImpl.selectDictLabel(Constants.ADDRESS_BOOK, t);
             dingtalkCallBackEvent.setEventDesc(addressBook);
-            dingtalkCallBackEvent.setCallBanckId((long)i);
+            dingtalkCallBackEvent.setCallBanckId(dingtalkCallBack.getId());
             dingtalkCallBackEventMapper.insertDingtalkCallBackEvent(dingtalkCallBackEvent);
         });
-        // 同步到dingding
-        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
-        applicationContext.publishEvent(syncEvent);
+        if(dingtalkCallBack.getIsSyncDingTalk()){
+            // 同步到dingding
+            SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
+            applicationContext.publishEvent(syncEvent);
+        }
         return 1;
     }
 

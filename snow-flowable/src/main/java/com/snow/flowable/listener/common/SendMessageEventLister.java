@@ -204,7 +204,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
             ProcessInstance processInstance = execution.getProcessInstance();
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("toUser", getUserInfo(processInstance.getStartUserId()).getUserName());
             map.put("starttime", DateUtil.formatDateTime(processInstance.getStartTime()));
             map.put("processInstance", processInstance.getProcessDefinitionName());
@@ -244,7 +244,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             executor.execute(() ->
                     flowCandidates.forEach(t -> {
-                        Map<String, String> map = new HashMap<>();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("toUser", t.getUserName());
                         map.put("startUser", getUserInfo(processInstance.getStartUserId()).getUserName());
                         map.put("processInstance", processDefinition.getName());
@@ -280,7 +280,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
             ProcessInstance processInstance = execution.getProcessInstance();
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("toUser", getUserInfo(processInstance.getStartUserId()).getUserName());
             map.put("starttime", DateUtil.formatDateTime(processInstance.getStartTime()));
             map.put("processInstance", processInstance.getProcessDefinitionName());
@@ -313,7 +313,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
-            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
                     .paramMap(map)
@@ -338,7 +338,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
-            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
 
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiverSet(Sets.newHashSet(getUserInfo(hisProcessInstance.getStartUserId()).getDingUserId()))
@@ -357,8 +357,8 @@ public class SendMessageEventLister extends AbstractEventListener {
      *
      * @param hisProcessInstance
      */
-    private Map<String, String> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance) {
-        Map<String, String> map = new HashMap<>();
+    private Map<String, Object> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance) {
+        Map<String, Object> map = new HashMap<>();
         map.put("toUser", getUserInfo(hisProcessInstance.getStartUserId()).getUserName());
         map.put("starttime", DateUtil.formatDateTime(hisProcessInstance.getStartTime()));
         map.put("orderNo", hisProcessInstance.getBusinessKey());

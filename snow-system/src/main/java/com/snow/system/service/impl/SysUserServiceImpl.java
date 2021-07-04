@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.*;
 import com.snow.system.event.SyncEvent;
+import org.apache.commons.compress.utils.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,7 +285,20 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
-        userRoleMapper.deleteUserRoleByUserId(userId);
+        List<SysUserRole> sysUserRoles = userRoleMapper.selectUserRoleByUserId(userId);
+        if(CollectionUtil.isNotEmpty(sysUserRoles)){
+            sysUserRoles.forEach(t->{
+                SysRole sysRole = roleMapper.selectRoleById(t.getRoleId());
+                if(sysRole.getRoleType()==1){
+                    SysUserRole sysUserRole=new SysUserRole();
+                    sysUserRole.setRoleId(t.getRoleId());
+                    sysUserRole.setUserId(userId);
+                    userRoleMapper.deleteUserRoleInfo(sysUserRole);
+                }
+            });
+        }
+
+        // userRoleMapper.deleteUserRoleByUserId(userId);
         insertUserRole(userId, roleIds);
     }
 

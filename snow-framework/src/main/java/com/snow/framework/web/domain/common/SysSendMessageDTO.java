@@ -1,6 +1,7 @@
 package com.snow.framework.web.domain.common;
 
 import com.snow.common.enums.DingTalkMessageType;
+import com.snow.common.enums.MessageEventType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -36,7 +37,7 @@ public class SysSendMessageDTO implements Serializable {
     /**
      * 参数List
      */
-    private Map<String,String> paramMap;
+    private Map<String,Object> paramMap;
 
     /**
      * 接收人
@@ -45,7 +46,7 @@ public class SysSendMessageDTO implements Serializable {
     /**
      * 接收人set集合
      */
-    private Set receiverSet;
+    private Set<String> receiverSet;
     /**
      * 抄送人
      */
@@ -73,4 +74,28 @@ public class SysSendMessageDTO implements Serializable {
      */
     private DingTalkMessageType dingTalkMessageType;
 
+    /**
+     * pc端url
+     */
+    private String pcUrl;
+
+    /**
+     * app端url
+     */
+    private String appUrl;
+
+    /**
+     * 1--官网,2--后台
+     */
+    private Integer messageShow;
+
+    /**
+     * 外部消息id
+     */
+    private String messageOutsideId;
+
+    /**
+     * 消息事件类型
+     */
+    private MessageEventType messageEventType;
 }

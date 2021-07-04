@@ -54,7 +54,7 @@
                                     </h3>
                                 </a>
                                 <br/>
-                                <h2 class="m-xs text-center"> <span class="text-warning text-center" style="font-size:1em">待办数 - [[${flowGeneralSituation.todoTaskNum}]]</span></h2>
+                                <h2 class="m-xs text-center"> <span class="text-warning text-center" style="font-size:0.8em">待办数 - [[${flowGeneralSituation.todoTaskNum}]]</span></h2>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -65,7 +65,7 @@
                                     </h3>
                                 </a>
                                 <br/>
-                                <h2 class="m-xs text-center"> <span class="text-primary text-center" style="font-size:1em">已办数 - [[${flowGeneralSituation.doneTaskNum}]]</span></h2>
+                                <h2 class="m-xs text-center"> <span class="text-primary text-center" style="font-size:0.8em">已办数 - [[${flowGeneralSituation.doneTaskNum}]]</span></h2>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -75,7 +75,7 @@
                                 </h3>
                                 <br/>
                                 <h2 class="m-xs text-center">
-                                    <span class="text-success text-center" style="font-size:1em">流程数 - [[${flowGeneralSituation.myStartProcessInstanceNum}]]</span>
+                                    <span class="text-success text-center" style="font-size:0.8em">流程数 - [[${flowGeneralSituation.myStartProcessInstanceNum}]]</span>
                                 </h2>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                                 </h3>
                                 <br/>
                                 <h2 class="m-xs text-center">
-                                    <span class="text-danger text-center" style="font-size:1em"> 超时数 - [[${flowGeneralSituation.threeTodoTaskNum}]]</span>
+                                    <span class="text-danger text-center" style="font-size:0.8em"> 超时数 - [[${flowGeneralSituation.threeTodoTaskNum}]]</span>
                                 </h2>
                             </div>
                         </div>
@@ -176,7 +176,11 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary btn-block m-t" th:if="${sysNoticeListSize} gt 2"><i class="fa fa-arrow-down"></i> 加载更多</button>
+                        <button class="btn btn-primary btn-block m-t" th:if="${sysNoticeListSize} gt 4">
+                            <a onclick="openMoreNotice()">
+                                <i class="fa fa-arrow-down"></i> 加载更多
+                            </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,7 +201,12 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary btn-block m-t" th:if="${historicTaskInstanceSize} gt 2"><i class="fa fa-arrow-down"></i> 加载更多</button>
+                        <button class="btn btn-primary btn-block m-t" th:if="${historicTaskInstanceSize} gt 4">
+                            <a onclick="openMoreHistoricTask()">
+                                <i class="fa fa-arrow-down"></i> 加载更多
+                            </a>
+
+                        </button>
                     </div>
                 </div>
             </div>
@@ -352,6 +361,12 @@
     function noticeDetail(id) {
         var detailUrl="/system/notice/detail/"+id;
         $.modal.openTab("公告详情", detailUrl);
+    }
+    function openMoreNotice(){
+        $.modal.openTab("公告管理","/system/notice");
+    }
+    function openMoreHistoricTask(){
+        $.modal.openTab("我的已办","/flow/toMyTakePartInProcess");
     }
     function hisTaskDetail(detailUrl) {
         $.modal.openTab("我的已办", detailUrl);

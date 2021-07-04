@@ -41,6 +41,21 @@ public class SysMessageTemplate extends BaseEntity
     @Excel(name = "1-钉钉消息，2--邮件，3--短信,4--站内消息")
     private Long templateType;
 
+    /**
+     * 消息pc端url
+     */
+    private String pcUrl;
+
+    /**
+     * 消息app端url
+     */
+    private String appUrl;
+
+    /**
+     * 图标样式
+     */
+    private String iconClass="fa fa-envelope fa-fw";
+
     /** 0--正常，1--禁用 */
     @Excel(name = "0--正常，1--禁用")
     private Long templateStatus;

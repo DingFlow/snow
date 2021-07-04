@@ -18,11 +18,11 @@ public class PatternUtils {
 
     /**
      * 替换消息模板参数
-     * @param map
+     * @param map  后面改成freemark模板取值的方式
      * @param templateBody
      * @return
      */
-    public static String builderTemplateBody(Map<String,String> map, String templateBody){
+    public static String builderTemplateBody(Map<String,Object> map, String templateBody){
         String re = "(?<=\\$\\{).*?(?=\\})";
         Pattern p = Pattern.compile(re);
         Matcher m = p.matcher(templateBody);
@@ -33,9 +33,8 @@ public class PatternUtils {
                 continue;
             }
             //如果为空这取null标识
-            String value = Optional.ofNullable(map.get(key)).orElse("null");
-            //todo 可以记录下取到空值的异常情况
-            message = message.replaceAll("\\$\\{" + key + "\\}",  value);
+            Object value = Optional.ofNullable(map.get(key)).orElse("");
+            message = message.replaceAll("\\$\\{" + key + "\\}",  String.valueOf(value));
         }
         return message;
     }

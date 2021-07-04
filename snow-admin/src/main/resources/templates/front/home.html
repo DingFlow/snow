@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的主页</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <style>
+        *{ padding:0; margin:0; font-size:12px}
+        ul,li{ list-style:none;}
+        .box1{ height:35px; background:; overflow:hidden;margin-top: 10px}
+        .t_news{ height:19px;  color:#fff; padding-left:10px; margin:8px 0; overflow:hidden; position:relative;}
+        .t_news b{ line-height:19px; font-weight:bold; display:inline-block;}
+        .news_li,.swap{ line-height:19px; display:inline-block; position:absolute; top:0; left:72px;}
+        .news_li a,.swap a{ color:#fff;}
+        .swap{top:19px;}
+    </style>
+</head>
+
+<body class="gray-bg">
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="box1" >
+        <div class="t_news">
+            <label style="color: #c9302c;margin-left:10px"> <i class="fa fa-volume-up "></i></label><b style="color: #0d8ddb">&nbsp;  系统公告：</b>
+            <ul class="news_li">
+                <li  th:each="notice,iterStat : ${sysNotices}">
+                    &nbsp; &nbsp;&nbsp;<a style="color: #b94a48;margin-left:10px" href="javascript:void(0)" th:onclick="noticeDetail([[${notice.noticeId}]]);">[[${notice.noticeTitle}]]</a>
+
+                    &nbsp; &nbsp; <span style="color: #b94a48">[[${#dates.format(notice.createTime, 'yyyy-MM-dd')}]]</span>
+                </li>
+            </ul>
+            <ul class="swap"></ul>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h3 class="text-success">   <i class="fa  fa-hourglass-half text-center " style="color:#31b0d5"></i>  我的待办</h3>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="toDoMyTask()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-hourglass-half fa-4x text-center " style="color:#5cb85c"> </i>
+                                    </h3>
+                                </a>
+                                <br/>
+                                <h2 class="m-xs text-center"> <span class="text-warning text-center" style="font-size:0.8em">待办数 - [[${flowGeneralSituation.todoTaskNum}]]</span></h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="toMyTakePartInProcess()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-legal fa-4x " style="color:#31b0d5"></i>
+                                    </h3>
+                                </a>
+                                <br/>
+                                <h2 class="m-xs text-center"> <span class="text-primary text-center" style="font-size:0.8em">已办数 - [[${flowGeneralSituation.doneTaskNum}]]</span></h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <h3 class="font-bold text-center no-margins">
+                                    <i class="fa fa-sitemap fa-4x " style="color:#f0ad4e"></i>
+                                </h3>
+                                <br/>
+                                <h2 class="m-xs text-center">
+                                    <span class="text-success text-center" style="font-size:0.8em">流程数 - [[${flowGeneralSituation.myStartProcessInstanceNum}]]</span>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <h3 class="font-bold text-center no-margins">
+                                    <i class="fa fa-paper-plane fa-4x " style="color: #1ab394"></i>
+                                </h3>
+                                <br/>
+                                <h2 class="m-xs text-center">
+                                    <span class="text-danger text-center" style="font-size:0.8em"> 超时数 - [[${flowGeneralSituation.threeTodoTaskNum}]]</span>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h3 class="text-success">   <i class="fa fa-ellipsis-v text-center " style="color:#31b0d5"></i>  常用功能</h3>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="openBill()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-file-text-o fa-4x text-center " style="color:#5cb85c"></i>
+                                    </h3>
+                                </a>
+                                <br/>
+                                <h2 class="m-xs text-center">智能账单</h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="openDepartment()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-list-ol fa-4x " style="color:#31b0d5"></i>
+                                    </h3>
+                                </a>
+
+                                <br/>
+                                <h2 class=" m-xs text-center"> 部门管理</h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="openUser()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-user-secret fa-4x " style="color:#f0ad4e"></i>
+                                    </h3>
+                                </a>
+
+                                <br/>
+                                <h2 class="m-xs text-center">
+                                    用户管理
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="m-b-md">
+                                <a onclick="openFlow()">
+                                    <h3 class="font-bold text-center no-margins">
+                                        <i class="fa fa-television fa-4x " style="color: #1ab394"></i>
+                                    </h3>
+                                </a>
+
+                                <br/>
+                                <h2 class="m-xs text-center">
+                                    流程设计
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h3 class="text-success">   <i class="fa  fa-list text-center " style="color:#31b0d5"></i>  公告列表</h3>
+                </div>
+                <div class="ibox-content">
+                    <div class="row feed-activity-list" >
+                        <div class="feed-element" th:each="notices,iterStat : ${sysNoticeList}">
+                            <div class="media-body ">
+                                <small  style="margin-right:8px" class="pull-right">[[${#dates.format(notices.createTime, 'yyyy-MM-dd')}]]</small>
+                                &nbsp;<a style="color:#A19595;margin-left:8px" href="javascript:void(0)" th:onclick="noticeDetail([[${notices.noticeId}]]);">
+                                    <strong>[[${iterStat.index+1}]].[[${notices.noticeTitle}]]</strong>
+                                 </a>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-block m-t" th:if="${sysNoticeListSize} gt 5">
+                            <a onclick="openMoreNotice()">
+                                <i class="fa fa-arrow-down"></i> 加载更多
+                            </a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+<script th:src="@{/js/echarts.min.js}"></script>
+<th:block th:include="include :: sparkline-js" />
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var todoList = [[${@permission.hasPermi('flow:get:todoList')}]];
+    var prefixFlow = ctx + "flow";
+    $(function() {
+        var options = {
+            id: "bootstrap-table",
+            formId:"formId",
+            url: prefixFlow + "/findTasksByUserId",
+            striped: true,
+            showToggle: false,
+            loadingFontSize:20,
+            showRefresh: false,                   // 是否显示刷新按钮
+            showColumns: false,                   // 是否显示隐藏某列下拉框
+            showToggle: false,
+            showSearch: false,                     // 是否显示检索信息
+            modalName: "我的待办",
+            columns: [{
+                title: '序号',
+                formatter: function (value, row, index) {
+                    return index+1;
+                }
+            },
+                {
+                    field: 'taskId',
+                    title: 'taskId',
+                    visible: false
+                },
+                {
+                    field: 'processDefinitionName',
+                    title: '流程名称'
+                },
+                {
+                    field: 'businessKey',
+                    title: '单号'
+
+                },
+
+                {
+                    field: 'taskName',
+                    title: '审批节点'
+
+                },
+                {
+                    field: 'startUserName',
+                    title: '流程发起人'
+                },
+                {
+                    field: 'startTime',
+                    title: '流程发起时间'
+                },
+                {
+                    field: 'createDate',
+                    title: '任务创建时间'
+                },
+
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function cancelTask(taskId) {
+        var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
+        $.modal.openTab("审批", preViewUrl);
+    }
+
+    function toDoMyTask() {
+        var preViewUrl=prefixFlow+'/toDoMyTask?';
+        $.modal.openTab("我的待办任务", preViewUrl);
+    }
+
+    function toMyTakePartInProcess() {
+        var preViewUrl=prefixFlow+'/toMyTakePartInProcess?';
+        $.modal.openTab("我的已办任务", preViewUrl);
+    }
+
+    function openBill() {
+        var preViewUrl='/system/flow';
+        $.modal.openTab("财务账单流水", preViewUrl);
+    }
+
+    function openUser() {
+        var preViewUrl='/system/user';
+        $.modal.openTab("用户管理", preViewUrl);
+    }
+
+    function openDepartment() {
+        var preViewUrl='/system/dept';
+        $.modal.openTab("部门管理", preViewUrl);
+    }
+    function openFlow() {
+        var preViewUrl='/system/model';
+        $.modal.openTab("模型管理", preViewUrl);
+    }
+    function noticeDetail(id) {
+        var detailUrl="/system/notice/detail/"+id;
+        $.modal.openTab("公告详情", detailUrl);
+    }
+    function openMoreNotice(){
+        $.modal.openTab("公告管理","/system/notice");
+    }
+    function openMoreHistoricTask(){
+        $.modal.openTab("我的已办","/flow/toMyTakePartInProcess");
+    }
+</script>
+<script type="text/javascript">
+    function b(){
+        t = parseInt(x.css('top'));
+        y.css('top','19px');
+        x.animate({top: t - 19 + 'px'},'slow');	//19为每个li的高度
+        if(Math.abs(t) == h-19){ //19为每个li的高度
+            y.animate({top:'0px'},'slow');
+            z=x;
+            x=y;
+            y=z;
+        }
+        setTimeout(b,3000);//滚动间隔时间 现在是3秒
+    }
+    $(document).ready(function(){
+        $('.swap').html($('.news_li').html());
+        x = $('.news_li');
+        y = $('.swap');
+        h = $('.news_li li').length * 19; //19为每个li的高度
+        setTimeout(b,3000);//滚动间隔时间 现在是3秒
+
+    })
+
+
+</script>
+</body>
+</html>
