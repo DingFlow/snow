@@ -1,28 +1,23 @@
 package com.snow.web.controller.system;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
-import com.snow.common.annotation.Log;
-import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
-import com.snow.common.core.text.Convert;
-import com.snow.common.enums.BusinessType;
 import com.snow.common.enums.MessageEventType;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.flowable.config.FlowIdGenerator;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.*;
-import com.snow.system.service.ISysMessageTemplateService;
+import com.snow.system.domain.SysMessageTransition;
+import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysMessageTransitionService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +34,6 @@ public class SysMessageCenterController extends BaseController
     private String prefix = "system/messageCenter";
 
     @Autowired
-    private ISysMessageTemplateService sysMessageTemplateService;
-    
-    @Autowired
     private ISysMessageTransitionService sysMessageTransitionService;
 
     @RequiresPermissions("system:messageCenter:view")
@@ -57,7 +49,6 @@ public class SysMessageCenterController extends BaseController
 
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
-            SysMessageTransition.init(visitLogsList);
             long count = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
             mmap.put("visitLogCount",count);
             mmap.put("visitLogs",visitLogsList);

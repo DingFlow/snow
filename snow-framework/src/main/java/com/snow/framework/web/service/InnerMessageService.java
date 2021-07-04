@@ -18,6 +18,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -54,6 +55,8 @@ public class InnerMessageService {
             //如果生产者为空，则取系统管理员id
             if(ObjectUtil.isEmpty(sysSendMessageDTO.getFrom())){
                 message.setProducerId(configService.selectConfigByKey(UserConstants.SYS_ADMIN_ID_KEY));
+            }else {
+                message.setProducerId(sysSendMessageDTO.getFrom());
             }
             message.setTemplateCode(sysMessageTemplate.getTemplateCode());
             //组装参数消息体
@@ -71,6 +74,7 @@ public class InnerMessageService {
             message.setMessageContent(messageContext);
             message.setMessageStatus(0L);
             message.setIconClass(sysMessageTemplate.getIconClass());
+            Optional.ofNullable(sysSendMessageDTO.getMessageOutsideId()).ifPresent(t->message.setMessageOutsideId(sysSendMessageDTO.getMessageOutsideId()));
             if(ObjectUtil.isNotNull(sysSendMessageDTO.getMessageEventType())){
                 message.setMessageType(sysSendMessageDTO.getMessageEventType().getCode());
             }

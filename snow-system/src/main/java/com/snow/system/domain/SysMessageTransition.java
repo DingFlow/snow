@@ -80,7 +80,7 @@ public class SysMessageTransition extends BaseEntity
     /**
      * 图标样式
      */
-    private String iconClass="fa fa-envelope fa-fw";
+    private String iconClass;
 
     /**
      * 已用时
@@ -96,10 +96,6 @@ public class SysMessageTransition extends BaseEntity
     public static void init(List<SysMessageTransition> sysMessageTransitions){
         sysMessageTransitions.forEach((t)->{
             switch (t.getMessageType()){
-                case "SEND_VISIT_LOG":
-                    t.setIconClass("fa fa-twitter fa-fw");
-                    t.setRedirectUrl("/system/customer/messageDetail/"+t.getMessageOutsideId());
-                    break;
                 case "SEND_EMAIL":
                     t.setIconClass("fa fa-envelope fa-fw");
                     t.setRedirectUrl("/system/email/mailDetail/"+t.getMessageOutsideId());

@@ -23,6 +23,7 @@ public class InnerMessageStrategy  implements MessageEventStrategy {
                 .appUrl(messageEventDTO.getAppUrl())
                 .pcUrl(messageEventDTO.getPcUrl())
                 .templateByCode(messageEventDTO.getTemplateCode())
+                .messageOutsideId(messageEventDTO.getMessageOutsideId())
                 .messageEventType(messageEventDTO.getMessageEventType())
                 .messageShow(messageEventDTO.getMessageShow())
                 .build();

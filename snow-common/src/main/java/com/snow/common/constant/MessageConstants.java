@@ -31,4 +31,10 @@ public class MessageConstants {
      * 成功注册账户
      */
     public static final String REGISTER_ACCOUNT_SUCCESS_CODE="1409865508035108864";
+
+    /**
+     * 拜访日志通知
+     */
+    public static final String CUSTOMER_VISIT_LOG_CODE="1411568525448978432";
+
 }

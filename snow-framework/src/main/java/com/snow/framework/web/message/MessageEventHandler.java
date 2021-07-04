@@ -34,9 +34,11 @@ public class MessageEventHandler implements ApplicationListener<MessageEventDTO>
                 messageEventContext.setMessageEventTypeStrategy(new TaskTodoStrategy());
                 break;
             case "SEND_EMAIL":
+                messageEventContext.setMessageEventTypeStrategy(new SendMessageCenterStrategy());
+                break;
             case "SEND_VISIT_LOG":
             case "REGISTER_ACCOUNT_SUCCESS":
-               // messageEventContext.setMessageEventTypeStrategy(new SendMessageCenterStrategy());
+
                 messageEventContext.setMessageEventTypeStrategy(new InnerMessageStrategy());
                 break;
             case "MARK_READED":

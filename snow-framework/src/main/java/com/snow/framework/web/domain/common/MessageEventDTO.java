@@ -22,6 +22,11 @@ public class MessageEventDTO extends ApplicationEvent implements Serializable {
 
     private static final long serialVersionUID = -8404237283199119018L;
 
+    /**
+     * 消息id
+     */
+    private Long messageId;
+
     /** 生产者id */
     private String producerId;
 
@@ -31,7 +36,9 @@ public class MessageEventDTO extends ApplicationEvent implements Serializable {
     /** 消息外部id */
     private String messageOutsideId;
 
-
+    /**
+     * 模板code
+     */
     private String templateCode;
 
 
@@ -59,6 +66,9 @@ public class MessageEventDTO extends ApplicationEvent implements Serializable {
      */
     private MessageEventType messageEventType;
 
+    /**
+     * 消息来源
+     */
     private Integer messageShow;
 
     public MessageEventDTO(Object source) {

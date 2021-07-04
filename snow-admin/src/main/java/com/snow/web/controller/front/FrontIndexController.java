@@ -144,4 +144,15 @@ public class FrontIndexController extends BaseController {
         return prefix + "/home";
     }
 
+
+    /**
+     * 庆祝共产党成立100周年新闻
+     * @return
+     */
+    @GetMapping("/news/communist_party")
+    public String communist_party()
+    {
+        return prefix+ "/news/communist_party";
+    }
+
 }

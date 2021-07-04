@@ -23,85 +23,62 @@
     </script>
 </head>
 <body id="page-top" class="landing-page no-skin-config">
-<div class="navbar-wrapper">
-        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header page-scroll">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">切换导航</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" th:href="@{/front/main}">DingFlow</a>
-                </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a class="page-scroll" href="#page-top">主页</a></li>
-                        <li><a class="page-scroll" href="#features">特色</a></li>
-                        <li><a class="page-scroll" href="#team">团队</a></li>
-                        <li><a class="page-scroll" href="#testimonials">获奖</a></li>
-                        <li><a class="page-scroll" href="#pricing">价格</a></li>
-                        <li><a class="page-scroll" href="http://dingflow.xyz:3000" target="_blank">在线文档</a></li>
-                        <li><a class="page-scroll" href="#contact">联系</a></li>
-                        <li shiro:guest=""><a  data-toggle="modal" class="page-scroll"   href="#modal-form">登录</a></li>
-                        <li shiro:user=""><a class="page-scroll" th:href="@{/front/main}">我的主页</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-</div>
-<div id="inSlider" class="carousel carousel-fade" data-ride="carousel">
-    <ol class="carousel-indicators">
-        <li data-target="#inSlider" data-slide-to="0" class="active"></li>
-        <li data-target="#inSlider" data-slide-to="1"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <div class="container">
-                <div class="carousel-caption">
-                    <h1>我们工艺<br/>
-                        品牌，网络应用,<br/>
-                        和用户界面<br/>
-                        我们是SNOW工作室</h1>
-                    <p>Snow社区致力于Java学习，目前包括DingFlow系统和SonwBlog博客</p>
-                    <p>
-                        <a class="btn btn-lg btn-primary" href="https://gitee.com/qimingjin" target="_blank" role="button">阅读更多</a>
-                        <a class="caption-link" href="#" role="button">灵感主题</a>
-                    </p>
-                </div>
-                <div class="carousel-image wow zoomIn">
-                    <img th:src="@{/img/landing/laptop.png}"  alt="laptop"/>
-                </div>
-            </div>
-            <!-- Set background for slide in css -->
-            <div class="header-back one"></div>
 
-        </div>
-        <div class="item">
-            <div class="container">
-                <div class="carousel-caption blank">
-                    <h1>我们致力于 <br/>中小企业快速数字化转型</h1>
-                    <p>借助钉钉，致力于流程，让流程更简单。</p>
-                    <p><a class="btn btn-lg btn-primary" href="http://snowblog.shop.csj361.com" role="button">学到更多</a></p>
-                </div>
-            </div>
-            <!-- Set background for slide in css -->
-            <div class="header-back two"></div>
+<th:block th:include="include :: front-header" />
+<section id="features" class="container services">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>企业简报</h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
         </div>
     </div>
-    <a class="left carousel-control" href="#inSlider" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#inSlider" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
+    <div class="row">
+        <div class="col-md-6 text-center  wow zoomIn">
+          <img th:src="@{/img/landing/xinwen.png}" alt="dashboard" class="img-responsive">
+        </div>
+        <div class="col-md-6 text-center wow fadeInLeft">
+            <div>
+              <!--  <i class="fa fa-mobile features-icon"></i>-->
+                <h2>青春万岁！——庆祝中国共产党成立100周年</h2>
+                <p>　　1921年7月23日至31日，从上海望志路树德里106号（今兴业路76号）到嘉兴南湖的小游船，毛泽东、董必武、何叔衡、陈潭秋、王尽美、邓恩铭、李汉俊、李达、张国焘、刘仁静、陈公博、周佛海、包惠僧等13位同志代表全国各地50多名共产党员，召开了中国共产党第一次全国代表大会。中国共产党的诞生是中国历史上开天辟地的大事，中国革命的面貌从此焕然一新...</p>
+                <p>
+                    <a class="btn btn-lg btn-primary" href="/front/news/communist_party" target="_blank" role="button">阅读更多</a>
+                </p>
+            </div>
+        </div>
 
+    </div>
 
-<section id="features" class="container services">
+</section>
+
+<section  class="container features">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>系统简介</h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
+        </div>
+    </div>
+    <div class="row features-block">
+        <div class="col-lg-6 features-text wow fadeInLeft">
+            <!--<small>DingFlow</small>-->
+            <h2>DingFlow</h2>
+            <p>　　DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意，念及雪之人便有了Snow。后来 在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段， 虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
+            <a href="" class="btn btn-primary">学到更多</a>
+        </div>
+        <div class="col-lg-6 text-right wow fadeInRight">
+            <img th:src="@{/img/landing/dashboard.png}" alt="dashboard" class="img-responsive pull-right">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>丰富的模块系统<br/> <span class="navy"> 与许多自定义组合</span> </h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-3">
             <h2>系统模块</h2>
@@ -136,63 +113,8 @@
             <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
         </div>
     </div>
-</section>
 
-<section  class="container features">
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <div class="navy-line"></div>
-            <h1>超过40多个独特的视图<br/> <span class="navy"> 与许多自定义组件</span> </h1>
-            <p>描述描述描述描述 </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3 text-center wow fadeInLeft">
-            <div>
-                <i class="fa fa-mobile features-icon"></i>
-                <h2>完全响应</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
-            </div>
-            <div class="m-t-lg">
-                <i class="fa fa-bar-chart features-icon"></i>
-                <h2>超强图表</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
-            </div>
-        </div>
-        <div class="col-md-6 text-center  wow zoomIn">
-            <img th:src="@{/img/landing/perspective.png}" alt="dashboard" class="img-responsive">
-        </div>
-        <div class="col-md-3 text-center wow fadeInRight">
-            <div>
-                <i class="fa fa-envelope features-icon"></i>
-                <h2>邮件页面</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
-            </div>
-            <div class="m-t-lg">
-                <i class="fa fa-google features-icon"></i>
-                <h2>AngularJS版本</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <div class="navy-line"></div>
-            <h1>系统简介</h1>
-            <p>借助钉钉，致力于流程，让流程更简单</p>
-        </div>
-    </div>
-    <div class="row features-block">
-        <div class="col-lg-6 features-text wow fadeInLeft">
-            <!--<small>DingFlow</small>-->
-            <h2>DingFlow</h2>
-            <p>  DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意，念及雪之人便有了Snow。后来 在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段， 虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
-            <a href="" class="btn btn-primary">学到更多</a>
-        </div>
-        <div class="col-lg-6 text-right wow fadeInRight">
-            <img th:src="@{/img/landing/dashboard.png}" alt="dashboard" class="img-responsive pull-right">
-        </div>
-    </div>
+
 </section>
 
 <section id="team" class="gray-section team">
@@ -201,7 +123,7 @@
             <div class="col-lg-12 text-center">
                 <div class="navy-line"></div>
                 <h1>我们的队伍</h1>
-                <p>描述描述描述描述</p>
+                <p>借助钉钉，致力于流程，让流程更简单</p>
             </div>
         </div>
         <div class="row">
@@ -209,7 +131,7 @@
                 <div class="team-member">
                     <img th:src="@{/img/landing/avatar3.jpg}" class="img-responsive img-circle img-small" alt="">
                     <h4><span class="navy">阿西</span> 后端开发工程师</h4>
-                    <p>这个家伙很懒，什么都没有留下！</p>
+                    <p><strong>个性签名：</strong> 有些事不是努力就可以改变的，五十块的人民币设计的再好看，也没有一百块的招人喜欢</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
                         </li>
@@ -224,7 +146,7 @@
                 <div class="team-member wow zoomIn">
                     <img th:src="@{/img/landing/avatar1.jpg}" class="img-responsive img-circle" alt="">
                     <h4><span class="navy">阿吉</span> 后端开发工程师</h4>
-                    <p>这个家伙很懒，什么都没有留下！</p>
+                    <p><strong>个性签名：</strong> 天下英雄出我辈，一入江湖岁月催。鸿图霸道业谈笑间，不胜人生一场醉。 提剑跨骑内挥鬼雨，白骨如山鸟惊飞。尘世如潮人如水，只叹江湖几人回</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
                         </li>
@@ -239,7 +161,7 @@
                 <div class="team-member">
                     <img th:src="@{/img/landing/avatar2.jpg}" class="img-responsive img-circle img-small" alt="">
                     <h4><span class="navy">阿衰</span> web前端开发工程师</h4>
-                    <p>这个家伙很懒，什么都没有留下！</p>
+                    <p><strong>个性签名：</strong>路还长，青春这碗饭吃个几年也就没了。留点本事吧，谁都会老的</p>
                     <ul class="list-inline social-icon">
                         <li><a href="#"><i class="fa fa-twitter"></i></a>
                         </li>
@@ -251,11 +173,11 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+      <!--  <div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
                 <p>描述描述描述</p>
             </div>
-        </div>
+        </div>-->
     </div>
 </section>
 
@@ -264,24 +186,24 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="navy-line"></div>
-                <h1>更伟大的功能</h1>
-                <p>描述描述描述</p>
+                <h1>未来规划</h1>
+                <p>一个好的产品，需要不断的注入新的活力。关注用户需求，不断展望未来</p>
             </div>
         </div>
         <div class="row features-block">
             <div class="col-lg-3 features-text wow fadeInLeft">
-                <small>INSPINIA</small>
-                <h2>完美设计</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
+                <small>DingFlow</small>
+                <h2>VUE版DingFlow</h2>
+                <p>　　在讲颜值的时代，前后端分离的技术将会被运用的越来越广泛，DingFlow将会在后续推出VUE版。</p>
                 <a href="" class="btn btn-primary">Learn more</a>
             </div>
             <div class="col-lg-6 text-right m-t-n-lg wow zoomIn">
                 <img th:src="@{/img/landing/iphone.jpg}" class="img-responsive" alt="dashboard">
             </div>
-            <div class="col-lg-3 features-text text-right wow fadeInRight">
-                <small>INSPINIA</small>
-                <h2>完美设计</h2>
-                <p>INSPINIA管理主题是具有平面设计理念的高级管理信息板模板。它是完全响应的管理信息板模板，使用Bootstrap 3+ Framework，HTML5和CSS3，Media查询构建。它具有可重复使用的UI组件的大量集合，并与最新的jQuery插件集成。</p>
+            <div class="col-lg-3 features-text  wow fadeInRight">
+                <small>DingFlow</small>
+                <h2>企业微信版DingFlow</h2>
+                <p>　　未来会通过搭载企业微信，构建一套私域企业流量后台管理系统。通过简单的分流、引流转化微信客户为企业客户，结合强大的后台支持，灵活的运营模式，建立企业与客户的强联系，让企业的盈利模式有了多种不同的选择。</p>
                 <a href="" class="btn btn-primary">Learn more</a>
             </div>
         </div>
@@ -315,6 +237,7 @@
                             <p> 4. 新增官网FAQ管理：登录官网可在线提FAQ </p>
                             <p> 5. 重构钉钉回调注册管理 </p>
                             <p> 6. 重构消息中心模块,支持站内信 </p>
+                            <p> 7. 修复分配系统角色时会自动删除流程角色 </p>
                             <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
                             <span class="vertical-date"> <!--今天 <br/>--> <small>2021年07月04日</small> </span>
                         </div>
@@ -535,7 +458,7 @@
                         AngularJs
                     </li>
                     <li>
-                        <a class="btn btn-primary btn-xs" href="#">Signup</a>
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
                     </li>
                 </ul>
             </div>
@@ -570,7 +493,7 @@
                         <strong>支持平台</strong>
                     </li>
                     <li class="plan-action">
-                        <a class="btn btn-primary btn-xs" href="#">注册</a>
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
                     </li>
                 </ul>
             </div>
@@ -602,7 +525,7 @@
                         AngularJs
                     </li>
                     <li>
-                        <a class="btn btn-primary btn-xs" href="#">注册</a>
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
                     </li>
                 </ul>
             </div>
@@ -616,79 +539,27 @@
 
 </section>
 
-<section id="contact" class="gray-section contact">
-    <div class="container">
-        <div class="row m-b-lg">
-            <div class="col-lg-12 text-center">
-                <div class="navy-line"></div>
-                <h1>联系我们</h1>
-            </div>
-        </div>
-        <div class="row m-b-lg">
-            <div class="col-lg-3 col-lg-offset-3">
-                <address>
-                    <strong><span class="navy">启明文化创意有限公司</span></strong><br/>
-                   <!-- 北京市东城区某街道<br/>
-                    北京, 100000<br/>-->
-                    <abbr title="QQ群">   <i class="fa fa-qq" aria-hidden="true"></i></abbr> <span> 577813338</span><br/>
-                    <abbr title="邮箱">   <i class="fa fa-envelope" aria-hidden="true"></i></abbr> qimingjin@126.com
-                </address>
-            </div>
-            <div class="col-lg-4">
-                <p class="text-color">
-                    DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。该管理系统致力于和钉钉数据打通，企业即可通过钉钉移动化办公，也可通过系统开发满足自身不同需求。
-                </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0f39a32c5ffd44069dcbc8c1861bfe54.jpg" width="250px" height="250px" class="btn btn-primary"/>
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <a href="mailto:test@email.com" class="btn btn-primary">寄给我们邮件</a>
-                <p class="m-t-sm">
-                    或者跟随我们在社交平台上
-                </p>
-                <ul class="list-inline social-icon">
-                    <li><a href="#"><i class="fa fa-twitter"></i></a>
-                    </li>
-                    <li><a href="#"><i class="fa fa-facebook"></i></a>
-                    </li>
-                    <li><a href="#"><i class="fa fa-linkedin"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
-                <p><strong>&copy; 启明文化创意有限公司</strong><br/></p>
-            </div>
-        </div>
-    </div>
+<th:block th:include="include :: front-footer" />
 
-    <div id="modal-form" class="modal fade" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-6 b-r"><h3 class="m-t-none m-b">登录</h3>
-
-                           <!-- <p>今天登录获得更多经验。</p>-->
-                            <form id="signupForm" autocomplete="off">
-                                <div class="form-group"><!--<label>用户名</label>  --><input type="text"   name="username" class="form-control uname"     placeholder="请输入用户名"     /></div>
-                                <div class="form-group"><!--<label>密码</label> --><input type="password"  name="password"  placeholder="请输入密码" class="form-control pword"></div>
-                                <div class="row m-t form-group" th:if="${captchaEnabled==true}">
-                                    <div class="col-xs-6">
-                                        <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" />
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <a href="javascript:void(0);" title="点击更换验证码">
-                                            <img th:src="@{../captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>
-                                        </a>
-                                    </div>
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6 b-r"><h3 class="m-t-none m-b">登录</h3>
+                         <p>借助钉钉，致力于流程，让流程更简单</p>
+                        <form id="signupForm" autocomplete="off">
+                            <div class="form-group"><!--<label>用户名</label>  --><input type="text"   name="username" class="form-control uname"     placeholder="请输入用户名"     /></div>
+                            <div class="form-group"><!--<label>密码</label> --><input type="password"  name="password"  placeholder="请输入密码" class="form-control pword"></div>
+                            <div class="row m-t form-group" th:if="${captchaEnabled==true}">
+                                <div class="col-xs-6">
+                                    <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <a href="javascript:void(0);" title="点击更换验证码">
+                                        <img th:src="@{../captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>
+                                    </a>
+                                </div>
                                 </div>
                                 <div class="checkbox-custom form-group" th:classappend="${captchaEnabled==false} ? 'm-t'">
                                     <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>
@@ -704,12 +575,12 @@
                                 <a th:href="@{/front/register}" target="_blank"><i class="fa fa-sign-in big-icon"></i></a>
                             </p>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
+
 
 <!-- Mainly scripts -->
 <script th:src="@{/js/jquery.min.js}"></script>

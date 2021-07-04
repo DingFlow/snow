@@ -90,6 +90,11 @@ public class SysSendMessageDTO implements Serializable {
     private Integer messageShow;
 
     /**
+     * 外部消息id
+     */
+    private String messageOutsideId;
+
+    /**
      * 消息事件类型
      */
     private MessageEventType messageEventType;
