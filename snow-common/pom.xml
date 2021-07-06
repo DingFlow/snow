@@ -158,12 +158,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.binarywang</groupId>
-            <artifactId>weixin-java-cp</artifactId>
-            <version>4.1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
             <version>3.7.4.ALL</version>

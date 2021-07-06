@@ -190,5 +190,13 @@ wx:
 #        secret: 1111
 #        token: 111
 #        aesKey: 111
+wechat:
+  cp:
+    corpId: ww2354bcd694497bd8
+    appConfigs:
+      - agentId: 1000002
+        secret: EzODWvC9zdPJJS4KnCNVENB3UhSiYCbmr9UrFpOM9dQ
+        token:
+        aesKey:
 
 

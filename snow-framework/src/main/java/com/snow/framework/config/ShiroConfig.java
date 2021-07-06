@@ -304,6 +304,7 @@ public class ShiroConfig
         //新闻跳转页
         filterChainDefinitionMap.put("/front/news/**", "anon");
         filterChainDefinitionMap.put("/wx/portal/**", "anon");
+        filterChainDefinitionMap.put("/wx/cp/portal/**", "anon");
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
