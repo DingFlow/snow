@@ -179,5 +179,16 @@ jeecg :
   path :
     #文件路径
     upload: /opt/upload
+wx:
+  mp:
+    configs:
+      - appId: wxf847d7ba2539a307
+        secret: 1111
+        token: 9527520
+        aesKey: 8SW2foeh1NoPN0YbVuweO67YbTmaxA0JOzM1flK1gjj
+#      - appId: 2222 # 第二个公众号的appid，以下同上
+#        secret: 1111
+#        token: 111
+#        aesKey: 111
 
 

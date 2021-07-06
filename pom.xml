@@ -32,6 +32,7 @@
         <velocity.version>1.7</velocity.version>
         <flowable.version>6.4.1</flowable.version>
         <dingtalk.version>dingtalk-SNAPSHOT</dingtalk.version>
+        <wechart.version.third>4.1.0</wechart.version.third>
     </properties>
 
     <!-- 依赖声明 -->
@@ -234,8 +235,16 @@
                 <artifactId>snow-from</artifactId>
                 <version>${snow.version}</version>
             </dependency>
-
-
+            <dependency>
+                <groupId>com.snow</groupId>
+                <artifactId>snow-wechart</artifactId>
+                <version>${snow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>weixin-java-mp</artifactId>
+                <version>${wechart.version.third}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -249,6 +258,7 @@
         <module>snow-dingtalk</module>
         <module>snow-flowable</module>
         <module>snow-from</module>
+        <module>snow-wechart</module>
     </modules>
     <packaging>pom</packaging>
 

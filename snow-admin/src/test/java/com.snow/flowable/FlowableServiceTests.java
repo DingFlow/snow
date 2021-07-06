@@ -3,15 +3,21 @@ package com.snow.flowable;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.snow.JunitTestApplication;
+import com.snow.flowable.cmd.AfterSignUserTaskCmd;
 import com.snow.flowable.domain.DeploymentQueryDTO;
 import com.snow.flowable.domain.StartProcessDTO;
 import com.snow.flowable.domain.TaskVO;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
+import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.service.InnerMessageService;
+import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.engine.ManagementService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.impl.dynamic.DynamicUserTaskBuilder;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.IdentityLinkInfo;
@@ -20,9 +26,7 @@ import org.flowable.task.api.TaskQuery;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author qimingjin
@@ -43,6 +47,13 @@ public class FlowableServiceTests extends JunitTestApplication {
     @Autowired
     private FlowableTaskService flowableTaskService;
 
+
+    @Autowired
+    private ManagementService managementService;
+
+    @Autowired
+    private InnerMessageService innerMessageService;
+
     @Test
     public void startProcessInstanceByKey(){
         StartProcessDTO startProcessDTO=new StartProcessDTO();
@@ -58,10 +69,11 @@ public class FlowableServiceTests extends JunitTestApplication {
 
     @Test
     public void getDeploymentList(){
-        flowableUserService.getUserByFlowGroupId(108L);
-        //DeploymentQueryDTO startProcessDTO=new DeploymentQueryDTO();
-
-    //    flowableService.getDeploymentList(startProcessDTO);
+        DynamicUserTaskBuilder taskBuilder = new DynamicUserTaskBuilder();
+        taskBuilder.setName("加签测试");
+        taskBuilder.setId("ceshi002");
+        taskBuilder.setAssignee("1");
+        managementService.executeCommand(new AfterSignUserTaskCmd("1405362190638260224",taskBuilder,"1405362195931471872","/system/leave/checkDetail"));
 
     }
     @Test
@@ -82,6 +94,33 @@ public class FlowableServiceTests extends JunitTestApplication {
 
        
         log.info(JSON.toJSONString(list));
+    }
+
+    @Test
+    public void sendInnerMessage(){
+        SysSendMessageDTO sysMessageTransition=new SysSendMessageDTO();
+        sysMessageTransition.setFrom("114");
+        sysMessageTransition.setReceiver("1");
+        sysMessageTransition.setTemplateByCode("1368128438703104000");
+        Map<String, Object> map = new HashMap<>();
+        map.put("toUser","111");
+        map.put("starttime","111");
+        map.put("orderNo","111");
+        map.put("processInstance","111");
+        map.put("time","111");
+        map.put("url","111");
+        map.put("datetime","20210001");
+        sysMessageTransition.setParamMap(map);
+        //尊敬的${toUser}:
+        //
+        //         您好，您于${starttime}发起单号为：${orderNo}的${processInstance}已审批结束。
+        //         流程用时：${time}。
+        //         请及时登录系统查看。
+        //         附： 系统地址：${url}
+        //
+        //                                                                                                         DingFlow团队
+        //                                                                                                           ${datetime}
+        innerMessageService.sendInnerMessage(sysMessageTransition);
     }
 
 

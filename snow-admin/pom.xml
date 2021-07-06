@@ -112,6 +112,12 @@
             <groupId>com.snow</groupId>
             <artifactId>snow-from</artifactId>
         </dependency>
+
+        <!--微信-->
+        <dependency>
+            <groupId>com.snow</groupId>
+            <artifactId>snow-wechart</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -303,6 +303,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/front/register", "anon,captchaValidate");
         //新闻跳转页
         filterChainDefinitionMap.put("/front/news/**", "anon");
+        filterChainDefinitionMap.put("/wx/portal/**", "anon");
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
