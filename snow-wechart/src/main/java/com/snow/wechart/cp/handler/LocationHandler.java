@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @author Binary Wang(https://github.com/binarywang)
+ * 地理位置
  */
 @Component
 public class LocationHandler extends AbstractHandler {

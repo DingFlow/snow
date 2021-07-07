@@ -13,7 +13,6 @@ import java.util.Map;
 /**
  * 通讯录变更事件处理器.
  *
- * @author Binary Wang(https://github.com/binarywang)
  */
 @Component
 public class ContactChangeHandler extends AbstractHandler {

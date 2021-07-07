@@ -14,7 +14,7 @@ snow:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 9527
+  port: 80
   servlet:
     # 应用的访问路径
     context-path: /
@@ -196,7 +196,7 @@ wechat:
     appConfigs:
       - agentId: 1000002
         secret: EzODWvC9zdPJJS4KnCNVENB3UhSiYCbmr9UrFpOM9dQ
-        token:
-        aesKey:
+        token: TeA28CSfuNhhxNqZzEuPXl4UPSYj
+        aesKey: ofzEPXuC6OgwjfXp5iEYJrYRaTtzVHKUvKDobBED1B8
 
 

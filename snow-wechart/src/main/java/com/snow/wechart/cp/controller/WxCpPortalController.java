@@ -2,24 +2,16 @@ package com.snow.wechart.cp.controller;
 
 import com.snow.common.json.JsonUtils;
 import com.snow.wechart.cp.config.WxCpConfiguration;
+import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlOutMessage;
+import me.chanjar.weixin.cp.util.crypto.WxCpCryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import me.chanjar.weixin.cp.api.WxCpService;
-import me.chanjar.weixin.cp.util.crypto.WxCpCryptUtil;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * @author Binary Wang(https://github.com/binarywang)
- */
+
 @RestController
 @RequestMapping("/wx/cp/portal/{agentId}")
 public class WxCpPortalController {
@@ -42,11 +34,9 @@ public class WxCpPortalController {
     if (wxCpService == null) {
       throw new IllegalArgumentException(String.format("未找到对应agentId=[%d]的配置，请核实！", agentId));
     }
-
     if (wxCpService.checkSignature(signature, timestamp, nonce, echostr)) {
       return new WxCpCryptUtil(wxCpService.getWxCpConfigStorage()).decrypt(echostr);
     }
-
     return "非法请求";
   }
 

@@ -12,7 +12,6 @@ import me.chanjar.weixin.cp.bean.message.WxCpXmlOutMessage;
 /**
  * <pre>
  *
- * Created by Binary Wang on 2018/8/27.
  * </pre>
  *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
