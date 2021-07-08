@@ -89,6 +89,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="status != null and status != ''">
 			AND u.status = #{status}
 		</if>
+		<if test="userType != null and userType != ''">
+		    AND u.user_type = #{userType}
+		</if>
 		<if test="phonenumber != null and phonenumber != ''">
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
