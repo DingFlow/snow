@@ -71,7 +71,7 @@ public class SysNoticeController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysNotice notice)
     {
-        notice.setCreateBy(ShiroUtils.getLoginName());
+        notice.setCreateBy(ShiroUtils.getSysUser().getUserName());
         return toAjax(noticeService.insertNotice(notice));
     }
 
@@ -94,7 +94,7 @@ public class SysNoticeController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SysNotice notice)
     {
-        notice.setUpdateBy(ShiroUtils.getLoginName());
+        notice.setUpdateBy(ShiroUtils.getSysUser().getUserName());
         return toAjax(noticeService.updateNotice(notice));
     }
 

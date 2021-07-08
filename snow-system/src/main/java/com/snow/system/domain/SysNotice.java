@@ -19,7 +19,7 @@ public class SysNotice extends BaseEntity
     /** 公告标题 */
     private String noticeTitle;
 
-    /** 公告类型（1通知 2公告） */
+    /** 公告类型（1公告 2通知） */
     private String noticeType;
 
     /** 公告内容 */
@@ -29,8 +29,8 @@ public class SysNotice extends BaseEntity
     private String status;
 
     /**
-     * 钉钉的公告id
+     * url
      */
-    private String blackboardId;
+    private String noticeUrl;
 
 }

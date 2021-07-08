@@ -20,12 +20,14 @@ public interface BlackboardService {
      * 删除
      * @param blackboardId
      */
+    @Deprecated
     void deleteBlackboard(String blackboardId);
 
     /**
      * 更新
      * @param sysNotice
      */
+    @Deprecated
     void updateBlackboard(SysNotice sysNotice);
 
 

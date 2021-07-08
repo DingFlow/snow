@@ -24,9 +24,8 @@ import java.util.Optional;
  * @author snow
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler
-{
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+public class SnowGlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(SnowGlobalExceptionHandler.class);
 
     /**
      * 权限校验失败 如果请求为ajax返回json，普通请求跳转页面

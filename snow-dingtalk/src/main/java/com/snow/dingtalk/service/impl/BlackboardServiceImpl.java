@@ -68,10 +68,6 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
             OapiBlackboardCreateResponse response = client.execute(req, getDingTalkToken());
             if(response.getErrcode()!=0){
                 throw new SyncDataException(JSON.toJSONString(req),response.getErrmsg());
-            }else {
-                //更新boardId  注意这个requestId不是公告id，这个钉钉是真的垃圾，添加成功不返回id，还需要去查，就先这样写吧，后面再改
-                sysNotice.setBlackboardId(response.getRequestId());
-                sysNoticeService.updateNotice(sysNotice);
             }
             return response.getRequestId();
         } catch (ApiException e) {
@@ -106,7 +102,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
         OapiBlackboardUpdateRequest.OapiUpdateBlackboardVo boardVoObj = new OapiBlackboardUpdateRequest.OapiUpdateBlackboardVo();
         boardVoObj.setAuthor("没用的阿吉");
         boardVoObj.setDing(true);
-        boardVoObj.setBlackboardId(sysNotice.getBlackboardId());
+        boardVoObj.setBlackboardId("");
         boardVoObj.setTitle(sysNotice.getNoticeTitle());
         boardVoObj.setContent(sysNotice.getNoticeContent());
         //修改后是否再次通知接收人
