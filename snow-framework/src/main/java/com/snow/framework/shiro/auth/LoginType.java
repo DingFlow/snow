@@ -14,7 +14,12 @@ public enum LoginType
     /**
      * 免密码登录
      */
-    NOPASSWD("nopasswd");
+    NOPASSWD("nopasswd"),
+
+    /**
+     * 官方网站
+     */
+    OFFICIAL_WEBSITE("official_website");
 
     private String desc;
 

@@ -106,6 +106,8 @@ public class UserRealm extends AuthorizingRealm
                 user = loginService.login(username, password);
             }else if(LoginType.NOPASSWD.equals(loginType)){
                 user = loginService.login(username);
+            }else if(LoginType.OFFICIAL_WEBSITE.equals(loginType)){
+
             }
 
         }
