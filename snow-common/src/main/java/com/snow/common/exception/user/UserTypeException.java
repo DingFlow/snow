@@ -11,6 +11,6 @@ public class UserTypeException extends UserException
 
     public UserTypeException()
     {
-        super("user.password.delete", null);
+        super("user.type.error", null);
     }
 }

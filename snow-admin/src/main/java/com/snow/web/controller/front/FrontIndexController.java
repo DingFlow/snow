@@ -3,41 +3,23 @@ package com.snow.web.controller.front;
 import cn.hutool.core.collection.CollectionUtil;
 import com.snow.common.config.Global;
 import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.core.page.PageModel;
 import com.snow.common.enums.MessageReadStatus;
-import com.snow.common.utils.ServletUtils;
-import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.FlowGeneralSituationVO;
-import com.snow.flowable.domain.HistoricTaskInstanceDTO;
-import com.snow.flowable.domain.HistoricTaskInstanceVO;
 import com.snow.flowable.service.FlowableService;
-import com.snow.framework.shiro.auth.LoginType;
-import com.snow.framework.shiro.auth.UserToken;
-import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysMenu;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.domain.SysNotice;
 import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysDingRuTaskService;
 import com.snow.system.service.ISysMessageTransitionService;
-import com.snow.system.service.ISysOperLogService;
-import com.snow.system.service.impl.*;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.subject.Subject;
+import com.snow.system.service.impl.SysMenuServiceImpl;
+import com.snow.system.service.impl.SysNoticeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -76,26 +58,7 @@ public class FrontIndexController extends BaseController {
         return prefix + "/index";
     }
 
-    /**
-     * 登录
-     * @return
-     */
-    @PostMapping("/login")
-    @ResponseBody
-    public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe){
-        UserToken token = new UserToken(username, password, LoginType.OFFICIAL_WEBSITE, rememberMe);
-        Subject subject = SecurityUtils.getSubject();
-        try {
-            subject.login(token);
-            return success();
-        } catch (AuthenticationException e) {
-            String msg = "用户或密码错误";
-            if (StringUtils.isNotEmpty(e.getMessage())) {
-                msg = e.getMessage();
-            }
-            return error(msg);
-        }
-    }
+
 
 
     /**

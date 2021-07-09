@@ -1,6 +1,7 @@
 package com.snow.framework.shiro.service;
 
 import com.snow.common.enums.UserType;
+import com.snow.common.exception.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -8,11 +9,6 @@ import com.snow.common.constant.Constants;
 import com.snow.common.constant.ShiroConstants;
 import com.snow.common.constant.UserConstants;
 import com.snow.common.enums.UserStatus;
-import com.snow.common.exception.user.CaptchaException;
-import com.snow.common.exception.user.UserBlockedException;
-import com.snow.common.exception.user.UserDeleteException;
-import com.snow.common.exception.user.UserNotExistsException;
-import com.snow.common.exception.user.UserPasswordNotMatchException;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.MessageUtils;
 import com.snow.common.utils.ServletUtils;
@@ -159,7 +155,7 @@ public class SysLoginService
     }
 
     /**
-     * 三方登录
+     * 前台登录
      */
     public SysUser officialWebsiteLogin(String username,String password)
     {
@@ -207,7 +203,7 @@ public class SysLoginService
         if (!UserType.FRONT_USER_TYPE.getCode().equals(user.getUserType()))
         {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.type.error", user.getRemark())));
-            throw new UserBlockedException();
+            throw new UserTypeException();
         }
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         recordLoginInfo(user);
