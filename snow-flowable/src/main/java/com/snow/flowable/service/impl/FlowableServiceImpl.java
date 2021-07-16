@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.WorkRecordStatus;
@@ -28,7 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.common.engine.impl.identity.Authentication;
+import org.flowable.common.engine.impl.interceptor.CommandContext;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
@@ -36,6 +39,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.impl.RepositoryServiceImpl;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.repository.*;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -1162,6 +1166,30 @@ public class FlowableServiceImpl implements FlowableService {
 
     private String getUserNameById(String id){
         return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
+    }
+
+
+    /**
+     * 获取流程定义实体信息
+     *
+     * @param event
+     * @return ProcessDefinitionEntity
+     */
+    public ProcessDefinitionEntity getProcessDefinition(FlowableEngineEvent event) {
+        String processDefinitionId = event.getProcessDefinitionId();
+        if (processDefinitionId != null) {
+            CommandContext commandContext = CommandContextUtil.getCommandContext();
+            if (commandContext != null) {
+                return CommandContextUtil.getProcessDefinitionEntityManager(commandContext).findById(processDefinitionId);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<FlowDefEnum> getAllFlowDefEnumsSet() {
+        FlowDefEnum[] values = FlowDefEnum.values();
+        return Sets.newHashSet(values);
     }
 
 }

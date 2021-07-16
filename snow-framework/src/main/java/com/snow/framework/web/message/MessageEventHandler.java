@@ -38,6 +38,7 @@ public class MessageEventHandler implements ApplicationListener<MessageEventDTO>
                 break;
             case "SEND_VISIT_LOG":
             case "REGISTER_ACCOUNT_SUCCESS":
+            case "INNER_TASK_TODO":
 
                 messageEventContext.setMessageEventTypeStrategy(new InnerMessageStrategy());
                 break;

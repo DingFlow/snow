@@ -62,6 +62,13 @@ public class SysMessageCenterController extends BaseController
             mmap.put("emailList",emailList);
         }
 
+        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+            List<SysMessageTransition> todoTaskList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_TASK_TODO.getCode())).collect(Collectors.toList());
+            long count = todoTaskList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("todoTaskCount",count);
+            mmap.put("todoTaskList",todoTaskList);
+        }
+
         return prefix + "/messageCenter";
     }
 

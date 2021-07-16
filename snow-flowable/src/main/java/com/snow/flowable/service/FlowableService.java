@@ -1,10 +1,13 @@
 package com.snow.flowable.service;
 
 import com.snow.common.core.page.PageModel;
+import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
 import com.snow.system.domain.ActDeModel;
 import com.snow.system.domain.SysUser;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -178,4 +181,18 @@ public interface FlowableService {
      * @param suspendState
      */
     void suspendOrActiveProcessInstance(String instanceId, Integer suspendState);
+    /**
+     * 获取流程定义实体信息
+     *
+     * @param event
+     * @return ProcessDefinitionEntity
+     */
+     ProcessDefinitionEntity getProcessDefinition(FlowableEngineEvent event);
+
+
+    /**
+     * 获取所有流程定义枚举set
+     * @return
+     */
+     Set<FlowDefEnum> getAllFlowDefEnumsSet();
 }

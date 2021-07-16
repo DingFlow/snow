@@ -19,7 +19,8 @@
                                  <a data-toggle="tab" href="#tab-2"> 站内邮件   <span class="label label-info pull-right" >[[${emailListCount}]]</span></a>
 
                              </li>
-                             <li class=""><a data-toggle="tab" href="#tab-3"> 第二个选项卡</a>
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-3"> 系统流程待办  <span class="label label-info pull-right" >[[${todoTaskCount}]]</span></a>
                              </li>
                              <li class=""><a data-toggle="tab" href="#tab-4"> 第二个选项卡</a>
                              </li>
@@ -71,7 +72,7 @@
                                                      <strong th:text="${#dates.format(email.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
                                                  </p>
                                                  <label  >
-                                                     <a class="text-info" href="#"></i> @[[${email.producerUser.userName}]]</a>
+                                                    <a class="text-info" href="#"></i> @[[${email.producerUser.userName}]]</a>
                                                  </label>
                                                  <label > 发来一条站内邮件，请及时查看。</label>
                                                  <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${email.redirectUrl}]]);"> 查看详情 </a>
@@ -86,10 +87,30 @@
                              </div>
                              <div id="tab-3" class="tab-pane">
                                  <div class="panel-body">
-                                     <strong>栅格系统</strong>
+                                     <strong>系统流程待办</strong>
+                                     <div id="vertical-timeline" class="vertical-container light-timeline" th:each="todoTask,iterStat : ${todoTaskList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${todoTask.iconClass}"></i>
+                                             </div>
 
-                                     <p>Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。它包含了易于使用的预定义类，还有强大的mixin 用于生成更具语义的布局。</p>
-                                 </div>
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${todoTask.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(todoTask.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <p >[[${todoTask.messageContent}]]</p>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${todoTask.redirectUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${email.spendTime}]]</small>
+                                                 </p>
+                                             </div>
+                                       </div>
+                                  </div>
+                                </div>
                              </div>
                              <div id="tab-4" class="tab-pane">
                                  <div class="panel-body">

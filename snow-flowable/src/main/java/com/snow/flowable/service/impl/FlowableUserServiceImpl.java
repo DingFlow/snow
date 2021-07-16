@@ -1,5 +1,6 @@
 package com.snow.flowable.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.snow.common.constant.UserConstants;
@@ -12,6 +13,8 @@ import com.snow.system.service.IFlowGroupDOService;
 import com.snow.system.service.ISysRoleService;
 import com.snow.system.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.identitylink.api.IdentityLink;
+import org.flowable.engine.TaskService;
 import org.flowable.ui.common.model.RemoteGroup;
 import org.flowable.ui.common.model.RemoteUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,9 @@ public class FlowableUserServiceImpl implements FlowableUserService {
 
     @Autowired
     private IFlowGroupDOService flowGroupDOService;
+
+    @Autowired
+    private TaskService taskService;
 
     @Override
     public Map<String, Object> loginFlowable() {
@@ -199,4 +205,36 @@ public class FlowableUserServiceImpl implements FlowableUserService {
         return parentFlowGroup;
     }
 
+
+    /**
+     * 获取当前节点的待办人
+     * @param assignee 任务分配人
+     * @param taskId 任务ID
+     * @return 待处理人员集合
+     */
+    public List<SysUser> getCandidateUsers(String assignee,String taskId) {
+        Set<SysUser> result = Sets.newHashSet();
+        if (ObjectUtil.isNotNull(assignee)) {
+            // 已经被指派了，则可审批人就是指派的人
+            SysUser sysUser = iSysUserService.selectUserById(Long.parseLong(assignee));
+            if (sysUser != null) {
+                result.add(sysUser);
+            }
+        } else {
+            // 获取待办对应的groupId和userId
+            List<IdentityLink> identityLinks = taskService.getIdentityLinksForTask(taskId);
+            for (IdentityLink identityLink : identityLinks) {
+                if (ObjectUtil.isNotNull(identityLink.getGroupId())) {
+                    List<SysUser> sysUsers = getUserByFlowGroupId(Long.parseLong(identityLink.getGroupId()));
+                    result.addAll(sysUsers);
+                } else if (ObjectUtil.isNotNull(identityLink.getUserId())) {
+                    SysUser handleUser = iSysUserService.selectUserById(Long.parseLong(identityLink.getUserId()));
+                    if (handleUser != null) {
+                        result.add(handleUser);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(result);
+    }
 }

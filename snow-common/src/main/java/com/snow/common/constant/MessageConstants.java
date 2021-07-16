@@ -37,4 +37,10 @@ public class MessageConstants {
      */
     public static final String CUSTOMER_VISIT_LOG_CODE="1411568525448978432";
 
+    /**
+     * 站内信任务创建模板
+     */
+    public static final String INNER_TASK_CREATED_CODE="1415927384573616128";
+
+
 }

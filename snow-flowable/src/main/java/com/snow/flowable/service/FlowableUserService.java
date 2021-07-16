@@ -52,4 +52,13 @@ public interface FlowableUserService {
      * @return
      */
     Set<Long> getFlowGroupByUserId(Long userId);
+
+
+    /**
+     * 获取当前节点的待办人
+     * @param assignee 任务分配人
+     * @param taskId 任务ID
+     * @return 待处理人员集合
+     */
+     List<SysUser> getCandidateUsers(String assignee,String taskId);
 }
