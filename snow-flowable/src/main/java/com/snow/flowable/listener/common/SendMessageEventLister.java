@@ -143,19 +143,6 @@ public class SendMessageEventLister extends AbstractEventListener {
             sendTaskCreateEmailMessage(event);
         }
 
-
-        //根据任务ID获取任务获选人
-    /*    TaskEntity entity = (TaskEntity) event.getEntity();
-        Set<SysUser> flowCandidates = getFlowCandidates(entity);
-        if(CollectionUtils.isNotEmpty(flowCandidates)){
-            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.TASK_TODO.getCode());
-            messageEventDTO.setConsumerIds(Sets.newHashSet(flowCandidates.stream().map(t->String.valueOf(t.getUserId())).collect(Collectors.toList())));
-            messageEventDTO.setMessageEventType(MessageEventType.TASK_TODO);
-            messageEventDTO.setMessageOutsideId(entity.getId());
-            applicationContext.publishEvent(messageEventDTO);
-        }*/
-
-
     }
 
     /**
@@ -389,7 +376,7 @@ public class SendMessageEventLister extends AbstractEventListener {
         // workrecordAddRequest.setBizId(processInstance.getBusinessKey());
         workrecordAddRequest.setUrl(entity.getFormKey());
         workrecordAddRequest.setPcUrl(entity.getFormKey());
-        workrecordAddRequest.setSourceName("DING-FLOW");
+        workrecordAddRequest.setSourceName("DingFlow");
         workrecordAddRequest.setPcOpenType(2L);
         workrecordAddRequest.setTitle(processDefinition.getName());
         workrecordAddRequest.setCreateTime(entity.getCreateTime().getTime());

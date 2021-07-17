@@ -142,7 +142,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
     public List<OapiDepartmentListResponse.Department> getDingTalkDepartmentList(){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DEPARTMENT_LIST);
         OapiDepartmentListRequest request = new OapiDepartmentListRequest();
-        request.setId("1");
+       // request.setId("1");
         request.setHttpMethod("GET");
         request.setFetchChild(true);
         try {

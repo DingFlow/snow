@@ -17,10 +17,12 @@ function login() {
     var password = $.common.trim($("input[name='password']").val());
     var validateCode = $("input[name='validateCode']").val();
     var rememberMe = $("input[name='rememberme']").is(':checked');
-    console.log("==========================>")
+    var url= ctx +"front/login";
+    console.log("==========================>"+url)
+
     $.ajax({
         type: "post",
-        url: "../front/login",
+        url: url,
         data: {
             "username": username,
             "password": password,

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysDept;
 import com.snow.system.domain.SysUser;
@@ -218,11 +219,13 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         SysDept info = deptMapper.selectDeptById(dept.getParentId());
         // 如果父节点不为"正常"状态,则不允许新增子节点
-        if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
-        {
-            throw new BusinessException("部门停用，不允许新增");
+        if(ObjectUtil.isNotEmpty(info)){
+            if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
+            {
+                throw new BusinessException("部门停用，不允许新增");
+            }
+            dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         }
-        dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         int d=deptMapper.insertDept(dept);
         if(dept.getIsSyncDingTalk()){
             //同步钉钉数据

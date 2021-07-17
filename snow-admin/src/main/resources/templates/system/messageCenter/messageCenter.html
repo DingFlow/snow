@@ -20,9 +20,7 @@
 
                              </li>
                              <li class="">
-                                 <a data-toggle="tab" href="#tab-3"> 系统流程待办  <span class="label label-info pull-right" >[[${todoTaskCount}]]</span></a>
-                             </li>
-                             <li class=""><a data-toggle="tab" href="#tab-4"> 第二个选项卡</a>
+                                 <a data-toggle="tab" href="#tab-3"> 流程待办  <span class="label label-info pull-right" >[[${todoTaskCount}]]</span></a>
                              </li>
                          </ul>
                          <div class="tab-content ">
@@ -54,10 +52,11 @@
                                      </div>
                                  </div>
                              </div>
+
                              <div id="tab-2" class="tab-pane">
                                  <div class="panel-body">
                                      <h3>站内邮件</h3>
-                                     <div id="vertical-timeline" class="vertical-container light-timeline" th:each="email,iterStat : ${emailList}">
+                                     <div id="vertical-timeline1" class="vertical-container light-timeline" th:each="email,iterStat : ${emailList}">
                                          <div class="vertical-timeline-block">
                                              <div class="vertical-timeline-icon blue-bg">
                                                  <i th:class="${email.iconClass}"></i>
@@ -85,10 +84,11 @@
                                      </div>
                                  </div>
                              </div>
+
                              <div id="tab-3" class="tab-pane">
                                  <div class="panel-body">
-                                     <strong>系统流程待办</strong>
-                                     <div id="vertical-timeline" class="vertical-container light-timeline" th:each="todoTask,iterStat : ${todoTaskList}">
+                                     <h3>流程待办</h3>
+                                     <div id="vertical-timeline2" class="vertical-container light-timeline" th:each="todoTask,iterStat : ${todoTaskList}">
                                          <div class="vertical-timeline-block">
                                              <div class="vertical-timeline-icon blue-bg">
                                                  <i th:class="${todoTask.iconClass}"></i>
@@ -103,26 +103,20 @@
                                                      <strong th:text="${#dates.format(todoTask.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
                                                  </p>
                                                  <p >[[${todoTask.messageContent}]]</p>
-                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${todoTask.redirectUrl}]]);"> 查看详情 </a>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:href="${todoTask.pcUrl}"> 查看详情 </a>
                                                  <p>
-                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${email.spendTime}]]</small>
+                                                     <!--<small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${todoTask.spendTime}]]</small>-->
                                                  </p>
                                              </div>
-                                       </div>
-                                  </div>
-                                </div>
-                             </div>
-                             <div id="tab-4" class="tab-pane">
-                                 <div class="panel-body">
-                                     <strong>栅格系统</strong>
-
-                                     <p>Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。它包含了易于使用的预定义类，还有强大的mixin 用于生成更具语义的布局。</p>
+                                             <hr>
+                                         </div>
+                                     </div>
                                  </div>
                              </div>
                          </div>
 
-                     </div>
 
+                     </div>
                  </div>
              </div>
         </div>

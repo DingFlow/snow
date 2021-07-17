@@ -260,8 +260,7 @@ public class ShiroConfig
      * Shiro过滤器配置
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager)
-    {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // Shiro的核心安全接口,这个属性是必须的
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -297,12 +296,15 @@ public class ShiroConfig
         // 不需要拦截的访问 -需要过 captchaValidate拦截
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         filterChainDefinitionMap.put("/front/index", "anon,captchaValidate");
+        //前端登录
+        filterChainDefinitionMap.put("/front/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
         //前端注册
         filterChainDefinitionMap.put("/front/register", "anon,captchaValidate");
         //新闻跳转页
         filterChainDefinitionMap.put("/front/news/**", "anon");
+
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 

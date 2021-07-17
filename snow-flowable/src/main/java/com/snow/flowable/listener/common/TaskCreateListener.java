@@ -1,5 +1,6 @@
 package com.snow.flowable.listener.common;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -70,7 +71,7 @@ public class TaskCreateListener implements FlowableEventListener {
                     if(CollectionUtils.isNotEmpty(candidateUsers)){
                         HistoricProcessInstance processInstance = flowableService.getHistoricProcessInstanceById(entity.getProcessInstanceId());
                         candidateUsers.forEach(t->
-                            sendInnerMessage(t,processInstance)
+                            sendInnerMessage(t,entity,processInstance)
                         );
                     }
                 }
@@ -81,7 +82,7 @@ public class TaskCreateListener implements FlowableEventListener {
 
 
 
-    private void sendInnerMessage(SysUser toUsers, HistoricProcessInstance processInstance){
+    private void sendInnerMessage(SysUser toUsers,TaskEntity entity, HistoricProcessInstance processInstance){
         SysUser startSysUser = sysUserServiceImpl.selectUserById(Long.parseLong(processInstance.getStartUserId()));
         MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_TASK_TODO.getCode());
         messageEventDTO.setProducerId(String.valueOf(0));
@@ -90,12 +91,11 @@ public class TaskCreateListener implements FlowableEventListener {
         messageEventDTO.setMessageOutsideId(processInstance.getId());
         messageEventDTO.setMessageShow(2);
         Map<String,Object> map= Maps.newHashMap();
-        map.put("toUser", toUsers.getUserName());
-        //map.put("starttime", DateUtil.formatDateTime(hisProcessInstance.getStartTime()));
         map.put("startUser", startSysUser.getUserName());
+        map.put("startTime", DateUtil.formatDateTime(processInstance.getStartTime()));
         map.put("processInstance", processInstance.getProcessDefinitionName());
-        map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
-       // map.put("datetime", DateUtil.formatDateTime(new Date()));
+        //map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+        map.put("taskName", entity.getName());
         messageEventDTO.setParamMap(map);
         messageEventDTO.setTemplateCode(MessageConstants.INNER_TASK_CREATED_CODE);
         applicationContext.publishEvent(messageEventDTO);
