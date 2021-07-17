@@ -123,7 +123,7 @@
 						</a>
 						<ul class="dropdown-menu dropdown-alerts">
 							<li th:each="sysMessages,iterStat:${sysMessageList}" class="mt5">
-								<a href="javascript:void(0)" th:onclick="messageDetail([[${sysMessages.pcUrl}]]);">
+								<a href="javascript:void(0)" th:onclick="messageDetail([[${sysMessages.pcUrl}]]);" >
 									<i th:class="${sysMessages.iconClass}"></i><span class="text-success">[[${sysMessages.producerUser!=null?sysMessages.producerUser.userName:'系统'}]]</span> 发送来一条消息<span class="pull-right text-muted small">[[${sysMessages.spendTime}]]</span>
 								</a>
 							</li>
@@ -284,7 +284,6 @@ function messageDetail(url){
 		area : ["70%", "80%"],
 		content : [url, 'yes']
 	})
-
 }
 
 function mailDetailAll() {

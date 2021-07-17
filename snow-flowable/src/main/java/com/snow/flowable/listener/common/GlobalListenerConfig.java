@@ -21,11 +21,13 @@ public class GlobalListenerConfig implements ApplicationListener<ContextRefreshe
 
     private final TaskCreateListener taskCreateListener;
 
+    private final ProcessEndListener processEndListener;
+
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
         FlowableEventDispatcher dispatcher = configuration.getEventDispatcher();
         // 流程结束事件
-       // dispatcher.addEventListener(processEndListener, FlowableEngineEventType.PROCESS_COMPLETED);
+        dispatcher.addEventListener(processEndListener, FlowableEngineEventType.PROCESS_COMPLETED);
         //任务创建
         dispatcher.addEventListener(taskCreateListener, FlowableEngineEventType.TASK_CREATED);
     }

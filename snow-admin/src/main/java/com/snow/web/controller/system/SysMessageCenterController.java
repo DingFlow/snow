@@ -36,6 +36,11 @@ public class SysMessageCenterController extends BaseController
     @Autowired
     private ISysMessageTransitionService sysMessageTransitionService;
 
+    /**
+     * 跳转消息中心界面
+     * @param mmap
+     * @return
+     */
     @RequiresPermissions("system:messageCenter:view")
     @GetMapping()
     public String messageCenter(ModelMap mmap)
@@ -47,6 +52,7 @@ public class SysMessageCenterController extends BaseController
         sysMessageTransition.setOrderBy("update_time desc");
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
 
+        //拜访日志tab页数据
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
             long count = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
@@ -62,11 +68,20 @@ public class SysMessageCenterController extends BaseController
             mmap.put("emailList",emailList);
         }
 
+        //待办tab页数据
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> todoTaskList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_TASK_TODO.getCode())).collect(Collectors.toList());
             long count = todoTaskList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
             mmap.put("todoTaskCount",count);
             mmap.put("todoTaskList",todoTaskList);
+        }
+
+        //流程完结tab页数据
+        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+            List<SysMessageTransition> processEndList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_PROCESS_END.getCode())).collect(Collectors.toList());
+            long count = processEndList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("processEndCount",count);
+            mmap.put("processEndList",processEndList);
         }
 
         return prefix + "/messageCenter";
@@ -101,7 +116,7 @@ public class SysMessageCenterController extends BaseController
      * @param id
      * @return
      */
-    @PostMapping( "/remarkRead")
+    @RequestMapping( "/remarkRead")
     @ResponseBody
     public AjaxResult remarkRead(Long id)
     {

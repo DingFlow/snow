@@ -88,13 +88,13 @@ public class TaskCreateListener implements FlowableEventListener {
         messageEventDTO.setProducerId(String.valueOf(0));
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(toUsers.getUserId())));
         messageEventDTO.setMessageEventType(MessageEventType.INNER_TASK_TODO);
-        messageEventDTO.setMessageOutsideId(processInstance.getId());
+        messageEventDTO.setMessageOutsideId(entity.getId());
         messageEventDTO.setMessageShow(2);
         Map<String,Object> map= Maps.newHashMap();
         map.put("startUser", startSysUser.getUserName());
         map.put("startTime", DateUtil.formatDateTime(processInstance.getStartTime()));
         map.put("processInstance", processInstance.getProcessDefinitionName());
-        //map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+        map.put("taskId", entity.getId());
         map.put("taskName", entity.getName());
         messageEventDTO.setParamMap(map);
         messageEventDTO.setTemplateCode(MessageConstants.INNER_TASK_CREATED_CODE);

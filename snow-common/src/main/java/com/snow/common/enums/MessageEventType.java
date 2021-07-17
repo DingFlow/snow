@@ -11,6 +11,8 @@ public enum  MessageEventType {
 
     INNER_TASK_TODO("INNER_TASK_TODO", "站内信任务待办"),
 
+    INNER_PROCESS_END("INNER_PROCESS_END", "站内信流程完结"),
+
     TASK_FINISH("TASK_FINISH", "任务完成"),
 
     SEND_EMAIL("SEND_EMAIL", "发送邮件"),

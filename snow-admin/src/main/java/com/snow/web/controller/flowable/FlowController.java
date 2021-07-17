@@ -93,7 +93,7 @@ public class FlowController extends BaseController {
      * 获取我的待办列表
      */
     @RequiresPermissions("flow:get:todoList")
-    @PostMapping("/findTasksByUserId")
+    @RequestMapping("/findTasksByUserId")
     @ResponseBody
     public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
     {
