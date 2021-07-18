@@ -61,4 +61,11 @@ public interface FlowableUserService {
      * @return 待处理人员集合
      */
      List<SysUser> getCandidateUsers(String assignee,String taskId);
+
+    /**
+     *
+     * @param filter
+     * @return
+     */
+    List<RemoteGroup> getLinkFlowUserGroupList(String filter);
 }

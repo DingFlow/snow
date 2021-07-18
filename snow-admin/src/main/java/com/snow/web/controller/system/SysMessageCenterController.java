@@ -55,8 +55,8 @@ public class SysMessageCenterController extends BaseController
         //拜访日志tab页数据
         if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
-            long count = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
-            mmap.put("visitLogCount",count);
+            long visitLogCount = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("visitLogCount",visitLogCount);
             mmap.put("visitLogs",visitLogsList);
         }
 

@@ -44,6 +44,13 @@ public interface FlowableTaskService {
      * @return
      */
     Task getTask(String taskId);
+
+    /**
+     * 根据id查询历史任务
+     * @param taskId 任务id
+     * @return
+     */
+    TaskVO getHisTask(String taskId);
     /**
      * 完成任务
      * @param finishTaskDTO

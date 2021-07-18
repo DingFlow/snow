@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -72,7 +73,7 @@ public class ProcessEndListener implements FlowableEventListener {
         messageEventDTO.setMessageOutsideId(processInstance.getId());
         messageEventDTO.setMessageShow(2);
         //计算流程用时
-        String spendTime= DateUtil.formatBetween(processInstance.getStartTime(), processInstance.getEndTime(), BetweenFormater.Level.SECOND);
+        String spendTime= DateUtil.formatBetween(processInstance.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
         Map<String,Object> map= Maps.newHashMap();
         map.put("businessKey", processInstance.getBusinessKey());
         map.put("startTime", DateUtil.formatDateTime(processInstance.getStartTime()));

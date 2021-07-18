@@ -93,6 +93,7 @@ public class TaskCreateListener implements FlowableEventListener {
         Map<String,Object> map= Maps.newHashMap();
         map.put("startUser", startSysUser.getUserName());
         map.put("startTime", DateUtil.formatDateTime(processInstance.getStartTime()));
+        map.put("businessKey",processInstance.getBusinessKey());
         map.put("processInstance", processInstance.getProcessDefinitionName());
         map.put("taskId", entity.getId());
         map.put("taskName", entity.getName());

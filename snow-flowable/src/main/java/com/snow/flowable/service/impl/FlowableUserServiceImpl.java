@@ -1,5 +1,6 @@
 package com.snow.flowable.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -236,5 +237,21 @@ public class FlowableUserServiceImpl implements FlowableUserService {
             }
         }
         return new ArrayList<>(result);
+    }
+
+    @Override
+    public List<RemoteGroup> getLinkFlowUserGroupList(String filter) {
+        List<RemoteGroup> returnFlowUserGroupList=Lists.newArrayList();
+        List<RemoteGroup> flowUserGroupList = getFlowUserGroupList(filter);
+        if(CollectionUtil.isNotEmpty(flowUserGroupList)){
+            flowUserGroupList.forEach(t->{
+                FlowGroupDO flowGroupDO1 = flowGroupDOService.selectFlowGroupDOById(Long.parseLong(t.getId()));
+                FlowGroupDO flowGroupDO=new FlowGroupDO();
+                flowGroupDO.setParentId(Long.parseLong(t.getId()));
+                List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
+                if()
+            });
+        }
+        return null;
     }
 }

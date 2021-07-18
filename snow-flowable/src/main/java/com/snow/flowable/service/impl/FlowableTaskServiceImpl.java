@@ -22,6 +22,7 @@ import org.flowable.identitylink.api.history.HistoricIdentityLink;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -199,6 +200,19 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                 .taskId(taskId)
                 .singleResult();
         return task;
+    }
+
+    @Override
+    public TaskVO getHisTask(String taskId) {
+        TaskVO taskVO=new TaskVO();
+        HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery()
+                .taskId(taskId)
+                .includeIdentityLinks()
+                .includeTaskLocalVariables()
+                .includeProcessVariables()
+                .singleResult();
+        BeanUtil.copyProperties(historicTaskInstance,taskVO);
+        return taskVO;
     }
 
 

@@ -252,4 +252,20 @@ public class FlowController extends BaseController {
         return AjaxResult.success();
     }
 
+
+    /**
+     * 跳转任务详情界面
+     * @return 跳转的页面
+     */
+    @GetMapping("/toTaskDetail")
+    public String toTaskDetail(String taskId,ModelMap mmap)
+    {
+        TaskVO task =  flowableTaskService.getHisTask(taskId);
+        //获取业务参数
+        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
+        mmap.put("appFrom", appFrom);
+        mmap.put("taskId", taskId);
+        mmap.put("processInstanceId", task.getProcessInstanceId());
+        return task.getFormKey();
+    }
 }
