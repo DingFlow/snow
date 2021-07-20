@@ -245,13 +245,22 @@ public class FlowableUserServiceImpl implements FlowableUserService {
         List<RemoteGroup> flowUserGroupList = getFlowUserGroupList(filter);
         if(CollectionUtil.isNotEmpty(flowUserGroupList)){
             flowUserGroupList.forEach(t->{
-                FlowGroupDO flowGroupDO1 = flowGroupDOService.selectFlowGroupDOById(Long.parseLong(t.getId()));
+                FlowGroupDO flowGroupDOById = flowGroupDOService.selectFlowGroupDOById(Long.parseLong(t.getId()));
+                if(flowGroupDOById.getParentId()==0L){
+                    return;
+                }
                 FlowGroupDO flowGroupDO=new FlowGroupDO();
                 flowGroupDO.setParentId(Long.parseLong(t.getId()));
                 List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
-                if()
+                if(CollectionUtil.isEmpty(flowGroupDOS)){
+                    RemoteGroup remoteGroup=new RemoteGroup();
+                    FlowGroupDO parentFlowGroupDO = flowGroupDOService.selectFlowGroupDOById(flowGroupDOById.getParentId());
+                    remoteGroup.setId(t.getId());
+                    remoteGroup.setName(parentFlowGroupDO.getRoleName()+"---"+t.getName());
+                    returnFlowUserGroupList.add(remoteGroup);
+                }
             });
         }
-        return null;
+        return returnFlowUserGroupList;
     }
 }
