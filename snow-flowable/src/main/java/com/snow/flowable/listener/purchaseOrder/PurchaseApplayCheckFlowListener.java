@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @date 2021/1/12 19:13
  */
 @Service("purApplayCheckFlowListener")
-public class purchaseApplayCheckFlowListener extends AbstractExecutionListener<PurchaseOrderForm> {
+public class PurchaseApplayCheckFlowListener extends AbstractExecutionListener<PurchaseOrderForm> {
     @Override
     protected void process() {
 
