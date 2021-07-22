@@ -1,9 +1,9 @@
 package com.snow.flowable.common.skipTask;
 
-import com.snow.flowable.domain.CompleteTaskDTO;
-import org.flowable.task.api.Task;
-import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.domain.FinishTaskDTO;
+import com.snow.flowable.service.FlowableTaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,12 @@ import java.util.List;
 public abstract class AbstractSkipTask {
 
     @Autowired
-    private FlowableService flowableService;
+    private FlowableTaskService flowableTaskService;
 
 
     public boolean execute(Task task) {
         log.info("@@检查节点是否能自动处理。节点={}, taskId={}", task.getName(), task.getId());
         if (canSkip(task)) {
-            log.info("自动跳过节点");
             doSkip(task);
             return true;
         }
@@ -38,13 +37,18 @@ public abstract class AbstractSkipTask {
 
 
     private void doSkip(Task task) {
-        log.info("执行自动跳过节点");
-        CompleteTaskDTO taskParameter = getTaskParameter(task);
-        flowableService.completeTask(taskParameter);
+        log.info("@@执行自动跳过节点");
+        FinishTaskDTO taskParameter = getTaskParameter(task);
+        flowableTaskService.submitTask(taskParameter);
     }
 
-    protected CompleteTaskDTO getTaskParameter(Task task){
-        CompleteTaskDTO completeTaskDTO=new CompleteTaskDTO();
+    /**
+     * 自动完成任务时，需要传入的参数
+     * @param task 任务对象
+     * @return 封装的提交完成任务参数
+     */
+    protected FinishTaskDTO getTaskParameter(Task task){
+        FinishTaskDTO completeTaskDTO=new FinishTaskDTO();
         completeTaskDTO.setTaskId(task.getId());
         completeTaskDTO.setIsPass(true);
         completeTaskDTO.setComment("系统自动完成");
@@ -54,5 +58,9 @@ public abstract class AbstractSkipTask {
 
     protected abstract String getProcessDefinitionKey();
 
+    /**
+     * 需要跳过的任务节点
+     * @return 返回跳过的任务节点list
+     */
     protected abstract List<String> getTaskKeys();
 }

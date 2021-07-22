@@ -78,6 +78,7 @@ public interface FlowableService {
      * @param startProcessDTO
      * @return
      */
+    @Deprecated
     ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
     /**

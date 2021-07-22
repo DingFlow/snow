@@ -12,8 +12,8 @@ import java.util.List;
 
 /**
  * @author qimingjin
- * @Title:
- * @Description:
+ * @Title: 任务自动跳过服务
+ * @Description: 任务自动跳过服务
  * @date 2021/1/11 10:24
  */
 @Slf4j

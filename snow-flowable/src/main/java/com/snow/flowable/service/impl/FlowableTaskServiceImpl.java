@@ -5,6 +5,7 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.bean.MyBeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -65,6 +66,9 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
 
     @Autowired
     private AppFormServiceImpl appFormService;
+
+    @Autowired
+    private TaskSkipService taskSkipService;
 
     @Override
     public PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO) {
@@ -271,6 +275,8 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
             taskService.claim(task.getId(),finishTaskDTO.getUserId());
             taskService.complete(task.getId(),paramMap,true);
         }
+        //推进自动推动的节点
+        taskSkipService.autoSkip(task.getProcessInstanceId());
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.snow.common.exception.BusinessException;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.common.enums.FlowInstanceEnum;
+import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
@@ -121,6 +122,9 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Resource
     private FlowableTaskService flowableTaskService;
+
+    @Resource
+    private TaskSkipService taskSkipService;
 
     @Override
     public void saveModel(ActDeModel actDeModel) {
@@ -301,6 +305,8 @@ public class FlowableServiceImpl implements FlowableService {
         }
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
         identityService.setAuthenticatedUserId(null);
+        //自动推进任务
+        taskSkipService.autoSkip(processInstance.getProcessInstanceId());
         return processInstance;
     }
 
@@ -316,6 +322,8 @@ public class FlowableServiceImpl implements FlowableService {
 
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
         identityService.setAuthenticatedUserId(null);
+        //自动推进任务
+        taskSkipService.autoSkip(processInstance.getProcessInstanceId());
         return processInstance;
     }
 
