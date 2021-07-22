@@ -182,6 +182,13 @@ public interface FlowableService {
      * @param suspendState
      */
     void suspendOrActiveProcessInstance(String instanceId, Integer suspendState);
+
+    /**
+     * 删除流程
+     * @param instanceId
+     * @param reason
+     */
+    void deleteProcessInstance(String instanceId, String reason);
     /**
      * 获取流程定义实体信息
      *

@@ -1093,6 +1093,16 @@ public class FlowableServiceImpl implements FlowableService {
         }
 
     }
+
+    @Override
+    public void deleteProcessInstance(String instanceId, String reason) {
+        //调用这个方法会把历史数据全部删除
+       // historyService.deleteHistoricProcessInstance();
+        //调用该方法
+        runtimeService.deleteProcessInstance(instanceId,reason);
+
+    }
+
     /**
      * 获取高亮的线
      * @param bpmnModel

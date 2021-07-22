@@ -50,8 +50,7 @@ public class FlowController extends BaseController {
      * @return
      */
     @GetMapping("/toFinishTask")
-    public String toFinishTask(String taskId,ModelMap mmap)
-    {
+    public String toFinishTask(String taskId,ModelMap mmap) {
         Task task =  flowableTaskService.getTask(taskId);
         //获取业务参数
         AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
@@ -69,8 +68,7 @@ public class FlowController extends BaseController {
     @RequiresPermissions("system:flow:finishTask")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult finishTask(FinishTaskDTO finishTaskDTO)
-    {
+    public AjaxResult finishTask(FinishTaskDTO finishTaskDTO) {
         SysUser sysUser = ShiroUtils.getSysUser();
         finishTaskDTO.setUserId(String.valueOf(sysUser.getUserId()));
         flowableTaskService.submitTask(finishTaskDTO);
@@ -83,8 +81,7 @@ public class FlowController extends BaseController {
      */
     @RequiresPermissions("flow:get:todoList")
     @GetMapping("/toDoMyTask")
-    public String todoTask()
-    {
+    public String todoTask() {
 
         return prefix+"/myTask";
     }
@@ -95,8 +92,7 @@ public class FlowController extends BaseController {
     @RequiresPermissions("flow:get:todoList")
     @RequestMapping("/findTasksByUserId")
     @ResponseBody
-    public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO)
-    {
+    public TableDataInfo findTasksByUserId(TaskBaseDTO taskBaseDTO) {
         Long userId = ShiroUtils.getUserId();
         PageModel<TaskVO> taskList = flowableTaskService.findTasksByUserId(String.valueOf(userId), taskBaseDTO);
         return getFlowDataTable(taskList);
@@ -120,8 +116,7 @@ public class FlowController extends BaseController {
      */
     @RequiresPermissions("flow:get:getMyStartProcess")
     @GetMapping("/toMyStartProcess")
-    public String getMyHistoricProcessInstance()
-    {
+    public String getMyHistoricProcessInstance() {
 
         return prefix+"/myStartProcess";
     }
@@ -149,8 +144,7 @@ public class FlowController extends BaseController {
      */
     @GetMapping("/myStartProcessDetail")
     @RequiresPermissions("system:flow:myStartProcessDetail")
-    public String myStartProcessDetail(String processInstanceId,ModelMap modelMap)
-    {
+    public String myStartProcessDetail(String processInstanceId,ModelMap modelMap) {
         //已审批的
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
@@ -170,8 +164,7 @@ public class FlowController extends BaseController {
      */
     @RequiresPermissions("flow:process:getMyTakePartInProcess")
     @GetMapping("/toMyTakePartInProcess")
-    public String getMyTakePartInProcess()
-    {
+    public String getMyTakePartInProcess() {
 
         return prefix+"/myTakePartInProcess";
     }
@@ -224,8 +217,7 @@ public class FlowController extends BaseController {
      * 选择用户
      */
     @GetMapping("/selectUser")
-    public String selectUser(String taskId,Integer flag,ModelMap mmap)
-    {
+    public String selectUser(String taskId,Integer flag,ModelMap mmap) {
         mmap.put("taskId",taskId);
         mmap.put("flag",flag);
         return prefix + "/selectUser";
@@ -236,8 +228,7 @@ public class FlowController extends BaseController {
     @RequiresPermissions("flow:process:activeProcessInstance")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult activeProcessInstance(String id)
-    {
+    public AjaxResult activeProcessInstance(String id) {
         flowableService.suspendOrActiveProcessInstance(id,FlowInstanceEnum.ACTIVATE.getCode());
         return AjaxResult.success();
     }
@@ -246,8 +237,7 @@ public class FlowController extends BaseController {
     @RequiresPermissions("flow:process:suspendProcessInstance")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult suspendProcessInstance(String id)
-    {
+    public AjaxResult suspendProcessInstance(String id) {
         flowableService.suspendOrActiveProcessInstance(id,FlowInstanceEnum.SUSPEND.getCode());
         return AjaxResult.success();
     }
@@ -258,8 +248,7 @@ public class FlowController extends BaseController {
      * @return 跳转的页面
      */
     @GetMapping("/toTaskDetail")
-    public String toTaskDetail(String taskId,ModelMap mmap)
-    {
+    public String toTaskDetail(String taskId,ModelMap mmap) {
         TaskVO task =  flowableTaskService.getHisTask(taskId);
         //获取业务参数
         AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
@@ -268,4 +257,20 @@ public class FlowController extends BaseController {
         mmap.put("processInstanceId", task.getProcessInstanceId());
         return task.getFormKey();
     }
+
+    /**
+     * 删除流程
+     * @param id
+     * @param reason
+     * @return
+     */
+    @PostMapping("/deleteProcessInstance")
+    @RequiresPermissions("flow:process:deleteProcessInstance")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult suspendProcessInstance(String id,String reason) {
+        flowableService.deleteProcessInstance(id,reason);
+        return AjaxResult.success();
+    }
+
 }
