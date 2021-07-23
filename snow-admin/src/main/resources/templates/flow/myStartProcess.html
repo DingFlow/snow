@@ -44,7 +44,7 @@
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
          var activeProcessInstanceFlag = [[${@permission.hasPermi('system:flow:activeProcessInstance')}]];
          var suspendProcessInstanceFlag = [[${@permission.hasPermi('system:flow:suspendProcessInstance')}]];
-         var deleteProcessInstanceFlag = [[${@permission.hasPermi('system:flow:deleteProcessInstance')}]];
+         var cancelProcessInstanceFlag = [[${@permission.hasPermi('system:flow:cancelProcessInstance')}]];
          var prefixFlow = ctx + "flow";
 
          $(function() {
@@ -119,7 +119,7 @@
                                  actions.push('<a class="btn btn-success btn-xs ' + activeProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.activeProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>激活</a> ');
                              }
                              if(isFinished==0) {
-                                 actions.push('<a class="btn btn-warning btn-xs ' + deleteProcessInstanceFlag + '" href="javascript:void(0)" onclick="deleteProcessInstance(\'' + row.id + '\')"><i class="fa fa-delicious"></i>删除</a> ');
+                                 actions.push('<a class="btn btn-warning btn-xs ' + cancelProcessInstanceFlag + '" href="javascript:void(0)" onclick="cancelProcessInstance(\'' + row.id + '\')"><i class="fa fa-delicious"></i>取消</a> ');
                              }
                              actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
                              return actions.join('');
@@ -140,8 +140,8 @@
              $.modal.openTab("详情", detailUrl);
 
          }
-         // 导入数据
-         function deleteProcessInstance(id) {
+         // 取消流程
+         function cancelProcessInstance(id) {
              layer.open({
                  type: 1,
                  area: ['500px', '350px'],
@@ -149,7 +149,7 @@
                  //不固定
                  maxmin: false,
                  shade: 0.3,
-                 title: '删除流程',
+                 title: '取消流程',
                  content: $('#deleteProcessInstanceTpl').html(),
                  btn: ['<i class="fa fa-check"></i>提交', '<i class="fa fa-remove"></i> 取消'],
                  // 弹层外区域关闭
@@ -157,7 +157,7 @@
                  btn1: function(index, layero){
                      var reason = layero.find('#reason').val();
                      if(reason==''||reason==null){
-                         $.modal.msgWarning("删除理由不能为空");
+                         $.modal.msgWarning("取消理由不能为空");
                          return false;
                      }
                      var index = layer.load(2, {shade: false});
@@ -194,9 +194,9 @@
         <div class="col-xs-offset-1">
             <div class="row">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">删除理由：</label>
+                    <label class="col-sm-3 control-label">取消理由：</label>
                     <div class="col-sm-8">
-                        <textarea name="reason"  id="reason" class="form-control" rows="7" placeholder="请输入删除理由..." required></textarea>
+                        <textarea name="reason"  id="reason" class="form-control" rows="7" placeholder="请输入取消理由..." required></textarea>
                     </div>
                 </div>
             </div>

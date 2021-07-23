@@ -1,7 +1,6 @@
 package com.snow.flowable.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -74,6 +73,5 @@ public class ProcessInstanceDTO extends FlowBaseDTO implements Serializable {
     public String nameLike;
 
     public String nameLikeIgnoreCase;
-
 
 }

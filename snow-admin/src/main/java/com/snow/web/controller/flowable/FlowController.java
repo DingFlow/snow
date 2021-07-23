@@ -16,6 +16,7 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -145,14 +146,16 @@ public class FlowController extends BaseController {
     @GetMapping("/myStartProcessDetail")
     @RequiresPermissions("system:flow:myStartProcessDetail")
     public String myStartProcessDetail(String processInstanceId,ModelMap modelMap) {
-        //已审批的
+        ProcessInstanceVO processInstanceVo = flowableService.getProcessInstanceVoById(processInstanceId);
+        //已审批的任务
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
-        //historicTaskInstanceDTO.setProcessStatus(1);
         List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        //获取业务数据
         AppForm appFrom = appFormService.getAppFrom(processInstanceId);
         modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
         modelMap.put("processInstanceId",processInstanceId);
+        modelMap.put("processInstance",processInstanceVo);
         modelMap.put("busVarUrl",appFrom.getBusVarUrl());
         modelMap.put("appId",ReflectUtil.getFieldValue(appFrom,"id"));
         return prefix +"/myStartProcessDetail";
@@ -259,17 +262,17 @@ public class FlowController extends BaseController {
     }
 
     /**
-     * 删除流程
-     * @param id
-     * @param reason
+     * 取消流程
+     * @param id 流程实例id
+     * @param reason 理由
      * @return
      */
-    @PostMapping("/deleteProcessInstance")
-    @RequiresPermissions("flow:process:deleteProcessInstance")
+    @PostMapping("/cancelProcessInstance")
+    @RequiresPermissions("flow:process:cancelProcessInstance")
     @ResponseBody
     @RepeatSubmit
-    public AjaxResult suspendProcessInstance(String id,String reason) {
-        flowableService.deleteProcessInstance(id,reason);
+    public AjaxResult cancelProcessInstanceFlag(String id,String reason) {
+        flowableService.cancelProcessInstance(id,reason);
         return AjaxResult.success();
     }
 

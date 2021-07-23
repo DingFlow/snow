@@ -112,7 +112,7 @@ public class ProcessInstanceVO  implements Serializable {
      */
     private String businessKey;
     /**
-     * 是否结束(0--进行中，1--结束)
+     * 是否结束(0--进行中，1--结束,2--取消)
      */
     private Integer isFinished;
 
@@ -131,14 +131,17 @@ public class ProcessInstanceVO  implements Serializable {
      */
     private Integer processInstanceStatus;
 
+    @Deprecated
     public static List<ProcessInstanceVO> warpList(List<HistoricProcessInstance> historicProcessInstanceList){
        return historicProcessInstanceList.stream().map(t->{
             ProcessInstanceVO processInstanceVO=new ProcessInstanceVO();
             BeanUtils.copyProperties(t,processInstanceVO);
-            if(StringUtils.isEmpty(t.getEndActivityId())){
-                processInstanceVO.setIsFinished(0);
-            }else {
+            if(StringUtils.isEmpty(t.getEndActivityId())&&StringUtils.isNotEmpty(t.getDeleteReason())){
+                processInstanceVO.setIsFinished(2);
+            }else if(StringUtils.isNotEmpty(t.getEndActivityId())){
                 processInstanceVO.setIsFinished(1);
+            }else {
+                processInstanceVO.setIsFinished(0);
             }
            Map<String, Object> processVariables = t.getProcessVariables();
            processInstanceVO.setProcessVariables(processVariables);

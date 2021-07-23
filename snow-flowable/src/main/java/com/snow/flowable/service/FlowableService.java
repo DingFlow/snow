@@ -120,6 +120,14 @@ public interface FlowableService {
      */
      HistoricProcessInstance getHistoricProcessInstanceById(String id);
 
+
+    /**
+     * 获取组装后的流程实例
+     * @param id 流程实例id
+     * @return 组装后的实例对象
+     */
+    ProcessInstanceVO getProcessInstanceVoById(String id);
+
     /**
      * 根据流程实例ID查询任务
      * @param id
@@ -184,11 +192,11 @@ public interface FlowableService {
     void suspendOrActiveProcessInstance(String instanceId, Integer suspendState);
 
     /**
-     * 删除流程
-     * @param instanceId
-     * @param reason
+     * 取消流程
+     * @param instanceId 流程实例id
+     * @param reason 理由
      */
-    void deleteProcessInstance(String instanceId, String reason);
+    void cancelProcessInstance(String instanceId, String reason);
     /**
      * 获取流程定义实体信息
      *

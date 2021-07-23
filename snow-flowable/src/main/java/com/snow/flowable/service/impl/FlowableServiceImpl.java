@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -490,6 +491,18 @@ public class FlowableServiceImpl implements FlowableService {
                 .singleResult();
     }
 
+    @Override
+    public ProcessInstanceVO getProcessInstanceVoById(String id) {
+        ProcessInstanceVO processInstanceVO=new ProcessInstanceVO();
+        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(id)
+                .includeProcessVariables()
+                .singleResult();
+        BeanUtils.copyProperties(historicProcessInstance,processInstanceVO);
+        //组装参数
+        warpProcessInstanceVo(processInstanceVO);
+        return processInstanceVO;
+    }
+
 
     @Override
     public Task getTaskProcessInstanceById(String id){
@@ -661,7 +674,6 @@ public class FlowableServiceImpl implements FlowableService {
         PageModel<ProcessInstanceVO> pageModel = new PageModel<> ();
         pageModel.setTotalCount((int)count);
         pageModel.setPagedRecords(processInstanceVOS);
-        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(pageInfo.getList(), ProcessInstanceVO.class);
         return pageModel;
     }
 
@@ -705,42 +717,7 @@ public class FlowableServiceImpl implements FlowableService {
      * @param processInstanceVOS
      */
     private void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
-        processInstanceVOS.parallelStream().forEach(t->{
-
-            Map<String, Object> processVariables = t.getProcessVariables();
-            String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
-            //设置返回详情页
-            if(!StringUtils.isEmpty(url)){
-                if(!StringUtils.isEmpty(processVariables.get("id")))
-                t.setFromDetailUrl(url+"/"+processVariables.get("id"));
-            }
-            AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
-            t.setAppForm(appForm);
-            //计算流程用时
-            if(StringUtils.isEmpty(t.getEndTime())){
-                String spendTime = DateUtil.formatBetween(t.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
-                t.setProcessSpendTime(spendTime);
-            }else {
-                String spendTime = DateUtil.formatBetween(t.getStartTime(), t.getEndTime(), BetweenFormater.Level.SECOND);
-                t.setProcessSpendTime(spendTime);
-            }
-            String startUserId = t.getStartUserId();
-            SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
-            t.setStartUserName(sysUser.getUserName());
-
-            //流程状态查询 ACT_RU_EXECUTION
-            List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(t.getId()).list();
-            if(CollectionUtils.isEmpty(list)){
-                t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
-            }else {
-                Execution execution=list.get(0);
-                if(execution.isSuspended()){
-                    t.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
-                }else {
-                    t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
-                }
-            }
-        });
+        processInstanceVOS.parallelStream().forEach(t-> warpProcessInstanceVo(t));
     }
 
     @Override
@@ -1095,7 +1072,7 @@ public class FlowableServiceImpl implements FlowableService {
     }
 
     @Override
-    public void deleteProcessInstance(String instanceId, String reason) {
+    public void cancelProcessInstance(String instanceId, String reason) {
         //调用这个方法会把历史数据全部删除
        // historyService.deleteHistoricProcessInstance();
         //调用该方法
@@ -1210,4 +1187,47 @@ public class FlowableServiceImpl implements FlowableService {
         return Sets.newHashSet(values);
     }
 
+
+    /**
+     * 构建ProcessInstanceVO对象
+     * @param processInstanceVO
+     */
+    private void warpProcessInstanceVo(ProcessInstanceVO processInstanceVO){
+        Map<String, Object> processVariables = processInstanceVO.getProcessVariables();
+        String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
+        //设置返回详情页
+        if(ObjectUtil.isNotNull(url)&&ObjectUtil.isNotNull(processVariables.get("id"))){
+            processInstanceVO.setFromDetailUrl(url+"/"+processVariables.get("id"));
+        }
+        //设置表单数据
+        AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
+        processInstanceVO.setAppForm(appForm);
+        //计算流程已用时间
+        String spendTime =  StringUtils.isEmpty(processInstanceVO.getEndTime())?DateUtil.formatBetween(processInstanceVO.getStartTime(), new Date(), BetweenFormater.Level.SECOND):DateUtil.formatBetween(processInstanceVO.getStartTime(), processInstanceVO.getEndTime(), BetweenFormater.Level.SECOND);
+        processInstanceVO.setProcessSpendTime(spendTime);
+        //设置流程发起人
+        SysUser sysUser = sysUserService.selectUserById(Long.parseLong(processInstanceVO.getStartUserId()));
+        processInstanceVO.setStartUserName(sysUser.getUserName());
+
+        //流程状态查询 ACT_RU_EXECUTION
+        List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(processInstanceVO.getId()).list();
+        if(CollectionUtils.isEmpty(list)){
+            processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+        }else {
+            Execution execution=list.get(0);
+            if(execution.isSuspended()){
+                processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
+            }else {
+                processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+            }
+        }
+        //设置流程状态
+        if(ObjectUtil.isEmpty(processInstanceVO.getEndActivityId())&& ObjectUtil.isNotEmpty(processInstanceVO.getDeleteReason())){
+            processInstanceVO.setIsFinished(2);
+        }else if(ObjectUtil.isNotEmpty(processInstanceVO.getEndActivityId())){
+            processInstanceVO.setIsFinished(1);
+        }else {
+            processInstanceVO.setIsFinished(0);
+        }
+    }
 }
