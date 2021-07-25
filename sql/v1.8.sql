@@ -22,4 +22,9 @@ INSERT INTO `sys_message_template`( `template_code`, `template_name`, `template_
 
 #2021-07-23
 INSERT INTO `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 3, '取消', '2', 'process_instance_status', NULL, 'warning', 'N', '0', 'admin', NOW(), '', NOW(), '取消');
-INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`, `menu_source`) VALUES ('取消流程', 2043, 3, '#', 'menuItem', 'F', '0', 'cancelProcessInstance', '#', 'admin', NOW(), '', NULL, '', 1, 0);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('取消流程', 2043, 3, '#', 'menuItem', 'F', '0', 'cancelProcessInstance', '#', 'admin', NOW(), '', NULL, '', 1);
+
+UPDATE `sys_menu` SET `url` = '/flow/toMyTakePartInTask',  `perms` = 'flow:process:getMyTakePartInTask' WHERE `menu_id` = 2044;
+
+INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES (
+'我的已办详情', (select temp.* from( select menu_id from sys_menu where perms='flow:process:getMyTakePartInTask' ) as temp), 2, '#', 'menuItem', 'F', '0', 'flow:process:myTaskedDetail', '#', 'admin', NOW(), 'admin', NOW(), '', 1);

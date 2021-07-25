@@ -38,7 +38,7 @@
          var prefixFlow = ctx + "flow";
          $(function() {
              var options = {
-                 url: prefixFlow + "/getMyTakePartInProcess",
+                 url: prefixFlow + "/getMyTakePartInTask",
                  modalName: "我的已办",
                  striped: true,      //是否显示行间隔色
                  showToggle: false,
@@ -62,7 +62,18 @@
                          field: 'taskName',
                          title: '任务名称'
                      },
-
+                     {
+                         field: 'isPass',
+                         title: '处理结果',
+                         formatter: function(value, row, index) {
+                             if(value=="true"){
+                                 return '<span class="text-success">通过</span> ';
+                             }else if(value=="false"){
+                                 return '<span class="text-danger" >驳回</span> ';
+                             }
+                             return '<span class="text-primary" >其他</span> ';
+                         }
+                     },
                      {
                          field: 'businessKey',
                          title: '单号',
@@ -73,8 +84,12 @@
 
                      },
                      {
-                         field: 'assignee',
-                         title: '任务完成人'
+                         field: 'startUserName',
+                         title: '流程发起人'
+                     },
+                     {
+                         field: 'startTime',
+                         title: '创建时间'
                      },
 
                      {
@@ -85,13 +100,12 @@
                          field: 'handleTaskTime',
                          title: '任务耗时'
                      },
-
                      {
                          title: '操作',
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
-                             actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="fromDetailUrl(\''+row.fromDetailUrl+'\')"><i class="fa fa-eye"></i>详情</a> ');
+                             actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
                              return actions.join('');
                          }
                      }]
@@ -100,10 +114,11 @@
 
          });
 
-         function getProcessDiagram(processInstanceId) {
-             var preViewUrl=prefix+'/getProcessDiagram?processInstanceId='+processInstanceId;
-             $.modal.openTab("流程图", preViewUrl);
+         function taskDetail(taskId) {
+             var url=prefixFlow+'/getMyTaskedDetail?taskId='+taskId;
+             $.modal.openTab("已办任务详情", url);
          }
+
          function fromDetailUrl(url) {
              $.modal.openTab("详情", url);
          }

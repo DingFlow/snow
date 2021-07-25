@@ -134,7 +134,6 @@ public class FlowController extends BaseController {
         SysUser sysUser = ShiroUtils.getSysUser();
         processInstanceDTO.setStartedUserId(String.valueOf(sysUser.getUserId()));
         PageModel<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
-        log.info(JSON.toJSONString(historicProcessInstance.getPagedRecords()));
         return getFlowDataTable(historicProcessInstance);
     }
 
@@ -150,7 +149,7 @@ public class FlowController extends BaseController {
         //已审批的任务
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
-        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableTaskService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
         //获取业务数据
         AppForm appFrom = appFormService.getAppFrom(processInstanceId);
         modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
@@ -165,11 +164,11 @@ public class FlowController extends BaseController {
      * 跳转我的已办
      * @return
      */
-    @RequiresPermissions("flow:process:getMyTakePartInProcess")
-    @GetMapping("/toMyTakePartInProcess")
+    @RequiresPermissions("flow:process:getMyTakePartInTask")
+    @GetMapping("/toMyTakePartInTask")
     public String getMyTakePartInProcess() {
 
-        return prefix+"/myTakePartInProcess";
+        return prefix+"/my-taked";
     }
 
     /**
@@ -177,16 +176,32 @@ public class FlowController extends BaseController {
      * @param historicTaskInstanceDTO
      * @return
      */
-    @RequiresPermissions("flow:process:getMyTakePartInProcess")
-    @PostMapping("/getMyTakePartInProcess")
+    @RequiresPermissions("flow:process:getMyTakePartInTask")
+    @PostMapping("/getMyTakePartInTask")
     @ResponseBody
     public TableDataInfo getMyTakePartInProcess(HistoricTaskInstanceDTO historicTaskInstanceDTO){
         SysUser sysUser = ShiroUtils.getSysUser();
         historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
+        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableTaskService.getHistoricTaskInstance(historicTaskInstanceDTO);
         return getFlowDataTable(historicTaskInstance);
     }
 
+    @RequiresPermissions("flow:process:myTaskedDetail")
+    @GetMapping("/getMyTaskedDetail")
+    public String getMyTaskedDetail(String taskId,ModelMap modelMap){
+        //获取任务实例
+        HistoricTaskInstanceVO hisTask = flowableTaskService.getHisTask(taskId);
+        //获取业务数据
+        AppForm appFrom = appFormService.getAppFrom(hisTask.getProcessInstanceId());
+        //获取流程实例
+        ProcessInstanceVO processInstanceVo = flowableService.getProcessInstanceVoById(hisTask.getProcessInstanceId());
+        modelMap.put("hisTask",hisTask);
+        modelMap.put("appFrom",appFrom);
+        modelMap.put("processInstance",processInstanceVo);
+        modelMap.put("busVarUrl",appFrom.getBusVarUrl());
+        modelMap.put("appId",ReflectUtil.getFieldValue(appFrom,"id"));
+        return prefix+"/my-task-detail";
+    }
     /**
      * 转办任务
      * @return

@@ -59,6 +59,12 @@ public interface FlowableService {
     PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO);
 
     /**
+     * 查询发布详情
+     * @param id
+     * @return
+     */
+    DeploymentVO getDeploymentDetailById(String id);
+    /**
      * 删除发布
      * @param ids
      */
@@ -135,12 +141,6 @@ public interface FlowableService {
      */
      Task getTaskProcessInstanceById(String id);
 
-    /**
-     * 获取历史任务
-     * @param
-     * @return
-     */
-    List<HistoricTaskInstanceVO> getHistoricTaskInstanceNoPage(HistoricTaskInstanceDTO historicTaskInstanceDTO);
 
     /**
      * 动态获取流程节点审批信息
@@ -163,13 +163,7 @@ public interface FlowableService {
      */
     PageModel<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO);
 
-    /**
-     * 查询历史任务实例(分页)
-     * 可查询我经办的
-     * @param historicTaskInstanceDTO
-     * @return
-     */
-    PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO);
+
 
     /**
      * 获取流程图像，已执行节点和流程线高亮显示

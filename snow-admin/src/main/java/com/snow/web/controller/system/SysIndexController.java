@@ -17,6 +17,7 @@ import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
@@ -62,6 +63,9 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private FlowableService flowableService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @Autowired
     private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService;
@@ -178,7 +182,7 @@ public class SysIndexController extends BaseController
         historicTaskInstanceDTO.setPageNum(1);
         historicTaskInstanceDTO.setPageSize(5);
         historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
+        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableTaskService.getHistoricTaskInstance(historicTaskInstanceDTO);
         mmap.put("historicTaskInstanceList",historicTaskInstance.getPagedRecords());
         mmap.put("historicTaskInstanceSize",historicTaskInstance.getPagedRecords().size());
         return "main";

@@ -195,7 +195,7 @@ public class SysOaLeaveController extends BaseController
         historicTaskInstanceDTO.setBusinessKey(sysOaLeave.getLeaveNo());
         historicTaskInstanceDTO.setProcessInstanceId(sysOaLeave.getProcessInstanceId());
         historicTaskInstanceDTO.setProcessStatus(WorkRecordStatus.FINISHED);
-        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableTaskService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
         String spendTime = DateUtil.formatBetween(sysOaLeave.getStartTime(), sysOaLeave.getEndTime(), BetweenFormater.Level.SECOND);
         sysOaLeave.setLeaveTime(spendTime);
         mmap.put("sysOaLeave", sysOaLeave);

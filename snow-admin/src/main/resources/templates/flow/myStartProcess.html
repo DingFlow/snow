@@ -68,6 +68,10 @@
                          }
                      },
                      {
+                         field: 'id',
+                         title: '实例id'
+                     },
+                     {
                          field: 'processDefinitionName',
                          title: '流程名称'
                      },
@@ -121,7 +125,7 @@
                              if(isFinished==0) {
                                  actions.push('<a class="btn btn-warning btn-xs ' + cancelProcessInstanceFlag + '" href="javascript:void(0)" onclick="cancelProcessInstance(\'' + row.id + '\')"><i class="fa fa-delicious"></i>取消</a> ');
                              }
-                             actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
+                             actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
                              return actions.join('');
                          }
                      }]
@@ -131,7 +135,7 @@
 
          });
 
-         function getProcessDiagram(processInstanceId) {
+         function myStartProcessDetail(processInstanceId) {
              var preViewUrl=prefixFlow+'/myStartProcessDetail?processInstanceId='+processInstanceId;
              $.modal.openTab("流程详情", preViewUrl);
          }

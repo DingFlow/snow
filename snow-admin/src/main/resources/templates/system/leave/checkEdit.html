@@ -94,6 +94,7 @@
                 autoReplace: true
             }).on('fileuploaded', function (event, data, previewId, index) {
                 files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+				console.log("===================>"+JSON.stringify(data));
             }).on('fileremoved', function (event, id, index) {
                 $("input[name='" + event.currentTarget.id + "']").val('')
             })

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('我发起的流程详情')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <input name="deploymentId"  id="deploymentId"  th:value="${deploymentVO.id}" type="hidden" >
+        <div class="ibox float-e-margins">
+            <h4 class="form-header h4">发布概况</h4>
+            <div class="vertical-timeline-block" >
+                <div class="row">
+                    <div class="col-xs-1 col-sm-1 "></div>
+                    <div class="col-xs-5 col-sm-5 ">
+                        <label class="control-label">流程分类：</label>
+                        <span class="form-control-static" th:text="${@dict.getLabel('flow_category',deploymentVO.category)}">
+                        </span>
+                    </div>
+                    <div class="col-xs-5 col-sm-5 ">
+                        <label class="control-label">流程名称：</label>
+                        <span class="form-control-static" th:text="${deploymentVO.name}">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-1 col-sm-1 "></div>
+                    <div class="col-xs-5 col-sm-5 ">
+                        <label class="control-label">发布key：</label>
+                        <span class="form-control-static" th:text="${deploymentVO.key}">
+                        </span>
+                    </div>
+                    <div class="col-xs-5 col-sm-5 ">
+                        <label class="control-label">发布时间：</label>
+                        <span class="form-control-static" th:text="${#dates.format(deploymentVO.deploymentTime, 'yyyy-MM-dd hh:mm:ss')}">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-1 col-sm-1 "></div>
+                    <div class="col-xs-5 col-sm-5 ">
+                        <label class="control-label">是否最新版本：</label>
+                        <span class="form-control-static" th:text="${deploymentVO.isNew}">
+                        </span>
+                    </div>
+                </div>
+                <div class="float-e-margins">
+                    <h4 class="form-header h4">流程定义表单</h4>
+                    <div class="vertical-timeline-block" >
+                        <div class="row">
+                            <div class="col-xs-1 col-sm-1 "></div>
+                            <div class="col-xs-10 col-sm-10 ">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>定义名称</th>
+                                        <th>定义key</th>
+                                        <th>版本</th>
+                                        <th>定义描述</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="processDef,iterStat : ${deploymentVO.processDefVOList}">
+                                        <td>[[${processDef.id}]]</td>
+                                        <td>[[${processDef.name}]]</td>
+                                        <td>[[${processDef.key}]]</td>
+                                        <td>[[${processDef.version}]]</td>
+                                        <td>[[${processDef.description}]]</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="float-e-margins">
+                    <h4 class="form-header h4">流程图</h4>
+
+                    <div class="vertical-timeline-block" >
+                        <div class="row">
+                            <div class="col-xs-1 col-sm-1 "></div>
+                            <div class="col-xs-10 col-sm-10 ">
+                                <img  class="imgcode" width="95%"/>
+                            </div>
+                        </div>
+                   </div>
+                </div>
+                <br>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        $(function () {
+            var deploymentId= $("#deploymentId").val();
+            var url ='/modeler/getFlowPicture?id='+deploymentId+'&resourceName=';
+            $(".imgcode").attr("src", url);
+        });
+
+        function getProcessDiagram() {
+            var appId= $("#appId").val();
+            var busVarUrl= $("#busVarUrl").val();
+            $.modal.open('业务单', busVarUrl+"/"+appId);
+        }
+    </script>
+</body>
+</html>
