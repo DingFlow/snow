@@ -24,7 +24,36 @@ INSERT INTO `sys_message_template`( `template_code`, `template_name`, `template_
 INSERT INTO `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 3, '取消', '2', 'process_instance_status', NULL, 'warning', 'N', '0', 'admin', NOW(), '', NOW(), '取消');
 INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('取消流程', 2043, 3, '#', 'menuItem', 'F', '0', 'cancelProcessInstance', '#', 'admin', NOW(), '', NULL, '', 1);
 
+
 UPDATE `sys_menu` SET `url` = '/flow/toMyTakePartInTask',  `perms` = 'flow:process:getMyTakePartInTask' WHERE `menu_id` = 2044;
 
 INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES (
 '我的已办详情', (select temp.* from( select menu_id from sys_menu where perms='flow:process:getMyTakePartInTask' ) as temp), 2, '#', 'menuItem', 'F', '0', 'flow:process:myTaskedDetail', '#', 'admin', NOW(), 'admin', NOW(), '', 1);
+
+#2021-07-29
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务', '2145', '1', '/system/task', 'C', '0', 'system:task:view', '#', 'admin', now(), 'ry', now(), '系统任务菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务查询', @parentId, '1',  '#',  'F', '0', 'system:task:list',         '#', 'admin', now(), 'ry', now(), '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务新增', @parentId, '2',  '#',  'F', '0', 'system:task:add',          '#', 'admin', now(), 'ry', now(), '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务修改', @parentId, '3',  '#',  'F', '0', 'system:task:edit',         '#', 'admin', now(), 'ry', now(), '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务删除', @parentId, '4',  '#',  'F', '0', 'system:task:remove',       '#', 'admin', now(), 'ry', now(), '');
+
+insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('系统任务导出', @parentId, '5',  '#',  'F', '0', 'system:task:export',       '#', 'admin', now(), 'ry', now(), '');
+
+INSERT INTO `snow-dev`.`sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('任务类型', 'sys_task_type', '0', 'admin', NOW(), '', NULL, '任务类型');
+INSERT INTO `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 1, '系统任务', '1', 'sys_task_type', NULL, 'primary', 'Y', '0', 'admin', NOW(), '', NULL, '待办任务');
