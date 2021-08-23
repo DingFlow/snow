@@ -1,6 +1,9 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -86,6 +89,8 @@ public class SysOaTaskController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysOaTask sysOaTask)
     {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaTask.setCreateBy(String.valueOf(sysUser.getUserId()));
         return toAjax(sysOaTaskService.insertSysOaTask(sysOaTask));
     }
 

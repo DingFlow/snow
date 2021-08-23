@@ -49,6 +49,14 @@ public class SysOaTask extends BaseEntity
     @Excel(name = "任务跳转URL")
     private String taskUrl;
 
+    /** 任务分配人 */
+    @Excel(name = "任务分配人")
+    private String taskDistributeId;
+
+    /** 任务执行人 */
+    @Excel(name = "任务执行人")
+    private String taskExecuteId;
+
     /** 乐观锁 */
     @Excel(name = "乐观锁")
     private Long revision;
