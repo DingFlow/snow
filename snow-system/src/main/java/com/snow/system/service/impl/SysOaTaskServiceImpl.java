@@ -1,6 +1,9 @@
 package com.snow.system.service.impl;
 
 import java.util.List;
+
+import cn.hutool.core.util.ObjectUtil;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,9 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
 {
     @Autowired
     private SysOaTaskMapper sysOaTaskMapper;
+
+    @Autowired
+    private SysSequenceServiceImpl sequenceService;
 
     /**
      * 查询系统任务
@@ -55,6 +61,15 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     public int insertSysOaTask(SysOaTask sysOaTask)
     {
         sysOaTask.setCreateTime(DateUtils.getNowDate());
+        String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_TASK_SEQUENCE);
+        sysOaTask.setTaskNo(newSequenceNo);
+        if(ObjectUtil.isNotNull(sysOaTask.getTaskDistributeId())){
+            //待完成
+            sysOaTask.setTaskStatus("");
+        }else {
+            //待分配
+            sysOaTask.setTaskStatus("");
+        }
         return sysOaTaskMapper.insertSysOaTask(sysOaTask);
     }
 

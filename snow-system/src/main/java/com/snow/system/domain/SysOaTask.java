@@ -1,11 +1,8 @@
 package com.snow.system.domain;
 
 import com.snow.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 系统任务对象 sys_oa_task

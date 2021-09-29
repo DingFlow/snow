@@ -24,7 +24,7 @@ import com.snow.common.core.page.TableDataInfo;
 
 /**
  * 系统任务Controller
- * 
+ * 当任务被分配后，判断是否同步到钉钉系统
  * @author 没用的阿吉
  * @date 2021-07-29
  */

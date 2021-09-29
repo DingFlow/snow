@@ -32,6 +32,13 @@ public class SequenceConstants {
      */
     public static final String OA_EMAIL_SEQUENCE="OA_YJ";
 
-
+    /**
+     * 客户
+     */
     public static final String OA_CUSTOMER_SEQUENCE="OA_KH";
+
+    /**
+     * 任务单
+     */
+    public static final String OA_TASK_SEQUENCE="OA_RW";
 }
