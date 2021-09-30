@@ -1,18 +1,19 @@
 package com.snow.framework.excel;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.snow.common.enums.FinanceTradeType;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
-import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
-import com.snow.system.domain.FinanceAlipayFlowImport;
+import com.snow.system.domain.FinanceWeChatFlowImport;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,14 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author qimingjin
- * @Title:
- * @Description:
- * @date 2020/11/4 10:43
- */
+public class FinanceWeChartFlowListener extends AnalysisEventListener<FinanceWeChatFlowImport> {
 
-public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlipayFlowImport> {
 
     private static final Logger log = LoggerFactory.getLogger(FinanceAlipayFlowListener.class);
 
@@ -59,7 +54,7 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
      *
      * @param financeAlipayFlowService
      */
-    public FinanceAlipayFlowListener(IFinanceAlipayFlowService financeAlipayFlowService, SysUser sysUser, String tradeAccount, String tradeRealName, Integer billType) {
+    public FinanceWeChartFlowListener(IFinanceAlipayFlowService financeAlipayFlowService, SysUser sysUser, String tradeAccount, String tradeRealName, Integer billType) {
         this.financeAlipayFlowService = financeAlipayFlowService;
         this.sysUser=sysUser;
         this.tradeAccount=tradeAccount;
@@ -67,26 +62,26 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
         this.billType=billType;
     }
     //创建list集合封装最终的数据
-    List<FinanceAlipayFlowImport> list = new ArrayList<>();
+    List<FinanceWeChatFlowImport> list = new ArrayList<>();
 
     //一行一行去读取excle内容
     @Override
-    public void invoke(FinanceAlipayFlowImport financeAlipayFlowImport, AnalysisContext analysisContext) {
-
+    public void invoke(FinanceWeChatFlowImport financeWeChatFlowImport, AnalysisContext analysisContext) {
         //没有读取到金额直接返回
-        if(StringUtils.isNull(financeAlipayFlowImport.getTradePrice())){
+        if(ObjectUtil.isNull(financeWeChatFlowImport.getTradePrice())){
             return;
         }
-        list.add(financeAlipayFlowImport);
+        list.add(financeWeChatFlowImport);
     }
 
     //读取excel表头信息
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
+        int size = headMap.size();
         String firstHead = headMap.get(0);
         Integer rowIndex = context.readRowHolder().getRowIndex();
-        if(!firstHead.equals("支付宝交易记录明细查询")&&rowIndex==0){
-            throw new BusinessException("非标准化模板请勿导入，请下载标准模板或使用支付宝导出的原账单模板");
+        if(!firstHead.equals("微信支付账单明细")&&rowIndex==0){
+            throw new BusinessException("非标准化模板请勿导入，请下载标准模板或使用微信导出的原账单模板");
         }
         System.out.println("表头信息："+headMap);
     }
@@ -103,41 +98,17 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     public void saveData(){
 
         List<FinanceAlipayFlow> financeAlipayFlowList = list.stream().map(t -> {
-            //数据校验（交易号）
             FinanceAlipayFlow financeAlipayFlow1 = financeAlipayFlowService.selectFinanceAlipayFlowByTradeNo(t.getTradeNo());
-            if(StringUtils.isNotNull(financeAlipayFlow1)){
+            if(ObjectUtil.isNotNull(financeAlipayFlow1)){
                 throw new BusinessException("交易号：【"+t.getTradeNo()+"】已存在请勿重复导入数据");
             }
             FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
             BeanUtils.copyProperties(t, financeAlipayFlow);
             String payTime = t.getPayTime();
-            String tradeCreateTime = t.getTradeCreateTime();
-            String lastModifyTime = t.getLastModifyTime();
-            if (StringUtils.isNotEmpty(payTime)) {
+            if (!StringUtils.isEmpty(payTime)) {
                 Date date = DateUtils.parseDate(payTime);
                 financeAlipayFlow.setPayTime(date);
             }
-            if (StringUtils.isNotEmpty(tradeCreateTime)) {
-                Date date = DateUtils.parseDate(tradeCreateTime);
-                financeAlipayFlow.setTradeCreateTime(date);
-            }
-            if (StringUtils.isNotEmpty(lastModifyTime)) {
-                Date date = DateUtils.parseDate(lastModifyTime);
-                financeAlipayFlow.setLastModifyTime(date);
-            }
-            String capitalStatus = t.getCapitalStatus();
-            if (StringUtils.isEmpty(capitalStatus)) {
-                financeAlipayFlow.setCapitalStatus(0);
-            } else if (capitalStatus.equals("已支出")) {
-                financeAlipayFlow.setCapitalStatus(1);
-            } else if (capitalStatus.equals("已收入")) {
-                financeAlipayFlow.setCapitalStatus(2);
-            } else if (capitalStatus.equals("资金转移")) {
-                financeAlipayFlow.setCapitalStatus(3);
-            } else {
-                financeAlipayFlow.setCapitalStatus(10);
-            }
-
             String incomeExpenditureType = t.getIncomeExpenditureType();
             if (StringUtils.isEmpty(incomeExpenditureType)) {
                 financeAlipayFlow.setIncomeExpenditureType(0);
@@ -152,7 +123,7 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             String tradeStatus = t.getTradeStatus();
             if (StringUtils.isEmpty(tradeStatus)) {
                 financeAlipayFlow.setTradeStatus(null);
-            } else if (tradeStatus.equals("交易成功")||tradeStatus.equals("已存入零钱")||tradeStatus.equals("支付成功")) {
+            } else if (tradeStatus.equals("交易成功")||tradeStatus.equals("已存入零钱")||tradeStatus.equals("支付成功")||tradeStatus.equals("朋友已收钱")) {
                 financeAlipayFlow.setTradeStatus(1);
             } else if (tradeStatus.equals("交易关闭")) {
                 financeAlipayFlow.setTradeStatus(2);
@@ -179,5 +150,4 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
         financeAlipayFlowService.insertBatchFinanceAlipayFlow(financeAlipayFlowList);
 
     }
-
 }

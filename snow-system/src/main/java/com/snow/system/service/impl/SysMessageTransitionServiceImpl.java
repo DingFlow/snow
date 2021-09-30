@@ -1,20 +1,19 @@
 package com.snow.system.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
+import com.snow.common.core.text.Convert;
+import com.snow.common.utils.DateUtils;
+import com.snow.system.domain.SysMessageTransition;
+import com.snow.system.mapper.SysMessageTransitionMapper;
+import com.snow.system.service.ISysMessageTransitionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUtil;
-import com.snow.common.utils.DateUtils;
-import com.snow.common.utils.StringUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysMessageTransitionMapper;
-import com.snow.system.domain.SysMessageTransition;
-import com.snow.system.service.ISysMessageTransitionService;
-import com.snow.common.core.text.Convert;
 
 /**
  * 消息流转中心Service业务层处理
@@ -56,7 +55,7 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
         isReadSysMessageTransition.setMessageType(sysMessageTransition.getMessageType());
         isReadSysMessageTransition.setMessageStatus(0L);
         List<SysMessageTransition> sysMessageTransitionList = sysMessageTransitionMapper.selectSysMessageTransitionList(isReadSysMessageTransition);
-        if(CollectionUtils.isNotEmpty(sysMessageTransitionList)){
+        if(CollUtil.isNotEmpty(sysMessageTransitionList)){
            return sysMessageTransitionList.get(0).getMessageReadStatus()==1L;
         }
         return false;
@@ -72,7 +71,7 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
     {
         sysMessageTransition.setMessageStatus(0L);
         List<SysMessageTransition> sysMessageTransitionList= sysMessageTransitionMapper.selectSysMessageTransitionList(sysMessageTransition);
-        if(CollectionUtils.isNotEmpty(sysMessageTransitionList)){
+        if(CollUtil.isNotEmpty(sysMessageTransitionList)){
             sysMessageTransitionList.forEach(t->{
                 t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
                 t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));

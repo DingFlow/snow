@@ -1,8 +1,11 @@
 package com.snow.system.service;
 
-import java.util.List;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceBillSituationVO;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 财务支付宝流水Service接口
@@ -19,6 +22,8 @@ public interface IFinanceAlipayFlowService
      * @return 财务支付宝流水
      */
     public FinanceAlipayFlow selectFinanceAlipayFlowById(Long id);
+
+    public FinanceAlipayFlow selectFinanceAlipayFlowByTradeNo(String tradeNo);
 
     /**
      * 查询财务支付宝流水列表
@@ -73,4 +78,6 @@ public interface IFinanceAlipayFlowService
      * @return
      */
     public FinanceBillSituationVO getFinanceAlipayFlowSituation(Long userId);
+
+    public LinkedHashMap<String,BigDecimal> getFinanceAlipayFlowByYearAndMonth(FinanceAlipayFlow financeAlipayFlow);
 }

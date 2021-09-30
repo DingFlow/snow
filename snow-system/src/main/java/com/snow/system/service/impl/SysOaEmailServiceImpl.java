@@ -1,24 +1,24 @@
 package com.snow.system.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
+import com.snow.common.core.text.Convert;
+import com.snow.common.enums.MessageEventType;
+import com.snow.common.utils.DateUtils;
+import com.snow.system.domain.SysMessageTransition;
+import com.snow.system.domain.SysOaEmail;
+import com.snow.system.domain.SysOaEmailDO;
+import com.snow.system.domain.SysOaEmailVO;
+import com.snow.system.mapper.SysOaEmailMapper;
+import com.snow.system.service.ISysOaEmailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUtil;
-import com.snow.common.enums.MessageEventType;
-import com.snow.common.utils.DateUtils;
-import com.snow.system.domain.SysMessageTransition;
-import com.snow.system.domain.SysOaEmailDO;
-import com.snow.system.domain.SysOaEmailVO;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysOaEmailMapper;
-import com.snow.system.domain.SysOaEmail;
-import com.snow.system.service.ISysOaEmailService;
-import com.snow.common.core.text.Convert;
 
 /**
  * 邮件Service业务层处理
@@ -71,7 +71,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
         sysMessageTransition.setMessageStatus(0L);
         sysMessageTransition.setMessageReadStatus(0L);
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
-        if(CollectionUtils.isNotEmpty(sysMessageTransitions)){
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<String> emailNoList = sysMessageTransitions.stream().map(SysMessageTransition::getMessageOutsideId).collect(Collectors.toList());
             SysOaEmail sysOaEmail=new SysOaEmail();
             sysOaEmail.setEmailNoList(emailNoList);
@@ -90,7 +90,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
     {
 
         List<SysOaEmail> sysOaEmailList = sysOaEmailMapper.selectSysOaEmailList(sysOaEmail);
-        if(CollectionUtils.isNotEmpty(sysOaEmailList)){
+        if(CollUtil.isNotEmpty(sysOaEmailList)){
             sysOaEmailList.forEach(t->{
                 t.setSpendTime(DateUtil.formatBetween(t.getSendTime(), new Date(), BetweenFormater.Level.SECOND)+"前");
                 SysMessageTransition sysMessageTransition=new SysMessageTransition();
@@ -98,7 +98,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
                 sysMessageTransition.setMessageStatus(0L);
                 sysMessageTransition.setMessageOutsideId(t.getEmailNo());
                 List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
-                if(CollectionUtils.isNotEmpty(sysMessageTransitions)){
+                if(CollUtil.isNotEmpty(sysMessageTransitions)){
                     //生产者只有一个，直接get(0)就行了
                     t.setEmailFromUser(sysMessageTransitions.get(0).getProducerUser());
                     //消费者存在多个
@@ -112,7 +112,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
     @Override
     public List<SysOaEmailVO> selectEmailList(SysOaEmailDO sysOaEmailDO) {
         List<SysOaEmailVO> sysOaEmailVOS = sysOaEmailMapper.selectEmailList(sysOaEmailDO);
-        if(CollectionUtils.isNotEmpty(sysOaEmailVOS)){
+        if(CollUtil.isNotEmpty(sysOaEmailVOS)){
             sysOaEmailVOS.forEach(t->{
                 t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
                 t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));

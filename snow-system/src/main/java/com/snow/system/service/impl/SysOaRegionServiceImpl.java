@@ -1,21 +1,17 @@
 package com.snow.system.service.impl;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import cn.hutool.core.bean.BeanUtil;
 import com.snow.common.core.domain.Ztree;
+import com.snow.common.core.text.Convert;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.RegionTreeVO;
-import org.apache.commons.collections.CollectionUtils;
+import com.snow.system.domain.SysOaRegion;
+import com.snow.system.mapper.SysOaRegionMapper;
+import com.snow.system.service.ISysOaRegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysOaRegionMapper;
-import com.snow.system.domain.SysOaRegion;
-import com.snow.system.service.ISysOaRegionService;
-import com.snow.common.core.text.Convert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 地区Service业务层处理

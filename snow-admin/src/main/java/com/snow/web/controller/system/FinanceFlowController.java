@@ -6,8 +6,10 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
+import com.snow.framework.excel.FinanceWeChartFlowListener;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.FinanceAlipayFlowImport;
+import com.snow.system.domain.FinanceWeChatFlowImport;
 import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import com.snow.system.mapper.SysUserMapper;
@@ -141,19 +143,37 @@ public class FinanceFlowController extends BaseController
     }
 
 
-    @Log(title = "财务支付宝流水", businessType = BusinessType.IMPORT)
+    @Log(title = "财务账单流水", businessType = BusinessType.IMPORT)
     @RequiresPermissions("system:flow:import")
     @PostMapping("/importData")
     @ResponseBody
     public AjaxResult importData(MultipartFile file, String tradeRealName,String tradeAccount,String billType) throws Exception
     {
         SysUser sysUser = ShiroUtils.getSysUser();
-        FinanceAlipayFlowListener financeAlipayFlowListener = new FinanceAlipayFlowListener(financeAlipayFlowService, sysUser, tradeAccount,tradeRealName,Integer.parseInt(billType));
-        ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceAlipayFlowImport.class, financeAlipayFlowListener).build();
-        ReadSheet readSheet = EasyExcel.readSheet(0).build();
-        excelReader.read(readSheet);
-        // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
-        excelReader.finish();
+
+        if(billType.equals("1")){
+            FinanceAlipayFlowListener financeAlipayFlowListener = new FinanceAlipayFlowListener(financeAlipayFlowService, sysUser, tradeAccount,tradeRealName,Integer.parseInt(billType));
+            ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceAlipayFlowImport.class, financeAlipayFlowListener).build();
+            ReadSheet readSheet = EasyExcel.readSheet(0)
+                    // 这里可以设置1，因为头就是一行。如果多行头，可以设置其他值。不传入也可以，因为默认会根据DemoData 来解析，他没有指定头，也就是默认1行
+                    .headRowNumber(5).build();
+            excelReader.read(readSheet);
+            // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
+            excelReader.finish();
+        }else if(billType.equals("2")){
+            FinanceWeChartFlowListener financeWeChartFlowListener = new FinanceWeChartFlowListener(financeAlipayFlowService, sysUser, tradeAccount,tradeRealName,Integer.parseInt(billType));
+            ExcelReader excelReader = EasyExcel.read(file.getInputStream(), FinanceWeChatFlowImport.class, financeWeChartFlowListener).build();
+            //微信账单是从第十五行开始读的
+            ReadSheet readSheet = EasyExcel.readSheet(0)
+                    // 这里可以设置1，因为头就是一行。如果多行头，可以设置其他值。不传入也可以，因为默认会根据DemoData 来解析，他没有指定头，也就是默认1行
+                    .headRowNumber(17).build();
+            excelReader.read(readSheet);
+            // 这里千万别忘记关闭，读的时候会创建临时文件，到时磁盘会崩的
+            excelReader.finish();
+        }
+
+
         return AjaxResult.success("导入成功");
     }
+
 }

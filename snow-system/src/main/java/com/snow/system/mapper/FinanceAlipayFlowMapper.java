@@ -1,8 +1,11 @@
 package com.snow.system.mapper;
 
-import java.util.List;
 import com.snow.system.domain.FinanceAlipayFlow;
 import org.apache.ibatis.annotations.Param;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 财务支付宝流水Mapper接口
@@ -19,6 +22,8 @@ public interface FinanceAlipayFlowMapper
      * @return 财务支付宝流水
      */
     public FinanceAlipayFlow selectFinanceAlipayFlowById(Long id);
+
+    public FinanceAlipayFlow selectFinanceAlipayFlowByTradeNo(String tradeNo);
 
     /**
      * 查询财务支付宝流水列表
@@ -66,4 +71,11 @@ public interface FinanceAlipayFlowMapper
      * @return 结果
      */
     public int deleteFinanceAlipayFlowByIds(String[] ids);
+
+    /**
+     *
+     * @param financeAlipayFlow
+     * @return
+     */
+    public LinkedHashMap<String,BigDecimal> getFinanceAlipayFlowByYearAndMonth(FinanceAlipayFlow financeAlipayFlow);
 }

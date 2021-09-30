@@ -28,10 +28,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createBy"    column="create_by"    />
         <result property="goodsName"    column="goods_name"    />
         <result property="billType"    column="bill_type"    />
+        <result property="realFinanceType"    column="real_finance_type"    />
+        <result property="realIncomeExpenditureType"    column="real_income_expenditure_type"    />
     </resultMap>
 
     <sql id="selectFinanceAlipayFlowVo">
-        select id, trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name,bill_type from finance_alipay_flow
+        select id, trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name,bill_type,real_finance_type,real_income_expenditure_type from finance_alipay_flow
     </sql>
 
     <select id="selectFinanceAlipayFlowList" parameterType="FinanceAlipayFlow" resultMap="FinanceAlipayFlowResult">
@@ -48,6 +50,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tradePrice != null "> and trade_price = #{tradePrice}</if>
             <if test="tradeStatus != null "> and trade_status = #{tradeStatus}</if>
             <if test="incomeExpenditureType != null "> and income_expenditure_type = #{incomeExpenditureType}</if>
+            <if test="realIncomeExpenditureType != null "> and real_income_expenditure_type = #{realIncomeExpenditureType}</if>
+            <if test="realFinanceType != null "> and real_finance_type = #{realFinanceType}</if>
             <if test="serviceCharge != null "> and service_charge = #{serviceCharge}</if>
             <if test="refundPrice != null "> and refund_price = #{refundPrice}</if>
             <if test="capitalStatus != null "> and capital_status = #{capitalStatus}</if>
@@ -57,13 +61,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tradeRealName != null  and tradeRealName != ''"> and trade_real_name like concat('%', #{tradeRealName}, '%')</if>
             <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
         </where>
+        order by pay_time desc
     </select>
     
     <select id="selectFinanceAlipayFlowById" parameterType="Long" resultMap="FinanceAlipayFlowResult">
         <include refid="selectFinanceAlipayFlowVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectFinanceAlipayFlowByTradeNo" parameterType="String" resultMap="FinanceAlipayFlowResult">
+        <include refid="selectFinanceAlipayFlowVo"/>
+        where trade_no = #{tradeNo}
+    </select>
+
+
     <insert id="insertFinanceAlipayFlow" parameterType="FinanceAlipayFlow" useGeneratedKeys="true" keyProperty="id">
         insert into finance_alipay_flow
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -89,6 +100,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">create_by,</if>
             <if test="goodsName != null">goods_name,</if>
             <if test="billType != null "> bill_type,</if>
+            <if test="realIncomeExpenditureType != null "> real_income_expenditure_type, </if>
+            <if test="realFinanceType != null ">  real_finance_type, </if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tradeNo != null">#{tradeNo},</if>
@@ -113,14 +126,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">#{createBy},</if>
             <if test="goodsName != null">#{goodsName},</if>
             <if test="billType != null ">  #{billType},</if>
+            <if test="realIncomeExpenditureType != null ">  #{realIncomeExpenditureType},</if>
+            <if test="realFinanceType != null "> #{realFinanceType},</if>
          </trim>
     </insert>
     <insert id="insertBatchFinanceAlipayFlow" parameterType="java.util.List">
-        insert into finance_alipay_flow (trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name,bill_type) values
+        insert into finance_alipay_flow (trade_no, order_no, trade_create_time, pay_time, last_modify_time, trade_source_place, trade_type, counterparty, trade_price, trade_status, income_expenditure_type, service_charge, refund_price, capital_status, remark, belong_user_id, trade_account, trade_real_name, create_time, create_by,goods_name,bill_type,real_income_expenditure_type,real_finance_type) values
         <foreach collection="financeAlipayFlowList" item="item"  separator="," close=";">
             (
             #{item.tradeNo}, #{item.orderNo}, #{item.tradeCreateTime}, #{item.payTime}, #{item.lastModifyTime}, #{item.tradeSourcePlace}, #{item.tradeType}
-            ,#{item.counterparty}, #{item.tradePrice}, #{item.tradeStatus}, #{item.incomeExpenditureType}, #{item.serviceCharge}, #{item.refundPrice}, #{item.capitalStatus},#{item.remark}, #{item.belongUserId}, #{item.tradeAccount}, #{item.tradeRealName}, now(), #{item.createBy}, #{item.goodsName},#{item.billType}
+            ,#{item.counterparty}, #{item.tradePrice}, #{item.tradeStatus}, #{item.incomeExpenditureType}, #{item.serviceCharge}, #{item.refundPrice}, #{item.capitalStatus},#{item.remark}, #{item.belongUserId}, #{item.tradeAccount}, #{item.tradeRealName}, now(), #{item.createBy}, #{item.goodsName},#{item.billType}, #{item.realIncomeExpenditureType},#{item.realFinanceType}
             )
         </foreach>
     </insert>
@@ -149,6 +164,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="goodsName != null">goods_name = #{goodsName},</if>
             <if test="billType != null ">  bill_type = #{billType},</if>
+            <if test="realIncomeExpenditureType != null ">  real_income_expenditure_type = #{realIncomeExpenditureType},</if>
+            <if test="realFinanceType != null ">  real_finance_type = #{realFinanceType},</if>
         </trim>
         where id = #{id}
     </update>
@@ -163,5 +180,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-
+    <select id="getFinanceAlipayFlowByYearAndMonth" parameterType="FinanceAlipayFlow"  resultType="java.util.LinkedHashMap">
+        select  sum(case month(pay_time) when '1'  then trade_price else 0 end) as Jan,
+        sum(case month(pay_time) when '2'  then trade_price else 0 end) as Feb,
+        sum(case month(pay_time) when '3'  then trade_price else 0 end) as Mar,
+        sum(case month(pay_time) when '4'  then trade_price else 0 end) as Apr,
+        sum(case month(pay_time) when '5'  then trade_price else 0 end) as May,
+        sum(case month(pay_time) when '6'  then trade_price else 0 end) as June,
+        sum(case month(pay_time) when '7'  then trade_price else 0 end) as July,
+        sum(case month(pay_time) when '8'  then trade_price else 0 end) as Aug,
+        sum(case month(pay_time) when '9'  then trade_price else 0 end) as Sept,
+        sum(case month(pay_time) when '10' then trade_price  else 0 end) as Oct,
+        sum(case month(pay_time) when '11' then trade_price  else 0 end) as Nov,
+        sum(case month(pay_time) when '12' then trade_price  else 0 end) as Dece
+        from  finance_alipay_flow
+        <where>
+           <if test="belongUserId != null "> and belong_user_id = #{belongUserId}</if>
+           <if test="realIncomeExpenditureType != null "> and real_income_expenditure_type = #{realIncomeExpenditureType}</if>
+            <if test="year != null and year !=''"> and year(pay_time)=#{year} </if>
+        </where>
+    </select>
 </mapper>
