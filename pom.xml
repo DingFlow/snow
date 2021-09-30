@@ -42,6 +42,7 @@
         <lombok.version>1.18.10</lombok.version>
         <zhyd.oauth.version>1.15.6</zhyd.oauth.version>
         <jsqlparser.version>1.4</jsqlparser.version>
+        <googlecode.aviator.version>2.3.3</googlecode.aviator.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -328,6 +329,13 @@
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-json-converter</artifactId>
                 <version>${flowable.version}</version>
+            </dependency>
+
+            <!--Aviator是一个轻量级、高性能的Java表达式执行引擎，它动态地将表达式编译成字节码并运行。可被用于动态的公式计算、规则执行和过滤等场景-->
+            <dependency>
+                <groupId>com.googlecode.aviator</groupId>
+                <artifactId>aviator</artifactId>
+                <version>${googlecode.aviator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
