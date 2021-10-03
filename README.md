@@ -38,8 +38,7 @@
   暂未开放数据库，有需要的可以加群，项目可用于搭建流程平台商业化
   **地址：http://dingflow.xyz:9527/login**
 - QQ群:   
--  **技术一群：577813338**<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=HBdPBdyf"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Flop Mine" title="DingFlow"></a>
--  **技术二群：473942262**
+-  **技术交流群：577813338**<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=HBdPBdyf"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Flop Mine" title="DingFlow"></a>
 - 超级管理员： admin/admin123  
 - 普通管理员： yuanyb/admin123
 - 钉钉管理员： ry/admin123    
@@ -181,7 +180,7 @@ V1.6 2021-05-17
   开源离不开您的参与、支持与鼓励。开源不易，如果您觉得项目对您有帮助，请您动动小手star一下，也是对作者的莫大帮助与支持。
 
 ## 友情链接
-   - 博客：http://snowblog.shop.csj361.com
+   - 博客：http://47.114.7.28:8082
    - 若依：http://ruoyi.vip 
    - 在线文档：http://dingflow.xyz:3000
    
