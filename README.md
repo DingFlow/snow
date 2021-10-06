@@ -172,7 +172,7 @@ V1.6 2021-05-17
  - QQ群: 577813338
  - 欢迎入群讨论，我们的口号：**借助钉钉，致力于流程，让流程更简单**
  
- - Ding-Flow公众号（关注公众号即可获取DingFlow开发手册一份）
+ - DingFlow公众号（关注公众号即可获取DingFlow开发手册一份）
  - <img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0f39a32c5ffd44069dcbc8c1861bfe54.jpg"/>
    
  
