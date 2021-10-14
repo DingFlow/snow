@@ -19,6 +19,14 @@ public interface SysOaTaskDistributeMapper
      */
     public SysOaTaskDistribute selectSysOaTaskDistributeById(Long id);
 
+
+    /**
+     * 根据任务编号查询
+     * @param taskNo 任务编号
+     * @return 任务分配
+     */
+   List<SysOaTaskDistribute> selectSysOaTaskDistributeByTaskNo(String taskNo);
+
     /**
      * 查询任务分配列表
      * 

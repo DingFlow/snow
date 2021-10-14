@@ -1,8 +1,12 @@
 package com.snow.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 系统任务对象 sys_oa_task
@@ -48,11 +52,18 @@ public class SysOaTask extends BaseEntity
 
     /** 任务分配人 */
     @Excel(name = "任务分配人")
-    private String taskDistributeId;
+    private List<String> taskDistributeId;
 
-    /** 任务执行人 */
-    @Excel(name = "任务执行人")
-    private String taskExecuteId;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date taskCompleteTime;
+
+    /** 任务开始时间 */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date taskStartTime;
+
+    /** 任务挂起时间 */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date taskSuspendTime;
 
     /** 乐观锁 */
     @Excel(name = "乐观锁")

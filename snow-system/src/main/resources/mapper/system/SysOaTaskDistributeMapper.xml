@@ -46,6 +46,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysOaTaskDistributeVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectSysOaTaskDistributeByTaskNo" parameterType="Long" resultMap="SysOaTaskDistributeResult">
+        <include refid="selectSysOaTaskDistributeVo"/>
+        where task_no = #{taskNo} and is_delete=0
+    </select>
         
     <insert id="insertSysOaTaskDistribute" parameterType="SysOaTaskDistribute" useGeneratedKeys="true" keyProperty="id">
         insert into sys_oa_task_distribute

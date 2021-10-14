@@ -1,16 +1,25 @@
 package com.snow.system.service.impl;
 
-import java.util.List;
-
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.snow.common.constant.SequenceConstants;
-import com.snow.common.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysOaTaskMapper;
-import com.snow.system.domain.SysOaTask;
-import com.snow.system.service.ISysOaTaskService;
 import com.snow.common.core.text.Convert;
+import com.snow.common.enums.DingFlowTaskType;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.DateUtils;
+import com.snow.system.domain.SysOaTask;
+import com.snow.system.domain.SysOaTaskDistribute;
+import com.snow.system.event.SyncEvent;
+import com.snow.system.mapper.SysOaTaskDistributeMapper;
+import com.snow.system.mapper.SysOaTaskMapper;
+import com.snow.system.service.ISysOaTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 系统任务Service业务层处理
@@ -25,7 +34,13 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     private SysOaTaskMapper sysOaTaskMapper;
 
     @Autowired
+    private SysOaTaskDistributeMapper sysOaTaskDistributeMapper;
+
+    @Autowired
     private SysSequenceServiceImpl sequenceService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 查询系统任务
@@ -58,18 +73,31 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insertSysOaTask(SysOaTask sysOaTask)
     {
         sysOaTask.setCreateTime(DateUtils.getNowDate());
         String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_TASK_SEQUENCE);
         sysOaTask.setTaskNo(newSequenceNo);
-        if(ObjectUtil.isNotNull(sysOaTask.getTaskDistributeId())){
+        List<String> taskDistributeIdList= sysOaTask.getTaskDistributeId();
+        if(CollUtil.isNotEmpty(taskDistributeIdList)){
             //待完成
-            sysOaTask.setTaskStatus("");
+            sysOaTask.setTaskStatus(DingFlowTaskType.NEW.getCode());
         }else {
-            //待分配
-            sysOaTask.setTaskStatus("");
+            //已分配
+            sysOaTask.setTaskStatus(DingFlowTaskType.RUNNING.getCode());
+            taskDistributeIdList.forEach(t->{
+                SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
+                sysOaTaskDistribute.setTaskDistributeId(sysOaTaskDistribute.getTaskDistributeId());
+                sysOaTaskDistribute.setTaskNo(newSequenceNo);
+                sysOaTaskDistribute.setTaskCompleteTime(sysOaTask.getTaskCompleteTime());
+                sysOaTaskDistribute.setTaskStartTime(sysOaTask.getTaskStartTime());
+                sysOaTaskDistributeMapper.insertSysOaTaskDistribute(sysOaTaskDistribute);
+            });
         }
+        //事件发送
+        SyncEvent<SysOaTask> syncEvent = new SyncEvent(sysOaTask, DingTalkListenerType.WORK_RECODE_CREATE);
+        applicationContext.publishEvent(syncEvent);
         return sysOaTaskMapper.insertSysOaTask(sysOaTask);
     }
 
@@ -95,6 +123,13 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     @Override
     public int deleteSysOaTaskByIds(String ids)
     {
+        List<String> list = Arrays.asList(Convert.toStrArray(ids));
+        list.forEach(t->{
+            List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeMapper.selectSysOaTaskDistributeByTaskNo(t);
+            if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
+                throw new BusinessException("任务编号："+t+"已分配，不允许删除操作");
+            }
+        });
         return sysOaTaskMapper.deleteSysOaTaskByIds(Convert.toStrArray(ids));
     }
 
@@ -107,6 +142,10 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     @Override
     public int deleteSysOaTaskById(String taskNo)
     {
+        List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeMapper.selectSysOaTaskDistributeByTaskNo(taskNo);
+        if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
+            throw new BusinessException("任务编号："+taskNo+"已分配，不允许删除操作");
+        }
         return sysOaTaskMapper.deleteSysOaTaskById(taskNo);
     }
 }
