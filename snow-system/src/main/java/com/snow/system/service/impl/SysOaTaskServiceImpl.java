@@ -80,7 +80,7 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_TASK_SEQUENCE);
         sysOaTask.setTaskNo(newSequenceNo);
         List<String> taskDistributeIdList= sysOaTask.getTaskDistributeId();
-        if(CollUtil.isNotEmpty(taskDistributeIdList)){
+        if(CollUtil.isEmpty(taskDistributeIdList)){
             //待完成
             sysOaTask.setTaskStatus(DingFlowTaskType.NEW.getCode());
         }else {

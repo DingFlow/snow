@@ -15,10 +15,6 @@
                                 <input type="text" name="taskName"/>
                             </li>
                             <li>
-                                <label>任务内容：</label>
-                                <input type="text" name="taskContent"/>
-                            </li>
-                            <li>
                                 <label>任务状态：</label>
                                 <select name="taskStatus" th:with="type=${@dict.getType('ding_task_status')}">
                                     <option value="">所有</option>
@@ -35,22 +31,6 @@
                             <li>
                                 <label>任务来源：</label>
                                 <input type="text" name="taskSource"/>
-                            </li>
-                            <li>
-                                <label>任务外部id：</label>
-                                <input type="text" name="taskOutsideId"/>
-                            </li>
-                            <li>
-                                <label>任务跳转URL：</label>
-                                <input type="text" name="taskUrl"/>
-                            </li>
-                            <li>
-                                <label>乐观锁：</label>
-                                <input type="text" name="revision"/>
-                            </li>
-                            <li>
-                                <label>删除标识：</label>
-                                <input type="text" name="isDelete"/>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -102,7 +82,7 @@
                 {
                     field: 'taskNo',
                     title: '任务编号',
-                    visible: false
+                    visible: true
                 },
                 {
                     field: 'taskName',
@@ -110,7 +90,10 @@
                 },
                 {
                     field: 'taskContent',
-                    title: '任务内容'
+                    title: '任务内容',
+                    formatter: function(value, row, index) {
+                        return row.taskContent.substring(0,20)+"...";
+                    }
                 },
                 {
                     field: 'taskStatus',
@@ -129,22 +112,6 @@
                 {
                     field: 'taskSource',
                     title: '任务来源'
-                },
-                {
-                    field: 'taskOutsideId',
-                    title: '任务外部id'
-                },
-                {
-                    field: 'taskUrl',
-                    title: '任务跳转URL'
-                },
-                {
-                    field: 'revision',
-                    title: '乐观锁'
-                },
-                {
-                    field: 'isDelete',
-                    title: '删除标识'
                 },
                 {
                     title: '操作',

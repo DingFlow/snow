@@ -10,6 +10,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskContent"    column="task_content"    />
         <result property="taskStatus"    column="task_status"    />
         <result property="taskType"    column="task_type"    />
+        <result property="expectedTime"    column="expected_time"    />
+        <result property="priority"    column="priority"    />
         <result property="taskSource"    column="task_source"    />
         <result property="taskOutsideId"    column="task_outside_id"    />
         <result property="taskUrl"    column="task_url"    />
@@ -22,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysOaTaskVo">
-        select task_no, task_name, task_content, task_status, task_type, task_source, task_outside_id, task_url, revision, create_by, is_delete, create_time, update_by, update_time from sys_oa_task
+        select task_no, task_name, expected_time,priority,task_content, task_status, task_type, task_source, task_outside_id, task_url, revision, create_by, is_delete, create_time, update_by, update_time from sys_oa_task
     </sql>
 
     <select id="selectSysOaTaskList" parameterType="SysOaTask" resultMap="SysOaTaskResult">
@@ -34,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskType != null  and taskType != ''"> and task_type = #{taskType}</if>
             <if test="taskSource != null  and taskSource != ''"> and task_source = #{taskSource}</if>
             <if test="taskOutsideId != null  and taskOutsideId != ''"> and task_outside_id = #{taskOutsideId}</if>
-            <if test="taskUrl != null  and taskUrl != ''"> and task_url = #{taskUrl}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
             <if test="revision != null "> and revision = #{revision}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
         </where>
@@ -53,6 +55,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskContent != null">task_content,</if>
             <if test="taskStatus != null">task_status,</if>
             <if test="taskType != null">task_type,</if>
+            <if test="priority != null">priority,</if>
+            <if test="expectedTime != null">expected_time,</if>
             <if test="taskSource != null">task_source,</if>
             <if test="taskOutsideId != null">task_outside_id,</if>
             <if test="taskUrl != null">task_url,</if>
@@ -69,6 +73,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskContent != null">#{taskContent},</if>
             <if test="taskStatus != null">#{taskStatus},</if>
             <if test="taskType != null">#{taskType},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="expectedTime != null">#{expectedTime},</if>
             <if test="taskSource != null">#{taskSource},</if>
             <if test="taskOutsideId != null">#{taskOutsideId},</if>
             <if test="taskUrl != null">#{taskUrl},</if>
@@ -88,6 +94,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskContent != null">task_content = #{taskContent},</if>
             <if test="taskStatus != null">task_status = #{taskStatus},</if>
             <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="priority != null">priority=#{priority},</if>
+            <if test="expectedTime != null">expected_time=#{expectedTime},</if>
             <if test="taskSource != null">task_source = #{taskSource},</if>
             <if test="taskOutsideId != null">task_outside_id = #{taskOutsideId},</if>
             <if test="taskUrl != null">task_url = #{taskUrl},</if>

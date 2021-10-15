@@ -317,4 +317,13 @@ public class SysUserController extends BaseController
         SysUser sysUser = userService.selectUserById(id);
         return AjaxResult.success(sysUser);
     }
+
+    /**
+     * 多选用户
+     * @return
+     */
+    @GetMapping("/selectMultiUser")
+    public String selectMultiUser() {
+        return prefix + "/selectMultiUser";
+    }
 }

@@ -13,7 +13,12 @@ public enum DingFlowTaskType {
     PAUSED("PAUSED", "暂停"),
     CANCELED("CANCELED", "取消"),
     COMPLETED("COMPLETED", "完成"),
-    TERMINATED("TERMINATED", "终止");
+    TERMINATED("TERMINATED", "终止"),
+
+    //20211015
+    PROCESSING("","处理中")
+
+    ;
 
     private final String code;
     private final String info;
@@ -35,18 +40,18 @@ public enum DingFlowTaskType {
     }
 
     public static DingFlowTaskType getType(String info) {
-        for (DingFlowTaskType dingFLowOperationType:DingFlowTaskType.values()){
-            if(dingFLowOperationType.getInfo().equals(info)){
-                return dingFLowOperationType;
+        for (DingFlowTaskType dingFlowTaskType:DingFlowTaskType.values()){
+            if(dingFlowTaskType.getInfo().equals(info)){
+                return dingFlowTaskType;
             }
         }
         return null;
     }
 
     public static DingFlowTaskType getCode(String code) {
-        for (DingFlowTaskType dingFLowOperationType:DingFlowTaskType.values()){
-            if(dingFLowOperationType.getCode().equals(code)){
-                return dingFLowOperationType;
+        for (DingFlowTaskType dingFlowTaskType:DingFlowTaskType.values()){
+            if(dingFlowTaskType.getCode().equals(code)){
+                return dingFlowTaskType;
             }
         }
         return null;

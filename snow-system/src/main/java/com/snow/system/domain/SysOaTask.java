@@ -30,6 +30,12 @@ public class SysOaTask extends BaseEntity
     @Excel(name = "任务内容")
     private String taskContent;
 
+    @Excel(name = "紧急程度")
+    private Integer priority;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date expectedTime;
+
     /** 任务状态（详见数据字典） */
     @Excel(name = "任务状态", readConverterExp = "详=见数据字典")
     private String taskStatus;

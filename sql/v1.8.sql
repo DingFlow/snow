@@ -32,6 +32,25 @@ INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `
 
 #2021-07-29
 
+CREATE TABLE `sys_oa_task` (
+                               `task_no` varchar(64)  NOT NULL COMMENT '任务编号',
+                               `task_name` varchar(128) NOT NULL COMMENT '任务名称',
+                               `task_content` text  COMMENT '任务内容',
+                               `priority` int(11) NOT NULL DEFAULT '20' COMMENT '紧急程度（详见数据字典）',
+                               `expected_time` datetime DEFAULT NULL COMMENT '预期完成时间',
+                               `task_status` varchar(32)  DEFAULT NULL COMMENT '任务状态（详见数据字典）',
+                               `task_type` varchar(32)  DEFAULT NULL COMMENT '任务类型（详见数据字典）',
+                               `task_source` varchar(128) DEFAULT NULL COMMENT '任务来源',
+                               `task_outside_id` varchar(64) DEFAULT NULL COMMENT '任务外部id',
+                               `task_url` varchar(128)  DEFAULT NULL COMMENT '任务跳转URL',
+                               `revision` int(11) NOT NULL DEFAULT '1' COMMENT '乐观锁',
+                               `create_by` varchar(32) DEFAULT NULL COMMENT '创建人',
+                               `is_delete` int(11) NOT NULL DEFAULT '0' COMMENT '删除标识',
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `update_by` varchar(32) DEFAULT NULL COMMENT '更新人',
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                               PRIMARY KEY (`task_no`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统任务表';
 -- 菜单 SQL
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('系统任务', '2145', '1', '/system/task', 'C', '0', 'system:task:view', '#', 'admin', now(), 'ry', now(), '系统任务菜单');
@@ -55,5 +74,8 @@ values('系统任务删除', @parentId, '4',  '#',  'F', '0', 'system:task:remov
 insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('系统任务导出', @parentId, '5',  '#',  'F', '0', 'system:task:export',       '#', 'admin', now(), 'ry', now(), '');
 
-INSERT INTO `snow-dev`.`sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('任务类型', 'sys_task_type', '0', 'admin', NOW(), '', NULL, '任务类型');
+INSERT INTO  `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('任务类型', 'sys_task_type', '0', 'admin', NOW(), '', NULL, '任务类型');
 INSERT INTO `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 1, '系统任务', '1', 'sys_task_type', NULL, 'primary', 'Y', '0', 'admin', NOW(), '', NULL, '待办任务');
+
+--20211015
+INSERT INTO `sys_sequence`(`name`, `current_value`, `increment`, `described`) VALUES ('OA_RW', 1, 1, '系统任务单号');
