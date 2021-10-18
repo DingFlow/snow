@@ -3,7 +3,10 @@ package com.snow.web.controller.system;
 import java.util.List;
 
 import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysOaCustomerVisitLog;
+import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysOaTaskDistributeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -37,11 +40,14 @@ public class SysOaTaskController extends BaseController
     @Autowired
     private ISysOaTaskService sysOaTaskService;
 
+    @Autowired
+    private ISysOaTaskDistributeService sysOaTaskDistributeService;
+
     @RequiresPermissions("system:task:view")
     @GetMapping()
     public String task()
     {
-        return prefix + "/task";
+        return prefix + "/task1";
     }
 
     /**
@@ -53,6 +59,33 @@ public class SysOaTaskController extends BaseController
     public TableDataInfo list(SysOaTask sysOaTask)
     {
         startPage();
+        List<SysOaTask> list = sysOaTaskService.selectSysOaTaskList(sysOaTask);
+        return getDataTable(list);
+    }
+
+    /**
+     * 任务分配列表
+     */
+    @RequiresPermissions("system:task:taskDistributeList")
+    @PostMapping("/taskDistributeList")
+    @ResponseBody
+    public TableDataInfo visitLogList(SysOaTaskDistribute sysOaTaskDistribute)
+    {
+        startPage();
+        List<SysOaTaskDistribute> list = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
+        return getDataTable(list);
+    }
+    /**
+     * 查询我发起系统任务列表
+     */
+    @RequiresPermissions("system:task:myList")
+    @PostMapping("/myList")
+    @ResponseBody
+    public TableDataInfo myList(SysOaTask sysOaTask)
+    {
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaTask.setCreateBy(String.valueOf(sysUser.getUserId()));
         List<SysOaTask> list = sysOaTaskService.selectSysOaTaskList(sysOaTask);
         return getDataTable(list);
     }

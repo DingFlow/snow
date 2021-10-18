@@ -2,12 +2,13 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('新增系统任务')" />
+    <th:block th:include="include :: datetimepicker-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-task-add">
             <div class="form-group">
-                <label class="col-sm-3 control-label">任务类型：</label>
+                <label class="col-sm-3 control-label is-required">任务类型：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_task_type')}">
                         <input type="radio" th:id="${'taskType_' + dict.dictCode}" name="taskType" th:value="${dict.dictValue}" th:checked="${dict.default}">
@@ -22,16 +23,25 @@
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label">任务内容：</label>
+                <label class="col-sm-3 control-label is-required">任务内容：</label>
                 <div class="col-sm-8">
                     <textarea name="taskContent" class="form-control" rows="7"  required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">紧急程度：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_oa_task_priority')}">
+                        <input type="radio" th:id="${'taskType_' + dict.dictCode}" name="priority" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'taskType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">执行人：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                        <input class="form-control" type="hidden" name="taskDistributeId"  id="taskDistributeId" required>
+                        <input class="form-control" type="hidden" name="taskDistributeId"  id="taskDistributeId">
                         <input class="form-control" type="text" name="transitionPersonName" onclick="selectUserInfo()" id="transitionPersonName" readonly="true">
                         <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
@@ -41,8 +51,7 @@
                 <label class="col-sm-3 control-label is-required">期望完成时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="expectedTime" class="form-control" placeholder="yyyy-MM-dd mm:hh:ss" type="text" required>
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="expectedTime" class="datetime-input form-control" placeholder="yyyy-MM-dd HH:mm:ss" type="text" required>
                     </div>
                 </div>
             </div>
@@ -61,6 +70,7 @@
         </form>
     </div>
     <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
     <script th:inline="javascript">
         var prefix = ctx + "system/task"
         $("#form-task-add").validate({
