@@ -15,21 +15,18 @@
                             <a data-toggle="tab" href="#tab-1">  待处理   <span class="label label-info pull-right"></span></a>
 
                         </li>
-
                         <li class="">
                             <a data-toggle="tab" href="#tab-2">  我创建  <span class="label label-info pull-right" ></span></a>
 
                         </li>
-
                         <li class="">
                             <a data-toggle="tab" href="#tab-3"> 已处理  <span class="label label-info pull-right" ></span></a>
                         </li>
-
                         <li class="">
                             <a data-toggle="tab" href="#tab-4"> 流程完结  <span class="label label-info pull-right" ></span></a>
                         </li>
-
                     </ul>
+
                     <div class="tab-content ">
                         <div id="tab-1" class="tab-pane active">
                             <div class="panel-body">
@@ -38,16 +35,16 @@
                                         <div class="select-list">
                                             <ul>
                                                 <li>
-                                                    <label>客户编号：</label>
-                                                    <input type="text" name="customerNo" id="seasCustomerNo"/>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="myTaskNo"/>
                                                 </li>
                                                 <li>
-                                                    <label>客户名称：</label>
-                                                    <input type="text" name="customerName" id="seasCustomerName"/>
+                                                    <label>任务名称：</label>
+                                                    <input type="text" name="taskName" id="myTaskName"/>
                                                 </li>
                                                 <li>
-                                                    <label>所属行业：</label>
-                                                    <select name="customerIndustry"  id="seasCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                    <label>任务状态：</label>
+                                                    <select name="taskStatus"  id="myTaskStatus" th:with="type=${@dict.getType('ding_task_status')}">
                                                         <option value="">所有</option>
                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                     </select>
@@ -62,16 +59,16 @@
                                 </div>
 
                                 <div class="btn-group-sm" id="toolbar1" role="group">
-                                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:customer:add">
+                                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:task:edit">
                                         <i class="fa fa-plus"></i> 添加
                                     </a>
-                                    <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:customer:edit">
+                                    <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:task:edit">
                                         <i class="fa fa-edit"></i> 修改
                                     </a>
-                                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:customer:remove">
+                                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:task:remove">
                                         <i class="fa fa-remove"></i> 删除
                                     </a>
-                                    <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:customer:export">
+                                    <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:task:export">
                                         <i class="fa fa-download"></i> 导出
                                     </a>
                                 </div>
@@ -88,16 +85,16 @@
                                         <div class="select-list">
                                             <ul>
                                                 <li>
-                                                    <label>客户编号：</label>
-                                                    <input type="text" name="customerNo" id="myCustomerNo"/>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="taskNo"/>
                                                 </li>
                                                 <li>
-                                                    <label>客户名称：</label>
-                                                    <input type="text" name="customerName" id="myCustomerName"/>
+                                                    <label>任务名称：</label>
+                                                    <input type="text" name="taskName" id="taskName"/>
                                                 </li>
                                                 <li>
-                                                    <label>所属行业：</label>
-                                                    <select name="customerIndustry" id="myCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                    <label>任务状态：</label>
+                                                    <select name="taskStatus"  id="taskStatus" th:with="type=${@dict.getType('ding_task_status')}">
                                                         <option value="">所有</option>
                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                     </select>
@@ -111,7 +108,7 @@
                                     </form>
                                 </div>
                                 <div class="btn-group-sm" id="toolbar2" role="group">
-                                    <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:customer:export">
+                                    <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:task:export">
                                         <i class="fa fa-download"></i> 导出
                                     </a>
                                 </div>
@@ -128,18 +125,16 @@
                                         <div class="select-list">
                                             <ul>
                                                 <li>
-                                                    <label>客户编号：</label>
-                                                    <input type="text" name="customerNo" id="blackCustomerNo"/>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="myTaskNoEd"/>
                                                 </li>
                                                 <li>
-                                                    <label>客户名称：</label>
-                                                    <input type="text" name="customerName" id="blackCustomerName"/>
+                                                    <label>任务名称：</label>
+                                                    <input type="text" name="taskName" id="myTaskNameEd"/>
                                                 </li>
-
-
                                                 <li>
-                                                    <label>所属行业：</label>
-                                                    <select name="customerIndustry"   id="blackCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                    <label>任务状态：</label>
+                                                    <select name="taskStatus"  id="myTaskStatusEd" th:with="type=${@dict.getType('ding_task_status')}">
                                                         <option value="">所有</option>
                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                     </select>
@@ -159,10 +154,9 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -184,6 +178,8 @@
             removeUrl: prefix + "/remove",
             exportUrl: prefix + "/export",
             modalName: "系统任务",
+            toolbar: "toolbar1",
+            queryParams:queryParams,
             columns: [{
                 checkbox: true
             },
@@ -236,9 +232,9 @@
         function queryParams(params) {
             var search = $.table.queryParams(params);
             search["isHighSeas"]=1
-            search.customerNo = $("#seasCustomerNo").val();
-            search.customerName = $("#seasCustomerName").val();
-            search.customerIndustry = $("#seasCustomerIndustry").val();
+            search.taskNo = $("#myTaskNo").val();
+            search.taskName = $("#myTaskName").val();
+            search.taskStatus = $("#myTaskStatus").val();
             return search;
 
         }
@@ -255,7 +251,7 @@
                 initChildTable(index, row, $detail);
             },
 
-            modalName: "",
+            modalName: "我创建",
             columns: [{
                 checkbox: true
             },
@@ -308,9 +304,9 @@
         $.table.init(options1);
         function queryParamMy(params) {
             var search = $.table.queryParams(params);
-            search.customerNo = $("#myCustomerNo").val();
-            search.customerName = $("#myCustomerName").val();
-            search.customerIndustry = $("#myCustomerIndustry").val();
+            search.taskNo = $("#taskNo").val();
+            search.taskName = $("#taskName").val();
+            search.taskStatus = $("#taskStatus").val();
             return search;
 
         }
@@ -376,9 +372,9 @@
         function queryParam(params) {
             var search = $.table.queryParams(params);
             search["customerStatus"]="BLACKLIST"
-            search.customerNo = $("#blackCustomerNo").val();
-            search.customerName = $("#blackCustomerName").val();
-            search.customerIndustry = $("#blackCustomerIndustry").val();
+            search.taskNo = $("#myTaskNoEd").val();
+            search.taskName = $("#myTaskNameEd").val();
+            search.taskStatus = $("#myTaskStatusEd").val();
             return search;
 
         }
