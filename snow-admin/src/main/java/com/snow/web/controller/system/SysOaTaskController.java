@@ -2,11 +2,13 @@ package com.snow.web.controller.system;
 
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaCustomerVisitLog;
 import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaTaskDistributeService;
+import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -42,6 +44,9 @@ public class SysOaTaskController extends BaseController
 
     @Autowired
     private ISysOaTaskDistributeService sysOaTaskDistributeService;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     @RequiresPermissions("system:task:view")
     @GetMapping()
@@ -91,6 +96,46 @@ public class SysOaTaskController extends BaseController
     }
 
     /**
+     * 我的待处理任务
+     * @param sysOaTaskDistribute
+     * @return
+     */
+    @RequiresPermissions("system:task:waitList")
+    @PostMapping("/waitList")
+    @ResponseBody
+    public TableDataInfo waitList(SysOaTaskDistribute sysOaTaskDistribute)
+    {
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaTaskDistribute.setTaskDistributeId(String.valueOf(sysUser.getUserId()));
+        List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
+        if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
+            warpSysOaTask(sysOaTaskDistributes);
+        }
+        return getDataTable(sysOaTaskDistributes);
+    }
+
+    /**
+     * 我处理的任务
+     * @param sysOaTaskDistribute
+     * @return
+     */
+    @RequiresPermissions("system:task:handleList")
+    @PostMapping("/handleList")
+    @ResponseBody
+    public TableDataInfo handleList(SysOaTaskDistribute sysOaTaskDistribute)
+    {
+        startPage();
+        SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaTaskDistribute.setTaskExecuteId(String.valueOf(sysUser.getUserId()));
+        List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
+        if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
+            warpSysOaTask(sysOaTaskDistributes);
+        }
+        return getDataTable(sysOaTaskDistributes);
+    }
+
+    /**
      * 导出系统任务列表
      */
     @RequiresPermissions("system:task:export")
@@ -128,6 +173,28 @@ public class SysOaTaskController extends BaseController
     }
 
     /**
+     * 处理系统任务
+     */
+    @GetMapping("/handle/{taskNo}")
+    public String handle(@PathVariable("taskNo") String taskNo, ModelMap mmap)
+    {
+        SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(taskNo);
+        mmap.put("sysOaTask", sysOaTask);
+        return prefix + "/handle";
+    }
+
+    /**
+     * 处理保存系统任务
+     */
+    @RequiresPermissions("system:task:handle")
+    @Log(title = "系统任务", businessType = BusinessType.UPDATE)
+    @PostMapping("/handle")
+    @ResponseBody
+    public AjaxResult handleSave(SysOaTask sysOaTask)
+    {
+        return toAjax(sysOaTaskService.updateSysOaTask(sysOaTask));
+    }
+    /**
      * 修改系统任务
      */
     @GetMapping("/edit/{taskNo}")
@@ -160,5 +227,15 @@ public class SysOaTaskController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(sysOaTaskService.deleteSysOaTaskByIds(ids));
+    }
+
+
+
+    private void  warpSysOaTask(List<SysOaTaskDistribute> sysOaTaskDistributes){
+        sysOaTaskDistributes.forEach(t->{
+            SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(t.getTaskNo());
+            t.setSysOaTask(sysOaTask);
+            t.setCreateBy(sysUserService.selectUserById(Long.parseLong(t.getCreateBy())).getUserName());
+        });
     }
 }

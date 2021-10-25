@@ -4,6 +4,7 @@ import java.util.Date;
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author 没用的阿吉
  * @date 2021-08-15
  */
+@Data
 public class SysOaTaskDistribute extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -63,124 +65,9 @@ public class SysOaTaskDistribute extends BaseEntity
     @Excel(name = "删除标识")
     private Long isDelete;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
+    /**
+     * 任务主表
+     */
+    private SysOaTask sysOaTask;
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setTaskNo(String taskNo) 
-    {
-        this.taskNo = taskNo;
-    }
-
-    public String getTaskNo() 
-    {
-        return taskNo;
-    }
-    public void setTaskDistributeId(String taskDistributeId) 
-    {
-        this.taskDistributeId = taskDistributeId;
-    }
-
-    public String getTaskDistributeId() 
-    {
-        return taskDistributeId;
-    }
-    public void setTaskExecuteId(String taskExecuteId) 
-    {
-        this.taskExecuteId = taskExecuteId;
-    }
-
-    public String getTaskExecuteId() 
-    {
-        return taskExecuteId;
-    }
-    public void setTaskExecuteStatus(String taskExecuteStatus) 
-    {
-        this.taskExecuteStatus = taskExecuteStatus;
-    }
-
-    public String getTaskExecuteStatus() 
-    {
-        return taskExecuteStatus;
-    }
-    public void setTaskCompleteTime(Date taskCompleteTime) 
-    {
-        this.taskCompleteTime = taskCompleteTime;
-    }
-
-    public Date getTaskCompleteTime() 
-    {
-        return taskCompleteTime;
-    }
-    public void setTaskStartTime(Date taskStartTime) 
-    {
-        this.taskStartTime = taskStartTime;
-    }
-
-    public Date getTaskStartTime() 
-    {
-        return taskStartTime;
-    }
-    public void setTaskSuspendTime(Date taskSuspendTime) 
-    {
-        this.taskSuspendTime = taskSuspendTime;
-    }
-
-    public Date getTaskSuspendTime() 
-    {
-        return taskSuspendTime;
-    }
-    public void setTaskFeedback(String taskFeedback) 
-    {
-        this.taskFeedback = taskFeedback;
-    }
-
-    public String getTaskFeedback() 
-    {
-        return taskFeedback;
-    }
-    public void setRevision(Long revision) 
-    {
-        this.revision = revision;
-    }
-
-    public Long getRevision() 
-    {
-        return revision;
-    }
-    public void setIsDelete(Long isDelete) 
-    {
-        this.isDelete = isDelete;
-    }
-
-    public Long getIsDelete() 
-    {
-        return isDelete;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("taskNo", getTaskNo())
-            .append("taskDistributeId", getTaskDistributeId())
-            .append("taskExecuteId", getTaskExecuteId())
-            .append("taskExecuteStatus", getTaskExecuteStatus())
-            .append("taskCompleteTime", getTaskCompleteTime())
-            .append("taskStartTime", getTaskStartTime())
-            .append("taskSuspendTime", getTaskSuspendTime())
-            .append("taskFeedback", getTaskFeedback())
-            .append("revision", getRevision())
-            .append("createBy", getCreateBy())
-            .append("isDelete", getIsDelete())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .toString();
-    }
 }

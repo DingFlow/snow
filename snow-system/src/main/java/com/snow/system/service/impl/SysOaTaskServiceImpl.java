@@ -12,6 +12,7 @@ import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.SysOaTaskDistributeMapper;
 import com.snow.system.mapper.SysOaTaskMapper;
+import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysOaTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +33,9 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
 {
     @Autowired
     private SysOaTaskMapper sysOaTaskMapper;
+
+    @Autowired
+    private ISysOaTaskDistributeService sysOaTaskDistributeService;
 
     @Autowired
     private SysOaTaskDistributeMapper sysOaTaskDistributeMapper;
@@ -88,11 +92,12 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
             sysOaTask.setTaskStatus(DingFlowTaskType.RUNNING.getCode());
             taskDistributeIdList.forEach(t->{
                 SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
-                sysOaTaskDistribute.setTaskDistributeId(sysOaTaskDistribute.getTaskDistributeId());
+                sysOaTaskDistribute.setTaskDistributeId(t);
                 sysOaTaskDistribute.setTaskNo(newSequenceNo);
                 sysOaTaskDistribute.setTaskCompleteTime(sysOaTask.getTaskCompleteTime());
                 sysOaTaskDistribute.setTaskStartTime(sysOaTask.getTaskStartTime());
-                sysOaTaskDistributeMapper.insertSysOaTaskDistribute(sysOaTaskDistribute);
+                sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
+                sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
             });
         }
         //事件发送
