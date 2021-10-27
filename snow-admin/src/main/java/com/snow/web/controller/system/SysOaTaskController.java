@@ -74,7 +74,7 @@ public class SysOaTaskController extends BaseController
     @RequiresPermissions("system:task:taskDistributeList")
     @PostMapping("/taskDistributeList")
     @ResponseBody
-    public TableDataInfo visitLogList(SysOaTaskDistribute sysOaTaskDistribute)
+    public TableDataInfo taskDistributeList(SysOaTaskDistribute sysOaTaskDistribute)
     {
         startPage();
         List<SysOaTaskDistribute> list = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
@@ -234,6 +234,7 @@ public class SysOaTaskController extends BaseController
     private void  warpSysOaTask(List<SysOaTaskDistribute> sysOaTaskDistributes){
         sysOaTaskDistributes.forEach(t->{
             SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(t.getTaskNo());
+            sysOaTask.setCreateBy(sysUserService.selectUserById(Long.parseLong(sysOaTask.getCreateBy())).getUserName());
             t.setSysOaTask(sysOaTask);
             t.setCreateBy(sysUserService.selectUserById(Long.parseLong(t.getCreateBy())).getUserName());
         });

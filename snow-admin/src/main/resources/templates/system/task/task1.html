@@ -198,6 +198,13 @@
                     }
                 },
                 {
+                    field: 'createBy',
+                    title: '分配人',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.createBy;
+                    }
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
@@ -318,6 +325,13 @@
                     }
                 },
                 {
+                    field: 'createBy',
+                    title: '分配人',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.createBy;
+                    }
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
@@ -378,7 +392,7 @@
                 },
                 {
                     field: 'taskDistributeId',
-                    title: '分配人'
+                    title: '待处理人'
                 },
                 {
                     field: 'taskExecuteStatus',
