@@ -1,12 +1,15 @@
 package com.snow.web.controller.system;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.google.common.collect.Lists;
+import com.snow.common.enums.DingFlowTaskType;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysOaCustomerVisitLog;
+import com.snow.system.domain.*;
 import com.snow.system.domain.SysOaTaskDistribute;
-import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.snow.common.annotation.Log;
 import com.snow.common.enums.BusinessType;
 import org.springframework.stereotype.Controller;
-import com.snow.system.domain.SysOaTask;
 import com.snow.system.service.ISysOaTaskService;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -107,6 +109,7 @@ public class SysOaTaskController extends BaseController
     {
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
+        sysOaTaskDistribute.setTaskExecuteStatusList(Lists.newArrayList(DingFlowTaskType.RUNNING.getCode(),DingFlowTaskType.PROCESSING.getCode()));
         sysOaTaskDistribute.setTaskDistributeId(String.valueOf(sysUser.getUserId()));
         List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
         if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
@@ -172,16 +175,29 @@ public class SysOaTaskController extends BaseController
         return toAjax(sysOaTaskService.insertSysOaTask(sysOaTask));
     }
 
+    @RequiresPermissions("system:task:start")
+    @PostMapping("/start")
+    @ResponseBody
+    public AjaxResult start(Long id)
+    {
+        SysOaTaskDistribute sysOaTaskDistribute =new SysOaTaskDistribute();
+        sysOaTaskDistribute.setId(id);
+        sysOaTaskDistribute.setTaskStartTime(new Date());
+        sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.PROCESSING.getCode());
+        return toAjax(sysOaTaskDistributeService.updateSysOaTaskDistribute(sysOaTaskDistribute));
+    }
     /**
      * 处理系统任务
      */
-    @GetMapping("/handle/{taskNo}")
-    public String handle(@PathVariable("taskNo") String taskNo, ModelMap mmap)
+    @GetMapping("/handle/{id}")
+    public String handle(@PathVariable("id") Long id, ModelMap mmap)
     {
-        SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(taskNo);
-        mmap.put("sysOaTask", sysOaTask);
+        SysOaTaskDistribute sysOaTaskDistribute = sysOaTaskDistributeService.selectSysOaTaskDistributeById(id);
+        warpSysOaTask(Lists.newArrayList(sysOaTaskDistribute));
+        mmap.put("sysOaTaskDistribute", sysOaTaskDistribute);
         return prefix + "/handle";
     }
+
 
     /**
      * 处理保存系统任务
@@ -190,9 +206,13 @@ public class SysOaTaskController extends BaseController
     @Log(title = "系统任务", businessType = BusinessType.UPDATE)
     @PostMapping("/handle")
     @ResponseBody
-    public AjaxResult handleSave(SysOaTask sysOaTask)
+    public AjaxResult handleSave(SysOaTaskDistribute sysOaTaskDistribute)
     {
-        return toAjax(sysOaTaskService.updateSysOaTask(sysOaTask));
+        sysOaTaskDistribute.setTaskCompleteTime(new Date());
+        sysOaTaskDistribute.setTaskExecuteId(String.valueOf(ShiroUtils.getUserId()));
+        sysOaTaskDistribute.setUpdateBy(String.valueOf(ShiroUtils.getUserId()));
+        sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.COMPLETED.getCode());
+        return toAjax(sysOaTaskDistributeService.updateSysOaTaskDistribute(sysOaTaskDistribute));
     }
     /**
      * 修改系统任务
@@ -229,12 +249,51 @@ public class SysOaTaskController extends BaseController
         return toAjax(sysOaTaskService.deleteSysOaTaskByIds(ids));
     }
 
+    /**
+     * 任务详情
+     * @param taskNo 任务编码
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/detail/{id}")
+    @RequiresPermissions("system:task:detail")
+    public String detail(@PathVariable("id") String taskNo, ModelMap mmap)
+    {
+        SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(taskNo);
+        SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
+        sysOaTaskDistribute.setTaskNo(taskNo);
+        List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
+        mmap.put("sysOaTask", sysOaTask);
+        mmap.put("sysOaTaskDistributes", sysOaTaskDistributes);
+        return prefix + "/detail";
+    }
 
+    /**
+     * 任务分配详情
+     * @param id
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/taskDistribute/detail/{id}")
+    @RequiresPermissions("system:taskDistribute:detail")
+    public String taskDistributeDetail(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysOaTaskDistribute sysOaTaskDistribute = sysOaTaskDistributeService.selectSysOaTaskDistributeById(id);
+        warpSysOaTask(Lists.newArrayList(sysOaTaskDistribute));
+        mmap.put("sysOaTask", sysOaTaskDistribute);
+        return prefix + "/taskDistributeDetail";
+    }
 
     private void  warpSysOaTask(List<SysOaTaskDistribute> sysOaTaskDistributes){
         sysOaTaskDistributes.forEach(t->{
             SysOaTask sysOaTask = sysOaTaskService.selectSysOaTaskById(t.getTaskNo());
             sysOaTask.setCreateBy(sysUserService.selectUserById(Long.parseLong(sysOaTask.getCreateBy())).getUserName());
+            if(ObjectUtil.isNotNull(t.getTaskDistributeId())){
+                t.setTaskDistributeId(sysUserService.selectUserById(Long.parseLong(t.getTaskDistributeId())).getUserName());
+            }
+            if(ObjectUtil.isNotNull(t.getTaskExecuteId())){
+                t.setTaskExecuteId(sysUserService.selectUserById(Long.parseLong(t.getTaskExecuteId())).getUserName());
+            }
             t.setSysOaTask(sysOaTask);
             t.setCreateBy(sysUserService.selectUserById(Long.parseLong(t.getCreateBy())).getUserName());
         });

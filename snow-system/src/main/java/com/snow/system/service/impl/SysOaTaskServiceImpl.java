@@ -92,10 +92,11 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
             sysOaTask.setTaskStatus(DingFlowTaskType.RUNNING.getCode());
             taskDistributeIdList.forEach(t->{
                 SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
-                sysOaTaskDistribute.setTaskDistributeId(t);
+                //任务分配人
+                sysOaTaskDistribute.setTaskDistributeId(sysOaTask.getCreateBy());
                 sysOaTaskDistribute.setTaskNo(newSequenceNo);
                 sysOaTaskDistribute.setTaskCompleteTime(sysOaTask.getTaskCompleteTime());
-                sysOaTaskDistribute.setTaskStartTime(sysOaTask.getTaskStartTime());
+                sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.RUNNING.getCode());
                 sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
                 sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
             });

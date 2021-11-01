@@ -1,12 +1,12 @@
 package com.snow.system.domain;
 
-import java.util.Date;
-import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 任务分配对象 sys_oa_task_distribute
@@ -37,6 +37,8 @@ public class SysOaTaskDistribute extends BaseEntity
     /** 任务执行状态 */
     @Excel(name = "任务执行状态")
     private String taskExecuteStatus;
+
+    private List<String> taskExecuteStatusList;
 
     /** 任务完成时间 */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

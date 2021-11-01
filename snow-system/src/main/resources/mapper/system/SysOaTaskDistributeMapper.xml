@@ -33,6 +33,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskDistributeId != null  and taskDistributeId != ''"> and task_distribute_id = #{taskDistributeId}</if>
             <if test="taskExecuteId != null  and taskExecuteId != ''"> and task_execute_id = #{taskExecuteId}</if>
             <if test="taskExecuteStatus != null  and taskExecuteStatus != ''"> and task_execute_status = #{taskExecuteStatus}</if>
+            <if test="taskExecuteStatusList!= null and taskExecuteStatusList.size()>0">
+                AND task_execute_status IN
+                <foreach item="item" index="index" collection="taskExecuteStatusList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="taskCompleteTime != null "> and task_complete_time = #{taskCompleteTime}</if>
             <if test="taskStartTime != null "> and task_start_time = #{taskStartTime}</if>
             <if test="taskSuspendTime != null "> and task_suspend_time = #{taskSuspendTime}</if>

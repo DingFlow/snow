@@ -56,15 +56,6 @@
                                 </div>
 
                                 <div class="btn-group-sm" id="toolbar1" role="group">
-                                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:task:edit">
-                                        <i class="fa fa-plus"></i> 添加
-                                    </a>
-                                    <a class="btn btn-primary single disabled" onclick="$.operate.handle()" shiro:hasPermission="system:task:handle">
-                                        <i class="fa fa-edit"></i> 修改
-                                    </a>
-                                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:task:remove">
-                                        <i class="fa fa-remove"></i> 删除
-                                    </a>
                                     <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:task:export">
                                         <i class="fa fa-download"></i> 导出
                                     </a>
@@ -101,6 +92,9 @@
                                     </form>
                                 </div>
                                 <div class="btn-group-sm" id="toolbar2" role="group">
+                                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:task:edit">
+                                        <i class="fa fa-plus"></i> 添加
+                                    </a>
                                     <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:task:export">
                                         <i class="fa fa-download"></i> 导出
                                     </a>
@@ -160,6 +154,8 @@
     var editFlag = [[${@permission.hasPermi('system:task:edit')}]];
     var handleFlag = [[${@permission.hasPermi('system:task:handle')}]];
     var removeFlag = [[${@permission.hasPermi('system:task:remove')}]];
+
+    var startFlag = [[${@permission.hasPermi('system:task:start')}]];
     var taskStatusDatas = [[${@dict.getType('ding_task_status')}]];
     var taskTypeDatas = [[${@dict.getType('sys_task_type')}]];
     var prefix = ctx + "system/task";
@@ -167,8 +163,6 @@
         var options = {
             id:"bootstrap-table3",
             url: prefix + "/waitList",
-            createUrl: prefix + "/add",
-            updateUrl: prefix + "/edit/{id}",
             removeUrl: prefix + "/remove",
             exportUrl: prefix + "/export",
             handleUrl: prefix + "/handle/{id}",
@@ -179,9 +173,13 @@
                 checkbox: true
             },
                 {
+                    field: 'id',
+                    title: '任务编号',
+                    visible: false
+                },
+                {
                     field: 'taskNo',
                     title: '任务编号',
-                    visible: true
                 },
                 {
                     field: 'taskName',
@@ -199,7 +197,7 @@
                 },
                 {
                     field: 'createBy',
-                    title: '分配人',
+                    title: '指派人',
                     formatter: function(value, row, index) {
                         return row.sysOaTask.createBy;
                     }
@@ -209,8 +207,12 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + handleFlag + '" href="javascript:void(0)" onclick="$.operate.handle(\'' + row.taskNo + '\')"><i class="fa fa-edit"></i>处理</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.taskNo + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.taskExecuteStatus=='RUNNING') {
+                            actions.push('<a class="btn btn-info btn-xs ' + startFlag + '" href="javascript:void(0)" onclick="startTask(\''+row.id+'\')"><i class="fa fa-hourglass-start"></i>开始</a> ');
+                        }
+                        if(row.taskExecuteStatus=='PROCESSING') {
+                            actions.push('<a class="btn btn-success btn-xs ' + handleFlag + '" href="javascript:void(0)" onclick="$.operate.handle(\'' + row.id + '\')"><i class="fa fa-edit"></i>处理</a>');
+                        }
                         return actions.join('');
                     }
                 }]
@@ -229,6 +231,8 @@
             id: "bootstrap-table1",
             url: prefix + "/myList",
             detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            createUrl: prefix + "/add",
             toolbar: "toolbar2",
             queryParams:queryParamMy,
             detailView: true,
@@ -279,8 +283,9 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
-
+                        actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.taskNo + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.taskNo + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.taskNo + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
                 }]
@@ -336,8 +341,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.taskNo + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.taskNo + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.taskNo + '\')"><i class="fa fa-eye"></i>详情</a> ');
                         return actions.join('');
                     }
                 }]
@@ -347,7 +351,6 @@
 
         function queryParam(params) {
             var search = $.table.queryParams(params);
-            search["customerStatus"]="BLACKLIST"
             search.taskNo = $("#myTaskNoEd").val();
             search.taskName = $("#myTaskNameEd").val();
             search.taskStatus = $("#myTaskStatusEd").val();
@@ -421,8 +424,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="editLog(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="removeLog(\''+row.id+'\')"><i class="fa fa-remove"></i>删除</a>');
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="detailLog(\'' + row.id + '\')"><i class="fa fa-edit"></i>详情</a> ');
                         return actions.join('');
                     }
                 }]
@@ -430,17 +432,16 @@
         });
 
     };
-
-    function removeLog(id) {
-        $.modal.confirm("确定删除该条拜访记录信息吗？", function() {
-            var url = prefix + '/visitLogRemove';
-            $.operate.submit(url, "post", "json",  { "ids": id });
+    function startTask(id) {
+        $.modal.confirm("确定开始该条任务吗？", function() {
+            var url = prefix + '/start';
+            $.operate.submit(url, "post", "json",  { "id": id });
         });
     }
 
-    function editLog(id) {
-        var url = prefix + '/visitLogEdit/'+id;
-        $.modal.open("修改拜访记录信息", url);
+    function detailLog(id) {
+        var url = prefix + '/taskDistribute/detail/'+id;
+        $.modal.open("详情", url);
     }
 </script>
 </body>
