@@ -16,7 +16,7 @@ public enum DingFlowTaskType {
     TERMINATED("TERMINATED", "终止"),
 
     //20211015
-    PROCESSING("","处理中")
+    PROCESSING("PROCESSING","处理中")
 
     ;
 
