@@ -22,6 +22,11 @@ public class SysOaTask extends BaseEntity
     /** 任务编号 */
     private String taskNo;
 
+    /**
+     * 钉钉待办taskId
+     */
+    private String dingTaskId;
+
     /** 任务名称 */
     @Excel(name = "任务名称")
     private String taskName;

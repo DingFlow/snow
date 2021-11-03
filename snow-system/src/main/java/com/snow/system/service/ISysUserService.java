@@ -1,11 +1,10 @@
 package com.snow.system.service;
 
-import java.util.List;
-import java.util.Set;
-
 import com.snow.system.domain.SysAuthUser;
 import com.snow.system.domain.SysUser;
 import com.snow.system.domain.SysUserRole;
+
+import java.util.List;
 
 /**
  * 用户 业务层

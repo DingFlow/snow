@@ -1,33 +1,27 @@
 package com.snow.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
+import com.snow.common.annotation.DataScope;
+import com.snow.common.constant.UserConstants;
+import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.security.Md5Utils;
 import com.snow.system.domain.*;
 import com.snow.system.event.SyncEvent;
-import org.apache.commons.compress.utils.Lists;
+import com.snow.system.mapper.*;
+import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.snow.common.annotation.DataScope;
-import com.snow.common.constant.UserConstants;
-import com.snow.common.core.text.Convert;
-import com.snow.common.exception.BusinessException;
-import com.snow.common.utils.StringUtils;
-import com.snow.common.utils.security.Md5Utils;
-import com.snow.system.mapper.SysPostMapper;
-import com.snow.system.mapper.SysRoleMapper;
-import com.snow.system.mapper.SysUserMapper;
-import com.snow.system.mapper.SysUserPostMapper;
-import com.snow.system.mapper.SysUserRoleMapper;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysUserService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用户 业务层处理
@@ -286,7 +280,7 @@ public class SysUserServiceImpl implements ISysUserService
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
         List<SysUserRole> sysUserRoles = userRoleMapper.selectUserRoleByUserId(userId);
-        if(CollectionUtil.isNotEmpty(sysUserRoles)){
+        if(CollUtil.isNotEmpty(sysUserRoles)){
             sysUserRoles.forEach(t->{
                 SysRole sysRole = roleMapper.selectRoleById(t.getRoleId());
                 if(sysRole.getRoleType()==1){

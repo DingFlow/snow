@@ -1,10 +1,10 @@
 package com.snow.dingtalk.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.dingtalktodo_1_0.Client;
-import com.aliyun.dingtalktodo_1_0.models.CreateTodoTaskHeaders;
-import com.aliyun.dingtalktodo_1_0.models.CreateTodoTaskRequest;
-import com.aliyun.tea.TeaException;
+import com.aliyun.dingtalktodo_1_0.models.*;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.dingtalk.api.DefaultDingTalkClient;
@@ -13,10 +13,7 @@ import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
 import com.dingtalk.api.request.OapiWorkrecordAddRequest;
 import com.dingtalk.api.request.OapiWorkrecordGetbyuseridRequest;
 import com.dingtalk.api.request.OapiWorkrecordUpdateRequest;
-import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
-import com.dingtalk.api.response.OapiWorkrecordAddResponse;
-import com.dingtalk.api.response.OapiWorkrecordGetbyuseridResponse;
-import com.dingtalk.api.response.OapiWorkrecordUpdateResponse;
+import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
@@ -29,10 +26,14 @@ import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.dingtalk.model.WorkrecordGetbyuseridRequest;
+import com.snow.dingtalk.service.UserService;
 import com.snow.dingtalk.service.WorkRecodeService;
+import com.snow.framework.util.ShiroUtils;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysMessageTemplate;
+import com.snow.system.domain.SysOaTask;
 import com.snow.system.service.ISysMessageTemplateService;
+import com.snow.system.service.ISysUserService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -57,6 +60,11 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
 
 
     private ISysMessageTemplateService sysMessageTemplateService=SpringUtils.getBean(ISysMessageTemplateService.class);
+
+    private UserService userService=SpringUtils.getBean(UserService.class);
+
+    private ISysUserService sysUserService=SpringUtils.getBean(ISysUserService.class);
+
     /**
      * 创建工作待办
      * @param workrecordAddRequest
@@ -83,45 +91,124 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
 
     }
 
+    @Override
+    public String createTodoTask(SysOaTask sysOaTask) {
+        List<String> taskDistributeId = sysOaTask.getTaskDistributeId();
 
-    public void createV2() throws Exception {
-        Config config = new Config();
-        config.protocol = "https";
-        config.regionId = "central";
-        Client client = new com.aliyun.dingtalktodo_1_0.Client(config);
         CreateTodoTaskHeaders createTodoTaskHeaders = new CreateTodoTaskHeaders();
         createTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        CreateTodoTaskRequest.CreateTodoTaskRequestNotifyConfigs notifyConfigs = new CreateTodoTaskRequest.CreateTodoTaskRequestNotifyConfigs()
+                .setDingNotify("1");
         CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl detailUrl = new CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl()
-                .setAppUrl("dingtalk://dingtalkclient/action/open_mini_app?miniAppId={0}&ddMode=push&page=pages%2ftask-detail%2ftask-detail%3ftaskId%3d{1}")
-                .setPcUrl("https://todo.dingtalk.com/ding-portal/detail/task/{0}");
+                .setAppUrl(sysOaTask.getTaskUrl())
+                .setPcUrl(sysOaTask.getTaskUrl());
+
         CreateTodoTaskRequest createTodoTaskRequest = new CreateTodoTaskRequest()
-                .setSourceId("isv_dingtalkTodo1")
-                .setSubject("接入钉钉待办")
-                .setCreatorId("PUoiinWIpa2yH2ymhiiGiP6g")
-                .setDescription("应用可以调用该接口发起一个钉钉待办任务，该待办事项会出现在钉钉客户端“待办”页面，需要注意的是，通过开放接口发起的待办，目前仅支持直接跳转ISV应用详情页（ISV在调该接口时需传入自身应用详情页链接）。")
-                .setDueTime(1617675000000L)
-                .setExecutorIds(Arrays.asList(
-                        "PUoiinWIpa2yH2ymhiiGiP6g"
-                ))
-                .setParticipantIds(Arrays.asList(
-                        "PUoiinWIpa2yH2ymhiiGiP6g"
-                ))
-                .setDetailUrl(detailUrl);
+                .setSourceId(sysOaTask.getTaskNo())
+                .setSubject(sysOaTask.getTaskName())
+                .setCreatorId(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getCreateBy())))
+                .setDescription(sysOaTask.getTaskContent())
+                .setDetailUrl(detailUrl)
+                .setIsOnlyShowExecutor(true)
+                .setPriority(sysOaTask.getPriority())
+                .setNotifyConfigs(notifyConfigs);
+        if (ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime())) {
+            createTodoTaskRequest.setDueTime(sysOaTask.getTaskCompleteTime().getTime());
+        }
+        //执行者id
+        if(CollUtil.isNotEmpty(taskDistributeId)){
+            List<String> executorIds = taskDistributeId.stream().map(t -> {
+                return userService.getUnionIdBySysUserId(Long.parseLong(t));
+            }).collect(Collectors.toList());
+            createTodoTaskRequest.setExecutorIds(executorIds);
+        }
         try {
-            client.createTodoTaskWithOptions("PUoiinWIpa2yH2ymhiiGiP6g", createTodoTaskRequest, createTodoTaskHeaders, new RuntimeOptions());
-        } catch (TeaException err) {
-            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                // err 中含有 code 和 message 属性，可帮助开发定位问题
-            }
-
-        } catch (Exception _err) {
-            TeaException err = new TeaException(_err.getMessage(), _err);
-            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
-                // err 中含有 code 和 message 属性，可帮助开发定位问题
-            }
-
+            CreateTodoTaskResponse response = createTodoClient().createTodoTaskWithOptions(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getCreateBy())), createTodoTaskRequest, createTodoTaskHeaders, new RuntimeOptions());
+            return response.getBody().id;
+        } catch (Exception err) {
+            log.error("@@调用钉钉创建待办的时候出现异常，异常信息为:{}",err.getMessage());
+            throw new SyncDataException(JSON.toJSONString(createTodoTaskRequest),err.getMessage());
         }
     }
+
+    @Override
+    public String deleteTodoTask(String taskId) {
+        String dingUserId = ShiroUtils.getDingUserId();
+        OapiV2UserGetResponse.UserGetResponse user = userService.getUserByUserId(dingUserId);
+        DeleteTodoTaskHeaders deleteTodoTaskHeaders = new DeleteTodoTaskHeaders();
+        deleteTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        DeleteTodoTaskRequest deleteTodoTaskRequest = new DeleteTodoTaskRequest()
+                .setOperatorId(user.getUnionid());
+        try {
+            DeleteTodoTaskResponse deleteTodoTaskResponse = createTodoClient().deleteTodoTaskWithOptions(user.getUnionid(), taskId, deleteTodoTaskRequest, deleteTodoTaskHeaders, new RuntimeOptions());
+            return deleteTodoTaskResponse.getBody().requestId;
+        } catch (Exception exception) {
+            log.error("@@调用钉钉删除待办的时候出现异常，异常信息为:{}",exception.getMessage());
+            throw new SyncDataException(JSON.toJSONString(deleteTodoTaskRequest),exception.getMessage());
+        }
+    }
+
+    @Override
+    public Boolean updateTodoTask(SysOaTask sysOaTask) {
+        UpdateTodoTaskHeaders updateTodoTaskHeaders = new UpdateTodoTaskHeaders();
+        updateTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        UpdateTodoTaskRequest updateTodoTaskRequest = new UpdateTodoTaskRequest()
+                .setSubject(sysOaTask.getTaskName())
+                .setDescription(sysOaTask.getTaskContent())
+                .setExecutorIds(Arrays.asList(
+                        ""
+                ));
+        //设置是否完成
+        if(ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime())){
+            updateTodoTaskRequest.setDone(true);
+        }else {
+            updateTodoTaskRequest.setDone(false);
+        }
+        if(ObjectUtil.isNotNull(sysOaTask.getExpectedTime())){
+            updateTodoTaskRequest.setDueTime(sysOaTask.getExpectedTime().getTime());
+        }
+        try {
+            UpdateTodoTaskResponse updateTodoTaskResponse = createTodoClient().updateTodoTaskWithOptions(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getUpdateBy())), sysOaTask.getDingTaskId(), updateTodoTaskRequest, updateTodoTaskHeaders, new RuntimeOptions());
+            return updateTodoTaskResponse.getBody().result;
+        }catch (Exception err) {
+            log.error("@@调用钉钉更新待办的时候出现异常，异常信息为:{}",err.getMessage());
+            throw new SyncDataException(JSON.toJSONString(updateTodoTaskRequest),err.getMessage());
+        }
+    }
+
+    @Override
+    public Boolean updateTodoTaskExecutorStatus(String taskId,Boolean status) {
+        UpdateTodoTaskExecutorStatusHeaders updateTodoTaskExecutorStatusHeaders = new UpdateTodoTaskExecutorStatusHeaders();
+        updateTodoTaskExecutorStatusHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        UpdateTodoTaskExecutorStatusRequest.UpdateTodoTaskExecutorStatusRequestExecutorStatusList executorStatusList0 = new UpdateTodoTaskExecutorStatusRequest.UpdateTodoTaskExecutorStatusRequestExecutorStatusList()
+                .setId(taskId)
+                .setIsDone(status);
+        UpdateTodoTaskExecutorStatusRequest updateTodoTaskExecutorStatusRequest = new UpdateTodoTaskExecutorStatusRequest()
+                .setExecutorStatusList(java.util.Arrays.asList(
+                        executorStatusList0
+                ));
+        try {
+            UpdateTodoTaskExecutorStatusResponse response = createTodoClient().updateTodoTaskExecutorStatusWithOptions("PUoiinWIpa2yH2ymhiiGiP6g", taskId, updateTodoTaskExecutorStatusRequest, updateTodoTaskExecutorStatusHeaders, new RuntimeOptions());
+            return response.getBody().result;
+        } catch (Exception err) {
+            log.error("@@调用钉钉更新办状态的时候出现异常，异常信息为:{}",err.getMessage());
+            throw new SyncDataException(JSON.toJSONString(updateTodoTaskExecutorStatusRequest),err.getMessage());
+        }
+    }
+
+    @Override
+    public GetTodoTaskBySourceIdResponseBody getTodoTaskByBusinessId(String businessId) {
+        GetTodoTaskBySourceIdHeaders getTodoTaskBySourceIdHeaders = new GetTodoTaskBySourceIdHeaders();
+        getTodoTaskBySourceIdHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        try {
+            GetTodoTaskBySourceIdResponse respose = createTodoClient().getTodoTaskBySourceIdWithOptions("user123", businessId, getTodoTaskBySourceIdHeaders, new RuntimeOptions());
+            return respose.getBody();
+        } catch (Exception err) {
+            log.error("@@调用钉钉获取待办详情的时候出现异常，异常信息为:{}",err.getMessage());
+            throw new SyncDataException(JSON.toJSONString(getTodoTaskBySourceIdHeaders),err.getMessage());
+        }
+    }
+
     /**
      * 根据用户ID获取待办
      * @param workrecordGetbyuseridRequest
@@ -224,6 +311,19 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
         } catch (ApiException e) {
             log.error("钉钉workRecordAddRequest异常：{}",e.getErrMsg());
             throw new SyncDataException(JSON.toJSONString(request),e.getErrMsg());
+        }
+    }
+
+    public Client createTodoClient(){
+        Config config = new Config();
+        config.protocol = "https";
+        config.regionId = "central";
+        Client client = null;
+        try {
+            return new Client(config);
+        } catch (Exception exception) {
+            log.error("@@调用钉钉待办初始化client的时候出现异常，异常信息为:{}",exception.getMessage());
+            throw new SyncDataException(JSON.toJSONString(config),exception.getMessage());
         }
     }
 }

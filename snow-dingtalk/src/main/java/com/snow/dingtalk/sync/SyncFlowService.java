@@ -1,6 +1,6 @@
 package com.snow.dingtalk.sync;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.snow.common.annotation.SyncLog;
@@ -169,8 +169,8 @@ public class SyncFlowService implements ISyncSysInfo  {
         OapiProcessinstanceGetResponse.ProcessInstanceTopVo processInstanceDetail = dingOfficialFlowService.getProcessInstanceDetail(procInstId);
         //获取任务节点(写入钉钉待办表)
         List<OapiProcessinstanceGetResponse.TaskTopVo> tasks = processInstanceDetail.getTasks();
-        if(CollectionUtil.isNotEmpty(tasks)){
-            tasks.stream().forEach(t->{
+        if(CollUtil.isNotEmpty(tasks)){
+            tasks.forEach(t->{
                 //第二步，运行中的任务保存到本地表
                 if(t.getTaskStatus().equals(DingFlowTaskType.RUNNING.getCode())){
                     SysDingRuTask querySysDingRuTask = sysDingRuTaskService.selectSysDingRuTaskById(t.getTaskid());
@@ -197,8 +197,8 @@ public class SyncFlowService implements ISyncSysInfo  {
         OapiProcessinstanceGetResponse.ProcessInstanceTopVo processInstanceDetail = dingOfficialFlowService.getProcessInstanceDetail(procInstId);
         //获取任务节点(写入钉钉待办表)
         List<OapiProcessinstanceGetResponse.TaskTopVo> tasks = processInstanceDetail.getTasks();
-        if(CollectionUtil.isNotEmpty(tasks)){
-            tasks.stream().forEach(t->{
+        if(CollUtil.isNotEmpty(tasks)){
+            tasks.forEach(t->{
                 //第二步，删除运行中的任务，更新历史任务表
                 if(t.getTaskStatus().equals(DingFlowTaskType.COMPLETED.getCode())){
                     SysDingRuTask querySysDingRuTask = sysDingRuTaskService.selectSysDingRuTaskById(t.getTaskid());

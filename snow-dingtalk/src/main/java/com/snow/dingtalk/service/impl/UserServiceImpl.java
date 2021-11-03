@@ -16,17 +16,16 @@ import com.snow.dingtalk.model.UserListRequest;
 import com.snow.dingtalk.service.UserService;
 import com.snow.system.domain.SysPost;
 import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.ISysUserService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.snow.system.service.impl.SysPostServiceImpl;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author qimingjin
@@ -41,6 +40,8 @@ public class UserServiceImpl  extends BaseService implements UserService {
     private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
 
     private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
+
+    private ISysUserService sysUserService=SpringUtils.getBean(ISysUserService.class);
 
 
     public OapiSnsGetuserinfoBycodeResponse.UserInfo getUserInfoByCode(String authCode) {
@@ -220,6 +221,11 @@ public class UserServiceImpl  extends BaseService implements UserService {
             log.error("getUserByUnionId获取用户详细信息返回异常：{}",e.getErrMsg());
             throw new SyncDataException(JSON.toJSONString(request),e.getErrMsg());
         }
+    }
+
+    @Override
+    public String getUnionIdBySysUserId(Long sysUserId) {
+        return getUserByUserId(sysUserService.selectUserById(sysUserId).getDingUserId()).getUnionid();
     }
 
 }

@@ -23,7 +23,7 @@ public class SyncEventListener implements ApplicationListener<SyncEvent> {
 
     @Override
     public void onApplicationEvent(SyncEvent syncEvent) {
-        log.info("/n @@进入钉钉模块监听器.....,配置的开关为：{}",isSyncDingTalk);
+        log.info(" @@进入钉钉模块监听器.....,配置的开关为：{}",isSyncDingTalk);
         if(isSyncDingTalk){
             log.info("监听到的事件类型:"+JSON.toJSONString(syncEvent));
             SyncDingTalkInfoFactory syncEventListenerFactory = new SyncDingTalkInfoFactory();

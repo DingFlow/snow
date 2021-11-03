@@ -1,36 +1,30 @@
 package com.snow.web.controller.system;
 
-import java.util.List;
-
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.snow.common.annotation.Log;
+import com.snow.common.core.controller.BaseController;
+import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
+import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.framework.excel.FinanceAlipayFlowListener;
 import com.snow.framework.excel.FinanceWeChartFlowListener;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.FinanceWeChatFlowImport;
 import com.snow.system.domain.SysUser;
-import com.snow.system.mapper.FinanceAlipayFlowMapper;
-import com.snow.system.mapper.SysUserMapper;
+import com.snow.system.service.IFinanceAlipayFlowService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import com.snow.system.domain.FinanceAlipayFlow;
-import com.snow.system.service.IFinanceAlipayFlowService;
-import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 财务支付宝流水Controller

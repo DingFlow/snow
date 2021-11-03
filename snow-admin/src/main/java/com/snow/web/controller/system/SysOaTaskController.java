@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.snow.common.enums.DingFlowTaskType;
@@ -54,7 +56,7 @@ public class SysOaTaskController extends BaseController
     @GetMapping()
     public String task()
     {
-        return prefix + "/task1";
+        return prefix + "/task";
     }
 
     /**
@@ -131,6 +133,7 @@ public class SysOaTaskController extends BaseController
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         sysOaTaskDistribute.setTaskExecuteId(String.valueOf(sysUser.getUserId()));
+        sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.COMPLETED.getCode());
         List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
         if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
             warpSysOaTask(sysOaTaskDistributes);
@@ -268,6 +271,22 @@ public class SysOaTaskController extends BaseController
         return prefix + "/detail";
     }
 
+
+    /**
+     * 我处理的详情
+     * @param taskNo
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/taskDistributedDetail/{id}")
+    @RequiresPermissions("system:task:taskDistributedDetail")
+    public String taskDistributedDetail(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysOaTaskDistribute sysOaTaskDistribute = sysOaTaskDistributeService.selectSysOaTaskDistributeById(id);
+        warpSysOaTask(Lists.newArrayList(sysOaTaskDistribute));
+        mmap.put("sysOaTask", sysOaTaskDistribute);
+        return prefix + "/taskDistributedDetail";
+    }
     /**
      * 任务分配详情
      * @param id
@@ -293,6 +312,9 @@ public class SysOaTaskController extends BaseController
             }
             if(ObjectUtil.isNotNull(t.getTaskExecuteId())){
                 t.setTaskExecuteId(sysUserService.selectUserById(Long.parseLong(t.getTaskExecuteId())).getUserName());
+            }
+            if(ObjectUtil.isNotNull(t.getTaskStartTime())&&ObjectUtil.isNotNull(t.getTaskCompleteTime())){
+                t.setSpendTime(DateUtil.formatBetween(t.getTaskStartTime(),t.getTaskCompleteTime(), BetweenFormater.Level.SECOND));
             }
             t.setSysOaTask(sysOaTask);
             t.setCreateBy(sysUserService.selectUserById(Long.parseLong(t.getCreateBy())).getUserName());

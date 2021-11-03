@@ -73,20 +73,20 @@ public class BaseService {
 
     }
 
+    /**
+     * 钉钉新版服务费token获取
+     * @return token值
+     */
     public String getDingTalkTokenV2(){
         //创建缓存，缓存默认是7100S
         TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
         if(StringUtils.isEmpty(timedCache.get(TOKENV2))) {
-            Config config = new Config();
-            config.protocol = "https";
-            config.regionId = "central";
             try {
-                Client client = new Client(config);
                 GetAccessTokenRequest getAccessTokenRequest = new GetAccessTokenRequest()
                         .setAppKey(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY))
                         .setAppSecret(sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET));
                 try {
-                    GetAccessTokenResponse accessToken = client.getAccessToken(getAccessTokenRequest);
+                    GetAccessTokenResponse accessToken = createClient().getAccessToken(getAccessTokenRequest);
                     timedCache.put(TOKENV2,accessToken.getBody().getAccessToken());
                     return accessToken.getBody().getAccessToken();
                 } catch (Exception exception) {
@@ -103,6 +103,18 @@ public class BaseService {
         }else {
             return timedCache.get(TOKEN);
         }
+    }
+
+    /**
+     * 创建createClient
+     * @return
+     * @throws Exception
+     */
+    public  Client createClient() throws Exception {
+        Config config = new Config();
+        config.protocol = "https";
+        config.regionId = "central";
+        return new Client(config);
     }
 
     /**

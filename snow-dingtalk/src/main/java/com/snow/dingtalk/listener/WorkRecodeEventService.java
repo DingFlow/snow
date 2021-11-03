@@ -3,9 +3,9 @@ package com.snow.dingtalk.listener;
 import com.alibaba.fastjson.JSON;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.dingtalk.model.WorkrecordAddRequest;
 import com.snow.dingtalk.service.impl.WorkRecodeServiceImpl;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.system.domain.SysOaTask;
 import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class WorkRecodeService implements ISyncDingTalkInfo {
+public class WorkRecodeEventService implements ISyncDingTalkInfo {
 
     private WorkRecodeServiceImpl workRecodeService=SpringUtils.getBean(WorkRecodeServiceImpl.class);
 
@@ -29,8 +29,21 @@ public class WorkRecodeService implements ISyncDingTalkInfo {
         Integer code = eventType.getCode();
         //钉钉创建待办
         if(code.equals(DingTalkListenerType.WORK_RECODE_CREATE.getCode())){
-            WorkrecordAddRequest workrecordAddRequest=(WorkrecordAddRequest)syncEvent.getSource();
-            workRecodeService.create(workrecordAddRequest);
+            SysOaTask sysOaTask=(SysOaTask)syncEvent.getSource();
+            log.info("@@创建钉钉待办系统传入的参数：{}",JSON.toJSONString(sysOaTask));
+            workRecodeService.createTodoTask(sysOaTask);
+        }
+        //更新钉钉待办
+        if(code.equals(DingTalkListenerType.WORK_RECORD_UPDATE.getCode())){
+            SysOaTask sysOaTask=(SysOaTask)syncEvent.getSource();
+            log.info("@@更新钉钉待办系统传入的参数：{}",JSON.toJSONString(sysOaTask));
+            workRecodeService.updateTodoTask(sysOaTask);
+        }
+        //删除钉钉待办
+        if(code.equals(DingTalkListenerType.WORK_RECORD_DELETE.getCode())){
+            String taskId=(String)syncEvent.getSource();
+            log.info("@@删除钉钉待办系统传入的参数：{}",JSON.toJSONString(taskId));
+            workRecodeService.deleteTodoTask(taskId);
         }
         //钉钉发送普通消息
         else if(code.equals(DingTalkListenerType.ASYNCSEND_V2.getCode())){

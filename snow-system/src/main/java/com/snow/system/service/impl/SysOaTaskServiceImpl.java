@@ -95,7 +95,6 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
                 //任务分配人
                 sysOaTaskDistribute.setTaskDistributeId(sysOaTask.getCreateBy());
                 sysOaTaskDistribute.setTaskNo(newSequenceNo);
-                sysOaTaskDistribute.setTaskCompleteTime(sysOaTask.getTaskCompleteTime());
                 sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.RUNNING.getCode());
                 sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
                 sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
@@ -152,6 +151,9 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
             throw new BusinessException("任务编号："+taskNo+"已分配，不允许删除操作");
         }
+        //发送事件
+        SyncEvent<String> syncEvent = new SyncEvent(taskNo, DingTalkListenerType.WORK_RECODE_CREATE);
+        applicationContext.publishEvent(syncEvent);
         return sysOaTaskMapper.deleteSysOaTaskById(taskNo);
     }
 }

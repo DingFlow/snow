@@ -32,7 +32,7 @@
         <velocity.version>1.7</velocity.version>
         <flowable.version>6.4.1</flowable.version>
         <dingtalk.version>dingtalk-SNAPSHOT</dingtalk.version>
-        <aliyun.dingtalk.version>1.1.10</aliyun.dingtalk.version>
+        <aliyun.dingtalk.version>1.1.94</aliyun.dingtalk.version>
         <hutool.version>5.4.2</hutool.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <com.alipay.sdk.version>3.7.4.ALL</com.alipay.sdk.version>

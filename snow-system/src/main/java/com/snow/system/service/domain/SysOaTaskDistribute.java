@@ -68,6 +68,11 @@ public class SysOaTaskDistribute extends BaseEntity
     private Long isDelete;
 
     /**
+     * 任务花费时间
+     */
+    private String spendTime;
+
+    /**
      * 任务主表
      */
     private SysOaTask sysOaTask;

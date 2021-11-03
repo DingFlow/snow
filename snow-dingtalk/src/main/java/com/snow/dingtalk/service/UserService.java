@@ -54,4 +54,11 @@ public interface UserService  {
      * @return
      */
     OapiUserGetbyunionidResponse.UserGetByUnionIdResponse  getUserByUnionId(String unionId);
+
+    /**
+     * 根据系统用户id获取用户UnionId
+     * @param sysUserId 系统用户id
+     * @return UnionId
+     */
+    String getUnionIdBySysUserId(Long sysUserId);
 }

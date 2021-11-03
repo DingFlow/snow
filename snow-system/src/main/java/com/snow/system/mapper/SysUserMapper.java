@@ -1,11 +1,10 @@
 package com.snow.system.mapper;
 
-import java.util.List;
-import java.util.Set;
-
 import com.snow.system.domain.SysAuthUser;
 import com.snow.system.domain.SysUser;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 用户表 数据层
