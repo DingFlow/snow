@@ -92,7 +92,7 @@
                             <div class="row" th:each="dict : ${label}">
                                 <label class="col-xs-2 control-label" th:text="${dict.name}"></label>
                                 <div class="radio-box" th:each="label : ${dict.labels}">
-                                    <input type="radio" th:id="${'faqType_' + label.id}" name="labelIds" th:value="${label.name}">
+                                    <input type="radio" th:id="${'faqType_' + label.id}" name="labelIds" th:value="${label.id}">
                                     <label th:for="${'faqType_' + label.id}" th:text="${label.name}"></label>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
 	<th:block th:include="include :: footer" />
 	<th:block th:include="include :: select2-js" />
 	<script>
-	    var prefix = ctx + "/ding/extContactUser";
+	    var prefix = ctx + "ding/extContactUser";
         
         function submitHandler() {
 	        if ($.validate.form()) {

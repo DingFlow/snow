@@ -39,6 +39,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CREATE_EXT_CONTACT_USER);
         OapiExtcontactCreateRequest req = new OapiExtcontactCreateRequest();
         OapiExtcontactCreateRequest.OpenExtContact  contact = BeanUtil.copyProperties(extContactUserRequest, OapiExtcontactCreateRequest.OpenExtContact .class);
+        contact.setStateCode("86");
         req.setContact(contact);
         try {
             OapiExtcontactCreateResponse rsp = client.execute(req, getDingTalkToken());

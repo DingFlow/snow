@@ -45,6 +45,7 @@ public class ExtContactUserController extends BaseController {
 
     @RequiresPermissions("system:extContactUser:list")
     @PostMapping("/list")
+    @ResponseBody
     public TableDataInfo getList() {
         startPage();
         List<ExtContactUserRequest> extContactUserList = extContactUserService.getExtContactUserList(null,null);
@@ -70,10 +71,10 @@ public class ExtContactUserController extends BaseController {
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") String userId, ModelMap mmap)
+    public String edit(@PathVariable("id") String userid, ModelMap mmap)
     {
-        ExtContactUserRequest extContactUserDetail = extContactUserService.getExtContactUserDetail(userId);
-        SysUser sysUser = userService.selectUserByDingUserId(userId);
+        ExtContactUserRequest extContactUserDetail = extContactUserService.getExtContactUserDetail(userid);
+        SysUser sysUser = userService.selectUserByDingUserId(userid);
         if(ObjectUtil.isNotNull(sysUser)){
             extContactUserDetail.setFollowerUserId(sysUser.getUserName());
         }

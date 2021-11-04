@@ -7,7 +7,7 @@
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
 		<form class="form-horizontal m" id="form-dept-edit" th:object="${extContactUser}">
 			<h4 class="form-header h4">基本信息</h4>
-			<input class="form-control" type="hidden" name="userId" th:field="*{userId}">
+			<input class="form-control" type="hidden" name="userId" th:field="*{userid}">
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="form-group">
@@ -98,7 +98,7 @@
 	</div>
 	<th:block th:include="include :: footer" />
 	<script type="text/javascript">
-		var prefix = ctx + "/ding/extContactUser";
+		var prefix = ctx + "ding/extContactUser";
 
 		function submitHandler() {
 	        if ($.validate.form()) {

@@ -22,7 +22,7 @@ public class ExtContactUserRequest implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    private String userid;
     /**
      * 地址
      */
