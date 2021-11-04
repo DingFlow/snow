@@ -5,6 +5,7 @@ import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.TaskStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
 import com.snow.system.domain.SysOaTask;
@@ -83,13 +84,9 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         sysOaTask.setCreateTime(DateUtils.getNowDate());
         String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_TASK_SEQUENCE);
         sysOaTask.setTaskNo(newSequenceNo);
+        sysOaTask.setTaskStatus(TaskStatus.UN_FINISH.getCode());
         List<String> taskDistributeIdList= sysOaTask.getTaskDistributeId();
-        if(CollUtil.isEmpty(taskDistributeIdList)){
-            //待完成
-            sysOaTask.setTaskStatus(DingFlowTaskType.NEW.getCode());
-        }else {
-            //已分配
-            sysOaTask.setTaskStatus(DingFlowTaskType.RUNNING.getCode());
+        if(CollUtil.isNotEmpty(taskDistributeIdList)){
             taskDistributeIdList.forEach(t->{
                 SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
                 //任务分配人
@@ -98,11 +95,12 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
                 sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.RUNNING.getCode());
                 sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
                 sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
+                sysOaTaskDistribute.setSysOaTask(sysOaTask);
+                //事件发送
+                SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.WORK_RECODE_CREATE);
+                applicationContext.publishEvent(syncEvent);
             });
         }
-        //事件发送
-        SyncEvent<SysOaTask> syncEvent = new SyncEvent(sysOaTask, DingTalkListenerType.WORK_RECODE_CREATE);
-        applicationContext.publishEvent(syncEvent);
         return sysOaTaskMapper.insertSysOaTask(sysOaTask);
     }
 

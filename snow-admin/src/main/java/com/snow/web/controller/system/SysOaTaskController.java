@@ -9,13 +9,16 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.snow.common.enums.DingFlowTaskType;
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
 import com.snow.system.domain.SysOaTaskDistribute;
+import com.snow.system.event.SyncEvent;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +54,9 @@ public class SysOaTaskController extends BaseController
 
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequiresPermissions("system:task:view")
     @GetMapping()
@@ -215,6 +221,9 @@ public class SysOaTaskController extends BaseController
         sysOaTaskDistribute.setTaskExecuteId(String.valueOf(ShiroUtils.getUserId()));
         sysOaTaskDistribute.setUpdateBy(String.valueOf(ShiroUtils.getUserId()));
         sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.COMPLETED.getCode());
+        //事件发送
+        SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.UPDATE_TODO_TASK_EXECUTOR_STATUS);
+        applicationContext.publishEvent(syncEvent);
         return toAjax(sysOaTaskDistributeService.updateSysOaTaskDistribute(sysOaTaskDistribute));
     }
     /**

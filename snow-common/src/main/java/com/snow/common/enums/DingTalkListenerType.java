@@ -29,7 +29,7 @@ public enum  DingTalkListenerType {
 
     GET_EXT_CONTACT_USER(5,3,"get_ext_contact_user"),
 
-
+    //*******************回调
     CALL_BACK_CHECK_URL(1,10, "回调check_url"),
 
     CALL_BACK_REGISTER(1,10, "回调注册"),
@@ -40,6 +40,8 @@ public enum  DingTalkListenerType {
 
     CALL_BACK_FAILED_RESULT(23,10, "获取回调失败结果"),
 
+
+    //*****************待办
     WORK_RECODE_CREATE(1,20, "创建待办"),
 
     GET_WORK_RECORD_USER(2,20,"获取用户待办"),
@@ -47,6 +49,9 @@ public enum  DingTalkListenerType {
     WORK_RECORD_UPDATE(3,20,"更新待办"),
 
     WORK_RECORD_DELETE(4,20,"删除待办"),
+
+
+    UPDATE_TODO_TASK_EXECUTOR_STATUS(7,20,"更新任务执行状态"),
 
     /**
      * 审批任务开始、结束、转交。

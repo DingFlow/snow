@@ -6,6 +6,7 @@ import com.snow.dingtalk.model.request.WorkrecordAddRequest;
 import com.snow.dingtalk.model.request.WorkrecordGetbyuseridRequest;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysOaTask;
+import com.snow.system.domain.SysOaTaskDistribute;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,7 +32,7 @@ public interface WorkRecodeService  {
      * @param sysOaTask
      * @return
      */
-     String createTodoTask(SysOaTask sysOaTask);
+     String createTodoTask(SysOaTaskDistribute sysOaTaskDistribute);
 
     /**
      * 删除待办（新）

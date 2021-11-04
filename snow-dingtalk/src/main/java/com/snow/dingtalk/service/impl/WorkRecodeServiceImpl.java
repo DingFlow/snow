@@ -32,6 +32,7 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.domain.SysOaTask;
+import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.ISysUserService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
@@ -92,7 +93,8 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
     }
 
     @Override
-    public String createTodoTask(SysOaTask sysOaTask) {
+    public String createTodoTask(SysOaTaskDistribute sysOaTaskDistribute) {
+        SysOaTask sysOaTask = sysOaTaskDistribute.getSysOaTask();
         List<String> taskDistributeId = sysOaTask.getTaskDistributeId();
 
         CreateTodoTaskHeaders createTodoTaskHeaders = new CreateTodoTaskHeaders();
@@ -113,7 +115,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
                 .setPriority(sysOaTask.getPriority())
                 .setNotifyConfigs(notifyConfigs);
         if (ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime())) {
-            createTodoTaskRequest.setDueTime(sysOaTask.getTaskCompleteTime().getTime());
+            createTodoTaskRequest.setDueTime(sysOaTaskDistribute.getTaskCompleteTime().getTime());
         }
         //执行者id
         if(CollUtil.isNotEmpty(taskDistributeId)){
@@ -184,7 +186,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
                 .setId(taskId)
                 .setIsDone(status);
         UpdateTodoTaskExecutorStatusRequest updateTodoTaskExecutorStatusRequest = new UpdateTodoTaskExecutorStatusRequest()
-                .setExecutorStatusList(java.util.Arrays.asList(
+                .setExecutorStatusList(Arrays.asList(
                         executorStatusList0
                 ));
         try {
