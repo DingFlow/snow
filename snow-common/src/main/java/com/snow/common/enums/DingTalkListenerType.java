@@ -18,6 +18,18 @@ public enum  DingTalkListenerType {
 
     USER_DELETE(3,1,"user_leave_org"),
 
+    //*********************外部联系人
+    CREATE_EXT_CONTACT_USER(1,3,"create_ext_contact_user"),
+
+    UPDATE_EXT_CONTACT_USER(2,3,"update_ext_contact_user"),
+
+    DELETE_EXT_CONTACT_USER(3,3,"delete_ext_contact_user"),
+
+    EXT_CONTACT_USER_LIST(4,3,"ext_contact_user_list"),
+
+    GET_EXT_CONTACT_USER(5,3,"get_ext_contact_user"),
+
+
     CALL_BACK_CHECK_URL(1,10, "回调check_url"),
 
     CALL_BACK_REGISTER(1,10, "回调注册"),

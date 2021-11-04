@@ -1,4 +1,4 @@
-package com.snow.dingtalk.model;
+package com.snow.dingtalk.model.response;
 
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
@@ -15,7 +15,7 @@ import java.util.Date;
  * @create: 2021-03-26 16:21
  **/
 @Data
-public class DingTaskVO implements Serializable {
+public class DingTaskResponse implements Serializable {
     private static final long serialVersionUID = -1459137869980975766L;
 
 

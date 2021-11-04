@@ -1,4 +1,4 @@
-package com.snow.dingtalk.model;
+package com.snow.dingtalk.model.request;
 
 import com.snow.common.enums.DingTalkMessageType;
 import lombok.Data;

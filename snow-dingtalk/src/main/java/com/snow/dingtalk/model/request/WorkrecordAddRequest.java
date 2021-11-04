@@ -1,4 +1,4 @@
-package com.snow.dingtalk.model;
+package com.snow.dingtalk.model.request;
 
 import com.taobao.api.internal.mapping.ApiField;
 import com.taobao.api.internal.util.json.JSONWriter;

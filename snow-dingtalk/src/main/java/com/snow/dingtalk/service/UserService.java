@@ -1,7 +1,7 @@
 package com.snow.dingtalk.service;
 
 import com.dingtalk.api.response.*;
-import com.snow.dingtalk.model.UserListRequest;
+import com.snow.dingtalk.model.request.UserListRequest;
 import com.snow.system.domain.SysUser;
 
 /**

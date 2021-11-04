@@ -1,7 +1,7 @@
 package com.snow.dingtalk.service;
 
 import com.dingtalk.api.response.OapiOcrStructuredRecognizeResponse;
-import com.snow.dingtalk.model.OcrRecognizeRequest;
+import com.snow.dingtalk.model.request.OcrRecognizeRequest;
 
 /**
  * @program: snow

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.dingtalk.model.DepartmentCreateRequest;
+import com.snow.dingtalk.model.request.DepartmentCreateRequest;
 import com.snow.dingtalk.service.impl.DepartmentServiceImpl;
 import com.snow.system.domain.SysDept;
 import com.snow.system.event.SyncEvent;

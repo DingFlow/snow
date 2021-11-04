@@ -3,12 +3,10 @@ package com.snow.dingtalk.service;
 import com.dingtalk.api.response.OapiProcessListbyuseridResponse;
 import com.dingtalk.api.response.OapiProcessTemplateManageGetResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
-import com.snow.common.core.page.PageDomain;
-import com.snow.common.core.page.PageModel;
-import com.snow.dingtalk.model.FlowExecuteTaskRequest;
-import com.snow.dingtalk.model.FlowTerminateProcessInstanceRequest;
-import com.snow.dingtalk.model.SaveFlowRequest;
-import com.snow.dingtalk.model.StartFlowRequest;
+import com.snow.dingtalk.model.request.DepartmentCreateRequest;
+import com.snow.dingtalk.model.request.FlowExecuteTaskRequest;
+import com.snow.dingtalk.model.request.FlowTerminateProcessInstanceRequest;
+import com.snow.dingtalk.model.request.StartFlowRequest;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public interface DingOfficialFlowService {
      * @param saveFlowRequest
      * @return
      */
-    String saveProcess(SaveFlowRequest saveFlowRequest);
+    String saveProcess(DepartmentCreateRequest.SaveFlowRequest saveFlowRequest);
 
     /**
      * 发起审批实例

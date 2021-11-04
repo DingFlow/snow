@@ -150,4 +150,32 @@ public class BaseConstantUrl {
      * 分页获取指定用户可见的审批表单列表
      */
     public static final String GET_PROCESSLIST_USERID="https://oapi.dingtalk.com/topapi/process/listbyuserid";
+
+
+    //************************************************外部联系人
+
+    /**
+     * 创建外部联系人
+     */
+    public static final String CREATE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/create";
+    /**
+     * 删除外部联系人
+     */
+    public static final String DELETE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/delete";
+    /**
+     * 更新外部联系人
+     */
+    public static final String UPDATE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/update";
+    /**
+     * 获取外部联系人列表
+     */
+    public static final String EXT_CONTACT_USER_LIST="https://oapi.dingtalk.com/topapi/extcontact/list";
+    /**
+     * 获取外部联系人详情
+     */
+    public static final String GET_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/get";
+    /**
+     * 外部联系人列表
+     */
+    public static final String EXT_CONTACT_USER_LABEL="https://oapi.dingtalk.com/topapi/extcontact/listlabelgroups";
 }

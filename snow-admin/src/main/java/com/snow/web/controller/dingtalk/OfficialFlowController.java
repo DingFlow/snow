@@ -2,10 +2,7 @@ package com.snow.web.controller.dingtalk;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUtil;
 import com.dingtalk.api.response.OapiProcessListbyuseridResponse;
-import com.dingtalk.api.response.OapiProcessTemplateManageGetResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.google.common.collect.Lists;
 import com.snow.common.core.controller.BaseController;
@@ -14,11 +11,14 @@ import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.DingFlowOperationType;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.utils.DateUtils;
-import com.snow.dingtalk.model.*;
+import com.snow.dingtalk.model.request.FlowExecuteTaskRequest;
+import com.snow.dingtalk.model.request.FlowTerminateProcessInstanceRequest;
+import com.snow.dingtalk.model.request.StartFlowRequest;
+import com.snow.dingtalk.model.response.DingOperationRecordResponse;
+import com.snow.dingtalk.model.response.DingTaskResponse;
 import com.snow.dingtalk.service.impl.DingOfficialFlowServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysDingProcinst;
-import com.snow.system.domain.SysDingRuTask;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.impl.SysDingProcinstServiceImpl;
 import com.snow.system.service.impl.SysDingRuTaskServiceImpl;
@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -167,10 +166,10 @@ public class OfficialFlowController extends BaseController {
         List<OapiProcessinstanceGetResponse.FormComponentValueVo> formComponentValues = processInstanceDetail.getFormComponentValues();
         //获取操作记录
         List<OapiProcessinstanceGetResponse.OperationRecordsVo> operationRecords = processInstanceDetail.getOperationRecords();
-        List<DingOperationRecordVO> dingOperationRecordVOList=Lists.newArrayList();
+        List<DingOperationRecordResponse> dingOperationRecordVOList=Lists.newArrayList();
         if(CollectionUtil.isNotEmpty(operationRecords)){
             operationRecords.forEach(t->{
-                DingOperationRecordVO dingOperationRecordVO=new DingOperationRecordVO();
+                DingOperationRecordResponse dingOperationRecordVO=new DingOperationRecordResponse();
                 BeanUtil.copyProperties(t,dingOperationRecordVO);
                 SysUser sysUser = sysUserService.selectUserByDingUserId(t.getUserid());
                 dingOperationRecordVO.setUserName(sysUser.getUserName());
@@ -190,10 +189,10 @@ public class OfficialFlowController extends BaseController {
 
         //获取任务节点
         List<OapiProcessinstanceGetResponse.TaskTopVo> tasks = processInstanceDetail.getTasks();
-        List<DingTaskVO> dingTaskVOList=Lists.newArrayList();
+        List<DingTaskResponse> dingTaskVOList=Lists.newArrayList();
         if(CollectionUtil.isNotEmpty(tasks)){
             tasks.stream().filter(t->!t.getTaskStatus().equals(DingFlowTaskType.CANCELED.getCode())).collect(Collectors.toList()).forEach(t->{
-                DingTaskVO dingTaskVO=new DingTaskVO();
+                DingTaskResponse dingTaskVO=new DingTaskResponse();
                 BeanUtil.copyProperties(t,dingTaskVO);
                 dingTaskVO.defaultTaskSpendTime();
                 SysUser sysUser = sysUserService.selectUserByDingUserId(t.getUserid());

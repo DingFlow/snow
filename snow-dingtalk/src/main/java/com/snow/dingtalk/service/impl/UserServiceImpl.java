@@ -12,7 +12,7 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.UserListRequest;
+import com.snow.dingtalk.model.request.UserListRequest;
 import com.snow.dingtalk.service.UserService;
 import com.snow.system.domain.SysPost;
 import com.snow.system.domain.SysUser;

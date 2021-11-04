@@ -8,12 +8,10 @@ import com.snow.common.constant.Constants;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.ProcessInstanceCreateRequest;
-import com.snow.system.service.ISysConfigService;
+import com.snow.dingtalk.model.request.ProcessInstanceCreateRequest;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.taobao.api.ApiException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**

@@ -2,8 +2,8 @@ package com.snow.dingtalk.service;
 
 import com.aliyun.dingtalktodo_1_0.models.GetTodoTaskBySourceIdResponseBody;
 import com.dingtalk.api.response.OapiWorkrecordGetbyuseridResponse;
-import com.snow.dingtalk.model.WorkrecordAddRequest;
-import com.snow.dingtalk.model.WorkrecordGetbyuseridRequest;
+import com.snow.dingtalk.model.request.WorkrecordAddRequest;
+import com.snow.dingtalk.model.request.WorkrecordGetbyuseridRequest;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysOaTask;
 import org.springframework.stereotype.Service;

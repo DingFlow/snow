@@ -2,7 +2,7 @@ package com.snow.dingtalk.service;
 
 import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
-import com.snow.dingtalk.model.DepartmentCreateRequest;
+import com.snow.dingtalk.model.request.DepartmentCreateRequest;
 import com.snow.system.domain.SysDept;
 import org.springframework.stereotype.Service;
 

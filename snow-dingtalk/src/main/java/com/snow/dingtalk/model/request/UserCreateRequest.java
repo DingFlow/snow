@@ -1,4 +1,4 @@
-package com.snow.dingtalk.model;
+package com.snow.dingtalk.model.request;
 
 import lombok.NonNull;
 

@@ -1,4 +1,4 @@
-package com.snow.dingtalk.model;
+package com.snow.dingtalk.model.response;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.util.Date;
  * @create: 2021-03-24 15:45
  **/
 @Data
-public class DingOperationRecordVO implements Serializable {
+public class DingOperationRecordResponse implements Serializable {
     private static final long serialVersionUID = -281729978382670599L;
 
 
