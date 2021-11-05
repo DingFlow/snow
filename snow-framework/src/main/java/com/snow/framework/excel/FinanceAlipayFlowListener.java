@@ -1,12 +1,12 @@
 package com.snow.framework.excel;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.snow.common.enums.FinanceTradeType;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.StringUtils;
-import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
@@ -88,7 +88,6 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
         if(!firstHead.equals("支付宝交易记录明细查询")&&rowIndex==0){
             throw new BusinessException("非标准化模板请勿导入，请下载标准模板或使用支付宝导出的原账单模板");
         }
-        System.out.println("表头信息："+headMap);
     }
 
     //读取完成后执行
@@ -108,8 +107,7 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             if(StringUtils.isNotNull(financeAlipayFlow1)){
                 throw new BusinessException("交易号：【"+t.getTradeNo()+"】已存在请勿重复导入数据");
             }
-            FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
-            BeanUtils.copyProperties(t, financeAlipayFlow);
+            FinanceAlipayFlow financeAlipayFlow = BeanUtil.copyProperties(t,FinanceAlipayFlow.class);
             String payTime = t.getPayTime();
             String tradeCreateTime = t.getTradeCreateTime();
             String lastModifyTime = t.getLastModifyTime();
