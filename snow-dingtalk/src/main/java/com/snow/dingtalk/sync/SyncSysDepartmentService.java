@@ -1,6 +1,5 @@
 package com.snow.dingtalk.sync;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
 import com.snow.common.annotation.SyncLog;

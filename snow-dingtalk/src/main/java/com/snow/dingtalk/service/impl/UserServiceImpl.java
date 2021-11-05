@@ -1,11 +1,13 @@
 package com.snow.dingtalk.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
+import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.StringUtils;
@@ -63,7 +65,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
                 throw new SyncDataException(JSON.toJSONString(req),bycodeResponse.getErrmsg());
             }
         } catch (ApiException e) {
-            log.error("通过临时授权码获取授权用户的个人信息异常：{}",e.getErrMsg());
+            log.error("@@通过临时授权码获取授权用户的个人信息异常：{}",e.getErrMsg());
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
@@ -102,14 +104,11 @@ public class UserServiceImpl  extends BaseService implements UserService {
                 deptTitleList.add(deptTitle);
             }
         }
-
-        //req.setExtension("{\"爱好\":\"旅游\",\"年龄\":\"24\"}");
         req.setSeniorMode(false);
         if(StringUtils.isNotNull(sysUser.getHiredDate())){
             Date hiredDate= sysUser.getHiredDate();
             req.setHiredDate(hiredDate.getTime());
         }
-
         OapiV2UserCreateResponse response = null;
         try {
             response = client.execute(req, getDingTalkToken());
@@ -120,7 +119,41 @@ public class UserServiceImpl  extends BaseService implements UserService {
                 throw new SyncDataException(JSON.toJSONString(req),response.getErrmsg());
             }
         } catch (ApiException e) {
-            log.error("钉钉createUser异常：{}",e.getErrMsg());
+            log.error("@@钉钉createUser异常：{}",e.getErrMsg());
+            throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
+        }
+    }
+
+    @Override
+    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_UPDATE,dingTalkUrl=BaseConstantUrl.USER_UPDATE)
+    public String updateUserV2(SysUser sysUser) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_UPDATE);
+        OapiV2UserUpdateRequest req = new OapiV2UserUpdateRequest();
+        req.setUserid(sysUser.getDingUserId());
+        req.setName(sysUser.getUserName());
+        req.setMobile(sysUser.getPhonenumber());
+        req.setHideMobile(false);
+        req.setJobNumber(sysUser.getJobnumber());
+        req.setTitle(sysUser.getPosition());
+        req.setEmail(sysUser.getEmail());
+        req.setOrgEmail(sysUser.getOrgEmail());
+        req.setWorkPlace(sysUser.getWorkPlace());
+        req.setRemark(sysUser.getRemark());
+        req.setDeptIdList(JSON.toJSONString(sysUser.getDeptId()));
+        req.setSeniorMode(false);
+        if(ObjectUtil.isNotNull(sysUser.getHiredDate())){
+            req.setHiredDate(sysUser.getHiredDate().getTime());
+        }
+        req.setLanguage(Constants.ZH_CN);
+        try {
+            OapiV2UserUpdateResponse response = client.execute(req, getDingTalkTokenV2());
+            if(response.getErrcode()==0){
+                return response.getRequestId();
+            }else {
+                throw new SyncDataException(JSON.toJSONString(req),response.getErrmsg());
+            }
+        } catch (ApiException e) {
+            log.error("@@钉钉updateUser异常：{}",e.getErrMsg());
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
@@ -157,7 +190,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_USER_BY_ID);
         OapiV2UserGetRequest req = new OapiV2UserGetRequest();
         req.setUserid(userId);
-        req.setLanguage("zh_CN");
+        req.setLanguage(Constants.ZH_CN);
 
         try {
             OapiV2UserGetResponse response = client.execute(req, getDingTalkToken());
@@ -183,8 +216,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
         req.setSize(userListRequest.getSize());
         req.setOrderField("modify_desc");
         req.setContainAccessLimit(false);
-        req.setLanguage("zh_CN");
-
+        req.setLanguage(Constants.ZH_CN);
         try {
             OapiV2UserListResponse response = client.execute(req, getDingTalkToken());
             if(response.getErrcode()==0){
@@ -211,7 +243,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
             OapiUserGetbyunionidResponse  response = clientDingTalkClient.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
                 OapiUserGetbyunionidResponse.UserGetByUnionIdResponse result = response.getResult();
-                log.info("getUserByUnionId获取用户详细信息返回：{}",result);
+                log.info("@@getUserByUnionId获取用户详细信息返回：{}",result);
                 return result;
             }else {
                 throw new SyncDataException(JSON.toJSONString(request),response.getErrmsg());

@@ -3,6 +3,7 @@ package com.snow.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.snow.common.constant.SequenceConstants;
 import com.snow.system.service.impl.SysSequenceServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,7 @@ public class SysUserController extends BaseController
     public String add(ModelMap mmap)
     {
 
-        String jobNumber = sysSequenceService.getNewSequenceNo("SNOW");
+        String jobNumber = sysSequenceService.getNewSequenceNo(SequenceConstants.OA_SNOW);
         mmap.put("jobNumber",jobNumber);
         mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()&&r.getRoleType().equals(UserConstants.SYSTEM_ROLE_TYPE)).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostAll());

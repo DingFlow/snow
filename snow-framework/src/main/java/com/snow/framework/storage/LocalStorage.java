@@ -1,4 +1,5 @@
 package com.snow.framework.storage;
+
 import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.config.ServerConfig;
 import com.snow.common.constant.Constants;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -265,7 +265,7 @@ public class LocalStorage implements Storage {
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader("Content-Disposition",
-                    "attachment;fileName=" + sysFile.getKey());
+                    "attachment;fileName=" + sysFile.getName());
             //替换映射的url
             String url=sysFile.getUrl();
             StringBuilder stringBuilderUrl=new StringBuilder(url);

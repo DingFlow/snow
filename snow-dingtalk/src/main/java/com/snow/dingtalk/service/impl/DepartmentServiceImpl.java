@@ -6,6 +6,7 @@ import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
+import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -14,7 +15,6 @@ import com.snow.dingtalk.model.request.DepartmentCreateRequest;
 import com.snow.dingtalk.service.DepartmentService;
 import com.snow.system.domain.SysDept;
 import com.taobao.api.ApiException;
-import com.taobao.api.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +41,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         request.setCreateDeptGroup(departmentDTO.getCreateDeptGroup());
         request.setOrder(departmentDTO.getOrder());
         request.setName(departmentDTO.getName());
-        request.setHttpMethod(Constants.METHOD_POST);
+        request.setHttpMethod(com.taobao.api.Constants.METHOD_POST);
         request.setSourceIdentifier(departmentDTO.getSourceIdentifier());
         try {
             OapiDepartmentCreateResponse response = client.execute(request,getDingTalkToken());
@@ -51,7 +51,6 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
                 throw new SyncDataException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            e.printStackTrace();
             log.error("@@钉钉创建部门createDepartment异常：{}",e.getMessage());
             throw new SyncDataException(JSON.toJSONString(request),e.getErrMsg());
         }
@@ -71,7 +70,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         req.setCreateDeptGroup(true);
         req.setOrder(Long.parseLong(sysDept.getOrderNum()));
         req.setName(sysDept.getDeptName());
-        req.setLanguage("zh_CN");
+        req.setLanguage(Constants.ZH_CN);
         req.setAutoAddUser(false);
         //部门主管列表
         if(!CollectionUtils.isEmpty(sysDept.getLeader())){
@@ -86,8 +85,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
             }
         } catch (ApiException e) {
-            e.printStackTrace();
-            log.error("更新钉钉部门updateDepartment异常：{}",e.getMessage());
+            log.error("@@更新钉钉部门updateDepartment异常：{}",e.getMessage());
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
@@ -107,8 +105,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
             }
         } catch (ApiException e) {
-            e.printStackTrace();
-            log.error("删除钉钉部门deleteDepartment异常：{}",e.getMessage());
+            log.error("@@删除钉钉部门deleteDepartment异常：{}",e.getMessage());
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
 
@@ -119,7 +116,7 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_DEPARTMENT_BY_ID);
         OapiV2DepartmentGetRequest req = new OapiV2DepartmentGetRequest();
         req.setDeptId(id);
-        req.setLanguage("zh_CN");
+        req.setLanguage(Constants.ZH_CN);
         try {
             OapiV2DepartmentGetResponse rsp = client.execute(req, getDingTalkToken());
             if(rsp.getErrcode()==0){

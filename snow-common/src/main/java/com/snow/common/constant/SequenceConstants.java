@@ -41,4 +41,10 @@ public class SequenceConstants {
      * 任务单
      */
     public static final String OA_TASK_SEQUENCE="OA_RW";
+
+
+    /**
+     * 工号前缀
+     */
+    public static final String OA_SNOW="SNOW";
 }

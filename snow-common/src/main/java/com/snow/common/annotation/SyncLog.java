@@ -1,7 +1,8 @@
 package com.snow.common.annotation;
 
-import com.snow.common.enums.*;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkSyncType;
+import com.snow.common.enums.SyncLogType;
 
 import java.lang.annotation.*;
 

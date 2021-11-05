@@ -27,6 +27,14 @@ public interface UserService  {
      */
     OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser);
 
+
+    /**
+     * 编辑用户
+     * @param sysUser
+     * @return
+     */
+    String updateUserV2(SysUser sysUser);
+
     /**
      * 删除用户
      * @param ids

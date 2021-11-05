@@ -14,9 +14,14 @@ public enum  DingTalkListenerType {
 
     DEPARTMENT_DELETED(3,2,"org_dept_remove"),
 
+    //*****************************用户相关
+
     USER_CREATE(1,1,"user_add_org"),
 
     USER_DELETE(3,1,"user_leave_org"),
+
+    USER_UPDATE(2,1,"user_modify_org"),
+
 
     //*********************外部联系人
     CREATE_EXT_CONTACT_USER(1,3,"create_ext_contact_user"),

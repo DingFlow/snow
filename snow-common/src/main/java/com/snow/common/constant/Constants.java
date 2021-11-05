@@ -169,6 +169,12 @@ public class Constants
     public static final String Ding_Flow="DingFlow";
 
     /**
+     * 中文
+     */
+    public static final String ZH_CN="zh_CN";
+
+
+    /**
      * 支付宝公钥
      */
     public static final String ALIPAY_PUBLIC_KEY="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq1t0PeHM9KjQksI/qQTGXc5z3ic9a7sq6uThianOEB8xUZMT2Qe505L3XGWiyk7UNpnyEqOmvgrkG7SkbF/LJlmnowrL8Akkju72famdJ/imTsPRdHyEFFo5hmqUTsaeR56SKMcLINlCX+bIunva9c8uN1N6C1DmSYywOUx1Wj7wpVWWFHs1KsM13Nbe45VL4v76XXUvXOXSEYNlfu8/MvK8rjPHliqwDp2CRUG/oj14SJmZI1myGgqYHVMHmoBQI1wJg66ow5XdLKYy252edMKwOSnOBfcR/uNFw0292Cv4TKFDmyn3ox/MptHW2UqLSqVC80eJpIVPGjlYpyC5PwIDAQAB";

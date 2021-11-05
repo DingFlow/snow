@@ -92,8 +92,7 @@ public class CallBackController {
             // 返回success的加密信息表示回调处理成功
             return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
         } catch (Exception e) {
-            //todo 失败短信或者邮件通知，并记录下数据
-            log.error("process callback fail------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body, e);
+            log.error("@@dingTalkCallBack fail------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body, e);
             return Constants.CALL_BACK_FAIL_RETURN;
         }
     }

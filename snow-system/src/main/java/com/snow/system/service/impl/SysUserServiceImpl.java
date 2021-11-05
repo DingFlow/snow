@@ -217,7 +217,7 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserRole(user.getUserId(), user.getRoleIds());
         //同步用户数据
         if(user.getIsSyncDingTalk()){
-            SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
+            SyncEvent<SysUser> syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
             applicationContext.publishEvent(syncEvent);
         }
         return rows;
@@ -255,6 +255,10 @@ public class SysUserServiceImpl implements ISysUserService
         userPostMapper.deleteUserPostByUserId(userId);
         // 新增用户与岗位管理
         insertUserPost(user);
+        if(user.getIsSyncDingTalk()){
+            SyncEvent<SysUser> syncEvent = new SyncEvent(user, DingTalkListenerType.USER_UPDATE);
+            applicationContext.publishEvent(syncEvent);
+        }
         return userMapper.updateUser(user);
     }
 
