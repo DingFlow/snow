@@ -103,7 +103,8 @@ public class FinanceWeChartFlowListener extends AnalysisEventListener<FinanceWeC
             if(ObjectUtil.isNotNull(financeAlipayFlow1)){
                 throw new BusinessException("交易号：【"+t.getTradeNo()+"】已存在请勿重复导入数据");
             }
-            FinanceAlipayFlow financeAlipayFlow = BeanUtil.copyProperties(t,FinanceAlipayFlow.class);
+            FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
+            BeanUtils.copyProperties(t, financeAlipayFlow);
             String payTime = t.getPayTime();
             if (!StringUtils.isEmpty(payTime)) {
                 Date date = DateUtils.parseDate(payTime);

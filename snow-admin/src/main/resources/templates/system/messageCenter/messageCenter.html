@@ -29,6 +29,10 @@
                                  <a data-toggle="tab" href="#tab-4"> 流程完结  <span class="label label-info pull-right" >[[${processEndCount}]]</span></a>
                              </li>
 
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-5"> 系统任务  <span class="label label-info pull-right" >[[${sysTaskCount}]]</span></a>
+                             </li>
+
                          </ul>
                          <div class="tab-content ">
                              <div id="tab-1" class="tab-pane active">
@@ -146,14 +150,38 @@
                                      </div>
                                  </div>
                              </div>
+
+                             <div id="tab-5" class="tab-pane">
+                                 <div class="panel-body">
+                                     <h3>系统任务</h3>
+                                     <div id="vertical-timeline5" class="vertical-container light-timeline" th:each="sysTask,iterStat : ${sysTaskList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${sysTask.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${sysTask.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(sysTask.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <p >[[${sysTask.messageContent}]]</p>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success"  th:onclick="messageDetail([[${sysTask.id}]],[[${sysTask.pcUrl}]]);"> 查看详情 </a>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
                          </div>
-
-
-
                      </div>
 
-
                  </div>
+
+
              </div>
          </div>
      </div>

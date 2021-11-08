@@ -19,7 +19,7 @@ import com.snow.flowable.domain.customer.SysOaCustomerForm;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.system.domain.SysOaCustomer;
 import com.snow.system.domain.SysOaCustomerVisitLog;
 import com.snow.system.domain.SysOaRegion;

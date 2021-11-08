@@ -1,12 +1,10 @@
-package com.snow.framework.web.domain.common;
+package com.snow.common.core.domain;
 
-import com.snow.common.enums.DingTalkMessageType;
 import com.snow.common.enums.MessageEventType;
 import lombok.Data;
 import org.springframework.context.ApplicationEvent;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 

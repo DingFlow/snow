@@ -1,21 +1,27 @@
 package com.snow.web.controller.system;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
+import com.snow.common.constant.MessageConstants;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
 import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysUserService;
+import org.apache.commons.compress.utils.Sets;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -221,10 +227,31 @@ public class SysOaTaskController extends BaseController
         sysOaTaskDistribute.setTaskExecuteId(String.valueOf(ShiroUtils.getUserId()));
         sysOaTaskDistribute.setUpdateBy(String.valueOf(ShiroUtils.getUserId()));
         sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.COMPLETED.getCode());
+        sendInnerMessage(sysOaTaskDistribute);
         //事件发送
         SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.UPDATE_TODO_TASK_EXECUTOR_STATUS);
         applicationContext.publishEvent(syncEvent);
         return toAjax(sysOaTaskDistributeService.updateSysOaTaskDistribute(sysOaTaskDistribute));
+    }
+
+    /**
+     * 发送站内信
+     * @param sysOaTaskDistribute 参数
+     */
+    private void sendInnerMessage(SysOaTaskDistribute sysOaTaskDistribute){
+        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_SYS_TASK_COMPLETE.getCode());
+        messageEventDTO.setProducerId(sysOaTaskDistribute.getCreateBy());
+        messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaTaskDistribute.getTaskDistributeId()));
+        messageEventDTO.setMessageEventType(MessageEventType.INNER_SYS_TASK_COMPLETE);
+        messageEventDTO.setMessageShow(2);
+        Map<String,Object> map= new HashMap<>();
+        map.put("startUser",ShiroUtils.getUserName());
+        map.put("businessKey", sysOaTaskDistribute.getTaskNo());
+        map.put("startTime", DateUtil.formatDateTime(sysOaTaskDistribute.getTaskCompleteTime()));
+        map.put("id",sysOaTaskDistribute.getId());
+        messageEventDTO.setParamMap(map);
+        messageEventDTO.setTemplateCode(MessageConstants.INNER_SYS_TASK_COMPLETE);
+        applicationContext.publishEvent(messageEventDTO);
     }
     /**
      * 修改系统任务

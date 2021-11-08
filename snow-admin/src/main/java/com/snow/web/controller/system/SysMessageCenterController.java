@@ -1,6 +1,6 @@
 package com.snow.web.controller.system;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -53,14 +52,14 @@ public class SysMessageCenterController extends BaseController
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
 
         //拜访日志tab页数据
-        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> visitLogsList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_VISIT_LOG.getCode())).collect(Collectors.toList());
             long visitLogCount = visitLogsList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
             mmap.put("visitLogCount",visitLogCount);
             mmap.put("visitLogs",visitLogsList);
         }
 
-        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> emailList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.SEND_EMAIL.getCode())).collect(Collectors.toList());
             SysMessageTransition.init(emailList);
             long count = emailList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
@@ -69,7 +68,7 @@ public class SysMessageCenterController extends BaseController
         }
 
         //待办tab页数据
-        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> todoTaskList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_TASK_TODO.getCode())).collect(Collectors.toList());
             long count = todoTaskList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
             mmap.put("todoTaskCount",count);
@@ -77,11 +76,19 @@ public class SysMessageCenterController extends BaseController
         }
 
         //流程完结tab页数据
-        if(CollectionUtil.isNotEmpty(sysMessageTransitions)){
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<SysMessageTransition> processEndList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_PROCESS_END.getCode())).collect(Collectors.toList());
             long count = processEndList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
             mmap.put("processEndCount",count);
             mmap.put("processEndList",processEndList);
+        }
+        //系统任务
+        if(CollUtil.isNotEmpty(sysMessageTransitions)){
+            List<SysMessageTransition> sysTaskList = sysMessageTransitions.stream().filter(t -> t.getMessageType().equals(MessageEventType.INNER_SYS_TASK_COMPLETE.getCode())
+            ||t.getMessageType().equals(MessageEventType.INNER_SYS_TODO_TASK.getCode())).collect(Collectors.toList());
+            long count = sysTaskList.stream().filter(t -> t.getMessageReadStatus() == 0).count();
+            mmap.put("sysTaskCount",count);
+            mmap.put("sysTaskList",sysTaskList);
         }
 
         return prefix + "/messageCenter";

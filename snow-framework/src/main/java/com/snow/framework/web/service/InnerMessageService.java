@@ -1,9 +1,7 @@
 package com.snow.framework.web.service;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.snow.common.constant.Constants;
 import com.snow.common.constant.UserConstants;
-import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.FreemarkUtils;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
@@ -13,8 +11,6 @@ import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.ISysMessageTransitionService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -61,7 +57,7 @@ public class InnerMessageService {
             message.setTemplateCode(sysMessageTemplate.getTemplateCode());
             //组装参数消息体
             String messageContext = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getTemplateBody(), sysSendMessageDTO.getParamMap());
-
+            message.setMessageContent(messageContext);
             if(StringUtils.isNotEmpty(sysMessageTemplate.getPcUrl())){
                 String pcUrl = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getPcUrl(), sysSendMessageDTO.getParamMap());
                 message.setPcUrl(pcUrl);
@@ -71,17 +67,18 @@ public class InnerMessageService {
                 String appUrl = FreemarkUtils.process(sysMessageTemplate.getTemplateCode(), sysMessageTemplate.getAppUrl(), sysSendMessageDTO.getParamMap());
                 message.setAppUrl(appUrl);
             }
-            message.setMessageContent(messageContext);
-            message.setMessageStatus(0L);
-            message.setIconClass(sysMessageTemplate.getIconClass());
-            Optional.ofNullable(sysSendMessageDTO.getMessageOutsideId()).ifPresent(t->message.setMessageOutsideId(sysSendMessageDTO.getMessageOutsideId()));
-            if(ObjectUtil.isNotNull(sysSendMessageDTO.getMessageEventType())){
-                message.setMessageType(sysSendMessageDTO.getMessageEventType().getCode());
-            }
-            message.setMessageShow(sysSendMessageDTO.getMessageShow());
+
         }catch (Exception e){
+            log.error("@@消息中心在组装消息模板时出现异常：{}",e.getMessage());
             message.setMessageStatus(1L);
         }
+        message.setMessageStatus(0L);
+        message.setIconClass(sysMessageTemplate.getIconClass());
+        Optional.ofNullable(sysSendMessageDTO.getMessageOutsideId()).ifPresent(t->message.setMessageOutsideId(sysSendMessageDTO.getMessageOutsideId()));
+        if(ObjectUtil.isNotNull(sysSendMessageDTO.getMessageEventType())){
+            message.setMessageType(sysSendMessageDTO.getMessageEventType().getCode());
+        }
+        message.setMessageShow(sysSendMessageDTO.getMessageShow());
         if(ObjectUtil.isNotNull(sysSendMessageDTO.getReceiver())){
             message.setConsumerId(sysSendMessageDTO.getReceiver());
             sysMessageTransitionService.insertSysMessageTransition(message);

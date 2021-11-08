@@ -22,6 +22,10 @@ public enum  MessageEventType {
     SEND_VISIT_LOG("SEND_VISIT_LOG", "发送拜访日志"),
 
     REGISTER_ACCOUNT_SUCCESS("REGISTER_ACCOUNT_SUCCESS", "成功注册账户"),
+
+    INNER_SYS_TODO_TASK("INNER_SYS_TODO_TASK", "站内信系统任务待办"),
+
+    INNER_SYS_TASK_COMPLETE("INNER_SYS_TASK_COMPLETE", "站内信系统任务待办"),
     ;
 
 

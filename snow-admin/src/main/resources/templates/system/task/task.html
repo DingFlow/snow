@@ -92,7 +92,7 @@
                                     </form>
                                 </div>
                                 <div class="btn-group-sm" id="toolbar2" role="group">
-                                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:task:edit">
+                                    <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="system:task:add">
                                         <i class="fa fa-plus"></i> 添加
                                     </a>
                                     <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:task:export">
@@ -315,6 +315,7 @@
             url: prefix + "/handleList",
             detailUrl: prefix + "/taskDistributedDetail/{id}",
             exportUrl: prefix + "/export",
+            createUrl: prefix + "/add",
             modalName: "我处理的",
             columns: [{
                 checkbox: false

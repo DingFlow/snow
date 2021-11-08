@@ -47,4 +47,13 @@ public class MessageConstants {
      * 站内信流程完结模板
      */
     public static final String INNER_PROCESS_END_CODE="1416370192572882944";
+
+    /**
+     * 站内系统任务待办模板
+     */
+    public static final String INNER_SYS_TODO_TASK="1457582416733544448";
+    /**
+     * 系统任务完成模板
+     */
+    public static final String INNER_SYS_TASK_COMPLETE="1457591320074919936";
 }

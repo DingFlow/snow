@@ -9,7 +9,7 @@ import com.snow.common.enums.MessageEventType;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.RequiredArgsConstructor;

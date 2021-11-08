@@ -7,6 +7,7 @@ import com.snow.common.enums.FinanceTradeType;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
@@ -107,7 +108,8 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             if(StringUtils.isNotNull(financeAlipayFlow1)){
                 throw new BusinessException("交易号：【"+t.getTradeNo()+"】已存在请勿重复导入数据");
             }
-            FinanceAlipayFlow financeAlipayFlow = BeanUtil.copyProperties(t,FinanceAlipayFlow.class);
+            FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
+            BeanUtils.copyProperties(t, financeAlipayFlow);
             String payTime = t.getPayTime();
             String tradeCreateTime = t.getTradeCreateTime();
             String lastModifyTime = t.getLastModifyTime();

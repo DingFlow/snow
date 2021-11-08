@@ -1,7 +1,7 @@
 package com.snow.framework.web.message;
 
 import com.snow.common.utils.StringUtils;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.framework.web.message.consumer.SysMarkReadedStrategy;
 import com.snow.framework.web.message.producer.InnerMessageStrategy;
 import com.snow.framework.web.message.producer.SendMessageCenterStrategy;
@@ -40,7 +40,8 @@ public class MessageEventHandler implements ApplicationListener<MessageEventDTO>
             case "REGISTER_ACCOUNT_SUCCESS":
             case "INNER_TASK_TODO":
             case "INNER_PROCESS_END":
-
+            case "INNER_SYS_TODO_TASK":
+            case "INNER_SYS_TASK_COMPLETE":
                 messageEventContext.setMessageEventTypeStrategy(new InnerMessageStrategy());
                 break;
             case "MARK_READED":

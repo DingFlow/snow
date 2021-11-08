@@ -1,10 +1,15 @@
 package com.snow.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormater;
+import cn.hutool.core.date.DateUtil;
+import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.SequenceConstants;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.MessageEventType;
 import com.snow.common.enums.TaskStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
@@ -15,13 +20,14 @@ import com.snow.system.mapper.SysOaTaskDistributeMapper;
 import com.snow.system.mapper.SysOaTaskMapper;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysOaTaskService;
+import com.snow.system.service.ISysUserService;
+import org.apache.commons.compress.utils.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 系统任务Service业务层处理
@@ -40,6 +46,9 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
 
     @Autowired
     private SysOaTaskDistributeMapper sysOaTaskDistributeMapper;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Autowired
     private SysSequenceServiceImpl sequenceService;
@@ -96,6 +105,8 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
                 sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
                 sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
                 sysOaTaskDistribute.setSysOaTask(sysOaTask);
+                //发送消息
+                sendInnerMessage(sysOaTaskDistribute);
                 //事件发送
                 SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.WORK_RECODE_CREATE);
                 applicationContext.publishEvent(syncEvent);
@@ -103,6 +114,7 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         }
         return sysOaTaskMapper.insertSysOaTask(sysOaTask);
     }
+
 
     /**
      * 修改系统任务
@@ -153,5 +165,25 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         SyncEvent<String> syncEvent = new SyncEvent(taskNo, DingTalkListenerType.WORK_RECODE_CREATE);
         applicationContext.publishEvent(syncEvent);
         return sysOaTaskMapper.deleteSysOaTaskById(taskNo);
+    }
+
+    /**
+     * 发送站内信
+     * @param sysOaTaskDistribute 参数
+     */
+    private void sendInnerMessage(SysOaTaskDistribute sysOaTaskDistribute){
+        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_SYS_TODO_TASK.getCode());
+        messageEventDTO.setProducerId(sysOaTaskDistribute.getCreateBy());
+        messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaTaskDistribute.getTaskDistributeId()));
+        messageEventDTO.setMessageEventType(MessageEventType.INNER_SYS_TODO_TASK);
+        messageEventDTO.setMessageShow(2);
+        Map<String,Object> map= new HashMap<>();
+        map.put("startUser",sysUserService.selectUserById(Long.parseLong(sysOaTaskDistribute.getCreateBy())).getUserName());
+        map.put("businessKey", sysOaTaskDistribute.getTaskNo());
+        map.put("startTime", DateUtil.formatDateTime(sysOaTaskDistribute.getCreateTime()));
+        map.put("id",sysOaTaskDistribute.getId());
+        messageEventDTO.setParamMap(map);
+        messageEventDTO.setTemplateCode(MessageConstants.INNER_SYS_TODO_TASK);
+        applicationContext.publishEvent(messageEventDTO);
     }
 }

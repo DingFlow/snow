@@ -59,23 +59,45 @@ values('系统任务', '2145', '1', '/system/task', 'C', '0', 'system:task:view'
 SELECT @parentId := LAST_INSERT_ID();
 
 -- 按钮 SQL
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('系统任务查询', @parentId, '1',  '#',  'F', '0', 'system:task:list',         '#', 'admin', now(), 'ry', now(), '');
-
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('系统任务新增', @parentId, '2',  '#',  'F', '0', 'system:task:add',          '#', 'admin', now(), 'ry', now(), '');
-
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('系统任务修改', @parentId, '3',  '#',  'F', '0', 'system:task:edit',         '#', 'admin', now(), 'ry', now(), '');
-
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('系统任务删除', @parentId, '4',  '#',  'F', '0', 'system:task:remove',       '#', 'admin', now(), 'ry', now(), '');
-
-insert into sys_menu (menu_name, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
-values('系统任务导出', @parentId, '5',  '#',  'F', '0', 'system:task:export',       '#', 'admin', now(), 'ry', now(), '');
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '系统任务', @parentId , 1, '/system/task', '', 'C', '0', 'system:task:view', '#', 'admin', NOW(), 'ry', NOW(), '系统任务菜单', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '开始任务', @parentId , 1, '#', 'menuItem', 'F', '0', 'system:task:start', '#', 'admin', NOW(), 'admin', NOW(), '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '系统任务新增', @parentId , 2, '#', '', 'F', '0', 'system:task:add', '#', 'admin', NOW(), 'ry', NOW(), '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '系统任务修改', @parentId , 3, '#', '', 'F', '0', 'system:task:edit', '#', 'admin',  NOW(), 'ry',  NOW(), '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('系统任务删除', @parentId , 4, '#', '', 'F', '0', 'system:task:remove', '#', 'admin', NOW(), 'ry',  NOW(), '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('系统任务导出', @parentId , 5, '#', '', 'F', '0', 'system:task:export', '#', 'admin',  NOW(), 'ry',  NOW(), '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('待处理任务', @parentId , 1, '#', 'menuItem', 'F', '0', 'system:task:waitList', '#', 'admin',  NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('我创建的任务', @parentId , 2, '#', 'menuItem', 'F', '0', 'system:task:myList', '#', 'admin',  NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '我处理的任务', @parentId , 3, '#', 'menuItem', 'F', '0', 'system:task:handleList', '#', 'admin',  NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('完成任务', @parentId , 4, '#', 'menuItem', 'F', '0', 'system:task:handle', '#', 'admin',  NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('任务详情', @parentId , 6, '#', 'menuItem', 'F', '0', 'system:task:detail', '#', 'admin', NOW(), '', NULL, '', 1);
 
 INSERT INTO  `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('任务类型', 'sys_task_type', '0', 'admin', NOW(), '', NULL, '任务类型');
 INSERT INTO `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 1, '系统任务', '1', 'sys_task_type', NULL, 'primary', 'Y', '0', 'admin', NOW(), '', NULL, '待办任务');
 
 --20211015
 INSERT INTO `sys_sequence`(`name`, `current_value`, `increment`, `described`) VALUES ('OA_RW', 1, 1, '系统任务单号');
+
+
+--20211108
+
+-- 按钮父菜单ID
+--联系人菜单
+INSERT INTO `sys_menu`(`menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`,  `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ('外部联系人', 2019, 6, '/ding/extContactUser', 'menuItem', 'C', '0', 'system:extContactUser:view',  'admin', '2021-11-04 13:53:50', '', NULL, '', 1);
+
+SELECT @parentId := LAST_INSERT_ID();
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '联系人列表', @parentId , 1, '#', 'menuItem', 'F', '0', 'system:extContactUser:list', '#', 'admin', NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '新增联系人', @parentId , 2, '#', 'menuItem', 'F', '0', 'system:extContactUser:add', '#', 'admin', NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '编辑联系人', @parentId , 3, '#', 'menuItem', 'F', '0', 'system:extContactUser:edit', '#', 'admin', NOW(), 'admin', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '移除联系人', @parentId , 4, '#', 'menuItem', 'F', '0', 'system:extContactUser:remove', '#', 'admin', NOW(), '', NULL, '', 1);
+INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `url`, `target`, `menu_type`, `visible`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`, `is_refresh`) VALUES ( '联系人详情', @parentId , 5, '#', 'menuItem', 'F', '0', 'system:extContactUser:detail', '#', 'admin', NOW(), '', NULL, '', 1);
+
+INSERT INTO `sys_message_template`( `template_code`, `template_name`, `template_body`, `template_desc`, `template_type`, `pc_url`, `app_url`, `icon_class`, `template_status`, `is_delete`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES ( '1457582416733544448', '站内系统待办任务', '${startUser}于${startTime}发起单号为【${businessKey}】的站内待办任务，现需要您去协助处理。请点击详情前往处理。', '站内待办', 4, '/system/task/taskDistributedDetail?id=${id}', '', 'fa fa-balance-scale', 0, 0, '1', NOW(), '1', NOW());
+INSERT INTO `sys_message_template`( `template_code`, `template_name`, `template_body`, `template_desc`, `template_type`, `pc_url`, `app_url`, `icon_class`, `template_status`, `is_delete`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES ( '1457591320074919936', '完结系统待办任务', '${startUser}于${startTime}完成单号为【${businessKey}】的站内待办任务，可前往查看具体详情。', '系统待办任务完结', 4, '/system/task/taskDistributedDetail?id=${id}', '', 'fa fa-flag-o', 0, 0, '1', NOW(), '1', NOW());
+
+ALTER TABLE `finance_alipay_flow`
+    ADD COLUMN `real_finance_type` int(11) NULL COMMENT '真实财务用途（该条账单所属账务企业真实类型）' AFTER `bill_type`,
+    ADD COLUMN `real_income_expenditure_type` int(11) NULL COMMENT '真实收支类型' AFTER `real_finance_type`;
+
+
+INSERT INTO `sys_dict_type`(`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (134, '账单真实收支类型', 'finance_real_sz_type', '0', 'admin', NOW(), '', NULL, '账单真实收支类型');
+INSERT INTO `sys_dict_type`(`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (135, '财务用途', 'real_finance_type', '0', 'admin', NOW(), '', NULL, '财务用途');

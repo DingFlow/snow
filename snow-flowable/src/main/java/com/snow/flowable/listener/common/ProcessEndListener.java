@@ -9,7 +9,7 @@ import com.snow.common.constant.MessageConstants;
 import com.snow.common.enums.MessageEventType;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.service.FlowableService;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
