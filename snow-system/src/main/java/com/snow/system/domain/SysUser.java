@@ -3,6 +3,9 @@ package com.snow.system.domain;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
+
+import com.snow.common.annotation.Sensitive;
+import com.snow.common.enums.SensitiveTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.snow.common.annotation.Excel;
@@ -48,10 +51,12 @@ public class SysUser extends BaseEntity
 
     /** 用户邮箱 */
     @Excel(name = "用户邮箱")
+    @Sensitive(type=SensitiveTypeEnum.EMAIL)
     private String email;
 
     /** 手机号码 */
     @Excel(name = "手机号码")
+    @Sensitive(type=SensitiveTypeEnum.MOBILE_PHONE)
     private String phonenumber;
 
     /** 用户性别 */

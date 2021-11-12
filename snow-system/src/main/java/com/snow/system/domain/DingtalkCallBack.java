@@ -1,7 +1,9 @@
 package com.snow.system.domain;
 
 import com.snow.common.annotation.Excel;
+import com.snow.common.annotation.Sensitive;
 import com.snow.common.core.domain.BaseEntity;
+import com.snow.common.enums.SensitiveTypeEnum;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -24,10 +26,12 @@ public class DingtalkCallBack extends BaseEntity
 
     /** 加解密需要用到的token，ISV(服务提供商)推荐使用注册套件时填写的token，普通企业可以随机填写 */
     @Excel(name = "加解密需要用到的token，ISV(服务提供商)推荐使用注册套件时填写的token，普通企业可以随机填写")
+    @Sensitive(type = SensitiveTypeEnum.KEY)
     private String token;
 
     /** 数据加密密钥。用于回调数据的加密，长度固定为43个字符，从a-z, A-Z, 0-9共62个字符中选取,您可以随机生成，ISV(服务提供商)推荐使用注册套件时填写的EncodingAESKey */
     @Excel(name = "数据加密密钥。用于回调数据的加密，长度固定为43个字符，从a-z, A-Z, 0-9共62个字符中选取,您可以随机生成，ISV(服务提供商)推荐使用注册套件时填写的EncodingAESKey")
+    @Sensitive(type = SensitiveTypeEnum.KEY)
     private String aesKey;
 
     /** 接收事件回调的url，必须是公网可以访问的url地址 */
