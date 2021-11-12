@@ -73,22 +73,17 @@ public class SyncLogAspect
         {
             // 获得注解
             SyncLog controllerLog = getAnnotationLog(joinPoint);
-            if (controllerLog == null)
-            {
+            if (controllerLog == null) {
                 return;
             }
-
             // 获取当前的用户
             SysUser currentUser = ShiroUtils.getSysUser();
             SysDingtalkSyncLog sysDingtalkSyncLog = new SysDingtalkSyncLog();
             if(StringUtils.isNotNull(currentUser)){
                 sysDingtalkSyncLog.setOperName(currentUser.getUserName());
-                if (StringUtils.isNotNull(currentUser.getDept())
-                        && StringUtils.isNotEmpty(currentUser.getDept().getDeptName()))
-                {
+                if (StringUtils.isNotNull(currentUser.getDept()) && StringUtils.isNotEmpty(currentUser.getDept().getDeptName())) {
                     sysDingtalkSyncLog.setDeptName(currentUser.getDept().getDeptName());
                 }
-
                 // 请求的地址
                 String ip = ShiroUtils.getIp();
                 sysDingtalkSyncLog.setOperIp(ip);
@@ -102,15 +97,13 @@ public class SyncLogAspect
             // 返回参数
             sysDingtalkSyncLog.setJsonResult(StringUtils.substring(JSON.marshal(jsonResult), 0, 2000));
             Optional.ofNullable(ServletUtils.getRequest()).ifPresent(t->sysDingtalkSyncLog.setOperUrl(ServletUtils.getRequest().getRequestURI()));
-            if (e != null)
-            {
+            if (e != null) {
                 if(e instanceof SyncDataException){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
                     sysDingtalkSyncLog.setOperDingtalkParam(((SyncDataException) e).getRequestParam());
                     sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
                 }else if(e instanceof ApiException){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
-                  //  sysDingtalkSyncLog.setOperDingtalkParam(((ApiException) e).getErrMsg());
                     sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(((ApiException) e).getErrMsg(), 0, 2000));
                 }
                 else {
@@ -149,9 +142,9 @@ public class SyncLogAspect
      */
     public void getControllerMethodDescription(SyncLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
     {
-        sysDingtalkSyncLog.setTitle(log.dingTalkListenerType().getInfo());
-        sysDingtalkSyncLog.setModuleType(log.dingTalkListenerType().getType());
-        sysDingtalkSyncLog.setBusinessType(log.dingTalkListenerType().getCode());
+        sysDingtalkSyncLog.setTitle(log.dingTalkLogType().getTitle());
+        sysDingtalkSyncLog.setModuleType(log.dingTalkLogType().getModuleType());
+        sysDingtalkSyncLog.setBusinessType(log.dingTalkLogType().getBusinessType());
         // 设置操作人类别
         sysDingtalkSyncLog.setOperatorType(log.dingTalkSyncType().getCode());
         sysDingtalkSyncLog.setLogType(log.syncLogTpye().getCode());

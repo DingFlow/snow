@@ -8,7 +8,7 @@ import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.Constants;
-import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
@@ -50,7 +50,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
         String appId= isysConfigService.selectConfigByKey("ding.login.appid");
         String appSecret= isysConfigService.selectConfigByKey("ding.login.appSecret");
         // 通过临时授权码获取授权用户的个人信息
-        DefaultDingTalkClient client2 = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
+        DefaultDingTalkClient client2 = new DefaultDingTalkClient(BaseConstantUrl.GET_USER_BY_CODE);
         OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
         // 通过扫描二维码，跳转指定的redirect_uri后，向url中追加的code临时授权码
         req.setTmpAuthCode(authCode);
@@ -75,7 +75,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
      * @return
      */
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
     public OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_CREATE);
         OapiV2UserCreateRequest req = new OapiV2UserCreateRequest();
@@ -125,7 +125,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_UPDATE,dingTalkUrl=BaseConstantUrl.USER_UPDATE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_UPDATE,dingTalkUrl=BaseConstantUrl.USER_UPDATE)
     public String updateUserV2(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_UPDATE);
         OapiV2UserUpdateRequest req = new OapiV2UserUpdateRequest();
@@ -164,7 +164,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
      * @param ids
      */
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
     public void deleteUser(String ids) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_DELETE);
         OapiV2UserDeleteRequest req = new OapiV2UserDeleteRequest();
@@ -236,7 +236,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
     @Override
     public OapiUserGetbyunionidResponse.UserGetByUnionIdResponse  getUserByUnionId(String unionId){
 
-        DingTalkClient clientDingTalkClient = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/user/getbyunionid");
+        DingTalkClient clientDingTalkClient = new DefaultDingTalkClient(BaseConstantUrl.GET_USER_UNION_ID);
         OapiUserGetbyunionidRequest request = new OapiUserGetbyunionidRequest();
         request.setUnionid(unionId);
         try {

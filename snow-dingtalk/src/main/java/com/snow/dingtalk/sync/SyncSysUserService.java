@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.response.OapiV2UserGetResponse;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.SyncLogType;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.service.UserService;
@@ -50,7 +51,7 @@ public class SyncSysUserService implements ISyncSysInfo {
         return null;
     }
 
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_CREATE,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_CREATE,syncLogTpye = SyncLogType.SYNC_SYS)
     private void insertUser(JSONObject jsonObject){
         List<String> userIdList = jsonObject.getJSONArray("UserId").toJavaList(String.class);
         for(String userId:userIdList){
@@ -67,7 +68,7 @@ public class SyncSysUserService implements ISyncSysInfo {
 
     }
 
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_UPDATE,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_UPDATE,syncLogTpye = SyncLogType.SYNC_SYS)
     private void updateUser(JSONObject jsonObject){
         List<String> userIdList = jsonObject.getJSONArray("UserId").toJavaList(String.class);
         for(String userId:userIdList){
@@ -79,7 +80,7 @@ public class SyncSysUserService implements ISyncSysInfo {
         }
     }
 
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.USER_DELETE,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.USER_DELETE,syncLogTpye = SyncLogType.SYNC_SYS)
     private void deleteUser(JSONObject jsonObject){
         List<String> userIdList = jsonObject.getJSONArray("UserId").toJavaList(String.class);
         for(String userId:userIdList){

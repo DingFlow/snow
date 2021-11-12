@@ -9,7 +9,7 @@ import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
-import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
@@ -34,7 +34,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
 
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.CREATE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.CREATE_EXT_CONTACT_USER)
+    @SyncLog(dingTalkLogType = DingTalkLogType.CREATE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.CREATE_EXT_CONTACT_USER)
     public String createExtContactUser(ExtContactUserRequest extContactUserRequest) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CREATE_EXT_CONTACT_USER);
         OapiExtcontactCreateRequest req = new OapiExtcontactCreateRequest();
@@ -55,7 +55,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.DELETE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.DELETE_EXT_CONTACT_USER)
+    @SyncLog(dingTalkLogType = DingTalkLogType.DELETE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.DELETE_EXT_CONTACT_USER)
     public boolean deleteExtContactUser(String userId) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_EXT_CONTACT_USER);
         OapiExtcontactDeleteRequest req = new OapiExtcontactDeleteRequest();
@@ -76,7 +76,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
 
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.UPDATE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.UPDATE_EXT_CONTACT_USER)
+    @SyncLog(dingTalkLogType = DingTalkLogType.UPDATE_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.UPDATE_EXT_CONTACT_USER)
     public boolean updateExtContactUser(ExtContactUserRequest extContactUserRequest) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.UPDATE_EXT_CONTACT_USER);
         OapiExtcontactUpdateRequest req = new OapiExtcontactUpdateRequest();
@@ -96,7 +96,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.EXT_CONTACT_USER_LIST,dingTalkUrl= BaseConstantUrl.EXT_CONTACT_USER_LIST)
+    @SyncLog(dingTalkLogType = DingTalkLogType.EXT_CONTACT_USER_LIST,dingTalkUrl= BaseConstantUrl.EXT_CONTACT_USER_LIST)
     public List<ExtContactUserRequest>  getExtContactUserList(Long offset,Long size) {
         DingTalkClient client = new DefaultDingTalkClient( BaseConstantUrl.EXT_CONTACT_USER_LIST);
         OapiExtcontactListRequest req = new OapiExtcontactListRequest();
@@ -128,7 +128,7 @@ public class ExtContactUserServiceImpl extends BaseService implements ExtContact
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.GET_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.GET_EXT_CONTACT_USER)
+    @SyncLog(dingTalkLogType = DingTalkLogType.GET_EXT_CONTACT_USER,dingTalkUrl= BaseConstantUrl.GET_EXT_CONTACT_USER)
     public ExtContactUserRequest getExtContactUserDetail(String userId) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_EXT_CONTACT_USER);
         OapiExtcontactGetRequest req = new OapiExtcontactGetRequest();

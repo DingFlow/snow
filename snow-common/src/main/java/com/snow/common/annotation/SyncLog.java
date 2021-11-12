@@ -1,6 +1,6 @@
 package com.snow.common.annotation;
 
-import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.DingTalkSyncType;
 import com.snow.common.enums.SyncLogType;
 
@@ -18,10 +18,10 @@ public @interface SyncLog
 {
 
     /**
-     * 模块描述
+     * 日志类型
      */
 
-    public DingTalkListenerType dingTalkListenerType();
+    public DingTalkLogType dingTalkLogType();
 
 
     /**

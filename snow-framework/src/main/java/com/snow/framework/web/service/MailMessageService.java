@@ -1,13 +1,11 @@
 package com.snow.framework.web.service;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.snow.common.utils.PatternUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.FreemarkUtils;
 import com.snow.framework.web.domain.common.SysSendEmailDTO;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysMessageTemplate;
-import com.snow.system.domain.SysOaEmail;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.impl.SysOaEmailServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +32,7 @@ import java.util.Set;
  **/
 @Component
 @Slf4j
-public class MailService {
+public class MailMessageService {
 
     @Resource
     private JavaMailSender mailSender;

@@ -10,7 +10,7 @@ import com.dingtalk.api.response.OapiBlackboardCreateResponse;
 import com.dingtalk.api.response.OapiBlackboardDeleteResponse;
 import com.dingtalk.api.response.OapiBlackboardUpdateResponse;
 import com.snow.common.annotation.SyncLog;
-import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -18,7 +18,6 @@ import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.service.BlackboardService;
 import com.snow.system.domain.SysNotice;
 import com.snow.system.domain.SysUser;
-import com.snow.system.mapper.SysNoticeMapper;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +39,9 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
 
     private SysUserServiceImpl sysUserService=SpringUtils.getBean(SysUserServiceImpl.class);
 
-    private SysNoticeMapper sysNoticeService=SpringUtils.getBean(SysNoticeMapper.class);
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_CREATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_CREATE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_CREATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_CREATE)
     public String createBlackboard(SysNotice sysNotice) {
 
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_CREATE);
@@ -77,7 +75,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_DELETE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_DELETE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_DELETE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_DELETE)
     public void deleteBlackboard(String blackboardId) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_DELETE);
         OapiBlackboardDeleteRequest req = new OapiBlackboardDeleteRequest();
@@ -95,7 +93,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.BLACKBOARD_UPDATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_UPDATE)
+    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_UPDATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_UPDATE)
     public void updateBlackboard(SysNotice sysNotice) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_UPDATE);
         OapiBlackboardUpdateRequest req = new OapiBlackboardUpdateRequest();

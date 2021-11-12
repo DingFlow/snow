@@ -23,6 +23,8 @@ public class CacheUtils
 
     private static final String SYS_CACHE = "sys-cache";
 
+    private static final String SYS_CONFIG = "sys-config";
+
     /**
      * 获取SYS_CACHE缓存
      * 
@@ -35,6 +37,16 @@ public class CacheUtils
     }
 
     /**
+     * 获取SYS_Config缓存
+     *
+     * @param key
+     * @return
+     */
+    public static Object getSysConfig(String key)
+    {
+        return get(SYS_CONFIG, key);
+    }
+    /**
      * 获取SYS_CACHE缓存
      * 
      * @param key
@@ -44,6 +56,18 @@ public class CacheUtils
     public static Object get(String key, Object defaultValue)
     {
         Object value = get(key);
+        return value != null ? value : defaultValue;
+    }
+
+    /**
+     * 获取SYS_Config缓存
+     * @param key 缓存key
+     * @param defaultValue 默认值
+     * @return
+     */
+    public static Object getSysConfig(String key, Object defaultValue)
+    {
+        Object value = getSysConfig(key);
         return value != null ? value : defaultValue;
     }
 

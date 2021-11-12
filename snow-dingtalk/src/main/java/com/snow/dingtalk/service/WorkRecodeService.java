@@ -4,7 +4,6 @@ import com.aliyun.dingtalktodo_1_0.models.GetTodoTaskBySourceIdResponseBody;
 import com.dingtalk.api.response.OapiWorkrecordGetbyuseridResponse;
 import com.snow.dingtalk.model.request.WorkrecordAddRequest;
 import com.snow.dingtalk.model.request.WorkrecordGetbyuseridRequest;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.system.domain.SysOaTask;
 import com.snow.system.domain.SysOaTaskDistribute;
 import org.springframework.stereotype.Service;
@@ -79,9 +78,4 @@ public interface WorkRecodeService  {
     @Deprecated
      Boolean update(String userId,String recordId);
 
-    /**
-     * 钉钉发送消息
-     * @param sysSendMessageDTO
-     */
-    Long sendCommonMessage(SysSendMessageDTO sysSendMessageDTO);
 }

@@ -23,7 +23,7 @@ public class FreemarkUtils {
             template.process(model, stringWriter);
             return stringWriter.toString();
         } catch (Exception e) {
-            log.info("构建模板消息错误",e);
+            log.info("@@构建模板消息错误",e);
             throw  new RuntimeException(e);
         }
     }

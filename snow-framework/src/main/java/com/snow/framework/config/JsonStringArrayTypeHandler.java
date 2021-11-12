@@ -34,7 +34,6 @@ public class JsonStringArrayTypeHandler extends BaseTypeHandler<String[]> {
      */
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, String[] parameter, JdbcType jdbcType) throws SQLException {
-        log.info("存入数据库的数组数据:{}",toJson(parameter));
         preparedStatement.setString(i,toJson(parameter));
     }
 
@@ -46,13 +45,11 @@ public class JsonStringArrayTypeHandler extends BaseTypeHandler<String[]> {
 
     @Override
     public String[] getNullableResult(ResultSet resultSet, int columnIndex) throws SQLException {
-        log.info("读取数据库的数据columnIndex:{}",resultSet.getString(columnIndex));
         return  this.toObject(resultSet.getString(columnIndex));
     }
 
     @Override
     public String[] getNullableResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
-        log.info("读取数据库的数据callableStatement:{}",callableStatement.getString(columnIndex));
         return this.toObject(callableStatement.getString(columnIndex));
     }
 

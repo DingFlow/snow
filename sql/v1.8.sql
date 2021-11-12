@@ -101,3 +101,6 @@ ALTER TABLE `finance_alipay_flow`
 
 INSERT INTO `sys_dict_type`(`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (134, '账单真实收支类型', 'finance_real_sz_type', '0', 'admin', NOW(), '', NULL, '账单真实收支类型');
 INSERT INTO `sys_dict_type`(`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (135, '财务用途', 'real_finance_type', '0', 'admin', NOW(), '', NULL, '财务用途');
+
+
+INSERT INTO `sys_config`(`config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( '系统网址', 'sys.website.domain', 'http://dingflow.xyz:9527', 'Y', 'admin',NOW(), '', NULL, '系统网址');

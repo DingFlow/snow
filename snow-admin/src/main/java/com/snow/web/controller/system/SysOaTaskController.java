@@ -273,6 +273,11 @@ public class SysOaTaskController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SysOaTask sysOaTask)
     {
+
+        SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
+        sysOaTaskDistribute.setSysOaTask(sysOaTask);
+        SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.WORK_RECORD_UPDATE);
+        applicationContext.publishEvent(syncEvent);
         return toAjax(sysOaTaskService.updateSysOaTask(sysOaTask));
     }
 

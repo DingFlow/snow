@@ -7,6 +7,7 @@ import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.DingTalkSyncType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseConstantUrl;
@@ -32,7 +33,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
 
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_REGISTER,dingTalkUrl=BaseConstantUrl.REGISTER_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_REGISTER,dingTalkUrl=BaseConstantUrl.REGISTER_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void registerCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.REGISTER_CALL_BACK);
         OapiCallBackRegisterCallBackRequest request = new OapiCallBackRegisterCallBackRequest();
@@ -52,7 +53,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_UPDATE,dingTalkUrl=BaseConstantUrl.UPDATE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_UPDATE,dingTalkUrl=BaseConstantUrl.UPDATE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public Boolean updateCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.UPDATE_CALL_BACK);
         OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
@@ -74,7 +75,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void deleteCallBack() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_CALL_BACK);
         OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();
@@ -91,6 +92,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
+    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_FAILED_RESULT,dingTalkUrl=BaseConstantUrl.CALL_BACK_FAILED_RESULT,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public List<OapiCallBackGetCallBackFailedResultResponse.Failed> getCallBackFailedResult() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CALL_BACK_FAILED_RESULT);
         OapiCallBackGetCallBackFailedResultRequest request = new OapiCallBackGetCallBackFailedResultRequest();
@@ -99,17 +101,13 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
             OapiCallBackGetCallBackFailedResultResponse response = client.execute(request, getDingTalkToken());
             if(response.getErrcode()==0){
                 List<OapiCallBackGetCallBackFailedResultResponse.Failed> failedList = response.getFailedList();
-                syncDingTalkSuccessOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
                 return failedList;
             }else {
-                //记录获取token失败日志
-                syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,response.getErrmsg(),"getCallBackFailedResult()", JSON.toJSONString(request));
+                throw new SyncDataException(JSON.toJSONString(request),response.getErrmsg());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.CALL_BACK_FAILED_RESULT,e.getMessage(),"getCallBackFailedResult()", JSON.toJSONString(request));
-            e.printStackTrace();
+            throw new SyncDataException(JSON.toJSONString(request),e.getMessage());
         }
-        return null;
     }
 }
 

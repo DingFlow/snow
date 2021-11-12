@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiProcessinstanceCreateRequest;
 import com.dingtalk.api.response.OapiProcessinstanceCreateResponse;
+import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.Constants;
+import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
@@ -37,15 +40,12 @@ public class ProcessInstanceService extends BaseService {
         try {
             OapiProcessinstanceCreateResponse response = client.execute(request,getDingTalkToken());
             if(response.getErrcode()==0){
-                syncDingTalkErrorOperLog(BaseConstantUrl.FLOW_CREATE,response.getMessage(),"ProcessInstanceCreateRequest",JSON.toJSONString(request));
                 return response.getProcessInstanceId();
             }else {
-                syncDingTalkErrorOperLog(BaseConstantUrl.FLOW_CREATE,response.getErrmsg(),"ProcessInstanceCreateRequest",JSON.toJSONString(request));
+                throw new SyncDataException(JSON.toJSONString(request),response.getMessage());
             }
         } catch (ApiException e) {
-            syncDingTalkErrorOperLog(BaseConstantUrl.FLOW_CREATE,e.getMessage(),"ProcessInstanceCreateRequest",JSON.toJSONString(request));
-            e.printStackTrace();
+            throw new SyncDataException(JSON.toJSONString(request),e.getMessage());
         }
-        return null;
     }
 }

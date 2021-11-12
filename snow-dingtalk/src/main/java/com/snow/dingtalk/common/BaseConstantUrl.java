@@ -33,6 +33,16 @@ public class BaseConstantUrl {
     public static final String GET_USERINFO_BY_DEPT=  "https://oapi.dingtalk.com/topapi/v2/user/list";
 
     /**
+     * 获取用户UNION_ID
+     */
+    public static final String GET_USER_UNION_ID= "https://oapi.dingtalk.com/topapi/user/getbyunionid";
+
+    /**
+     * 通过临时授权码获取授权用户的个人信息
+     */
+    public static final String GET_USER_BY_CODE="https://oapi.dingtalk.com/sns/getuserinfo_bycode";
+
+    /**
      * 获取token url
      */
     public static final String GET_TOKEN_URL="https://oapi.dingtalk.com/gettoken";
@@ -99,9 +109,14 @@ public class BaseConstantUrl {
 
 
     /**
-     * 发送普通消息
+     * 发送工作通知
      */
     public static final String ASYNCSEND_V2="https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2";
+
+    /**
+     * 发送普通消息
+     */
+    public static final String SEND_TO_CONVERSATIO="https://oapi.dingtalk.com/message/send_to_conversation";
 
 
     /**

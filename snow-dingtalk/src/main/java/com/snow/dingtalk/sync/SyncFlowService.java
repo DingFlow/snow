@@ -6,6 +6,7 @@ import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.SyncLogType;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
@@ -48,7 +49,6 @@ public class SyncFlowService implements ISyncSysInfo  {
     private SysDingHiTaskServiceImpl sysDingHiTaskService=SpringUtils.getBean(SysDingHiTaskServiceImpl.class);
 
     @Override
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.BPMS_INSTANCE_CHANGE,syncLogTpye = SyncLogType.SYNC_SYS)
     public JSONObject SyncSysInfo(DingTalkListenerType dingTalkListenerType, JSONObject jsonObject) {
 
         Integer code = dingTalkListenerType.getCode();

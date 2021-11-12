@@ -22,6 +22,7 @@ public class PatternUtils {
      * @param templateBody
      * @return
      */
+    @Deprecated
     public static String builderTemplateBody(Map<String,Object> map, String templateBody){
         String re = "(?<=\\$\\{).*?(?=\\})";
         Pattern p = Pattern.compile(re);

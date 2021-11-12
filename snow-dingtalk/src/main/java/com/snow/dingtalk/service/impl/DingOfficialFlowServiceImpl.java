@@ -204,10 +204,6 @@ public class DingOfficialFlowServiceImpl extends BaseService implements DingOffi
 
     }
 
-    /*@Override
-    public void addProcessInstanceComment() {
-
-    }*/
 
     @Override
     public OapiProcessinstanceGetResponse.ProcessInstanceTopVo getProcessInstanceDetail(String processInstanceId) {

@@ -69,6 +69,9 @@ public enum  DingTalkListenerType {
      */
     BPMS_INSTANCE_CHANGE(6,20,"bpms_instance_change"),
 
+    /**
+     * 发送钉钉工作通知
+     */
     ASYNCSEND_V2(10,20,"发送钉钉消息"),
 
 
@@ -76,7 +79,11 @@ public enum  DingTalkListenerType {
 
     BLACKBOARD_UPDATE(2,30,"公告更新"),
 
-    BLACKBOARD_DELETE(3,30,"公告删除")
+    BLACKBOARD_DELETE(3,30,"公告删除"),
+
+    GET_TOKEN(1,40,"获取DingTalkToken"),
+
+    GET_TOKEN_V2(2,40,"获取DingTalkTokenV2")
     ;
 
 
