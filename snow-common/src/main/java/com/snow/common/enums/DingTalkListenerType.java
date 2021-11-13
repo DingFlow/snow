@@ -58,6 +58,7 @@ public enum  DingTalkListenerType {
 
     UPDATE_TODO_TASK_EXECUTOR_STATUS(7,20,"更新任务执行状态"),
 
+    WORK_RECODE_OLD_CREATE(8,20, "创建待办(old)"),
     /**
      * 审批任务开始、结束、转交。
      */

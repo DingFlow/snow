@@ -256,6 +256,8 @@ public class SysUserServiceImpl implements ISysUserService
         // 新增用户与岗位管理
         insertUserPost(user);
         if(user.getIsSyncDingTalk()){
+            SysUser sysUser = selectUserById(userId);
+            user.setDingUserId(sysUser.getDingUserId());
             SyncEvent<SysUser> syncEvent = new SyncEvent(user, DingTalkListenerType.USER_UPDATE);
             applicationContext.publishEvent(syncEvent);
         }

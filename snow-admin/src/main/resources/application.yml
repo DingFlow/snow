@@ -151,7 +151,7 @@ is:
   notice: true
   #是否开启同步钉钉
   sync:
-     dingtalk: false
+     dingtalk: true
 
 flowable:
   #关闭定时任务JOB

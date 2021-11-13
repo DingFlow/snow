@@ -93,7 +93,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
         List<String> taskDistributeId = sysOaTask.getTaskDistributeId();
 
         CreateTodoTaskHeaders createTodoTaskHeaders = new CreateTodoTaskHeaders();
-        createTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
+        createTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkToken();
         CreateTodoTaskRequest.CreateTodoTaskRequestNotifyConfigs notifyConfigs = new CreateTodoTaskRequest.CreateTodoTaskRequestNotifyConfigs()
                 .setDingNotify("1");
         CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl detailUrl = new CreateTodoTaskRequest.CreateTodoTaskRequestDetailUrl()

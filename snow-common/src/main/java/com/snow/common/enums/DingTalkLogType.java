@@ -61,6 +61,7 @@ public enum DingTalkLogType {
     UPDATE_TODO_TASK_EXECUTOR_STATUS(5,2,"更新任务执行状态"),
 
 
+
     /**
      * 发送钉钉工作通知
      */

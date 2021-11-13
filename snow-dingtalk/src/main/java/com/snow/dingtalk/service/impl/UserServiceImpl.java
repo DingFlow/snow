@@ -146,7 +146,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
         }
         req.setLanguage(Constants.ZH_CN);
         try {
-            OapiV2UserUpdateResponse response = client.execute(req, getDingTalkTokenV2());
+            OapiV2UserUpdateResponse response = client.execute(req, getDingTalkToken());
             if(response.getErrcode()==0){
                 return response.getRequestId();
             }else {

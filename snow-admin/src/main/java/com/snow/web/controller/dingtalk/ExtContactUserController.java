@@ -97,9 +97,9 @@ public class ExtContactUserController extends BaseController {
     @Log(title = "外部联系人", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
-    public AjaxResult remove(String userId)
+    public AjaxResult remove(String ids)
     {
-        return toAjax(extContactUserService.deleteExtContactUser(userId));
+        return toAjax(extContactUserService.deleteExtContactUser(ids));
     }
 
     @GetMapping("/detail/{id}")

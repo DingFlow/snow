@@ -43,6 +43,7 @@
         <zhyd.oauth.version>1.15.6</zhyd.oauth.version>
         <jsqlparser.version>1.4</jsqlparser.version>
         <googlecode.aviator.version>2.3.3</googlecode.aviator.version>
+        <kotlin.stdlib.verson>1.3.70</kotlin.stdlib.verson>
     </properties>
 
     <!-- 依赖声明 -->
@@ -336,6 +337,12 @@
                 <groupId>com.googlecode.aviator</groupId>
                 <artifactId>aviator</artifactId>
                 <version>${googlecode.aviator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.stdlib.verson}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

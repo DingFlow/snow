@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.aliyun.dingtalktodo_1_0.models.GetTodoTaskBySourceIdResponseBody;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.spring.SpringUtils;
+import com.snow.dingtalk.model.request.WorkrecordAddRequest;
 import com.snow.dingtalk.service.impl.MessageServiceImpl;
 import com.snow.dingtalk.service.impl.WorkRecodeServiceImpl;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
@@ -62,10 +63,16 @@ public class WorkRecodeEventService implements ISyncDingTalkInfo {
             workRecodeService.updateTodoTaskExecutorStatus(body.getId(),isComplete);
         }
         //钉钉发送普通消息
-        else if(code.equals(DingTalkListenerType.ASYNCSEND_V2.getCode())){
+        if(code.equals(DingTalkListenerType.ASYNCSEND_V2.getCode())){
             SysSendMessageDTO sysSendMessageDTO=(SysSendMessageDTO)syncEvent.getSource();
             log.info("@@发送钉钉工作通知消息传入的参数：{}",JSON.toJSONString(sysSendMessageDTO));
             messageService.sendWorkNotice(sysSendMessageDTO);
+        }
+
+        if(code.equals(DingTalkListenerType.WORK_RECODE_OLD_CREATE.getCode())){
+            WorkrecordAddRequest workrecordAddRequest=(WorkrecordAddRequest)syncEvent.getSource();
+            log.info("@@创建钉钉待办(old)系统传入的参数：{}",JSON.toJSONString(workrecordAddRequest));
+            workRecodeService.create(workrecordAddRequest);
         }
     }
 }

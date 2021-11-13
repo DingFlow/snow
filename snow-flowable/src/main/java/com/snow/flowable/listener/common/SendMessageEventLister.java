@@ -164,7 +164,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     String userId = String.valueOf(t.getUserId());
                     if (!StringUtils.isEmpty(userId)) {
                         WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(userId, event);
-                        SyncEvent<WorkrecordAddRequest> syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
+                        SyncEvent<WorkrecordAddRequest> syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_OLD_CREATE);
                         applicationContext.publishEvent(syncEventGroup);
                     }
                 });

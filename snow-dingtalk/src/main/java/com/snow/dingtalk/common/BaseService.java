@@ -3,7 +3,6 @@ package com.snow.dingtalk.common;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import com.alibaba.fastjson.JSON;
-import com.aliyun.dingtalkoauth2_1_0.Client;
 import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenRequest;
 import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenResponse;
 import com.aliyun.teaopenapi.models.Config;
@@ -13,7 +12,6 @@ import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.Constants;
-import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.CacheUtils;
@@ -77,11 +75,13 @@ public class BaseService {
         //创建缓存，缓存默认是7100S
         TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
         if(StringUtils.isEmpty(timedCache.get(TOKENV2))) {
-            GetAccessTokenRequest getAccessTokenRequest = new GetAccessTokenRequest()
-                    .setAppKey(String.valueOf(CacheUtils.getSysConfig(CacheConstants.ENTERPRICE_APP_KEY,sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY))))
-                    .setAppSecret(String.valueOf(CacheUtils.getSysConfig(CacheConstants.ENTERPRICE_APP_SECRET,sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET))));
+            GetAccessTokenRequest getAccessTokenRequest=null;
             try {
-                GetAccessTokenResponse accessToken = createClient().getAccessToken(getAccessTokenRequest);
+                com.aliyun.dingtalkoauth2_1_0.Client client = createClient();
+                getAccessTokenRequest = new GetAccessTokenRequest()
+                        .setAppKey(String.valueOf(CacheUtils.getSysConfig(CacheConstants.ENTERPRICE_APP_KEY,sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_KEY))))
+                        .setAppSecret(String.valueOf(CacheUtils.getSysConfig(CacheConstants.ENTERPRICE_APP_SECRET,sysConfigService.selectConfigByKey(Constants.ENTERPRICE_APP_SECRET))));
+                GetAccessTokenResponse accessToken = client.getAccessToken(getAccessTokenRequest);
                 timedCache.put(TOKENV2,accessToken.getBody().getAccessToken());
                 return accessToken.getBody().getAccessToken();
             } catch (Exception err) {
@@ -97,11 +97,12 @@ public class BaseService {
      * @return
      * @throws Exception
      */
-    public  Client createClient() throws Exception {
+
+    public static com.aliyun.dingtalkoauth2_1_0.Client createClient() throws Exception {
         Config config = new Config();
         config.protocol = "https";
         config.regionId = "central";
-        return new Client(config);
+        return new com.aliyun.dingtalkoauth2_1_0.Client(config);
     }
 
 }
