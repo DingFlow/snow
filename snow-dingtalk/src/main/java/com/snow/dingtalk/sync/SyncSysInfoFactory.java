@@ -17,6 +17,8 @@ public class SyncSysInfoFactory {
             return new SyncSysDepartmentService();
         }else if(type==DingTalkListenerType.BPMS_TASK_CHANGE.getType()){
             return new SyncFlowService();
+        }else if(type==DingTalkListenerType.USER_CREATE.getType()){
+            return new SyncSysUserService();
         }
         return null;
 

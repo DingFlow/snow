@@ -1,15 +1,16 @@
 package com.snow.system.service.impl;
 
-import java.util.List;
+import cn.hutool.core.collection.CollUtil;
+import com.snow.common.core.text.Convert;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.StringUtils;
-import org.apache.commons.collections.CollectionUtils;
+import com.snow.system.domain.SysOaCustomer;
+import com.snow.system.mapper.SysOaCustomerMapper;
+import com.snow.system.service.ISysOaCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysOaCustomerMapper;
-import com.snow.system.domain.SysOaCustomer;
-import com.snow.system.service.ISysOaCustomerService;
-import com.snow.common.core.text.Convert;
+
+import java.util.List;
 
 /**
  * 客户Service业务层处理
@@ -58,7 +59,7 @@ public class SysOaCustomerServiceImpl implements ISysOaCustomerService
     public List<SysOaCustomer> selectSysOaCustomerList(SysOaCustomer sysOaCustomer)
     {
         List<SysOaCustomer> sysOaCustomerList= sysOaCustomerMapper.selectSysOaCustomerList(sysOaCustomer);
-        if(CollectionUtils.isNotEmpty(sysOaCustomerList)){
+        if(CollUtil.isNotEmpty(sysOaCustomerList)){
             sysOaCustomerList.forEach(t->{
                 if(StringUtils.isNotNull(t.getCustomerManager())){
                     t.setCustomerManagerName(sysUserServicel.selectUserById(Long.parseLong(t.getCustomerManager())).getUserName());

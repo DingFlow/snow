@@ -46,6 +46,12 @@
 										<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
 									</select>
 								</li>
+								<li>
+									用户类型：<select name="userType" th:with="type=${@dict.getType('sys_user_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+								</li>
 								<li class="select-time">
 									<label>创建时间： </label>
 									<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
@@ -93,6 +99,7 @@
 		var editFlag = [[${@permission.hasPermi('system:user:edit')}]];
 		var removeFlag = [[${@permission.hasPermi('system:user:remove')}]];
 		var resetPwdFlag = [[${@permission.hasPermi('system:user:resetPwd')}]];
+		var datas = [[${@dict.getType('sys_user_type')}]];
 		var prefix = ctx + "system/user";
 
 		$(function() {
@@ -154,6 +161,13 @@
 		        		return statusTools(row);
 		        	}
 		        },
+				{
+					field: 'userType',
+					title: '用户类型',
+					formatter: function(value, row, index) {
+						return $.table.selectDictLabel(datas, value);
+					}
+				},
 		        {
 		            field: 'createTime',
 		            title: '创建时间',

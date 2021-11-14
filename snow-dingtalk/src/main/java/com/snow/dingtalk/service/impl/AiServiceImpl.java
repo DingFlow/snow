@@ -7,7 +7,7 @@ import com.dingtalk.api.request.OapiOcrStructuredRecognizeRequest;
 import com.dingtalk.api.response.OapiOcrStructuredRecognizeResponse;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.OcrRecognizeRequest;
+import com.snow.dingtalk.model.request.OcrRecognizeRequest;
 import com.snow.dingtalk.service.AiService;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;

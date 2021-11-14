@@ -16,8 +16,8 @@ public enum FinanceTradeType {
     WX_SINGLE_RED_PACKETS(7, "微信红包（单发）"),
     WX_RED_PACKETS_REFUND(8, "微信红包-退款"),
     SCANNER_QR_CODE_PAYMENT(9, "扫二维码付款"),
-    QR_CODE_PAYMENT(10, "二维码收款");
-
+    QR_CODE_PAYMENT(10, "二维码收款"),
+    GROUP_COLLECTION(11, "群收款");
     private final Integer code;
     private final String info;
 

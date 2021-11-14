@@ -1,11 +1,11 @@
 package com.snow.dingtalk.sync;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dingtalk.api.response.OapiV2DepartmentGetResponse;
 import com.snow.common.annotation.SyncLog;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.SyncLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.StringUtils;
@@ -59,7 +59,7 @@ public class SyncSysDepartmentService implements ISyncSysInfo {
      * 根据订订新增部门数据
      * @param jsonObject
      */
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.DEPARTMENT_CREATE,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.DEPARTMENT_CREATE,syncLogTpye = SyncLogType.SYNC_SYS)
     public void insertDepartment(JSONObject jsonObject){
         try {
             List<Long> deptId = jsonObject.getJSONArray("DeptId").toJavaList(Long.class);
@@ -91,7 +91,7 @@ public class SyncSysDepartmentService implements ISyncSysInfo {
     /**
      * 根据订订修改部门数据
      */
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.DEPARTMENT_UPDATE,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.DEPARTMENT_UPDATE,syncLogTpye = SyncLogType.SYNC_SYS)
     public void updateDepartment(JSONObject jsonObject){
         try {
             List<Long> deptId = jsonObject.getJSONArray("DeptId").toJavaList(Long.class);
@@ -118,7 +118,7 @@ public class SyncSysDepartmentService implements ISyncSysInfo {
     /**
      * 根据订订删除部门数据
      */
-    @SyncLog(dingTalkListenerType = DingTalkListenerType.DEPARTMENT_DELETED,syncLogTpye = SyncLogType.SYNC_SYS)
+    @SyncLog(dingTalkLogType = DingTalkLogType.DEPARTMENT_DELETED,syncLogTpye = SyncLogType.SYNC_SYS)
     public void deleteDepartment(JSONObject jsonObject){
         try {
             List<Long> deptId = jsonObject.getJSONArray("DeptId").toJavaList(Long.class);

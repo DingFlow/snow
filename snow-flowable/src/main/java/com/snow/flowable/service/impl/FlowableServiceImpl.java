@@ -1,21 +1,24 @@
 package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
-import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.bean.BeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.common.enums.FlowInstanceEnum;
+import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
@@ -26,9 +29,11 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.flowable.bpmn.model.*;
 import org.flowable.bpmn.model.Process;
+import org.flowable.bpmn.model.*;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.common.engine.impl.identity.Authentication;
+import org.flowable.common.engine.impl.interceptor.CommandContext;
 import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
@@ -36,20 +41,19 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.impl.RepositoryServiceImpl;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.flowable.engine.repository.*;
+import org.flowable.engine.impl.util.CommandContextUtil;
+import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.DeploymentQuery;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.task.Attachment;
-import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
-import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.service.ModelServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +68,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -117,6 +121,9 @@ public class FlowableServiceImpl implements FlowableService {
 
     @Resource
     private FlowableTaskService flowableTaskService;
+
+    @Resource
+    private TaskSkipService taskSkipService;
 
     @Override
     public void saveModel(ActDeModel actDeModel) {
@@ -219,7 +226,7 @@ public class FlowableServiceImpl implements FlowableService {
         List<Deployment> deployments = deploymentQuery.orderByDeploymenTime().desc().
                 listPage(deploymentQueryDTO.getPageNum(), deploymentQueryDTO.getPageSize());
 
-
+        //一次发布可以包含多个流程定义
         List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
           //  ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).list().get(0);
@@ -236,6 +243,25 @@ public class FlowableServiceImpl implements FlowableService {
         pageModel.setTotalCount((int)count);
         pageModel.setPagedRecords(deploymentVoList);
         return pageModel;
+    }
+
+    @Override
+    public DeploymentVO getDeploymentDetailById(String id) {
+        DeploymentVO deploymentVO=new DeploymentVO();
+        Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(id).singleResult();
+        BeanUtil.copyProperties(deployment,deploymentVO);
+        //一次发布可以包含多个流程定义
+        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
+        List<ProcessDefVO> processDefVOList=Lists.newArrayList();
+        if(CollectionUtil.isNotEmpty(list)){
+            list.forEach(t->{
+                ProcessDefVO processDefVO=new ProcessDefVO();
+                BeanUtils.copyProperties(t,processDefVO);
+                processDefVOList.add(processDefVO);
+            });
+        }
+        deploymentVO.setProcessDefVOList(processDefVOList);
+        return deploymentVO;
     }
 
     @Override
@@ -297,6 +323,8 @@ public class FlowableServiceImpl implements FlowableService {
         }
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
         identityService.setAuthenticatedUserId(null);
+        //自动推进任务
+        taskSkipService.autoSkip(processInstance.getProcessInstanceId());
         return processInstance;
     }
 
@@ -312,6 +340,8 @@ public class FlowableServiceImpl implements FlowableService {
 
         //这个方法最终使用一个ThreadLocal类型的变量进行存储，也就是与当前的线程绑定，所以流程实例启动完毕之后，需要设置为null，防止多线程的时候出问题。
         identityService.setAuthenticatedUserId(null);
+        //自动推进任务
+        taskSkipService.autoSkip(processInstance.getProcessInstanceId());
         return processInstance;
     }
 
@@ -478,6 +508,18 @@ public class FlowableServiceImpl implements FlowableService {
                 .singleResult();
     }
 
+    @Override
+    public ProcessInstanceVO getProcessInstanceVoById(String id) {
+        ProcessInstanceVO processInstanceVO=new ProcessInstanceVO();
+        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(id)
+                .includeProcessVariables()
+                .singleResult();
+        BeanUtils.copyProperties(historicProcessInstance,processInstanceVO);
+        //组装参数
+        warpProcessInstanceVo(processInstanceVO);
+        return processInstanceVO;
+    }
+
 
     @Override
     public Task getTaskProcessInstanceById(String id){
@@ -489,87 +531,6 @@ public class FlowableServiceImpl implements FlowableService {
                 .singleResult();
     }
 
-    @Override
-    public List<HistoricTaskInstanceVO>  getHistoricTaskInstanceNoPage(HistoricTaskInstanceDTO historicTaskInstanceDTO){
-        String userId= historicTaskInstanceDTO.getUserId();
-        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
-
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessInstanceId())){
-            historicTaskInstanceQuery= historicTaskInstanceQuery.processInstanceId(historicTaskInstanceDTO.getProcessInstanceId());
-        }
-
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getTaskDefinitionKey())){
-           historicTaskInstanceQuery.taskDefinitionKey(historicTaskInstanceDTO.getTaskDefinitionKey());
-        }
-
-        if(!StringUtils.isEmpty(userId)){
-            historicTaskInstanceQuery.taskAssignee(historicTaskInstanceDTO.getUserId());
-            //historicTaskInstanceQuery.taskCandidateUser(userId);
-            //historicTaskInstanceQuery.taskInvolvedUser(userId);
-        }
-
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKey())){
-            historicTaskInstanceQuery.processInstanceBusinessKey(historicTaskInstanceDTO.getBusinessKey());
-        }
-
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessStatus())){
-            WorkRecordStatus workRecordStatus=historicTaskInstanceDTO.getProcessStatus();
-            if( workRecordStatus.equals(WorkRecordStatus.NO_FINISHED)){
-                historicTaskInstanceQuery.unfinished();
-            }else if(workRecordStatus.equals(WorkRecordStatus.FINISHED)){
-                historicTaskInstanceQuery.finished();
-            }
-        }
-
-        historicTaskInstanceQuery.includeTaskLocalVariables().includeProcessVariables().includeIdentityLinks();
-        List<HistoricTaskInstance> list = historicTaskInstanceQuery.orderByTaskCreateTime().asc().list();
-        List<HistoricTaskInstanceVO> historicTaskInstanceVOS = HistoricTaskInstanceVO.warpList(list);
-        setHistoricTaskInstanceVos(historicTaskInstanceVOS);
-        return historicTaskInstanceVOS;
-    }
-
-    /**
-     * 处理任务参数
-     * @param list
-     */
-    private void setHistoricTaskInstanceVos(List<HistoricTaskInstanceVO> list){
-
-        list.forEach(t -> {
-            //保存待办人
-            Set<SysUser> identityLinksForTask = flowableTaskService.getHistoricIdentityLinksForTask(t.getTaskId());
-            Optional.ofNullable(identityLinksForTask).ifPresent(m->{
-                List<String> userNameList = identityLinksForTask.stream().map(SysUser::getUserName).collect(Collectors.toList());
-                t.setHandleUserList(userNameList);
-            });
-
-            if (!StringUtils.isEmpty(t.getAssignee())&&com.snow.common.utils.StringUtils.isNumeric(t.getAssignee())) {
-                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getAssignee()));
-                t .setAssigneeName(sysUser.getUserName());
-            }
-
-            Optional.ofNullable( t.getTaskLocalVariables()).ifPresent(u->{
-                Object isPass =Optional.ofNullable(u.get(FlowConstants.IS_PASS)).orElse("");
-                Object isStart =Optional.ofNullable(u.get(FlowConstants.IS_START)).orElse("");
-                //处理审核条件
-                t.setIsPass(String.valueOf(isPass));
-                t.setIsStart(String.valueOf(isStart));
-            });
-
-            List<Comment> comment = taskService.getTaskComments(t.getTaskId(), FlowConstants.OPINION);
-
-            List<Attachment> taskAttachments = taskService.getTaskAttachments(t.getTaskId());
-            t.setCommentList(comment);
-            t.setAttachmentList(taskAttachments);
-            //计算任务历时
-            if(!StringUtils.isEmpty(t.getCompleteTime())){
-                String spendTime = DateUtil.formatBetween(DateUtil.between(t.getStartTime(), t.getCompleteTime(), DateUnit.SECOND));
-                t.setHandleTaskTime(spendTime);
-            }
-            HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
-            t.setProcessName(historicProcessInstance.getProcessDefinitionName());
-            t.setBusinessKey(historicProcessInstance.getBusinessKey());
-        });
-    }
 
     /**
      * 思路就是我们取出节点的表达式，然后用我们流程实例的变量来给他翻译出来即可
@@ -577,15 +538,11 @@ public class FlowableServiceImpl implements FlowableService {
      */
     @Override
     public List<TaskVO> getDynamicFlowNodeInfo(String processInstanceId) {
-        //获取历史变量表
-   /*     List<HistoricVariableInstance> historicVariableInstanceList = historyService.createHistoricVariableInstanceQuery()
-                .processInstanceId(processInstanceId)
-                .list();*/
         HistoricProcessInstance processInstance= getHistoricProcessInstanceById(processInstanceId);
         List<TaskVO> hisTaskVOList=Lists.newArrayList();
         HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
         historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
-        List<HistoricTaskInstanceVO> historicTaskInstance = getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        List<HistoricTaskInstanceVO> historicTaskInstance = flowableTaskService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
         if(!CollectionUtils.isEmpty(historicTaskInstance)){
             hisTaskVOList = historicTaskInstance.stream().map(t -> {
                 TaskVO taskVO = new TaskVO();
@@ -629,7 +586,9 @@ public class FlowableServiceImpl implements FlowableService {
                 orderByProcessInstanceStartTime().
                 desc().
                 list();
-        return ProcessInstanceVO.warpList(list);
+        List<ProcessInstanceVO> processInstanceVOS = ProcessInstanceVO.warpList(list);
+        processInstanceVOS.parallelStream().forEach(t->warpProcessInstanceVo(t));
+        return processInstanceVOS;
     }
 
     @Override
@@ -645,17 +604,16 @@ public class FlowableServiceImpl implements FlowableService {
                 desc().
                 listPage(processInstanceDTO.getPageNum(), processInstanceDTO.getPageSize());
         List<ProcessInstanceVO> processInstanceVOS = ProcessInstanceVO.warpList(historicProcessInstances);
-        setProcessInstanceVOs(processInstanceVOS);
+        processInstanceVOS.forEach(t-> warpProcessInstanceVo(t));
         PageModel<ProcessInstanceVO> pageModel = new PageModel<> ();
         pageModel.setTotalCount((int)count);
         pageModel.setPagedRecords(processInstanceVOS);
-        //List<ProcessInstanceVO> processInstanceVOS = com.snow.common.utils.bean.BeanUtils.transformList(pageInfo.getList(), ProcessInstanceVO.class);
         return pageModel;
     }
 
     /**
      * 构建查询条件
-     * @param processInstanceDTO
+     * @param processInstanceDTO 传入的查询参数
      */
     private HistoricProcessInstanceQuery buildHistoricProcessInstanceCondition(ProcessInstanceDTO processInstanceDTO){
         HistoricProcessInstanceQuery historicProcessInstanceQuery = historyService.createHistoricProcessInstanceQuery();
@@ -687,135 +645,6 @@ public class FlowableServiceImpl implements FlowableService {
         return historicProcessInstanceQuery;
     }
 
-
-    /**
-     * 赋值ProcessInstanceVOs
-     * @param processInstanceVOS
-     */
-    private void  setProcessInstanceVOs(List<ProcessInstanceVO> processInstanceVOS){
-        processInstanceVOS.parallelStream().forEach(t->{
-
-            Map<String, Object> processVariables = t.getProcessVariables();
-            String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
-            //设置返回详情页
-            if(!StringUtils.isEmpty(url)){
-                if(!StringUtils.isEmpty(processVariables.get("id")))
-                t.setFromDetailUrl(url+"/"+processVariables.get("id"));
-            }
-            AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
-            t.setAppForm(appForm);
-            //计算流程用时
-            if(StringUtils.isEmpty(t.getEndTime())){
-                String spendTime = DateUtil.formatBetween(t.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
-                t.setProcessSpendTime(spendTime);
-            }else {
-                String spendTime = DateUtil.formatBetween(t.getStartTime(), t.getEndTime(), BetweenFormater.Level.SECOND);
-                t.setProcessSpendTime(spendTime);
-            }
-            String startUserId = t.getStartUserId();
-            SysUser sysUser = sysUserService.selectUserById(Long.parseLong(startUserId));
-            t.setStartUserName(sysUser.getUserName());
-
-            //流程状态查询 ACT_RU_EXECUTION
-            List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(t.getId()).list();
-            if(CollectionUtils.isEmpty(list)){
-                t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
-            }else {
-                Execution execution=list.get(0);
-                if(execution.isSuspended()){
-                    t.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
-                }else {
-                    t.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
-                }
-            }
-        });
-    }
-
-    @Override
-    public PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO) {
-        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
-
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getProcessDefinitionName())){
-            historicTaskInstanceQuery.processDefinitionName(historicTaskInstanceDTO.getProcessDefinitionName());
-        }
-        //只能判断null,不能判断""
-        Optional.ofNullable(historicTaskInstanceDTO.getUserId()).ifPresent(
-                userId-> {
-                    if(!StringUtils.isEmpty(historicTaskInstanceQuery.taskAssignee(userId))){
-                      historicTaskInstanceQuery.taskAssignee(userId);
-                    }
-                }
-        );
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKeyLike())){
-            historicTaskInstanceQuery.processInstanceBusinessKeyLike("%"+historicTaskInstanceDTO.getBusinessKeyLike()+"%");
-        }
-        if(!StringUtils.isEmpty(historicTaskInstanceDTO.getBusinessKey())){
-            historicTaskInstanceQuery.processInstanceBusinessKey(historicTaskInstanceDTO.getBusinessKey());
-        }
-        Optional.ofNullable(historicTaskInstanceDTO.getTaskStatus()).ifPresent(m->{
-            if(m.equals(WorkRecordStatus.NO_FINISHED)){
-                historicTaskInstanceQuery.unfinished();
-            }
-            if(m.equals(WorkRecordStatus.FINISHED)){
-                historicTaskInstanceQuery.finished();
-            }
-        });
-
-        Optional.ofNullable(historicTaskInstanceDTO.getProcessStatus()).ifPresent(m->{
-            if(m.equals(WorkRecordStatus.NO_FINISHED)){
-                historicTaskInstanceQuery.processUnfinished();
-            }
-            if(m.equals(WorkRecordStatus.FINISHED)){
-                historicTaskInstanceQuery.processFinished();
-            }
-        });
-        historicTaskInstanceQuery.includeIdentityLinks().includeProcessVariables().includeTaskLocalVariables();
-        long count = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
-                desc().
-                count();
-        List<HistoricTaskInstance> historicTaskInstances = historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().
-                desc().
-                listPage(historicTaskInstanceDTO.getPageNum(), historicTaskInstanceDTO.getPageSize());
-
-
-        List<HistoricTaskInstanceVO> historicTaskInstanceVOS = historicTaskInstances.stream().map(t -> {
-            HistoricTaskInstanceVO historicTaskInstanceVO = new HistoricTaskInstanceVO();
-            BeanUtils.copyProperties(t, historicTaskInstanceVO);
-            if (!StringUtils.isEmpty(t.getAssignee())) {
-                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getAssignee()));
-                historicTaskInstanceVO.setAssignee(sysUser.getUserName());
-            }
-            Map<String, Object> processVariables = t.getProcessVariables();
-            String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
-            //设置返回详情页
-            if(!StringUtils.isEmpty(url)){
-                if(!StringUtils.isEmpty(processVariables.get("id")))
-                    historicTaskInstanceVO.setFromDetailUrl(url+"/"+processVariables.get("id"));
-            }
-            AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
-            historicTaskInstanceVO.setAppForm(appForm);
-            historicTaskInstanceVO.setCompleteTime(t.getEndTime());
-            //转办的时候会出现到历史记录里，但是任务还没完结？？？
-            if(null!=t.getEndTime()){
-                String spendTime = DateUtil.formatBetween(DateUtil.between(t.getCreateTime(), t.getEndTime(), DateUnit.SECOND));
-                historicTaskInstanceVO.setHandleTaskTime(spendTime);
-            }
-            historicTaskInstanceVO.setTaskId(t.getId());
-            historicTaskInstanceVO.setTaskName(t.getName());
-            HistoricProcessInstance historicProcessInstance = getHistoricProcessInstanceById(t.getProcessInstanceId());
-            historicTaskInstanceVO.setProcessName(historicProcessInstance.getProcessDefinitionName());
-            historicTaskInstanceVO.setBusinessKey(historicProcessInstance.getBusinessKey());
-            return historicTaskInstanceVO;
-
-        }).collect(Collectors.toList());
-
-        PageModel<HistoricTaskInstanceVO> pageModel = new PageModel<> ();
-        pageModel.setTotalCount((int)count);
-        pageModel.setPagedRecords(historicTaskInstanceVOS);
-        return pageModel;
-    }
-
-    
     /**
      * 获取所有的任务节点
      * @param processInstance
@@ -1081,6 +910,16 @@ public class FlowableServiceImpl implements FlowableService {
         }
 
     }
+
+    @Override
+    public void cancelProcessInstance(String instanceId, String reason) {
+        //调用这个方法会把历史数据全部删除
+       // historyService.deleteHistoricProcessInstance();
+        //调用该方法
+        runtimeService.deleteProcessInstance(instanceId,reason);
+
+    }
+
     /**
      * 获取高亮的线
      * @param bpmnModel
@@ -1164,4 +1003,71 @@ public class FlowableServiceImpl implements FlowableService {
         return sysUserService.selectUserById(Long.parseLong(id)).getUserName();
     }
 
+
+    /**
+     * 获取流程定义实体信息
+     *
+     * @param event
+     * @return ProcessDefinitionEntity
+     */
+    public ProcessDefinitionEntity getProcessDefinition(FlowableEngineEvent event) {
+        String processDefinitionId = event.getProcessDefinitionId();
+        if (processDefinitionId != null) {
+            CommandContext commandContext = CommandContextUtil.getCommandContext();
+            if (commandContext != null) {
+                return CommandContextUtil.getProcessDefinitionEntityManager(commandContext).findById(processDefinitionId);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<FlowDefEnum> getAllFlowDefEnumsSet() {
+        FlowDefEnum[] values = FlowDefEnum.values();
+        return Sets.newHashSet(values);
+    }
+
+
+    /**
+     * 构建ProcessInstanceVO对象
+     * @param processInstanceVO
+     */
+    private void warpProcessInstanceVo(ProcessInstanceVO processInstanceVO){
+        Map<String, Object> processVariables = processInstanceVO.getProcessVariables();
+        String url= Optional.ofNullable(String.valueOf(processVariables.get(FlowConstants.BUS_VAR_URL))).orElse("");
+        //设置返回详情页
+        if(ObjectUtil.isNotNull(url)&&ObjectUtil.isNotNull(processVariables.get("id"))){
+            processInstanceVO.setFromDetailUrl(url+"/"+processVariables.get("id"));
+        }
+        //设置表单数据
+        AppForm appForm=(AppForm)processVariables.get(FlowConstants.APP_FORM);
+        processInstanceVO.setAppForm(appForm);
+        //计算流程已用时间
+        String spendTime =  StringUtils.isEmpty(processInstanceVO.getEndTime())?DateUtil.formatBetween(processInstanceVO.getStartTime(), new Date(), BetweenFormater.Level.SECOND):DateUtil.formatBetween(processInstanceVO.getStartTime(), processInstanceVO.getEndTime(), BetweenFormater.Level.SECOND);
+        processInstanceVO.setProcessSpendTime(spendTime);
+        //设置流程发起人
+        SysUser sysUser = sysUserService.selectUserById(Long.parseLong(processInstanceVO.getStartUserId()));
+        processInstanceVO.setStartUserName(sysUser.getUserName());
+
+        //流程状态查询 ACT_RU_EXECUTION
+        List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(processInstanceVO.getId()).list();
+        if(CollectionUtils.isEmpty(list)){
+            processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+        }else {
+            Execution execution=list.get(0);
+            if(execution.isSuspended()){
+                processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.SUSPEND.getCode());
+            }else {
+                processInstanceVO.setProcessInstanceStatus(FlowInstanceEnum.ACTIVATE.getCode());
+            }
+        }
+        //设置流程状态
+        if(ObjectUtil.isEmpty(processInstanceVO.getEndActivityId())&& ObjectUtil.isNotEmpty(processInstanceVO.getDeleteReason())){
+            processInstanceVO.setIsFinished(2);
+        }else if(ObjectUtil.isNotEmpty(processInstanceVO.getEndActivityId())){
+            processInstanceVO.setIsFinished(1);
+        }else {
+            processInstanceVO.setIsFinished(0);
+        }
+    }
 }

@@ -59,6 +59,7 @@
                     <input type="hidden" name="fileUrl" id="filekey" th:field="*{fileUrl}">
                     <div class="form-control-static">
                         <a id="fileName"></a>
+                        <button id="preview">预览</button>
                     </div>
                     <div class="file-loading">
                         <input class="form-control file-upload" id="fileUrl"  name="file" type="file">
@@ -82,6 +83,17 @@
             }
         }
 
+        $(function() {
+            var filekey=$("#fileKey").val()
+            var data= $.common.getFileByKey(filekey);
+            console.log(JSON.stringify(data))
+            $("#preview").click(function () {
+                preview(data.url);
+            })
+        });
+        function preview(url) {
+            window.open('http://47.98.36.102:8012/onlinePreview?url='+encodeURIComponent(Base64.encode(url)));
+        }
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val()
             $(this).fileinput({

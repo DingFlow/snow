@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: jsonview-css" />
+
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t">
+        <h2 class="form-header h2" align="center" >任务信息</h2>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">任务编号：</label>
+                <span class="form-control-static" th:text="${sysOaTask.sysOaTask.taskNo}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">任务标题：</label>
+                <span class="form-control-static" th:text="${sysOaTask.sysOaTask.taskName}">
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">紧急程度：</label>
+                <span class="form-control-static" th:text="${@dict.getLabel('sys_oa_task_priority',sysOaTask.sysOaTask.priority)}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">任务类型：</label>
+                <span class="form-control-static" th:text="${@dict.getLabel('sys_task_type',sysOaTask.sysOaTask.taskType)}">
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-10 col-sm-10">
+                <label class="control-label">任务内容：</label>
+                <span class="form-control-static" th:text="${sysOaTask.sysOaTask.taskContent}">
+                </span>
+            </div>
+        </div>
+
+        <br/>
+        <h2 class="form-header h2" align="center" >任务分配记录</h2>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">开始时间：</label>
+                <span class="text-navy"  th:text="${#dates.format(sysOaTask.taskStartTime, 'yyyy-MM-dd hh:mm:ss')}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">结束时间：</label>
+                <span class="text-navy"  th:text="${#dates.format(sysOaTask.taskCompleteTime, 'yyyy-MM-dd hh:mm:ss')}">
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">执行状态：</label>
+                <span class="m-b-xs" th:text="${@dict.getLabel('ding_task_status',sysOaTask.taskExecuteStatus)}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">任务用时：</label>
+                <span class="text-danger"  th:text="${sysOaTask.spendTime}">
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">任务分配人：</label>
+                <span class="form-control-static" th:text="${sysOaTask.taskDistributeId}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">任务执行人：</label>
+                <span class="form-control-static" th:text="${sysOaTask.taskExecuteId}">
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-10 col-sm-10">
+                <label class="control-label">任务反馈：</label>
+                <span class="form-control-static" th:text="${sysOaTask.taskFeedback}">
+                </span>
+            </div>
+        </div>
+	</form>
+    <th:block th:include="include :: footer" />
+</body>
+</html>

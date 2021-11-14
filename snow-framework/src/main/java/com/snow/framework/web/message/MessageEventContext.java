@@ -1,6 +1,6 @@
 package com.snow.framework.web.message;
 
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 
 /**
  * @program: snow

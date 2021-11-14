@@ -3,32 +3,23 @@ package com.snow.web.controller.front;
 import cn.hutool.core.collection.CollectionUtil;
 import com.snow.common.config.Global;
 import com.snow.common.core.controller.BaseController;
-import com.snow.common.core.page.PageModel;
 import com.snow.common.enums.MessageReadStatus;
-import com.snow.common.utils.ServletUtils;
 import com.snow.flowable.domain.FlowGeneralSituationVO;
-import com.snow.flowable.domain.HistoricTaskInstanceDTO;
-import com.snow.flowable.domain.HistoricTaskInstanceVO;
 import com.snow.flowable.service.FlowableService;
-import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysMenu;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.domain.SysNotice;
 import com.snow.system.domain.SysUser;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysDingRuTaskService;
 import com.snow.system.service.ISysMessageTransitionService;
-import com.snow.system.service.ISysOperLogService;
-import com.snow.system.service.impl.*;
+import com.snow.system.service.impl.SysMenuServiceImpl;
+import com.snow.system.service.impl.SysNoticeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -67,23 +58,7 @@ public class FrontIndexController extends BaseController {
         return prefix + "/index";
     }
 
-    /**
-     * 登录
-     * @param request
-     * @param response
-     * @return
-     */
-    @GetMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response)
-    {
-        // 如果是Ajax请求，返回Json字符串。
-        if (ServletUtils.isAjaxRequest(request))
-        {
-            return ServletUtils.renderString(response, "{\"code\":\"1\",\"msg\":\"未登录或登录超时。请重新登录\"}");
-        }
 
-        return prefix+"/login";
-    }
 
 
     /**

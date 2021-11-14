@@ -10,12 +10,14 @@ import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.MessageEventType;
+import com.snow.common.enums.NoticeType;
 import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.*;
@@ -61,6 +63,9 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private FlowableService flowableService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @Autowired
     private SysDingtalkSyncLogServiceImpl sysDingtalkSyncLogService;
@@ -164,7 +169,7 @@ public class SysIndexController extends BaseController
         mmap.put("flowGeneralSituation",flowGeneralSituation);
         SysNotice sysNotice=new SysNotice();
         sysNotice.setStatus("0");
-        sysNotice.setNoticeType("1");
+        sysNotice.setNoticeType(NoticeType.NOTICE_TYPE.getCode());
         List<SysNotice> sysNotices = sysNoticeService.selectNoticeList(sysNotice);
         mmap.put("sysNotices",sysNotices);
         if(CollectionUtil.isNotEmpty(sysNotices)&&sysNotices.size()>5){
@@ -177,7 +182,7 @@ public class SysIndexController extends BaseController
         historicTaskInstanceDTO.setPageNum(1);
         historicTaskInstanceDTO.setPageSize(5);
         historicTaskInstanceDTO.setUserId(String.valueOf(sysUser.getUserId()));
-        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableService.getHistoricTaskInstance(historicTaskInstanceDTO);
+        PageModel<HistoricTaskInstanceVO> historicTaskInstance = flowableTaskService.getHistoricTaskInstance(historicTaskInstanceDTO);
         mmap.put("historicTaskInstanceList",historicTaskInstance.getPagedRecords());
         mmap.put("historicTaskInstanceSize",historicTaskInstance.getPagedRecords().size());
         return "main";
@@ -281,17 +286,5 @@ public class SysIndexController extends BaseController
         List<ProcessInstanceVO> historicProcessInstanceList = flowableService.getHistoricProcessInstanceList(processInstanceDTO);
         mmap.put("historicProcessInstanceList",historicProcessInstanceList);
         return "big_screen";
-    }
-
-
-    public Integer getMyDingTalkRunTask(){
-        SysUser user = ShiroUtils.getSysUser();
-
-        SysDingRuTask sysDingRuTask=new SysDingRuTask();
-        sysDingRuTask.setAssignee(user.getDingUserId());
-        sysDingRuTask.setTaskState(DingFlowTaskType.RUNNING.getCode());
-        List<SysDingRuTask> sysDingRuTaskList = sysDingRuTaskService.selectSysDingRuTaskList(sysDingRuTask);
-
-        return sysDingRuTaskList.size();
     }
 }

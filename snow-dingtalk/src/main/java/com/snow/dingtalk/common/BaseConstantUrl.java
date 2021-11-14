@@ -18,6 +18,11 @@ public class BaseConstantUrl {
     public static final String USER_DELETE=  "https://oapi.dingtalk.com/topapi/v2/user/delete";
 
     /**
+     * 编辑用户
+     */
+    public static final String USER_UPDATE= "https://oapi.dingtalk.com/topapi/v2/user/update";
+
+    /**
      * 根据id获取用户信息
      */
     public static final String GET_USER_BY_ID=  "https://oapi.dingtalk.com/topapi/v2/user/get";
@@ -26,6 +31,16 @@ public class BaseConstantUrl {
      * 根据部门获取用户信息
      */
     public static final String GET_USERINFO_BY_DEPT=  "https://oapi.dingtalk.com/topapi/v2/user/list";
+
+    /**
+     * 获取用户UNION_ID
+     */
+    public static final String GET_USER_UNION_ID= "https://oapi.dingtalk.com/topapi/user/getbyunionid";
+
+    /**
+     * 通过临时授权码获取授权用户的个人信息
+     */
+    public static final String GET_USER_BY_CODE="https://oapi.dingtalk.com/sns/getuserinfo_bycode";
 
     /**
      * 获取token url
@@ -94,9 +109,14 @@ public class BaseConstantUrl {
 
 
     /**
-     * 发送普通消息
+     * 发送工作通知
      */
     public static final String ASYNCSEND_V2="https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2";
+
+    /**
+     * 发送普通消息
+     */
+    public static final String SEND_TO_CONVERSATIO="https://oapi.dingtalk.com/message/send_to_conversation";
 
 
     /**
@@ -150,4 +170,32 @@ public class BaseConstantUrl {
      * 分页获取指定用户可见的审批表单列表
      */
     public static final String GET_PROCESSLIST_USERID="https://oapi.dingtalk.com/topapi/process/listbyuserid";
+
+
+    //************************************************外部联系人
+
+    /**
+     * 创建外部联系人
+     */
+    public static final String CREATE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/create";
+    /**
+     * 删除外部联系人
+     */
+    public static final String DELETE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/delete";
+    /**
+     * 更新外部联系人
+     */
+    public static final String UPDATE_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/update";
+    /**
+     * 获取外部联系人列表
+     */
+    public static final String EXT_CONTACT_USER_LIST="https://oapi.dingtalk.com/topapi/extcontact/list";
+    /**
+     * 获取外部联系人详情
+     */
+    public static final String GET_EXT_CONTACT_USER="https://oapi.dingtalk.com/topapi/extcontact/get";
+    /**
+     * 外部联系人列表
+     */
+    public static final String EXT_CONTACT_USER_LABEL="https://oapi.dingtalk.com/topapi/extcontact/listlabelgroups";
 }

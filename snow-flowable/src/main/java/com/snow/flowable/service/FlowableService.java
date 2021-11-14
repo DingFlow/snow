@@ -1,10 +1,13 @@
 package com.snow.flowable.service;
 
 import com.snow.common.core.page.PageModel;
+import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
 import com.snow.system.domain.ActDeModel;
 import com.snow.system.domain.SysUser;
+import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -56,6 +59,12 @@ public interface FlowableService {
     PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO);
 
     /**
+     * 查询发布详情
+     * @param id
+     * @return
+     */
+    DeploymentVO getDeploymentDetailById(String id);
+    /**
      * 删除发布
      * @param ids
      */
@@ -75,6 +84,7 @@ public interface FlowableService {
      * @param startProcessDTO
      * @return
      */
+    @Deprecated
     ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
     /**
@@ -116,6 +126,14 @@ public interface FlowableService {
      */
      HistoricProcessInstance getHistoricProcessInstanceById(String id);
 
+
+    /**
+     * 获取组装后的流程实例
+     * @param id 流程实例id
+     * @return 组装后的实例对象
+     */
+    ProcessInstanceVO getProcessInstanceVoById(String id);
+
     /**
      * 根据流程实例ID查询任务
      * @param id
@@ -123,12 +141,6 @@ public interface FlowableService {
      */
      Task getTaskProcessInstanceById(String id);
 
-    /**
-     * 获取历史任务
-     * @param
-     * @return
-     */
-    List<HistoricTaskInstanceVO> getHistoricTaskInstanceNoPage(HistoricTaskInstanceDTO historicTaskInstanceDTO);
 
     /**
      * 动态获取流程节点审批信息
@@ -151,13 +163,7 @@ public interface FlowableService {
      */
     PageModel<ProcessInstanceVO> getHistoricProcessInstance(ProcessInstanceDTO processInstanceDTO);
 
-    /**
-     * 查询历史任务实例(分页)
-     * 可查询我经办的
-     * @param historicTaskInstanceDTO
-     * @return
-     */
-    PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO);
+
 
     /**
      * 获取流程图像，已执行节点和流程线高亮显示
@@ -178,4 +184,25 @@ public interface FlowableService {
      * @param suspendState
      */
     void suspendOrActiveProcessInstance(String instanceId, Integer suspendState);
+
+    /**
+     * 取消流程
+     * @param instanceId 流程实例id
+     * @param reason 理由
+     */
+    void cancelProcessInstance(String instanceId, String reason);
+    /**
+     * 获取流程定义实体信息
+     *
+     * @param event
+     * @return ProcessDefinitionEntity
+     */
+     ProcessDefinitionEntity getProcessDefinition(FlowableEngineEvent event);
+
+
+    /**
+     * 获取所有流程定义枚举set
+     * @return
+     */
+     Set<FlowDefEnum> getAllFlowDefEnumsSet();
 }

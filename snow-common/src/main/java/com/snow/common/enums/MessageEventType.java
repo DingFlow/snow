@@ -9,6 +9,10 @@ package com.snow.common.enums;
 public enum  MessageEventType {
     TASK_TODO("TASK_TODO", "任务待办"),
 
+    INNER_TASK_TODO("INNER_TASK_TODO", "站内信任务待办"),
+
+    INNER_PROCESS_END("INNER_PROCESS_END", "站内信流程完结"),
+
     TASK_FINISH("TASK_FINISH", "任务完成"),
 
     SEND_EMAIL("SEND_EMAIL", "发送邮件"),
@@ -18,6 +22,10 @@ public enum  MessageEventType {
     SEND_VISIT_LOG("SEND_VISIT_LOG", "发送拜访日志"),
 
     REGISTER_ACCOUNT_SUCCESS("REGISTER_ACCOUNT_SUCCESS", "成功注册账户"),
+
+    INNER_SYS_TODO_TASK("INNER_SYS_TODO_TASK", "站内信系统任务待办"),
+
+    INNER_SYS_TASK_COMPLETE("INNER_SYS_TASK_COMPLETE", "站内信系统任务待办"),
     ;
 
 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('外部联系人详情')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m-t" id="signupForm">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">姓名：</label>
+			<div class="form-control-static"  th:text="${extContactUser.name}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">负责人：</label>
+			<div class="form-control-static" th:text="${extContactUser.followerUserId}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">公司：</label>
+			<div class="form-control-static" th:text="${extContactUser.companyName}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">职位：</label>
+			<div class="form-control-static" th:text="${extContactUser.title}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">地址：</label>
+			<div class="form-control-static" th:text="${extContactUser.address}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">备注：</label>
+			<div class="form-control-static" th:text="${extContactUser.remark}">
+			</div>
+		</div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+
+</body>
+</html>

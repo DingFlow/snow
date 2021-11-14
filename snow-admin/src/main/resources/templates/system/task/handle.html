@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('处理任务')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-task-edit" th:object="${sysOaTaskDistribute}">
+            <input name="taskNo" th:field="*{sysOaTask.taskNo}" type="hidden">
+            <input name="id" th:field="*{id}" type="hidden">
+            <h2 class="form-header h2" align="center" >任务信息</h2>
+            <div class="row">
+                <div class="col-xs-1 col-sm-1 "></div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label ">任务名称：</label>
+                    <span class="form-control-static" th:text="${sysOaTaskDistribute.sysOaTask.taskName}">
+                    </span>
+                </div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label">任务状态：</label>
+                    <span class="form-control-static" th:text="${@dict.getLabel('ding_task_status',sysOaTaskDistribute.sysOaTask.taskStatus)}">
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-1 col-sm-1 "></div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label ">紧急程度：</label>
+                    <span class="form-control-static" th:text="${@dict.getLabel('sys_oa_task_priority',sysOaTaskDistribute.sysOaTask.priority)}">
+                    </span>
+                </div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label ">任务分配人：</label>
+                    <span class="form-control-static" th:text="${sysOaTaskDistribute.taskDistributeId}">
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-1 col-sm-1 "></div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label ">任务类型：</label>
+                    <span class="form-control-static" th:text="${@dict.getLabel('sys_task_type',sysOaTaskDistribute.sysOaTask.taskType)}">
+                    </span>
+                </div>
+                <div class="col-xs-5 col-sm-5 ">
+                    <label class="control-label">任务来源：</label>
+                    <span class="form-control-static" th:text="*{sysOaTask.taskSource}">
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-1 col-sm-1 "></div>
+                <div class="col-xs-10 col-sm-10 ">
+                    <label class="control-label ">任务内容：</label>
+                    <span class="form-control-static" th:text="*{sysOaTask.taskContent}">
+                    </span>
+                </div>
+            </div>
+           </br>
+            <h2 class="form-header h2" align="center" >任务反馈</h2>
+            <div class="form-group">
+                <label class="col-sm-2 control-label is-required">开始时间：</label>
+                <div class="col-sm-10">
+                    <input name="taskStartTime" class="datetime-input form-control" placeholder="yyyy-MM-dd HH:mm:ss" th:value="${#dates.format(sysOaTaskDistribute.taskStartTime, 'yyyy-MM-dd hh:mm:ss')}" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label is-required">任务反馈：</label>
+                <div class="col-sm-10">
+                    <textarea name="taskFeedback" class="form-control" rows="6"  required></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/task";
+        $("#form-task-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/handle", $('#form-task-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

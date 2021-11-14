@@ -1,7 +1,8 @@
 package com.snow.common.annotation;
 
-import com.snow.common.enums.*;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.snow.common.enums.DingTalkLogType;
+import com.snow.common.enums.DingTalkSyncType;
+import com.snow.common.enums.SyncLogType;
 
 import java.lang.annotation.*;
 
@@ -17,10 +18,10 @@ public @interface SyncLog
 {
 
     /**
-     * 模块描述
+     * 日志类型
      */
 
-    public DingTalkListenerType dingTalkListenerType();
+    public DingTalkLogType dingTalkLogType();
 
 
     /**

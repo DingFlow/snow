@@ -149,6 +149,9 @@ swagger:
 #登录后是否显示最新的公告
 is:
   notice: true
+  #是否开启同步钉钉
+  sync:
+     dingtalk: true
 
 flowable:
   #关闭定时任务JOB

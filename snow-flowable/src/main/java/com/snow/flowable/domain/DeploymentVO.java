@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @program: snow
@@ -50,6 +51,11 @@ public class DeploymentVO implements Serializable {
    private int engineVersion;
 
    /**
+    * 是否是最新版本
+    */
+   private Boolean isNew;
+
+   /**
     * xml
     */
    private String resourceName;
@@ -60,4 +66,8 @@ public class DeploymentVO implements Serializable {
    private String dgrmResourceName;
 
 
+   /**
+    * 流程定义
+    */
+   private List<ProcessDefVO> processDefVOList;
 }

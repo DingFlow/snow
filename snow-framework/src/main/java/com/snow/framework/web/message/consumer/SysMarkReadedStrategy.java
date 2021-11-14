@@ -1,9 +1,8 @@
 package com.snow.framework.web.message.consumer;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.framework.web.message.MessageEventStrategy;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.service.ISysMessageTransitionService;

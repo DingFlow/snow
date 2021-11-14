@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaTaskMapper">
+    
+    <resultMap type="SysOaTask" id="SysOaTaskResult">
+        <result property="taskNo"    column="task_no"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="taskContent"    column="task_content"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="expectedTime"    column="expected_time"    />
+        <result property="priority"    column="priority"    />
+        <result property="taskSource"    column="task_source"    />
+        <result property="taskOutsideId"    column="task_outside_id"    />
+        <result property="taskUrl"    column="task_url"    />
+        <result property="revision"    column="revision"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysOaTaskVo">
+        select task_no, task_name, expected_time,priority,task_content, task_status, task_type, task_source, task_outside_id, task_url, revision, create_by, is_delete, create_time, update_by, update_time from sys_oa_task
+    </sql>
+
+    <select id="selectSysOaTaskList" parameterType="SysOaTask" resultMap="SysOaTaskResult">
+        <include refid="selectSysOaTaskVo"/>
+        <where>  
+            <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="taskContent != null  and taskContent != ''"> and task_content = #{taskContent}</if>
+            <if test="taskStatus != null  and taskStatus != ''"> and task_status = #{taskStatus}</if>
+            <if test="taskType != null  and taskType != ''"> and task_type = #{taskType}</if>
+            <if test="taskSource != null  and taskSource != ''"> and task_source = #{taskSource}</if>
+            <if test="taskOutsideId != null  and taskOutsideId != ''"> and task_outside_id = #{taskOutsideId}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="revision != null "> and revision = #{revision}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysOaTaskById" parameterType="String" resultMap="SysOaTaskResult">
+        <include refid="selectSysOaTaskVo"/>
+        where task_no = #{taskNo}
+    </select>
+        
+    <insert id="insertSysOaTask" parameterType="SysOaTask">
+        insert into sys_oa_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskNo != null">task_no,</if>
+            <if test="taskName != null and taskName != ''">task_name,</if>
+            <if test="taskContent != null">task_content,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="taskType != null">task_type,</if>
+            <if test="priority != null">priority,</if>
+            <if test="expectedTime != null">expected_time,</if>
+            <if test="taskSource != null">task_source,</if>
+            <if test="taskOutsideId != null">task_outside_id,</if>
+            <if test="taskUrl != null">task_url,</if>
+            <if test="revision != null">revision,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskNo != null">#{taskNo},</if>
+            <if test="taskName != null and taskName != ''">#{taskName},</if>
+            <if test="taskContent != null">#{taskContent},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="taskType != null">#{taskType},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="expectedTime != null">#{expectedTime},</if>
+            <if test="taskSource != null">#{taskSource},</if>
+            <if test="taskOutsideId != null">#{taskOutsideId},</if>
+            <if test="taskUrl != null">#{taskUrl},</if>
+            <if test="revision != null">#{revision},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaTask" parameterType="SysOaTask">
+        update sys_oa_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null and taskName != ''">task_name = #{taskName},</if>
+            <if test="taskContent != null">task_content = #{taskContent},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="priority != null">priority=#{priority},</if>
+            <if test="expectedTime != null">expected_time=#{expectedTime},</if>
+            <if test="taskSource != null">task_source = #{taskSource},</if>
+            <if test="taskOutsideId != null">task_outside_id = #{taskOutsideId},</if>
+            <if test="taskUrl != null">task_url = #{taskUrl},</if>
+            <if test="revision != null">revision = #{revision},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where task_no = #{taskNo}
+    </update>
+
+    <delete id="deleteSysOaTaskById" parameterType="String">
+        delete from sys_oa_task where task_no = #{taskNo}
+    </delete>
+
+    <delete id="deleteSysOaTaskByIds" parameterType="String">
+        delete from sys_oa_task where task_no in 
+        <foreach item="taskNo" collection="array" open="(" separator="," close=")">
+            #{taskNo}
+        </foreach>
+    </delete>
+
+</mapper>

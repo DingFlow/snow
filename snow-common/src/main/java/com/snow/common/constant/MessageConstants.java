@@ -37,4 +37,23 @@ public class MessageConstants {
      */
     public static final String CUSTOMER_VISIT_LOG_CODE="1411568525448978432";
 
+    /**
+     * 站内信任务创建模板
+     */
+    public static final String INNER_TASK_CREATED_CODE="1415927384573616128";
+
+
+    /**
+     * 站内信流程完结模板
+     */
+    public static final String INNER_PROCESS_END_CODE="1416370192572882944";
+
+    /**
+     * 站内系统任务待办模板
+     */
+    public static final String INNER_SYS_TODO_TASK="1457582416733544448";
+    /**
+     * 系统任务完成模板
+     */
+    public static final String INNER_SYS_TASK_COMPLETE="1457591320074919936";
 }

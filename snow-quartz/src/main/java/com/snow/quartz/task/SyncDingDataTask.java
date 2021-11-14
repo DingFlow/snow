@@ -1,14 +1,15 @@
 package com.snow.quartz.task;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.dingtalk.api.response.OapiDepartmentListResponse;
 import com.dingtalk.api.response.OapiV2UserListResponse;
 import com.snow.common.utils.StringUtils;
-import com.snow.dingtalk.model.UserListRequest;
+import com.snow.dingtalk.model.request.UserListRequest;
 import com.snow.dingtalk.service.impl.DepartmentServiceImpl;
 import com.snow.dingtalk.service.impl.UserServiceImpl;
 import com.snow.framework.shiro.service.SysPasswordService;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.framework.web.service.ConfigService;
 import com.snow.system.domain.SysDept;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysConfigService;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @program: snow
@@ -34,7 +34,6 @@ public class SyncDingDataTask {
     @Autowired
     private DepartmentServiceImpl departmentService;
 
-
     @Autowired
     private SysUserServiceImpl sysUserService;
 
@@ -43,7 +42,6 @@ public class SyncDingDataTask {
 
     @Autowired
     private SysPasswordService passwordService;
-
 
     @Autowired
     private SysDeptServiceImpl sysDeptService;
@@ -58,27 +56,23 @@ public class SyncDingDataTask {
     public void syncDingDept(){
         //获取钉钉部门列表
         List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();
+        if(CollUtil.isEmpty(dingTalkDepartmentList)){
+            return;
+        }
         dingTalkDepartmentList.forEach(t->{
+            SysDept sysDept = new SysDept();
+            sysDept.setDeptId(t.getId());
+            sysDept.setDeptName(t.getName());
+            sysDept.setOrderNum(String.valueOf(t.getId()));
+            sysDept.setParentId(t.getParentid());
+            sysDept.setIsSyncDingTalk(false);
+            //判断是更新还是插入
             SysDept sysDepts = sysDeptService.selectDeptById(t.getId());
-            SysDept sysDept1 = Optional.ofNullable(sysDepts).orElseGet(() -> {
-                SysDept sysDept = new SysDept();
-                sysDept.setDeptId(t.getId());
-                sysDept.setDeptName(t.getName());
-                sysDept.setOrderNum(String.valueOf(t.getId()));
-                sysDept.setParentId(t.getParentid());
-                sysDept.setIsSyncDingTalk(false);
-                sysDeptService.insertDept(sysDept);
-                return sysDept;
-            });
-            Optional.ofNullable(sysDepts).ifPresent(m->{
-                SysDept sysDept=new SysDept();
-                sysDept.setDeptId(t.getId());
-                sysDept.setDeptName(t.getName());
-                sysDept.setOrderNum(String.valueOf(t.getId()));
-                sysDept.setParentId(t.getParentid());
-                sysDept.setIsSyncDingTalk(false);
+            if(ObjectUtil.isNotNull(sysDepts)){
                 sysDeptService.updateDept(sysDept);
-            });
+            }else {
+                sysDeptService.insertDept(sysDept);
+            }
         });
     }
 
@@ -94,55 +88,53 @@ public class SyncDingDataTask {
             //目前用户少，直接获取20条
             userListRequest.setSize(20L);
             userListRequest.setCursor(cursor);
+            //获取部门下的用户
             OapiV2UserListResponse.PageResult userInfoByDept = userService.getUserInfoByDept(userListRequest);
             List<OapiV2UserListResponse.ListUserResponse> list = userInfoByDept.getList();
+            if(CollUtil.isEmpty(list)){
+                return;
+            }
             list.forEach(t->{
-                SysUser sysUser = sysUserService.selectUserByDingUserId(t.getUserid());
-                if(StringUtils.isNotNull(sysUser)){
-                    SysUser insertUser=new SysUser();
-                    insertUser.setUserId(sysUser.getUserId());
-                    insertUser.setUserName(t.getName());
-                    insertUser.setDeptId(department.getId());
-                    insertUser.setEmail(t.getEmail());
-                    insertUser.setDingUserId(t.getUserid());
-                    if(StringUtils.isNotNull(t.getHiredDate())){
-                        insertUser.setHiredDate(new Date(t.getHiredDate()));
-                    }
-                    insertUser.setJobnumber(t.getJobNumber());
-                    insertUser.setPhonenumber(t.getMobile());
-                    insertUser.setWorkPlace(t.getWorkPlace());
-                    insertUser.setAvatar(t.getAvatar());
-                    insertUser.setPosition(t.getTitle());
-                    insertUser.setIsSyncDingTalk(false);
-                    sysUserService.updateUser(insertUser);
+                SysUser sysUser = warpUser(t);
+                sysUser.setDeptId(department.getId());
+                SysUser oldSysUser = sysUserService.selectUserByDingUserId(t.getUserid());
+                if(StringUtils.isNotNull(oldSysUser)){
+                    sysUser.setUserId(sysUser.getUserId());
+                    sysUserService.updateUser(sysUser);
                 }else {
-                    SysUser insertUser=new SysUser();
-                    insertUser.setUserName(t.getName());
-                    insertUser.setDeptId(department.getId());
-                    insertUser.setEmail(t.getEmail());
-                    insertUser.setDingUserId(t.getUserid());
-                    if(StringUtils.isNotNull(t.getHiredDate())){
-                        insertUser.setHiredDate(new Date(t.getHiredDate()));
-                    }
-                    insertUser.setJobnumber(t.getJobNumber());
-                    insertUser.setLoginName(t.getMobile());
-                    insertUser.setPhonenumber(t.getMobile());
-                    insertUser.setWorkPlace(t.getWorkPlace());
-                    insertUser.setAvatar(t.getAvatar());
-                    insertUser.setPosition(t.getTitle());
+                    sysUser.setLoginName(t.getMobile());
                     String password = configService.selectConfigByKey("sys.user.initPassword");
                     //设置密码
-                    insertUser.setSalt(ShiroUtils.randomSalt());
-                    insertUser.setPassword(passwordService.encryptPassword(t.getMobile(), password, insertUser.getSalt()));
-
+                    sysUser.setSalt(ShiroUtils.randomSalt());
+                    sysUser.setPassword(passwordService.encryptPassword(t.getMobile(), password, sysUser.getSalt()));
                     //角色统一为2
-                    insertUser.setRoleIds(new Long[]{2L});
-                    insertUser.setIsSyncDingTalk(false);
-                    sysUserService.insertUser(insertUser);
+                    sysUser.setRoleIds(new Long[]{2L});
+                    sysUserService.insertUser(sysUser);
                 }
-
             });
         }
+    }
+
+    /**
+     * 构建用户参数
+     * @param listUserResponse 传入参数
+     * @return 返回组装后user对象
+     */
+    private SysUser warpUser(OapiV2UserListResponse.ListUserResponse listUserResponse){
+        SysUser sysUser=new SysUser();
+        sysUser.setUserName(listUserResponse.getName());
+        sysUser.setEmail(listUserResponse.getEmail());
+        sysUser.setDingUserId(listUserResponse.getUserid());
+        sysUser.setJobnumber(listUserResponse.getJobNumber());
+        sysUser.setPhonenumber(listUserResponse.getMobile());
+        sysUser.setWorkPlace(listUserResponse.getWorkPlace());
+        sysUser.setAvatar(listUserResponse.getAvatar());
+        sysUser.setPosition(listUserResponse.getTitle());
+        if(StringUtils.isNotNull(listUserResponse.getHiredDate())){
+            sysUser.setHiredDate(new Date(listUserResponse.getHiredDate()));
+        }
+        sysUser.setIsSyncDingTalk(false);
+        return sysUser;
     }
 
 

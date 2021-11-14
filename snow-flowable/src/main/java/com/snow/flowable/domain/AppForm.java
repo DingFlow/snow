@@ -31,7 +31,7 @@ public abstract class AppForm implements Serializable {
 
 
     /**
-     * 业务参数URL
+     * 业务数据详情页URL
      */
     private String busVarUrl;
 

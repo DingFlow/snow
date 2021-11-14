@@ -1,7 +1,7 @@
 package com.snow.framework.web.message.producer;
 
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.framework.web.domain.common.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventDTO;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
 import com.snow.framework.web.message.MessageEventStrategy;
 import com.snow.framework.web.service.InnerMessageService;

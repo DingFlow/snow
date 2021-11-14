@@ -64,7 +64,7 @@
         <div class="col-lg-6 features-text wow fadeInLeft">
             <!--<small>DingFlow</small>-->
             <h2>DingFlow</h2>
-            <p>　　DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意，念及雪之人便有了Snow。后来 在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段， 虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
+            <p>　　DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意为之Snow。后来在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段，虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
             <a href="" class="btn btn-primary">学到更多</a>
         </div>
         <div class="col-lg-6 text-right wow fadeInRight">
@@ -551,7 +551,7 @@
                         <form id="signupForm" autocomplete="off">
                             <div class="form-group"><!--<label>用户名</label>  --><input type="text"   name="username" class="form-control uname"     placeholder="请输入用户名"     /></div>
                             <div class="form-group"><!--<label>密码</label> --><input type="password"  name="password"  placeholder="请输入密码" class="form-control pword"></div>
-                            <div class="row m-t form-group" th:if="${captchaEnabled==true}">
+                            <div class="row m-t form-group">
                                 <div class="col-xs-6">
                                     <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" />
                                 </div>
@@ -596,7 +596,7 @@
 <script src="/static/ajax/libs/layer/layer.min.js" th:src="@{/ajax/libs/layer/layer.min.js}"></script>
 <script src="/static/ajax/libs/blockUI/jquery.blockUI.js" th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
 <script src="/static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.3.1}"></script>
-
+<script src="/static/ruoyi/front-login.js" th:src="@{/ruoyi/front-login.js}"></script>
 <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
 <script th:inline="javascript">
     $(document).ready(function () {
@@ -649,99 +649,6 @@
 
     // Activate WOW.js plugin for animation on scrol
     new WOW().init();
-
-    $(function() {
-        validateKickout();
-        validateRule();
-        $('.imgcode').click(function() {
-            var url = ctx + "captcha/captchaImage?type=" + captchaType + "&s=" + Math.random();
-            $(".imgcode").attr("src", url);
-        });
-    });
-
-    $("#btnSubmit").click(function () {
-        login();
-    })
-
-    function login() {
-        $.modal.loading($("#btnSubmit").data("loading"));
-        var username = $.common.trim($("input[name='username']").val());
-        var password = $.common.trim($("input[name='password']").val());
-        var validateCode = $("input[name='validateCode']").val();
-        var rememberMe = $("input[name='rememberme']").is(':checked');
-        $.ajax({
-            type: "post",
-            url: ctx + "login",
-            data: {
-                "username": username,
-                "password": password,
-                "validateCode": validateCode,
-                "rememberMe": rememberMe
-            },
-            success: function(r) {
-                if (r.code == 0) {
-                    location.href ='/front/main';
-                } else {
-                    $.modal.closeLoading();
-                    $('.imgcode').click();
-                    $(".code").val("");
-                    $.modal.msg(r.msg);
-                }
-            }
-        });
-    }
-
-    function validateRule() {
-        var icon = "<i class='fa fa-times-circle'></i> ";
-        $("#signupForm").validate({
-            rules: {
-                username: {
-                    required: true
-                },
-                password: {
-                    required: true
-                }
-            },
-            messages: {
-                username: {
-                    required: icon + "请输入您的用户名",
-                },
-                password: {
-                    required: icon + "请输入您的密码",
-                }
-            }
-        })
-    }
-
-    function validateKickout() {
-        if (getParam("kickout") == 1) {
-            layer.alert("<font color='red'>您已在别处登录，请您修改密码或重新登录</font>", {
-                    icon: 0,
-                    title: "系统提示"
-                },
-                function(index) {
-                    //关闭弹窗
-                    layer.close(index);
-                    if (top != self) {
-                        top.location = self.location;
-                    } else {
-                        var url  =  location.search;
-                        if (url) {
-                            var oldUrl  = window.location.href;
-                            var newUrl  = oldUrl.substring(0,  oldUrl.indexOf('?'));
-                            self.location  = newUrl;
-                        }
-                    }
-                });
-        }
-    }
-
-    function getParam(paramName) {
-        var reg = new RegExp("(^|&)" + paramName + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) return decodeURI(r[2]);
-        return null;
-    }
 
 </script>
 

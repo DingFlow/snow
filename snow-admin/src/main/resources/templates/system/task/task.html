@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('任务中心')" />
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="row m-b-lg ">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+
+                <div class="tabs-left">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#tab-1">  待处理   <span class="label label-info pull-right"></span></a>
+
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#tab-2">  我创建  <span class="label label-info pull-right" ></span></a>
+
+                        </li>
+                        <li class="">
+                            <a data-toggle="tab" href="#tab-3"> 已处理  <span class="label label-info pull-right" ></span></a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content ">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="col-sm-12 search-collapse">
+                                    <form id="formId3">
+                                        <div class="select-list">
+                                            <ul>
+                                                <li>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="myTaskNo"/>
+                                                </li>
+                                                <li>
+                                                    <label>任务名称：</label>
+                                                    <input type="text" name="taskName" id="myTaskName"/>
+                                                </li>
+                                                <li>
+                                                    <label>任务状态：</label>
+                                                    <select name="taskStatus"  id="myTaskStatus" th:with="type=${@dict.getType('ding_task_status')}">
+                                                        <option value="">所有</option>
+                                                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                    </select>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId3','bootstrap-table3')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId3','bootstrap-table3')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="btn-group-sm" id="toolbar1" role="group">
+                                    <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:task:export">
+                                        <i class="fa fa-download"></i> 导出
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="bootstrap-table3"></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="col-sm-12 search-collapse">
+                                    <form id="myformId">
+                                        <div class="select-list">
+                                            <ul>
+                                                <li>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="taskNo"/>
+                                                </li>
+                                                <li>
+                                                    <label>任务状态：</label>
+                                                    <select name="taskStatus"  id="taskStatus" th:with="type=${@dict.getType('ding_task_status')}">
+                                                        <option value="">所有</option>
+                                                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                    </select>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('myformId','bootstrap-table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('myformId','bootstrap-table1')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="btn-group-sm" id="toolbar2" role="group">
+                                    <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="system:task:add">
+                                        <i class="fa fa-plus"></i> 添加
+                                    </a>
+                                    <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:task:export">
+                                        <i class="fa fa-download"></i> 导出
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="bootstrap-table1"></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="col-sm-12 search-collapse">
+                                    <form id="formId2">
+                                        <div class="select-list">
+                                            <ul>
+                                                <li>
+                                                    <label>任务编号：</label>
+                                                    <input type="text" name="taskNo" id="myTaskNoEd"/>
+                                                </li>
+                                                <li>
+                                                    <label>任务名称：</label>
+                                                    <input type="text" name="taskName" id="myTaskNameEd"/>
+                                                </li>
+                                                <li>
+                                                    <label>任务状态：</label>
+                                                    <select name="taskType"  id="myTaskTypeEd" th:with="type=${@dict.getType('sys_task_type')}">
+                                                        <option value="">所有</option>
+                                                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                    </select>
+                                                </li>
+
+                                                <li>
+                                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId2','bootstrap-table2')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId2','bootstrap-table2')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="bootstrap-table2"></table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    var editFlag = [[${@permission.hasPermi('system:task:edit')}]];
+    var handleFlag = [[${@permission.hasPermi('system:task:handle')}]];
+    var removeFlag = [[${@permission.hasPermi('system:task:remove')}]];
+
+    var startFlag = [[${@permission.hasPermi('system:task:start')}]];
+    var taskStatusDatas = [[${@dict.getType('ding_task_status')}]];
+    var taskTypeDatas = [[${@dict.getType('sys_task_type')}]];
+    var prefix = ctx + "system/task";
+    $(function() {
+        var options = {
+            id:"bootstrap-table3",
+            url: prefix + "/waitList",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            handleUrl: prefix + "/handle/{id}",
+            modalName: "系统任务",
+            toolbar: "toolbar1",
+            queryParams:queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '任务编号',
+                    visible: false
+                },
+                {
+                    field: 'taskNo',
+                    title: '任务编号',
+                },
+                {
+                    field: 'taskName',
+                    title: '任务名称',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.taskName;
+                    }
+                },
+                {
+                    field: 'taskType',
+                    title: '任务类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(taskTypeDatas, row.sysOaTask.taskType);
+                    }
+                },
+                {
+                    field: 'createBy',
+                    title: '指派人',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.createBy;
+                    }
+                },
+                {
+                    field: 'taskStartTime',
+                    title: '开始时间',
+                    formatter: function(value, row, index) {
+                        if(row.taskStartTime==null||row.taskStartTime==''){
+                            return '未开始'
+                        }else {
+                            return value;
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if(row.taskExecuteStatus=='RUNNING') {
+                            actions.push('<a class="btn btn-info btn-xs ' + startFlag + '" href="javascript:void(0)" onclick="startTask(\''+row.id+'\')"><i class="fa fa-hourglass-start"></i>开始</a> ');
+                        }
+                        if(row.taskExecuteStatus=='PROCESSING') {
+                            actions.push('<a class="btn btn-success btn-xs ' + handleFlag + '" href="javascript:void(0)" onclick="$.operate.handle(\'' + row.id + '\')"><i class="fa fa-edit"></i>处理</a>');
+                        }
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.taskNo = $("#myTaskNo").val();
+            search.taskStatus = $("#myTaskStatus").val();
+            return search;
+
+        }
+
+
+        var options1 = {
+            id: "bootstrap-table1",
+            url: prefix + "/myList",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            createUrl: prefix + "/add",
+            removeUrl: prefix + "/remove",
+            toolbar: "toolbar2",
+            queryParams:queryParamMy,
+            detailView: true,
+            onExpandRow : function(index, row, $detail) {
+                initChildTable(index, row, $detail);
+            },
+
+            modalName: "我创建",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'taskNo',
+                    title: '任务编号',
+                    visible: true
+                },
+                {
+                    field: 'taskName',
+                    title: '任务名称'
+                },
+                {
+                    field: 'taskContent',
+                    title: '任务内容',
+                    formatter: function(value, row, index) {
+                        return row.taskContent.substring(0,20)+"...";
+                    }
+                },
+           /*     {
+                    field: 'taskStatus',
+                    title: '任务状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(taskStatusDatas, value);
+                    }
+                },*/
+                {
+                    field: 'taskType',
+                    title: '任务类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(taskTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'taskSource',
+                    title: '任务来源'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.taskNo + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.taskNo + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.taskNo + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options1);
+        function queryParamMy(params) {
+            var search = $.table.queryParams(params);
+            search.taskNo = $("#taskNo").val();
+            search.taskName = $("#taskName").val();
+            search.taskStatus = $("#taskStatus").val();
+            return search;
+
+        }
+        var options2 = {
+            id: "bootstrap-table2",
+            url: prefix + "/handleList",
+            detailUrl: prefix + "/taskDistributedDetail/{id}",
+            exportUrl: prefix + "/export",
+            createUrl: prefix + "/add",
+            modalName: "我处理的",
+            columns: [{
+                checkbox: false
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'taskNo',
+                    title: '任务编号',
+                    visible: true
+                },
+                {
+                    field: 'taskName',
+                    title: '任务名称',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.taskName;
+                    }
+                },
+                {
+                    field: 'taskType',
+                    title: '任务类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(taskTypeDatas, row.sysOaTask.taskType);
+                    }
+                },
+                {
+                    field: 'createBy',
+                    title: '分配人',
+                    formatter: function(value, row, index) {
+                        return row.sysOaTask.createBy;
+                    }
+                },
+                {
+                    field: 'taskStartTime',
+                    title: '开始时间'
+                },
+                {
+                    field: 'taskCompleteTime',
+                    title: '完成时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                        return actions.join('');
+                    }
+                }]
+
+        };
+        $.table.init(options2);
+
+        function queryParam(params) {
+            var search = $.table.queryParams(params);
+            search.taskNo = $("#myTaskNoEd").val();
+            search.taskName = $("#myTaskNameEd").val();
+            search.taskStatus = $("#myTaskStatusEd").val();
+            return search;
+
+        }
+
+
+    });
+
+    initChildTable = function(index, row, $detail) {
+        var childTable = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+        $(childTable).bootstrapTable({
+            url: prefix + "/taskDistributeList",
+            method: 'post',
+            sidePagination: "server",
+            contentType: "application/x-www-form-urlencoded",
+            queryParams : {
+                taskNo: row.taskNo
+            },
+            columns: [
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                        return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'taskNo',
+                    title: '任务编号',
+                    formatter: function(value, row, index) {
+                        return row.taskNo.substring(0,5)+"...";
+                    }
+                },
+                {
+                    field: 'taskDistributeId',
+                    title: '待处理人'
+                },
+                {
+                    field: 'taskExecuteStatus',
+                    title: '任务状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(taskStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'taskStartTime',
+                    title: '开始时间'
+                },
+                {
+                    field: 'taskCompleteTime',
+                    title: '完成时间'
+                },
+                {
+                    field: 'taskFeedback',
+                    title: '任务反馈',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="detailLog(\'' + row.id + '\')"><i class="fa fa-edit"></i>详情</a> ');
+                        return actions.join('');
+                    }
+                }]
+
+        });
+
+    };
+    function startTask(id) {
+        $.modal.confirm("确定开始该条任务吗？", function() {
+            var url = prefix + '/start';
+            $.operate.submit(url, "post", "json",  { "id": id });
+        });
+    }
+
+    function detailLog(id) {
+        var url = prefix + '/taskDistribute/detail/'+id;
+        $.modal.open("详情", url);
+    }
+</script>
+</body>
+</html>

@@ -30,7 +30,7 @@ public class SyncDingTalkInfoFactory  {
             return new CallBackService();
         }
         else if(type.equals(DingTalkListenerType.WORK_RECODE_CREATE.getType())){
-            return new WorkRecodeService();
+            return new WorkRecodeEventService();
         }
         else if(type.equals(DingTalkListenerType.BLACKBOARD_CREATE.getType())){
             return new BlackboardService();

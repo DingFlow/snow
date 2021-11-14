@@ -57,14 +57,14 @@ public class FlowUserController extends BaseController {
      */
     @GetMapping(value = "/rest/getUserGroupList")
     public FlowRemoteVO getUserGroupList(@RequestParam(value = "filter",required = false) String filter) {
-        startPage();
-        List<RemoteGroup> flowUserGroupList = flowableUserService.getFlowUserGroupList(filter);
-        TableDataInfo dataTable = getDataTable(flowUserGroupList);
+
+        List<RemoteGroup> flowUserGroupList = flowableUserService.getLinkFlowUserGroupList(filter);
+
         FlowRemoteVO flowRemoteVO = new FlowRemoteVO();
-        flowRemoteVO.setData(dataTable.getRows());
-        flowRemoteVO.setSize(dataTable.getPageSize());
-        flowRemoteVO.setStart(dataTable.getPageIndex());
-        flowRemoteVO.setTotal(dataTable.getTotal());
+        flowRemoteVO.setData(flowUserGroupList);
+       // flowRemoteVO.setSize(dataTable.getPageSize());
+      //  flowRemoteVO.setStart(dataTable.getPageIndex());
+        flowRemoteVO.setTotal(flowUserGroupList.size());
         return flowRemoteVO;
     }
 }

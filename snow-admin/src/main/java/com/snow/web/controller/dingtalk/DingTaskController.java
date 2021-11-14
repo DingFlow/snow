@@ -8,9 +8,9 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.DingFlowTaskType;
-import com.snow.dingtalk.model.DingFinishTaskRequest;
-import com.snow.dingtalk.model.DingTaskVO;
-import com.snow.dingtalk.model.FlowExecuteTaskRequest;
+import com.snow.dingtalk.model.request.DingFinishTaskRequest;
+import com.snow.dingtalk.model.response.DingTaskResponse;
+import com.snow.dingtalk.model.request.FlowExecuteTaskRequest;
 import com.snow.dingtalk.service.impl.DingOfficialFlowServiceImpl;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysDingHiTask;
@@ -176,7 +176,7 @@ public class DingTaskController extends BaseController
 
         //获取任务节点
         List<OapiProcessinstanceGetResponse.TaskTopVo> tasks = processInstanceDetail.getTasks();
-        DingTaskVO dingTaskVO=new DingTaskVO();
+        DingTaskResponse dingTaskVO=new DingTaskResponse();
         if(CollectionUtil.isNotEmpty(tasks)){
             tasks.stream().filter(taskTopVo -> taskTopVo.getTaskid().equals(sysDingHiTask.getTaskId())).collect(Collectors.toList()).forEach(t->{
                 BeanUtil.copyProperties(t,dingTaskVO);

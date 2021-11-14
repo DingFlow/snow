@@ -3,7 +3,9 @@ package com.snow.system.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysDept;
 import com.snow.system.domain.SysUser;
@@ -218,15 +220,17 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         SysDept info = deptMapper.selectDeptById(dept.getParentId());
         // 如果父节点不为"正常"状态,则不允许新增子节点
-        if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
-        {
-            throw new BusinessException("部门停用，不允许新增");
+        if(ObjectUtil.isNotEmpty(info)){
+            if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
+            {
+                throw new BusinessException("部门停用，不允许新增");
+            }
+            dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         }
-        dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         int d=deptMapper.insertDept(dept);
         if(dept.getIsSyncDingTalk()){
             //同步钉钉数据
-            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
+            SyncEvent<SysDept> syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_CREATE);
             applicationContext.publishEvent(syncEvent);
         }
         return d;
@@ -242,11 +246,12 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Transactional
     public int updateDept(SysDept dept)
     {
-        SysDept newParentDept = deptMapper.selectDeptById(dept.getParentId());
+        SysDept parentDept = deptMapper.selectDeptById(dept.getParentId());
         SysDept oldDept = selectDeptById(dept.getDeptId());
-        if (StringUtils.isNotNull(newParentDept) && StringUtils.isNotNull(oldDept))
+        if (StringUtils.isNotNull(parentDept) && StringUtils.isNotNull(oldDept))
         {
-            String newAncestors = newParentDept.getAncestors() + "," + newParentDept.getDeptId();
+            String ancestors = Optional.ofNullable(parentDept.getAncestors()).orElse("0");
+            String newAncestors = ancestors + "," + parentDept.getDeptId();
             String oldAncestors = oldDept.getAncestors();
             dept.setAncestors(newAncestors);
             updateDeptChildren(dept.getDeptId(), newAncestors, oldAncestors);
@@ -260,7 +265,7 @@ public class SysDeptServiceImpl implements ISysDeptService
         }
         if(dept.getIsSyncDingTalk()) {
             //同步钉钉数据
-            SyncEvent syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_UPDATE);
+            SyncEvent<SysDept> syncEvent = new SyncEvent(dept, DingTalkListenerType.DEPARTMENT_UPDATE);
             applicationContext.publishEvent(syncEvent);
         }
         return result;

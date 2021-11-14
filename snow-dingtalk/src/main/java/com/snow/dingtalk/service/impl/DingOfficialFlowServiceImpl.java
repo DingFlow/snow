@@ -12,10 +12,10 @@ import com.snow.common.utils.bean.BeanUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.FlowExecuteTaskRequest;
-import com.snow.dingtalk.model.FlowTerminateProcessInstanceRequest;
-import com.snow.dingtalk.model.SaveFlowRequest;
-import com.snow.dingtalk.model.StartFlowRequest;
+import com.snow.dingtalk.model.request.DepartmentCreateRequest;
+import com.snow.dingtalk.model.request.FlowExecuteTaskRequest;
+import com.snow.dingtalk.model.request.FlowTerminateProcessInstanceRequest;
+import com.snow.dingtalk.model.request.StartFlowRequest;
 import com.snow.dingtalk.service.DingOfficialFlowService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.taobao.api.ApiException;
@@ -37,7 +37,7 @@ public class DingOfficialFlowServiceImpl extends BaseService implements DingOffi
     private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
 
     @Override
-    public String saveProcess(SaveFlowRequest saveFlowRequest) {
+    public String saveProcess(DepartmentCreateRequest.SaveFlowRequest saveFlowRequest) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.SAVE_PROCESS);
 
         OapiProcessSaveRequest request = new OapiProcessSaveRequest();
@@ -204,10 +204,6 @@ public class DingOfficialFlowServiceImpl extends BaseService implements DingOffi
 
     }
 
-    /*@Override
-    public void addProcessInstanceComment() {
-
-    }*/
 
     @Override
     public OapiProcessinstanceGetResponse.ProcessInstanceTopVo getProcessInstanceDetail(String processInstanceId) {

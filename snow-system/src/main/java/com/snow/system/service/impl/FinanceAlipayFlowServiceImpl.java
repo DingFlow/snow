@@ -9,11 +9,12 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.FinanceAlipayFlowMapper;
 import com.snow.system.mapper.SysUserMapper;
 import com.snow.system.service.IFinanceAlipayFlowService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  * @date 2020-11-09
  */
 @Service
-public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService 
+public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
 {
     @Autowired
     private FinanceAlipayFlowMapper financeAlipayFlowMapper;
@@ -40,6 +41,9 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
     public FinanceAlipayFlow selectFinanceAlipayFlowById(Long id)
     {
         return financeAlipayFlowMapper.selectFinanceAlipayFlowById(id);
+    }
+    public FinanceAlipayFlow selectFinanceAlipayFlowByTradeNo(String tradeNo){
+        return financeAlipayFlowMapper.selectFinanceAlipayFlowByTradeNo(tradeNo);
     }
 
     /**
@@ -172,5 +176,11 @@ public class FinanceAlipayFlowServiceImpl implements IFinanceAlipayFlowService
                     .wxRedPacketsTotal(BigDecimal.ZERO);
         }
         return builder.build();
+    }
+
+    @Override
+    public LinkedHashMap<String,BigDecimal> getFinanceAlipayFlowByYearAndMonth(FinanceAlipayFlow financeAlipayFlow) {
+
+        return financeAlipayFlowMapper.getFinanceAlipayFlowByYearAndMonth(financeAlipayFlow);
     }
 }

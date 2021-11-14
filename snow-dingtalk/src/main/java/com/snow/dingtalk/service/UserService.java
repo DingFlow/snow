@@ -1,7 +1,7 @@
 package com.snow.dingtalk.service;
 
 import com.dingtalk.api.response.*;
-import com.snow.dingtalk.model.UserListRequest;
+import com.snow.dingtalk.model.request.UserListRequest;
 import com.snow.system.domain.SysUser;
 
 /**
@@ -26,6 +26,14 @@ public interface UserService  {
      * @return
      */
     OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser);
+
+
+    /**
+     * 编辑用户
+     * @param sysUser
+     * @return
+     */
+    String updateUserV2(SysUser sysUser);
 
     /**
      * 删除用户
@@ -54,4 +62,11 @@ public interface UserService  {
      * @return
      */
     OapiUserGetbyunionidResponse.UserGetByUnionIdResponse  getUserByUnionId(String unionId);
+
+    /**
+     * 根据系统用户id获取用户UnionId
+     * @param sysUserId 系统用户id
+     * @return UnionId
+     */
+    String getUnionIdBySysUserId(Long sysUserId);
 }

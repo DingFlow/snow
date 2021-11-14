@@ -8,7 +8,7 @@
     <version>2.0.0</version>
 
     <name>snow</name>
-    <url>http://snowblog.shop.csj361.com</url>
+    <url>http://dingflow.xyz:9527</url>
     <description>snow管理系统</description>
     
     <properties>
@@ -32,6 +32,18 @@
         <velocity.version>1.7</velocity.version>
         <flowable.version>6.4.1</flowable.version>
         <dingtalk.version>dingtalk-SNAPSHOT</dingtalk.version>
+        <aliyun.dingtalk.version>1.1.94</aliyun.dingtalk.version>
+        <hutool.version>5.4.2</hutool.version>
+        <commons.lang3.version>3.11</commons.lang3.version>
+        <com.alipay.sdk.version>3.7.4.ALL</com.alipay.sdk.version>
+        <easyexcel.version>2.1.6</easyexcel.version>
+        <com.aliyun.oss.version>3.9.1</com.aliyun.oss.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <lombok.version>1.18.10</lombok.version>
+        <zhyd.oauth.version>1.15.6</zhyd.oauth.version>
+        <jsqlparser.version>1.4</jsqlparser.version>
+        <googlecode.aviator.version>2.3.3</googlecode.aviator.version>
+        <kotlin.stdlib.verson>1.3.70</kotlin.stdlib.verson>
     </properties>
 
     <!-- 依赖声明 -->
@@ -178,7 +190,26 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-            
+
+            <!--hu-tool-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!--工具包-->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.lang.version}</version>
+            </dependency>
             <!-- 定时任务-->
             <dependency>
                 <groupId>com.snow</groupId>
@@ -235,7 +266,84 @@
                 <version>${snow.version}</version>
             </dependency>
 
+            <!--支付宝-->
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${com.alipay.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dingtalk</artifactId>
+                <version>${aliyun.dingtalk.version}</version>
+            </dependency>
 
+            <!--aliExcel解析包-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
+
+            <!--阿里云oss-->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${com.aliyun.oss.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.10</version>
+            </dependency>
+
+            <!--sql解析组装-->
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>${jsqlparser.version}</version>
+            </dependency>
+
+            <!-- 第三方授权登录 -->
+            <dependency>
+                <groupId>me.zhyd.oauth</groupId>
+                <artifactId>JustAuth</artifactId>
+                <version>${zhyd.oauth.version}</version>
+            </dependency>
+
+            <!--flowable工作流-->
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-spring-boot-starter</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
+
+            <!--flowable整合设计器-->
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-ui-modeler-rest</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-json-converter</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
+
+            <!--Aviator是一个轻量级、高性能的Java表达式执行引擎，它动态地将表达式编译成字节码并运行。可被用于动态的公式计算、规则执行和过滤等场景-->
+            <dependency>
+                <groupId>com.googlecode.aviator</groupId>
+                <artifactId>aviator</artifactId>
+                <version>${googlecode.aviator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.stdlib.verson}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

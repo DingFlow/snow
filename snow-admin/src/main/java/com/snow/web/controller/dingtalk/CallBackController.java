@@ -14,6 +14,7 @@ import com.snow.system.domain.DingtalkCallBack;
 import com.snow.system.service.impl.DingtalkCallBackServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,8 @@ public class CallBackController {
     @Autowired
     private DingtalkCallBackServiceImpl dingtalkCallBackService;
 
+    @Value("${is.sync.dingtalk:false}")
+    private Boolean isSyncDingTalk;
 
     private static final String EVENT_TYPE="EventType";
 
@@ -63,7 +66,7 @@ public class CallBackController {
         }
         dingtalkCallBack=dingtalkCallBacks.get(0);
         try {
-            log.info("begin callback------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body);
+            log.info("\n @@begin callback------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body);
             DingTalkEncryptor dingTalkEncryptor = new DingTalkEncryptor(dingtalkCallBack.getToken(),dingtalkCallBack.getAesKey(),dingtalkCallBack.getCorpId());
 
             // 从post请求的body中获取回调信息的加密数据进行解密处理
@@ -81,14 +84,15 @@ public class CallBackController {
                 return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
             }
             //调用工厂模式异步处理数据
-            SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
-            ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(type);
-            iSyncSysInfo.SyncSysInfo(type, callBackContent);
+            if(isSyncDingTalk){
+                SyncSysInfoFactory syncSysInfoFactory = new SyncSysInfoFactory();
+                ISyncSysInfo iSyncSysInfo = syncSysInfoFactory.getSyncSysInfoService(type);
+                iSyncSysInfo.SyncSysInfo(type, callBackContent);
+            }
             // 返回success的加密信息表示回调处理成功
             return dingTalkEncryptor.getEncryptedMap(Constants.CALL_BACK_SUCCESS_RETURN, timestamp, nonce);
         } catch (Exception e) {
-            //todo 失败短信或者邮件通知，并记录下数据
-            log.error("process callback fail------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body, e);
+            log.error("@@dingTalkCallBack fail------》 signature:{},timestamp:{},nonce:{},body:{}" ,signature,timestamp,nonce,body, e);
             return Constants.CALL_BACK_FAIL_RETURN;
         }
     }

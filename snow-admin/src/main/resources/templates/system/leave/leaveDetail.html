@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<th:block th:include="include :: header('人事审批')" />
+	<th:block th:include="include :: header('请假详情')" />
 	<th:block th:include="include :: jsonview-css" />
 	<th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
@@ -45,10 +45,10 @@
 				<input type="hidden" name="fileUrl" id="fileKey" th:value="${sysOaLeave.fileUrl}">
 				<div class="form-control-static">
 					<a   id="fileName"></a>
+					<a  th:onclick="preview(${appFrom.fileUrl})">预览</a>
 				</div>
 			</div>
 		</div>
-
 	</form>
     </div>
     <th:block th:include="include :: footer" />
@@ -67,6 +67,9 @@
 			$('#fileName').attr('href',"../../../common/download?fileKey="+filekey);
 			$("#fileName").text(data.name);
 	    });
+		function preview(url) {
+			window.open('http://47.98.36.102:8012/onlinePreview?url='+encodeURIComponent(Base64.encode(url)));
+		}
 
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val();
