@@ -94,6 +94,9 @@ public class SysOaTaskController extends BaseController
     {
         startPage();
         List<SysOaTaskDistribute> list = sysOaTaskDistributeService.selectSysOaTaskDistributeList(sysOaTaskDistribute);
+        if(CollUtil.isNotEmpty(list)){
+            warpSysOaTask(list);
+        }
         return getDataTable(list);
     }
     /**

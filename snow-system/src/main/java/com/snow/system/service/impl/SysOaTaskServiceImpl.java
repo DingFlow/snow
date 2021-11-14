@@ -21,12 +21,14 @@ import com.snow.system.mapper.SysOaTaskMapper;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysOaTaskService;
 import com.snow.system.service.ISysUserService;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.compress.utils.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -44,7 +46,7 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     @Autowired
     private ISysOaTaskDistributeService sysOaTaskDistributeService;
 
-    @Autowired
+    @Resource
     private SysOaTaskDistributeMapper sysOaTaskDistributeMapper;
 
     @Autowired
@@ -95,11 +97,11 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
         sysOaTask.setTaskNo(newSequenceNo);
         sysOaTask.setTaskStatus(TaskStatus.UN_FINISH.getCode());
         List<String> taskDistributeIdList= sysOaTask.getTaskDistributeId();
+        List<SysOaTaskDistribute> sysOaTaskDistributeList= Lists.newArrayList();
         if(CollUtil.isNotEmpty(taskDistributeIdList)){
             taskDistributeIdList.forEach(t->{
                 SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
-                //任务分配人
-                sysOaTaskDistribute.setTaskDistributeId(sysOaTask.getCreateBy());
+                sysOaTaskDistribute.setTaskDistributeId(t);
                 sysOaTaskDistribute.setTaskNo(newSequenceNo);
                 sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.RUNNING.getCode());
                 sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
@@ -107,11 +109,13 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
                 sysOaTaskDistribute.setSysOaTask(sysOaTask);
                 //发送消息
                 sendInnerMessage(sysOaTaskDistribute);
-                //事件发送
-                SyncEvent<SysOaTaskDistribute> syncEvent = new SyncEvent(sysOaTaskDistribute, DingTalkListenerType.WORK_RECODE_CREATE);
-                applicationContext.publishEvent(syncEvent);
+                sysOaTaskDistributeList.add(sysOaTaskDistribute);
             });
         }
+        sysOaTask.setSysOaTaskDistributeList(sysOaTaskDistributeList);
+        //事件发送
+        SyncEvent<SysOaTask> syncEvent = new SyncEvent(sysOaTask, DingTalkListenerType.WORK_RECODE_CREATE);
+        applicationContext.publishEvent(syncEvent);
         return sysOaTaskMapper.insertSysOaTask(sysOaTask);
     }
 

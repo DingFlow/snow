@@ -88,8 +88,8 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
     }
 
     @Override
-    public String createTodoTask(SysOaTaskDistribute sysOaTaskDistribute) {
-        SysOaTask sysOaTask = sysOaTaskDistribute.getSysOaTask();
+    public String createTodoTask(SysOaTask sysOaTask) {
+
         List<String> taskDistributeId = sysOaTask.getTaskDistributeId();
 
         CreateTodoTaskHeaders createTodoTaskHeaders = new CreateTodoTaskHeaders();
@@ -109,15 +109,15 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
                 .setIsOnlyShowExecutor(true)
                 .setPriority(sysOaTask.getPriority())
                 .setNotifyConfigs(notifyConfigs);
-        if (ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime())) {
-            createTodoTaskRequest.setDueTime(sysOaTaskDistribute.getTaskCompleteTime().getTime());
-        }
         //执行者id
         if(CollUtil.isNotEmpty(taskDistributeId)){
             List<String> executorIds = taskDistributeId.stream().map(t -> {
                 return userService.getUnionIdBySysUserId(Long.parseLong(t));
             }).collect(Collectors.toList());
             createTodoTaskRequest.setExecutorIds(executorIds);
+        }
+        if(ObjectUtil.isNotNull(sysOaTask.getExpectedTime())){
+            createTodoTaskRequest.setDueTime(sysOaTask.getExpectedTime().getTime());
         }
         try {
             CreateTodoTaskResponse response = createTodoClient().createTodoTaskWithOptions(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getCreateBy())), createTodoTaskRequest, createTodoTaskHeaders, new RuntimeOptions());

@@ -68,13 +68,6 @@ public class SysOaTask extends BaseEntity
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date taskCompleteTime;
 
-    /** 任务开始时间 */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date taskStartTime;
-
-    /** 任务挂起时间 */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date taskSuspendTime;
 
     /** 乐观锁 */
     @Excel(name = "乐观锁")
@@ -83,5 +76,7 @@ public class SysOaTask extends BaseEntity
     /** 删除标识 */
     @Excel(name = "删除标识")
     private Long isDelete;
+
+    private List<com.snow.system.domain.SysOaTaskDistribute> sysOaTaskDistributeList;
 
 }

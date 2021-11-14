@@ -31,7 +31,7 @@ public interface WorkRecodeService  {
      * @param sysOaTask
      * @return
      */
-     String createTodoTask(SysOaTaskDistribute sysOaTaskDistribute);
+     String createTodoTask(SysOaTask sysOaTask);
 
     /**
      * 删除待办（新）

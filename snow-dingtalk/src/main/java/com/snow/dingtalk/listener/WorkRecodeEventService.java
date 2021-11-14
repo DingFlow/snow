@@ -36,7 +36,7 @@ public class WorkRecodeEventService implements ISyncDingTalkInfo {
         Integer code = eventType.getCode();
         //钉钉创建待办
         if(code.equals(DingTalkListenerType.WORK_RECODE_CREATE.getCode())){
-            SysOaTaskDistribute sysOaTask=(SysOaTaskDistribute)syncEvent.getSource();
+            SysOaTask sysOaTask=(SysOaTask)syncEvent.getSource();
             log.info("@@创建钉钉待办系统传入的参数：{}",JSON.toJSONString(sysOaTask));
             workRecodeService.createTodoTask(sysOaTask);
         }
