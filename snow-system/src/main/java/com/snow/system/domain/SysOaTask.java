@@ -77,6 +77,6 @@ public class SysOaTask extends BaseEntity
     @Excel(name = "删除标识")
     private Long isDelete;
 
-    private List<com.snow.system.domain.SysOaTaskDistribute> sysOaTaskDistributeList;
+    private List<SysOaTaskDistribute> sysOaTaskDistributeList;
 
 }
