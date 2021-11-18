@@ -6,7 +6,9 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 /**
  * druid 配置属性
- * 
+ * privateKey:MIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAjl7LDG9yssljrk70yXzSIHNZhYNiWHf3oV40DPSHhRzoKWWZ4A6tl8ZU3hFyOLMn/XuCTBPQoLaQ9hHJUTjyQwIDAQABAkAtwshPGe9rChJRL628qbM8nPb0VDOjLgRZSNdAJsT8gsA2BW9OasAHRIQfxWuiE0tlCg6UeMftQoltLPG3bCFJAiEAyNpvrKad/XQJGKz1jIhFQpiQ2Q9+U46qyZvTcj2bgf0CIQC1dbVRbS+2pCPDmHNFeNSw/8mGXRnBZLRB9D10TL9ZPwIhAKxk6LNc84BG50PZuIzdreziPHlCViBr9OVErXGBtYcVAiEAikytJeM+00fkjiW57T/7cu9wi7yXbaMwE3hwAhygVgcCIQCUs2A67Q3tYAVT8zRR0VM3APjeBGUVQI0ghXvFSnDe3w==
+ * publicKey:MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI5eywxvcrLJY65O9Ml80iBzWYWDYlh396FeNAz0h4Uc6CllmeAOrZfGVN4RcjizJ/17gkwT0KC2kPYRyVE48kMCAwEAAQ==
+ * password:VXTvn41xh0+92G8KAdvjQct2ZZ+IhRGm2MqTA38kayy48QwO/vSbTnTeTMVQ6s3axHWhQi9l1ZD5dyJUOenyNA==
  * @author snow
  */
 @Configuration
@@ -45,6 +47,9 @@ public class DruidProperties
     @Value("${spring.datasource.druid.testOnReturn}")
     private boolean testOnReturn;
 
+    @Value("${spring.datasource.druid.connectProperties}")
+    private String connectProperties;
+
     public DruidDataSource dataSource(DruidDataSource datasource)
     {
         /** 配置初始化大小、最小、最大 */
@@ -72,6 +77,8 @@ public class DruidProperties
         datasource.setTestOnBorrow(testOnBorrow);
         /** 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 */
         datasource.setTestOnReturn(testOnReturn);
+        /** 为数据库密码提供加密功能 */
+        datasource.setConnectionProperties(connectProperties);
         return datasource;
     }
 }

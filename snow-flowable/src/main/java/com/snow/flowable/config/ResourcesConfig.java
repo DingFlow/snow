@@ -1,5 +1,7 @@
 package com.snow.flowable.config;
 
+import com.snow.common.constant.Constants;
+import com.snow.framework.interceptor.RepeatSubmitInterceptor;
 import com.snow.system.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,9 +10,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.snow.common.config.Global;
-import com.snow.common.constant.Constants;
-import com.snow.framework.interceptor.RepeatSubmitInterceptor;
 
 /**
  * 通用配置
