@@ -3682,14 +3682,14 @@ layui.config({base: './ayq/modules/'}).define(["layer", "laytpl", "element", "fo
                     success: function(result) {
                         if (result.code === 0) {
                             layer.msg(result.msg, {icon: 1});
+                            setTimeout(function(){
+                                var index = parent.layer.getFrameIndex(window.name);
+                                layer.close(index);//关闭弹出层
+                                location.reload();
+                            }, 1000);
                         } else {
                             layer.msg(result.msg, {icon: 2});
                         }
-                        setTimeout(function(){
-                            var index = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(index);//关闭弹出层
-                            parent.location.reload();
-                        }, 1000);
                     }
                 };
                 $.ajax(config);
