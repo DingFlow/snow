@@ -1,10 +1,5 @@
 package com.snow.from.controller;
 
-import cn.hutool.cache.CacheUtil;
-import cn.hutool.cache.impl.TimedCache;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ListUtil;
-import com.alibaba.fastjson.JSON;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -12,26 +7,16 @@ import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.poi.ExcelUtil;
-import com.snow.framework.util.ShiroUtils;
-import com.snow.from.domain.FieldContentDTO;
-import com.snow.from.domain.FromInfoDTO;
-import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
 import com.snow.from.service.ISysFormFieldService;
 import com.snow.from.service.ISysFormInstanceService;
-import com.snow.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 单实例Controller
@@ -87,58 +72,6 @@ public class SysFormInstanceController extends BaseController
     }
 
     /**
-     *
-     * 保存表单数据
-     * @param fromInfoDTO
-     * @return
-     */
-    @PostMapping("/saveFromInfo")
-    @ResponseBody
-    @Transactional
-    public AjaxResult saveFromInfo(@RequestBody FromInfoDTO fromInfoDTO)
-    {
-        SysUser sysUser = ShiroUtils.getSysUser();
-        String contentHtml = fromInfoDTO.getContentHtml();
-        Object ortumJson = JSON.parseObject(contentHtml).get(FromInfoDTO.ORTUM_JSON);
-
-        List<FieldContentDTO> fieldContentDTOS = JSON.parseArray(JSON.toJSONString(ortumJson), FieldContentDTO.class);
-        if(fieldContentDTOS.size()==0){
-            return AjaxResult.error("还没有创建组件呢！");
-        }
-        SysFormInstance sysFormInstanceCode = sysFormInstanceService.selectSysFormInstanceByFormCode(fromInfoDTO.getFormCode());
-        if(StringUtils.isNotNull(sysFormInstanceCode)){
-            return AjaxResult.error(String.format("表单编号:%已存在",fromInfoDTO.getFormCode()));
-        }
-        SysFormInstance sysFormInstanceName = sysFormInstanceService.selectSysFormInstanceByFormCode(fromInfoDTO.getColumnName());
-        if(StringUtils.isNotNull(sysFormInstanceName)){
-            return AjaxResult.error(String.format("表单名称:%已存在",fromInfoDTO.getFormName()));
-        }
-        SysFormInstance sysFormInstance=new SysFormInstance();
-        sysFormInstance.setFormCode(fromInfoDTO.getFormCode());
-        sysFormInstance.setFormName(fromInfoDTO.getFormName());
-        sysFormInstance.setRev(Long.parseLong(fromInfoDTO.getVersion()));
-        sysFormInstance.setFromContentHtml(contentHtml);
-        sysFormInstance.setCreateBy(sysUser.getUserName());
-        sysFormInstance.setUpdateTime(new Date());
-        sysFormInstanceService.insertSysFormInstance(sysFormInstance);
-
-
-        fieldContentDTOS.stream().forEach(t->{
-            SysFormField sysFormField=new SysFormField();
-            sysFormField.setFromId(sysFormInstance.getId());
-            sysFormField.setFieldKey(t.getName());
-            sysFormField.setFieldName(t.getTitle());
-            sysFormField.setFieldType(t.getComponentKey());
-            sysFormField.setFieldHtml(t.getHtml());
-            sysFormField.setRev(sysFormInstance.getRev());
-            //组件属性
-            sysFormField.setRemark(t.getComponentProperties());
-            sysFormFieldService.insertSysFormField(sysFormField);
-        });
-        return AjaxResult.success(fromInfoDTO);
-    }
-
-    /**
      * 预览
      * @return
      */
@@ -146,36 +79,19 @@ public class SysFormInstanceController extends BaseController
     public String fromPreview(@PathVariable("id") Long id,ModelMap mmap)
     {
         mmap.put("formId",id);
-        return prefix+"/fromPreview";
+        return "/fromPreview";
     }
     /**
      * 获取表单内容
      * @param formId
      * @return
      */
-    @GetMapping("/getFromInfo/{formId}")
+    @PostMapping("/getFromInfo")
     @ResponseBody
-    public AjaxResult getFromInfo(@PathVariable("formId")Long formId)
+    public AjaxResult getFromInfo(@RequestParam Long formId)
     {
-        FromInfoDTO fromInfoDTO=new FromInfoDTO();
         SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(formId);
-        fromInfoDTO.setFormCode(sysFormInstance.getFormCode());
-        fromInfoDTO.setFormName(sysFormInstance.getFormName());
-        fromInfoDTO.setVersion(String.valueOf(sysFormInstance.getRev()));
-        fromInfoDTO.setId(String.valueOf(sysFormInstance.getId()));
-        SysFormField sysFormField=new SysFormField();
-        sysFormField.setFromId(formId);
-        List<SysFormField> sysFormFieldList = sysFormFieldService.selectSysFormFieldList(sysFormField);
-        if(CollectionUtil.isNotEmpty(sysFormFieldList)){
-            String columnID = sysFormFieldList.stream().map(SysFormField::getFieldKey).collect(Collectors.joining(","));
-            String columnName = sysFormFieldList.stream().map(SysFormField::getFieldName).collect(Collectors.joining(","));
-            fromInfoDTO.setColumnID(columnID);
-            fromInfoDTO.setColumnName(columnName);
-            fromInfoDTO.setContentHtml(sysFormInstance.getFromContentHtml());
-            fromInfoDTO.setEditor(sysFormInstance.getCreateBy());
-            fromInfoDTO.setEditTime(sysFormInstance.getUpdateTime());
-        }
-        return AjaxResult.success(fromInfoDTO);
+        return AjaxResult.success(sysFormInstance.getFromContentHtml());
     }
     /**
      * 新增单实例

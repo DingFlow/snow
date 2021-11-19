@@ -3,109 +3,152 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.snow.from.mapper.SysFormFieldMapper">
-    
+
     <resultMap type="SysFormField" id="SysFormFieldResult">
-        <result property="id"    column="id_"    />
-        <result property="fieldKey"    column="field_key_"    />
-        <result property="fieldName"    column="field_name_"    />
-        <result property="fieldType"    column="field_type_"    />
-        <result property="fieldHtml"    column="field_html_"    />
-        <result property="remark"    column="remark_"    />
+        <result property="id"    column="id"    />
+        <result property="fieldKey"    column="field_key"    />
+        <result property="fieldName"    column="field_name"    />
+        <result property="fieldType"    column="field_type"    />
+        <result property="options"    column="options"    />
+        <result property="document"    column="document"    />
+        <result property="expression"    column="expression"    />
+        <result property="defaultValue"    column="defaultValue"    />
+        <result property="required"    column="required"    />
+        <result property="disabled"    column="disabled"    />
+        <result property="readonly"    column="readonly"    />
+        <result property="maxlength"    column="maxlength"    />
+        <result property="width"    column="width"    />
+        <result property="labelWidth"    column="label_width"    />
+        <result property="placeholder"    column="placeholder"    />
+        <result property="fieldHtml"    column="field_html"    />
+        <result property="remark"    column="remark"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="updateBy"    column="update_by"    />
-        <result property="rev"    column="rev_"    />
-        <result property="tenantId"    column="tenant_id_"    />
         <result property="isDelete"    column="is_delete"    />
-
         <result property="fromId"    column="from_id"    />
     </resultMap>
 
     <sql id="selectSysFormFieldVo">
-        select id_, field_key_, field_name_, field_type_, from_id,field_html_, remark_, create_by, create_time, update_time, update_by, rev_, tenant_id_, is_delete from sys_form_field
+        select id, field_key, field_name, field_type, options, document, expression, defaultValue, required, disabled, readonly, maxlength, width, label_width, placeholder, field_html, remark, create_by, create_time, update_time, update_by, is_delete, from_id from sys_form_field
     </sql>
 
     <select id="selectSysFormFieldList" parameterType="SysFormField" resultMap="SysFormFieldResult">
         <include refid="selectSysFormFieldVo"/>
-        <where>  
-            <if test="fieldKey != null  and fieldKey != ''"> and field_key_ = #{fieldKey}</if>
-            <if test="fieldName != null  and fieldName != ''"> and field_name_ = #{fieldName}</if>
-            <if test="fieldType != null  and fieldType != ''"> and field_type_ = #{fieldType}</if>
-            <if test="fieldHtml != null  and fieldHtml != ''"> and field_html_ = #{fieldHtml}</if>
-            <if test="remark != null  and remark != ''"> and remark_ = #{remark}</if>
-            <if test="rev != null "> and rev_ = #{rev}</if>
-            <if test="tenantId != null  and tenantId != ''"> and tenant_id_ = #{tenantId}</if>
+        <where>
+            <if test="fieldKey != null  and fieldKey != ''"> and field_key = #{fieldKey}</if>
+            <if test="fieldName != null  and fieldName != ''"> and field_name like concat('%', #{fieldName}, '%')</if>
+            <if test="fieldType != null  and fieldType != ''"> and field_type = #{fieldType}</if>
+            <if test="options != null  and options != ''"> and options = #{options}</if>
+            <if test="document != null  and document != ''"> and document = #{document}</if>
+            <if test="expression != null  and expression != ''"> and expression = #{expression}</if>
+            <if test="defaultValue != null  and defaultValue != ''"> and defaultValue = #{defaultValue}</if>
+            <if test="required != null  and required != ''"> and required = #{required}</if>
+            <if test="disabled != null  and disabled != ''"> and disabled = #{disabled}</if>
+            <if test="readonly != null  and readonly != ''"> and readonly = #{readonly}</if>
+            <if test="maxlength != null  and maxlength != ''"> and maxlength = #{maxlength}</if>
+            <if test="width != null  and width != ''"> and width = #{width}</if>
+            <if test="labelWidth != null "> and label_width = #{labelWidth}</if>
+            <if test="placeholder != null  and placeholder != ''"> and placeholder = #{placeholder}</if>
+            <if test="fieldHtml != null  and fieldHtml != ''"> and field_html = #{fieldHtml}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
             <if test="fromId != null "> and from_id = #{fromId}</if>
         </where>
     </select>
-    
-    <select id="selectSysFormFieldById" parameterType="Long" resultMap="SysFormFieldResult">
+
+    <select id="selectSysFormFieldById" parameterType="Integer" resultMap="SysFormFieldResult">
         <include refid="selectSysFormFieldVo"/>
-        where id_ = #{id}
+        where id = #{id}
     </select>
-        
+
     <insert id="insertSysFormField" parameterType="SysFormField" useGeneratedKeys="true" keyProperty="id">
         insert into sys_form_field
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="fieldKey != null and fieldKey != ''">field_key_,</if>
-            <if test="fieldName != null and fieldName != ''">field_name_,</if>
-            <if test="fieldType != null and fieldType != ''">field_type_,</if>
-            <if test="fieldHtml != null and fieldHtml != ''">field_html_,</if>
-            <if test="remark != null">remark_,</if>
+            <if test="fieldKey != null and fieldKey != ''">field_key,</if>
+            <if test="fieldName != null and fieldName != ''">field_name,</if>
+            <if test="fieldType != null and fieldType != ''">field_type,</if>
+            <if test="options != null">options,</if>
+            <if test="document != null">document,</if>
+            <if test="expression != null">expression,</if>
+            <if test="defaultValue != null">defaultValue,</if>
+            <if test="required != null">required,</if>
+            <if test="disabled != null">disabled,</if>
+            <if test="readonly != null">readonly,</if>
+            <if test="maxlength != null">maxlength,</if>
+            <if test="width != null">width,</if>
+            <if test="labelWidth != null">label_width,</if>
+            <if test="placeholder != null">placeholder,</if>
+            <if test="fieldHtml != null and fieldHtml != ''">field_html,</if>
+            <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="updateBy != null">update_by,</if>
-            <if test="rev != null">rev_,</if>
-            <if test="tenantId != null">tenant_id_,</if>
             <if test="isDelete != null">is_delete,</if>
-            <if test="fromId != null ">from_id ,</if>
-         </trim>
+            <if test="fromId != null">from_id,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fieldKey != null and fieldKey != ''">#{fieldKey},</if>
             <if test="fieldName != null and fieldName != ''">#{fieldName},</if>
             <if test="fieldType != null and fieldType != ''">#{fieldType},</if>
+            <if test="options != null">#{options},</if>
+            <if test="document != null">#{document},</if>
+            <if test="expression != null">#{expression},</if>
+            <if test="defaultValue != null">#{defaultValue},</if>
+            <if test="required != null">#{required},</if>
+            <if test="disabled != null">#{disabled},</if>
+            <if test="readonly != null">#{readonly},</if>
+            <if test="maxlength != null">#{maxlength},</if>
+            <if test="width != null">#{width},</if>
+            <if test="labelWidth != null">#{labelWidth},</if>
+            <if test="placeholder != null">#{placeholder},</if>
             <if test="fieldHtml != null and fieldHtml != ''">#{fieldHtml},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
-            <if test="rev != null">#{rev},</if>
-            <if test="tenantId != null">#{tenantId},</if>
             <if test="isDelete != null">#{isDelete},</if>
-            <if test="fromId != null "> #{fromId}</if>
-         </trim>
+            <if test="fromId != null">#{fromId},</if>
+        </trim>
     </insert>
 
     <update id="updateSysFormField" parameterType="SysFormField">
         update sys_form_field
         <trim prefix="SET" suffixOverrides=",">
-            <if test="fieldKey != null and fieldKey != ''">field_key_ = #{fieldKey},</if>
-            <if test="fieldName != null and fieldName != ''">field_name_ = #{fieldName},</if>
-            <if test="fieldType != null and fieldType != ''">field_type_ = #{fieldType},</if>
-            <if test="fieldHtml != null and fieldHtml != ''">field_html_ = #{fieldHtml},</if>
-            <if test="remark != null">remark_ = #{remark},</if>
+            <if test="fieldKey != null and fieldKey != ''">field_key = #{fieldKey},</if>
+            <if test="fieldName != null and fieldName != ''">field_name = #{fieldName},</if>
+            <if test="fieldType != null and fieldType != ''">field_type = #{fieldType},</if>
+            <if test="options != null">options = #{options},</if>
+            <if test="document != null">document = #{document},</if>
+            <if test="expression != null">expression = #{expression},</if>
+            <if test="defaultValue != null">defaultValue = #{defaultValue},</if>
+            <if test="required != null">required = #{required},</if>
+            <if test="disabled != null">disabled = #{disabled},</if>
+            <if test="readonly != null">readonly = #{readonly},</if>
+            <if test="maxlength != null">maxlength = #{maxlength},</if>
+            <if test="width != null">width = #{width},</if>
+            <if test="labelWidth != null">label_width = #{labelWidth},</if>
+            <if test="placeholder != null">placeholder = #{placeholder},</if>
+            <if test="fieldHtml != null and fieldHtml != ''">field_html = #{fieldHtml},</if>
+            <if test="remark != null">remark = #{remark},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
-            <if test="rev != null">rev_ = #{rev},</if>
-            <if test="tenantId != null">tenant_id_ = #{tenantId},</if>
             <if test="isDelete != null">is_delete = #{isDelete},</if>
-            <if test="fromId != null ">  from_id = #{fromId},</if>
+            <if test="fromId != null">from_id = #{fromId},</if>
         </trim>
-        where id_ = #{id}
+        where id = #{id}
     </update>
 
-    <delete id="deleteSysFormFieldById" parameterType="Long">
-        delete from sys_form_field where id_ = #{id}
+    <delete id="deleteSysFormFieldById" parameterType="Integer">
+        delete from sys_form_field where id = #{id}
     </delete>
 
     <delete id="deleteSysFormFieldByIds" parameterType="String">
-        delete from sys_form_field where id_ in 
+        delete from sys_form_field where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

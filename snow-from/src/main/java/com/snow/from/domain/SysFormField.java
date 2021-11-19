@@ -1,11 +1,7 @@
 package com.snow.from.domain;
 
-import com.snow.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 单字段对象 sys_form_field
@@ -22,31 +18,71 @@ public class SysFormField extends BaseEntity
     private Long id;
 
     /** 字段标识 */
-    @Excel(name = "字段标识")
     private String fieldKey;
 
     /** 字段名称 */
-    @Excel(name = "字段名称")
     private String fieldName;
 
     /** 字段类型 */
-    @Excel(name = "字段类型")
     private String fieldType;
 
     /** 字段html */
-    @Excel(name = "字段html")
     private String fieldHtml;
+    /**
+     * 字段placeholder
+     */
+    private String placeholder;
 
-    /** 乐观锁版本号 */
-    @Excel(name = "乐观锁版本号")
-    private Long rev;
+    /**
+     * 宽度
+     */
+    private double labelWidth;
 
-    /** 租户ID */
-    @Excel(name = "租户ID")
-    private String tenantId;
+    /**
+     * 宽度百分比
+     */
+    private String width;
+
+    /**
+     * 最大长度
+     */
+    private String maxlength;
+
+    /**
+     * 是否只读
+     */
+    private boolean readonly;
+
+    /**
+     * 是否禁用
+     */
+    private boolean disabled;
+
+    /**
+     * 是否必填
+     */
+    private boolean required;
+
+    /**
+     * 默认值
+     */
+    private String defaultValue;
+    /**
+     * 验证表达式
+     */
+    private String expression;
+
+    /**
+     * 帮助文档
+     */
+    private String document;
+
+    /**
+     * 可选项
+     */
+    private String options;
 
     /** 删除标识（0--正常，1--删除） */
-    @Excel(name = "删除标识", readConverterExp = "0=--正常，1--删除")
     private Long isDelete;
 
     private Long fromId;

@@ -1,26 +1,23 @@
 package com.snow.from.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.from.domain.FieldContentDTO;
-import com.snow.from.domain.FromInfoDTO;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
 import com.snow.from.domain.request.FormFieldRequest;
 import com.snow.from.domain.request.FormRequest;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
 import com.snow.from.service.impl.SysFormInstanceServiceImpl;
-import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -65,13 +62,17 @@ public class FormController {
         return "/editorMenu";
     }
 
+    /**
+     * 保存表单数据
+     * @param formRequest 表单参数
+     * @return 是否成功
+     */
     @PostMapping("/form/saveForm")
     @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult saveForm(FormRequest formRequest){
-
         log.info("=====>{}", JSON.toJSONString(formRequest));
         String formData = formRequest.getFormData();
-
         if(StrUtil.isBlank(formData)){
             return AjaxResult.error("还没有创建组件呢！");
         }
@@ -83,6 +84,7 @@ public class FormController {
         if(StringUtils.isNotNull(sysFormInstanceName)){
             return AjaxResult.error(String.format("表单名称:%已存在",formRequest.getFormName()));
         }
+        //保存主表数据
         SysFormInstance sysFormInstance=new SysFormInstance();
         sysFormInstance.setFormCode(formRequest.getFormId());
         sysFormInstance.setFormName(formRequest.getFormName());
@@ -91,18 +93,39 @@ public class FormController {
         sysFormInstance.setCreateBy(String.valueOf(ShiroUtils.getUserId()));
         sysFormInstance.setUpdateTime(new Date());
         sysFormInstanceService.insertSysFormInstance(sysFormInstance);
+        //保存子表数据
+        saveFormField(sysFormInstance.getId(),formData);
+        return AjaxResult.success();
+    }
 
-        List<FormFieldRequest> fieldContentDTOS = JSON.parseArray(formData, FormFieldRequest.class);
-        for (int i=0;i<fieldContentDTOS.size();i++){
-            SysFormField sysFormField=new SysFormField();
-            sysFormField.setFromId(sysFormInstance.getId());
-            sysFormField.setFieldKey(fieldContentDTOS.get(i).getId());
-            sysFormField.setFieldName(fieldContentDTOS.get(i).getLabel());
-            sysFormField.setFieldType(fieldContentDTOS.get(i).getTag());
+    /**
+     * 预览
+     * @return 预览页
+     */
+    @GetMapping("/fromPreview")
+    public String fromPreview(@RequestParam Long id, ModelMap mmap) {
+        SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(id);
+        mmap.put("formId",id);
+        mmap.put("name",sysFormInstance.getFormName());
+        return "/fromPreview";
+    }
+
+    /**
+     * 构建子表数据
+     * @param formId 表单id
+     * @param formData 表单数据
+     */
+    private void saveFormField(Long formId,String formData ){
+        List<FormFieldRequest> formFieldRequestList = JSON.parseArray(formData, FormFieldRequest.class);
+        for (int i=0;i<formFieldRequestList.size();i++){
+            FormFieldRequest formFieldRequest = formFieldRequestList.get(i);
+            SysFormField sysFormField = BeanUtil.copyProperties(formFieldRequest, SysFormField.class,"id");
+            sysFormField.setFromId(formId);
+            sysFormField.setFieldKey(formFieldRequest.getId());
+            sysFormField.setFieldName(formFieldRequest.getLabel());
+            sysFormField.setFieldType(formFieldRequest.getTag());
             sysFormField.setFieldHtml(JSON.parseArray(formData).getString(i));
-            sysFormField.setRev(sysFormInstance.getRev());
             sysFormFieldService.insertSysFormField(sysFormField);
         }
-        return AjaxResult.success();
     }
 }
