@@ -7,9 +7,12 @@ import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.poi.ExcelUtil;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormInstance;
 import com.snow.from.service.ISysFormFieldService;
 import com.snow.from.service.ISysFormInstanceService;
+import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,9 +35,9 @@ public class SysFormInstanceController extends BaseController
 
     @Autowired
     private ISysFormInstanceService sysFormInstanceService;
-    
+
     @Autowired
-    private ISysFormFieldService sysFormFieldService;
+    private SysFormDataRecordServiceImpl sysFormDataRecordService;
 
 
     @RequiresPermissions("system:instance:view")
@@ -53,6 +56,10 @@ public class SysFormInstanceController extends BaseController
     public TableDataInfo list(SysFormInstance sysFormInstance)
     {
         startPage();
+        if(!ShiroUtils.isAdmin()){
+            Long userId = ShiroUtils.getUserId();
+            sysFormInstance.setCreateBy(String.valueOf(userId));
+        }
         List<SysFormInstance> list = sysFormInstanceService.selectSysFormInstanceList(sysFormInstance);
         return getDataTable(list);
     }
@@ -140,6 +147,28 @@ public class SysFormInstanceController extends BaseController
         }
         return toAjax(sysFormInstanceService.updateSysFormInstance(sysFormInstance));
     }
+
+    @RequiresPermissions("system:record:view")
+    @GetMapping("/formRecord")
+    public String record(@RequestParam Long id,ModelMap mmap)
+    {
+        mmap.put("id",id);
+        return prefix + "/record";
+    }
+
+    /**
+     * 查询单数据记录列表
+     */
+    @RequiresPermissions("system:record:list")
+    @PostMapping("/recordList")
+    @ResponseBody
+    public TableDataInfo recordList(SysFormDataRecord sysFormDataRecord)
+    {
+        startPage();
+        List<SysFormDataRecord> list = sysFormDataRecordService.selectSysFormDataRecordList(sysFormDataRecord);
+        return getDataTable(list);
+    }
+
 
     /**
      * 删除单实例

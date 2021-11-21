@@ -6,10 +6,13 @@ import com.alibaba.fastjson.JSON;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.ShiroUtils;
+import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
 import com.snow.from.domain.request.FormFieldRequest;
+import com.snow.from.domain.request.FormRecordRequest;
 import com.snow.from.domain.request.FormRequest;
+import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
 import com.snow.from.service.impl.SysFormInstanceServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author qimingjin
@@ -38,6 +42,9 @@ public class FormController {
 
     @Autowired
     private SysFormFieldServiceImpl sysFormFieldService;
+
+    @Autowired
+    private SysFormDataRecordServiceImpl sysFormDataRecordService;
     /**
      * 跳转form表单首页
      * @return 首页url路径
@@ -110,6 +117,27 @@ public class FormController {
         return "/fromPreview";
     }
 
+    /**
+     * 保存表单填写记录
+     * @return
+     */
+    @PostMapping("/form/saveFormRecord")
+    @ResponseBody
+    public AjaxResult saveFormRecord(@RequestParam String formId ,
+                                     @RequestParam String formData ){
+        Long userId = ShiroUtils.getUserId();
+        SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
+        sysFormDataRecord.setBelongUserId(String.valueOf(userId));
+        sysFormDataRecord.setFormData(formData);
+        sysFormDataRecord.setFormId(formId);
+        sysFormDataRecord.setCreateBy(String.valueOf(userId));
+        //获取最大版本号
+        Integer maxVersion = sysFormDataRecordService.getMaxVersionByUsrId(userId);
+        //版本号+1组成最新版本号
+        sysFormDataRecord.setVersion(Optional.ofNullable(maxVersion).orElse(0)+1);
+        sysFormDataRecordService.insertSysFormDataRecord(sysFormDataRecord);
+        return AjaxResult.success();
+    }
     /**
      * 构建子表数据
      * @param formId 表单id

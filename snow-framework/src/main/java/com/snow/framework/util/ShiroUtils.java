@@ -68,6 +68,15 @@ public class ShiroUtils
         return getSysUser().getUserId().longValue();
     }
 
+    /**
+     * 判断当前用户是否是管理员
+     * @return true是，false不是
+     */
+    public static boolean isAdmin()
+    {
+       return getSysUser().isAdmin();
+    }
+
     public static String getDingUserId()
     {
         return getSysUser().getDingUserId();
