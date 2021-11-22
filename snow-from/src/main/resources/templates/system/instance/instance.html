@@ -90,8 +90,7 @@
 
         function fromDetail(id) {
             var detailUrl="/fromPreview?id="+id;
-            $.modal.openTab("详情", detailUrl);
-
+            $.modal.openFull("填写表单", detailUrl);
         }
         function designFrom() {
             var detailUrl="/formIndex";
@@ -101,7 +100,6 @@
         function formRecordDetail(id) {
             var detailUrl="/from/instance/formRecord?id="+id;
             $.modal.openTab("表单数据列表", detailUrl);
-
         }
     </script>
 </body>

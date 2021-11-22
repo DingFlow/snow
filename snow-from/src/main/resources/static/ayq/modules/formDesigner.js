@@ -3567,7 +3567,7 @@ layui.config({base: './ayq/modules/'}).define(["layer", "laytpl", "element", "fo
                     , '<div id="testdemo" style="margin: 10px 20px;"><form  class="layui-form" style="height:100%;" id="formPreviewForm">'
                     , '' + _htmlelem.html() + ''
                     , '<div class="layui-form-item">'
-                    , '<div class="layui-input-block">'
+                    , '<div class="layui-input-block layui-col-md4 layui-col-md-offset5">'
                     , '<button type="submit" class="layui-btn" lay-submit="" lay-filter="formPreviewForm">提交</button>'
                     , '<button type="reset" class="layui-btn layui-btn-primary">重置</button>'
                     , '</div>'

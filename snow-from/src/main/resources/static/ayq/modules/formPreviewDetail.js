@@ -119,18 +119,16 @@ layui.config({base: './ayq/modules/'}).define(['layer', 'laytpl', 'element', 'fo
                 cronUrl:"运行路径",
                 bottom:"按钮组件",
             }
-            , MOD_NAME = 'formPreview'
+            , MOD_NAME = 'formPreviewDetail'
             , ELEM = '.layui-form-designer'
             , TPL_SUBMIT = ['<div class="layui-form-item">'
                 , '<div class="layui-input-block layui-col-md4 layui-col-md-offset5">'
-                , '<button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">提交</button>'
-                , '<button type="reset" class="layui-btn layui-btn-primary">重置</button>'
                 , '</div>'
                 , '</div>'].join('')
             //外部接口
 
-            , formPreview = {
-                index: layui.formPreview ? (layui.formPreview.index + 10000) : 0
+            , formPreviewDetail = {
+                index: layui.formPreviewDetail ? (layui.formPreviewDetail.index + 10000) : 0
 
                 //设置全局项
 
@@ -196,10 +194,10 @@ layui.config({base: './ayq/modules/'}).define(['layer', 'laytpl', 'element', 'fo
 
             , Class = function (options) {
                 var that = this;
-                that.index = ++formPreview.index; //增加实例，index 也是要增加
+                that.index = ++formPreviewDetail.index; //增加实例，index 也是要增加
                 that.config = $.extend({}
                     , that.config
-                    , formPreview.config
+                    , formPreviewDetail.config
                     , options);
                 that.render();
 
@@ -1638,13 +1636,13 @@ layui.config({base: './ayq/modules/'}).define(['layer', 'laytpl', 'element', 'fo
 
 
         //核心入口 初始化一个 regionSelect 类
-        formPreview.render = function (options) {
+        formPreviewDetail.render = function (options) {
             var ins = new Class(options);
             return thisIns.call(ins);
         };
 
-        exports('formPreview'
-            , formPreview);
+        exports('formPreviewDetail'
+            , formPreviewDetail);
 
 
     });

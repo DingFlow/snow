@@ -1,6 +1,7 @@
 package com.snow.from.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.snow.common.core.domain.AjaxResult;
@@ -137,6 +138,34 @@ public class FormController {
         sysFormDataRecord.setVersion(Optional.ofNullable(maxVersion).orElse(0)+1);
         sysFormDataRecordService.insertSysFormDataRecord(sysFormDataRecord);
         return AjaxResult.success();
+    }
+
+    /**
+     * 跳转到详情
+     * @param id 记录id
+     * @param map 返回前端的数据
+     * @return 跳转页面
+     */
+    @GetMapping("/toFormRecordDetail")
+    public String toFormRecordDetail(String id,ModelMap map){
+        SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordById(Integer.valueOf(id));
+        SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.valueOf(sysFormDataRecord.getFormId()));
+        map.put("id",id);
+        map.put("name",sysFormInstance.getFormName());
+        map.put("createTime", DateUtil.formatDateTime(sysFormInstance.getCreateTime()));
+        return "formDetail";
+    }
+
+    /**
+     * 表单详情
+     * @param id 表单记录id
+     * @return 表单数据
+     */
+    @PostMapping("/form/getFormRecordDetail")
+    @ResponseBody
+    public AjaxResult getFormRecordDetail(Integer id){
+        SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordById(id);
+        return AjaxResult.success(sysFormDataRecord.getFormData());
     }
     /**
      * 构建子表数据

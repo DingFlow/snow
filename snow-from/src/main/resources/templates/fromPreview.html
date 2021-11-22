@@ -20,11 +20,6 @@
         <div  id="testdemo" style="margin-top: 15px">
 
         </div>
-        <div style="margin-top: 20px" class="layui-row">
-            <div class="layui-col-md4 layui-col-md-offset5">
-                <button type="button" class="layui-btn layui-btn-normal" name="submit" id="getFormData">提交</button>
-            </div>
-        </div>
     </div>
 
 </div>
@@ -173,10 +168,13 @@
             };
             $.ajax(config);
         }
-        $('#getFormData').on('click', function () {
-            var data=render.getData();
+
+        //监听提交
+        form.on('submit(demo1)', function(data){
+            console.info("======>"+JSON.stringify(data))
+            var newData = render.getData();
             var dataFrom=render.getFormData();
-            $.each(data,function(i,item){
+            $.each(newData,function(i,item){
                 item["defaultValue"]=dataFrom[item["id"]];
             });
             // 再把数据提交到后台
@@ -187,16 +185,27 @@
                 dataType: "json",
                 data: {
                     "formId":formId,
-                    "formData":JSON.stringify(data)
+                    "formData":JSON.stringify(newData)
                 },
                 beforeSend: function () {
                     layer.msg("正在提交数据，请稍后...",{icon: 1});
                 },
                 success: function(result) {
-                    layer.msg("保存成功",{icon: 1});
+                    if (result.code === 0) {
+                        layer.msg(result.msg,{icon: 1});
+                        setTimeout(function () {
+                            //先得到当前iframe层的索引
+                            var index = parent.layer.getFrameIndex(window.name);
+                            //再执行关闭
+                            parent.layer.close(index);
+                        },2000)
+                    }else {
+                        layer.msg(result.msg,{icon: 2});
+                    }
                 }
             };
             $.ajax(config);
+            return false;
         });
     });
 

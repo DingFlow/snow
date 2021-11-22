@@ -11,19 +11,16 @@
 
 <body >
 <div >
-    <input type="hidden" name="formId" id="formId" th:value="${formId}">
+    <input type="hidden" name="id" id="id" th:value="${id}">
     <div style="margin: 20px 20px;padding: 20px 20px;border: 1px solid #009688;">
         <div style="margin-top: 20px">
             <h2 th:text="${name}" style="text-align: center"></h2>
         </div>
-
+        <div style="margin-top: 20px" class="layui-col-md4 layui-col-md-offset4">
+          <span>填表时间：</span>  <h5 th:text="${createTime}" style="text-align: center"></h5>
+        </div>
         <div  id="testdemo" style="margin-top: 15px">
 
-        </div>
-        <div style="margin-top: 20px" class="layui-row">
-            <div class="layui-col-md4 layui-col-md-offset5">
-                <button type="button" class="layui-btn layui-btn-normal" name="submit" id="getFormData">提交</button>
-            </div>
         </div>
     </div>
 
@@ -45,25 +42,22 @@
     var demojs = [];
     //JavaScript代码区域
     layui.config(
-        {base: './ayq/modules/'}).use(['formPreview', 'form','layer','upload'], function () {
+        {base: './ayq/modules/'}).use(['formPreviewDetail', 'form','layer','upload'], function () {
         var layer = layui.layer;
         var $ = layui.jquery;
         var upload  = layui.upload;
         var index = layui.index;
-        var formPreview = layui.formPreview;
+        var formPreview = layui.formPreviewDetail;
         var form = layui.form;
         var render;
         if (window.localStorage.getItem('layui_form_json') !== undefined) {
-            var formId=$("#formId").val();
+            var id=$("#id").val();
             var config = {
-                url: "/from/instance/getFromInfo",
+                url: "/form/getFormRecordDetail",
                 type: "post",
                 dataType: "json",
                 data: {
-                    "formId":formId
-                },
-                beforeSend: function () {
-                    layer.msg("正在处理中，请稍后...",{icon: 1});
+                    "id":id
                 },
                 success: function(result) {
                     if (result.code === 0) {
@@ -72,6 +66,7 @@
                             elem: '#testdemo',
                             data: demojs,
                         });
+                        render.globalDisable();
                         var images = render.getImages();
                         for (var i = 0; i < images.length; i++) {
                             upload.render({
