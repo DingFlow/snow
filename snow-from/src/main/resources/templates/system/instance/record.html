@@ -13,7 +13,7 @@
                         <ul>
                             <li>
                                 <label>版本号：</label>
-                                <input type="text" name="version"/>
+                                <input type="text" name="version" id="version"/>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -31,17 +31,12 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:record:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:record:remove')}]];
         var prefix = ctx + "/from/instance";
-
         $(function() {
             var options = {
                 url: "/from/instance/recordList",
-                createUrl: prefix + "/add",
-                updateUrl: prefix + "/edit/{id}",
-                removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
+                removeUrl: "/from/instance/removeRecord",
                 queryParams:queryParams,
                 modalName: "单数据记录",
                 columns: [{
@@ -56,9 +51,13 @@
                     field: 'formId',
                     title: '表单ID'
                 },
+                    {
+                        field: 'formName',
+                        title: '表单名称'
+                    },
                 {
-                    field: 'belongUserId',
-                    title: '表单操作人所属人id'
+                    field: 'belongUserName',
+                    title: '填写人'
                 },
                 {
                     field: 'version',

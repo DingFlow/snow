@@ -1,6 +1,7 @@
 package com.snow.from.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
@@ -11,7 +12,6 @@ import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
 import com.snow.from.domain.request.FormFieldRequest;
-import com.snow.from.domain.request.FormRecordRequest;
 import com.snow.from.domain.request.FormRequest;
 import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
@@ -79,18 +79,24 @@ public class FormController {
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult saveForm(FormRequest formRequest){
-        log.info("=====>{}", JSON.toJSONString(formRequest));
+        log.info("@@保存设计的表单前端传入的数据:{}", JSON.toJSONString(formRequest));
         String formData = formRequest.getFormData();
         if(StrUtil.isBlank(formData)){
             return AjaxResult.error("还没有创建组件呢！");
         }
+        if(StringUtils.isEmpty(formRequest.getFormId())){
+            return AjaxResult.error("表单id必填项");
+        }
+        if(StringUtils.isEmpty(formRequest.getFormName())){
+            return AjaxResult.error("表单名称必填项");
+        }
         SysFormInstance sysFormInstanceCode = sysFormInstanceService.selectSysFormInstanceByFormCode(formRequest.getFormId());
         if(StringUtils.isNotNull(sysFormInstanceCode)){
-            return AjaxResult.error(String.format("表单编号:%已存在",formRequest.getFormId()));
+            return AjaxResult.error(StrUtil.format("表单编号:{}已存在",formRequest.getFormId()));
         }
         SysFormInstance sysFormInstanceName = sysFormInstanceService.selectSysFormInstanceByFormName(formRequest.getFormName());
         if(StringUtils.isNotNull(sysFormInstanceName)){
-            return AjaxResult.error(String.format("表单名称:%已存在",formRequest.getFormName()));
+            return AjaxResult.error(StrUtil.format("表单名称:{}已存在",formRequest.getFormName()));
         }
         //保存主表数据
         SysFormInstance sysFormInstance=new SysFormInstance();
@@ -125,12 +131,14 @@ public class FormController {
     @PostMapping("/form/saveFormRecord")
     @ResponseBody
     public AjaxResult saveFormRecord(@RequestParam String formId ,
-                                     @RequestParam String formData ){
+                                     @RequestParam String formData,
+                                     @RequestParam String formField){
         Long userId = ShiroUtils.getUserId();
         SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
         sysFormDataRecord.setBelongUserId(String.valueOf(userId));
         sysFormDataRecord.setFormData(formData);
         sysFormDataRecord.setFormId(formId);
+        sysFormDataRecord.setFormField(formField);
         sysFormDataRecord.setCreateBy(String.valueOf(userId));
         //获取最大版本号
         Integer maxVersion = sysFormDataRecordService.getMaxVersionByUsrId(userId);
@@ -152,9 +160,10 @@ public class FormController {
         SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.valueOf(sysFormDataRecord.getFormId()));
         map.put("id",id);
         map.put("name",sysFormInstance.getFormName());
-        map.put("createTime", DateUtil.formatDateTime(sysFormInstance.getCreateTime()));
+        map.put("createTime",DateUtil.formatDateTime(sysFormInstance.getCreateTime()));
         return "formDetail";
     }
+
 
     /**
      * 表单详情

@@ -1,19 +1,20 @@
-package com.snow.from.domain;
+package com.snow.from.domain.response;
 
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * 单数据记录对象 sys_form_data_record
- * 
- * @author 阿吉
- * @date 2021-11-21
+ * @author qimingjin
+ * @Title:
+ * @Description:
+ * @date 2021/11/23 9:26
  */
 @Data
-public class SysFormDataRecord extends BaseEntity
-{
-    private static final long serialVersionUID = 1L;
+public class FormDataRecordResponse extends BaseEntity implements Serializable {
 
+    private static final long serialVersionUID = 5569500779097541889L;
     /** 主键ID */
     private Integer id;
 
@@ -21,9 +22,9 @@ public class SysFormDataRecord extends BaseEntity
     private String formId;
 
     /**
-     * 表单id数组
+     * 表单名称
      */
-    private String[] formIdList;
+    private String formName;
 
     /**
      * 表单内容
@@ -41,6 +42,8 @@ public class SysFormDataRecord extends BaseEntity
     /** 表单操作人所属人id */
     private String belongUserId;
 
+    /** 表单操作人所属人名称 */
+    private String belongUserName;
 
     /** 版本号 */
     private Integer version;

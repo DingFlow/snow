@@ -13,13 +13,16 @@
 <div >
     <input type="hidden" name="id" id="id" th:value="${id}">
     <div style="margin: 20px 20px;padding: 20px 20px;border: 1px solid #009688;">
-        <div style="margin-top: 20px">
+        <div style="margin-top: 20px" class="layui-row">
             <h2 th:text="${name}" style="text-align: center"></h2>
         </div>
-        <div style="margin-top: 20px" class="layui-col-md4 layui-col-md-offset4">
-          <span>填表时间：</span>  <h5 th:text="${createTime}" style="text-align: center"></h5>
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset8">
+                <h5>填表时间：[[${createTime}]]</h5>
+            </div>
         </div>
-        <div  id="testdemo" style="margin-top: 15px">
+        <br/>
+        <div  id="testdemo" style="margin-top: 20px">
 
         </div>
     </div>

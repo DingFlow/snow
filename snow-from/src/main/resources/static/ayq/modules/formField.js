@@ -224,7 +224,7 @@ layui.define(['layer'], function (exports) {
         iconPicker: {
             id:'-1',
             index:'-1',
-            label: "图标选择器",
+            label: "图标选择器（暂无）",
             tag: "iconPicker",
             tagIcon: 'iconPicker',
             labelWidth: 110,

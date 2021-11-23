@@ -21,4 +21,6 @@ public class FormRecordRequest implements Serializable {
 
     @NotBlank(message = "表单数据不能为空")
     private String formData;
+
+    private String formField;
 }

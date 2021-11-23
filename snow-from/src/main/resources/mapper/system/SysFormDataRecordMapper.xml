@@ -8,6 +8,7 @@
         <result property="id"    column="id"    />
         <result property="formId"    column="form_id"    />
         <result property="formData"    column="form_data"    />
+        <result property="formField"    column="form_field"    />
         <result property="formUrl"    column="form_url"    />
         <result property="belongUserId"    column="belong_user_id"    />
         <result property="createBy"    column="create_by"    />
@@ -18,7 +19,7 @@
     </resultMap>
 
     <sql id="selectSysFormDataRecordVo">
-        select id, form_id, form_data, form_url, belong_user_id, create_by, create_time, update_time, update_by, version from sys_form_data_record
+        select id, form_id, form_data, form_field,form_url, belong_user_id, create_by, create_time, update_time, update_by, version from sys_form_data_record
     </sql>
 
     <select id="selectSysFormDataRecordList" parameterType="SysFormDataRecord" resultMap="SysFormDataRecordResult">
@@ -28,6 +29,12 @@
             <if test="formData != null  and formData != ''"> and form_data = #{formData}</if>
             <if test="formUrl != null  and formUrl != ''"> and form_url = #{formUrl}</if>
             <if test="belongUserId != null  and belongUserId != ''"> and belong_user_id = #{belongUserId}</if>
+            <if test="formIdList != null">
+                and form_id in
+                <foreach item="formId" collection="array" open="(" separator="," close=")">
+                    #{formId}
+                </foreach>
+            </if>
             <if test="version != null "> and version = #{version}</if>
         </where>
     </select>
@@ -36,6 +43,7 @@
         <include refid="selectSysFormDataRecordVo"/>
         where id = #{id}
     </select>
+
 
     <select id="getMaxVersionByUsrId" parameterType="Long" resultType="integer">
         select max(version) from sys_form_data_record
@@ -47,6 +55,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="formId != null and formId != ''">form_id,</if>
             <if test="formData != null">form_data,</if>
+            <if test="formField != null">form_field,</if>
             <if test="formUrl != null and formUrl != ''">form_url,</if>
             <if test="belongUserId != null">belong_user_id,</if>
             <if test="createBy != null">create_by,</if>
@@ -58,6 +67,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="formId != null and formId != ''">#{formId},</if>
             <if test="formData != null">#{formData},</if>
+            <if test="formField != null">#{formField},</if>
             <if test="formUrl != null and formUrl != ''">#{formUrl},</if>
             <if test="belongUserId != null">#{belongUserId},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -73,6 +83,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="formId != null and formId != ''">form_id = #{formId},</if>
             <if test="formData != null">form_data = #{formData},</if>
+            <if test="formField != null">form_field=#{formField},</if>
             <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
             <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>

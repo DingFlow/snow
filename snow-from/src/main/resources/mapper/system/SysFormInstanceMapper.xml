@@ -27,9 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSysFormInstanceList" parameterType="SysFormInstance" resultMap="SysFormInstanceResult">
         <include refid="selectSysFormInstanceVo"/>
         <where>  
-            <if test="formCode != null  and formCode != ''"> and form_code_ = #{formCode}</if>
-            <if test="formName != null  and formName != ''"> and form_name_ = #{formName}</if>
-            <if test="fromUrl != null  and fromUrl != ''"> and from_url_ = #{fromUrl}</if>
+            <if test="formCode != null  and formCode != ''"> and form_code_ like concat('%', #{formCode}, '%')</if>
+            <if test="formName != null  and formName != ''"> and form_name_ like concat('%', #{formName}, '%')</if>
             <if test="rev != null "> and rev_ = #{rev}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
             <if test="tenantId != null  and tenantId != ''"> and tenant_id_ = #{tenantId}</if>
