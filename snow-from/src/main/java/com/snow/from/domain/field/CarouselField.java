@@ -1,4 +1,4 @@
-package com.snow.from.domain.Field;
+package com.snow.from.domain.field;
 
 import lombok.Data;
 

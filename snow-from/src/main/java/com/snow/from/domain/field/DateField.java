@@ -1,4 +1,4 @@
-package com.snow.from.domain.Field;
+package com.snow.from.domain.field;
 
 import lombok.Data;
 
@@ -8,11 +8,11 @@ import java.io.Serializable;
  * @author qimingjin
  * @Title:
  * @Description:
- * @date 2021/11/23 17:27
+ * @date 2021/11/23 17:22
  */
 @Data
-public class DateRangeField extends BaseField implements Serializable {
-    private static final long serialVersionUID = -2230998568274724840L;
+public class DateField extends BaseField implements Serializable {
+    private static final long serialVersionUID = 8453685053675545671L;
 
     private String datetype;
 
@@ -47,7 +47,7 @@ public class DateRangeField extends BaseField implements Serializable {
     /**
      * 日期默认值
      */
-    private String dateRangeDefaultValue;
+    private String dateDefaultValue;
 
     private String labelWidth;
 
@@ -58,4 +58,5 @@ public class DateRangeField extends BaseField implements Serializable {
     private String maxlength;
 
     private String readonly;
+
 }

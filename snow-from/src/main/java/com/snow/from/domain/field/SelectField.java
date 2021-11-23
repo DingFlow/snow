@@ -1,4 +1,4 @@
-package com.snow.from.domain.Field;
+package com.snow.from.domain.field;
 
 import lombok.Data;
 
@@ -7,20 +7,22 @@ import java.util.List;
 
 /**
  * @author qimingjin
- * @Title: 复选框
+ * @Title: 下拉框
  * @Description:
- * @date 2021/11/23 17:00
+ * @date 2021/11/23 16:45
  */
 @Data
-public class CheckboxField extends BaseField implements Serializable {
-    private static final long serialVersionUID = -4033182714436591774L;
-
+public class SelectField extends BaseField implements Serializable {
+    private static final long serialVersionUID = -3434970624558260655L;
 
     /**
      * 宽度
      */
     private String labelWidth;
-
+    /**
+     * 宽度百分比
+     */
+    private String width;
     /**
      * 是否只读
      */
@@ -54,9 +56,14 @@ public class CheckboxField extends BaseField implements Serializable {
      * 映射到value
      */
     private String remoteOptionValue;
+    /**
+     * 表示对应的remoteOptionValue的值
+     */
+    private String remoteDefaultValue;
 
     /**
      * 下拉框选项
      */
     private List<Options> options;
+
 }

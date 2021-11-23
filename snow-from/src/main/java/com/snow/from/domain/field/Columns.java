@@ -1,4 +1,4 @@
-package com.snow.from.domain.Field;
+package com.snow.from.domain.field;
 
 import lombok.Data;
 
@@ -17,5 +17,5 @@ public class Columns implements Serializable {
 
     private int span;
 
-    private List list;
+    private List<BaseField> list;
 }

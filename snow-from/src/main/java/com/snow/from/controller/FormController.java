@@ -1,16 +1,23 @@
 package com.snow.from.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.enums.FormFieldTypeEnums;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
+import com.snow.from.domain.field.BaseField;
+import com.snow.from.domain.field.Columns;
+import com.snow.from.domain.field.GridField;
+import com.snow.from.domain.field.InputField;
 import com.snow.from.domain.request.FormFieldRequest;
 import com.snow.from.domain.request.FormRequest;
 import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
@@ -133,6 +140,31 @@ public class FormController {
     public AjaxResult saveFormRecord(@RequestParam String formId ,
                                      @RequestParam String formData,
                                      @RequestParam String formField){
+
+
+        //解析前端传过来的数据
+        JSONArray formDataArray = JSON.parseArray(formData);
+        for(int i=0;i<formDataArray.size();i++){
+            BaseField baseField=formDataArray.getObject(i,BaseField.class);
+          //一行多列布局
+          if(baseField.getTag().equals(FormFieldTypeEnums.GRID.getCode())){
+              GridField gridField=formDataArray.getObject(i, GridField.class);
+              List<Columns> columnsList=gridField.getColumns();
+              if(CollUtil.isNotEmpty(columnsList)){
+                  columnsList.forEach(t->{
+                      List<BaseField> list = t.getList();
+                      for(int j=0;j<list.size();j++){
+                          if(list.get(j).getTag().equals(FormFieldTypeEnums.INPUT.getCode())){
+
+                          }
+                      }
+                  });
+              }
+          }
+        }
+       
+
+
         Long userId = ShiroUtils.getUserId();
         SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
         sysFormDataRecord.setBelongUserId(String.valueOf(userId));
