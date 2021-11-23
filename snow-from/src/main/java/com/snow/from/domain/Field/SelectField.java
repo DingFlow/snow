@@ -64,6 +64,6 @@ public class SelectField extends BaseField implements Serializable {
     /**
      * 下拉框选项
      */
-    private List<OptionsField> options;
+    private List<Options> options;
 
 }

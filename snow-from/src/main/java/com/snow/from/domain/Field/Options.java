@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2021/11/23 16:48
  */
 @Data
-public class OptionsField implements Serializable {
+public class Options implements Serializable {
 
     private static final long serialVersionUID = 975771972944583123L;
     /**
