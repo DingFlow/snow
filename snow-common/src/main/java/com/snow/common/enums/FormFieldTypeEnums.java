@@ -19,13 +19,13 @@ public enum FormFieldTypeEnums {
 
     RADIO("radio","单选框"),
 
-    CHECKBOX("CHECKBOX","复选框"),
+    CHECKBOX("checkbox","复选框"),
 
-    SWITCH("SWITCH","开关"),
+    SWITCH("switch","开关"),
 
-    SLIDER("SLIDER","滑块"),
+    SLIDER("slider","滑块"),
 
-    DATE("DATE","日期"),
+    DATE("date","日期"),
 
     DATE_RANGE("dateRange","日期范围"),
 

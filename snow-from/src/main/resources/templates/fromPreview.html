@@ -175,30 +175,6 @@
             var newData = render.getData();
             var dataFrom=render.getFormData();
             console.info("===dataFrom===>"+JSON.stringify(dataFrom))
-            $.each(newData,function(i,item){
-                if(item["tag"]==="grid"){
-                  var columns= item["columns"];
-                    $.each(columns,function(j,items){
-                       var list= items["list"];
-                        $.each(list,function(k,newItem){
-                            if(newItem["tag"]==="input"||item["tag"]==="textarea"||item["tag"]==="password"){
-                                newItem["defaultValue"]=dataFrom[newItem["id"]];
-                            }
-                            if(newItem["tag"]==="date"){
-                                newItem["dateDefaultValue"]=dataFrom[newItem["id"]];
-                            }
-
-                        });
-                    });
-                }else {
-                    if(item["tag"]==="input"||item["tag"]==="textarea"){
-                        item["defaultValue"]=dataFrom[item["id"]];
-                    }
-                    if(item["tag"]==="date"){
-                        item["dateDefaultValue"]=dataFrom[item["id"]];
-                    }
-                }
-            });
             // 再把数据提交到后台
             var formId=$("#formId").val();
             var config = {

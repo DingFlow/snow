@@ -15,12 +15,10 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
-import com.snow.from.domain.field.BaseField;
-import com.snow.from.domain.field.Columns;
-import com.snow.from.domain.field.GridField;
-import com.snow.from.domain.field.InputField;
+import com.snow.from.domain.field.*;
 import com.snow.from.domain.request.FormFieldRequest;
 import com.snow.from.domain.request.FormRequest;
+import com.snow.from.domain.response.BaseFormDataResponse;
 import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
 import com.snow.from.service.impl.SysFormInstanceServiceImpl;
@@ -31,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +43,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping()
 @Slf4j
-public class FormController {
+public class FormController extends BaseFieldController{
 
     @Autowired
     private SysFormInstanceServiceImpl sysFormInstanceService;
@@ -142,43 +141,14 @@ public class FormController {
                                      @RequestParam String formData,
                                      @RequestParam String formField){
 
-
-        JSONObject formFieldObject = JSON.parseObject(formField);
-        //解析前端传过来的数据
-        JSONArray formDataArray = JSON.parseArray(formData);
-        for(int i=0;i<formDataArray.size();i++){
-            BaseField baseField=formDataArray.getObject(i,BaseField.class);
-            //一行多列布局
-            if(baseField.getTag().equals(FormFieldTypeEnums.GRID.getCode())){
-                GridField gridField=formDataArray.getObject(i, GridField.class);
-                List<Columns> columnsList=gridField.getColumns();
-                if(CollUtil.isNotEmpty(columnsList)){
-                    columnsList.forEach(t->{
-                        JSONArray newColumnsArray=
-                        JSONArray columnsArray = JSON.parseArray(t.getList());
-                        for(int j=0;j<columnsArray.size();j++){
-                            //获取组件类型
-                            String tag= JSON.parseObject(columnsArray.getString(j)).getString("tag");
-                            if(tag.equals(FormFieldTypeEnums.INPUT.getCode())){
-                                InputField inputField = columnsArray.getObject(j, InputField.class);
-                                String value = formFieldObject.getString(inputField.getId());
-                                inputField.setDefaultValue(value);
-                                inputField.setDocument("这个是帮助文档");
-                                columnsArray.add(inputField);
-                            }
-                        }
-                        System.out.println("----------");
-                    });
-                }
-          }
-        }
-       
-
-
+        //把用户填写的值赋值到表单里面去
+        String newFormData = warpFormField(formData, formField);
+        String s=null;
+        s.getBytes();
         Long userId = ShiroUtils.getUserId();
         SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
         sysFormDataRecord.setBelongUserId(String.valueOf(userId));
-        sysFormDataRecord.setFormData(formData);
+        sysFormDataRecord.setFormData(newFormData);
         sysFormDataRecord.setFormId(formId);
         sysFormDataRecord.setFormField(formField);
         sysFormDataRecord.setCreateBy(String.valueOf(userId));

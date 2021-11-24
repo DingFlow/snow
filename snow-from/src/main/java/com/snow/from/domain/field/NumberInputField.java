@@ -24,7 +24,7 @@ public class NumberInputField extends BaseField implements Serializable {
     private String  width;
 
     /**
-     * 开关值（true-开，false-关）
+     * 数值
      */
     private Integer defaultValue;
 
