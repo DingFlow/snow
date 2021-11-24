@@ -17,5 +17,8 @@ public class Columns implements Serializable {
 
     private int span;
 
-    private List<BaseField> list;
+    /**
+     * list字符串
+     */
+    private String list;
 }

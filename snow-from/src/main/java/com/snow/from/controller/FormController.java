@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.enums.FormFieldTypeEnums;
 import com.snow.common.utils.StringUtils;
@@ -142,24 +143,33 @@ public class FormController {
                                      @RequestParam String formField){
 
 
+        JSONObject formFieldObject = JSON.parseObject(formField);
         //解析前端传过来的数据
         JSONArray formDataArray = JSON.parseArray(formData);
         for(int i=0;i<formDataArray.size();i++){
             BaseField baseField=formDataArray.getObject(i,BaseField.class);
-          //一行多列布局
-          if(baseField.getTag().equals(FormFieldTypeEnums.GRID.getCode())){
-              GridField gridField=formDataArray.getObject(i, GridField.class);
-              List<Columns> columnsList=gridField.getColumns();
-              if(CollUtil.isNotEmpty(columnsList)){
-                  columnsList.forEach(t->{
-                      List<BaseField> list = t.getList();
-                      for(int j=0;j<list.size();j++){
-                          if(list.get(j).getTag().equals(FormFieldTypeEnums.INPUT.getCode())){
-
-                          }
-                      }
-                  });
-              }
+            //一行多列布局
+            if(baseField.getTag().equals(FormFieldTypeEnums.GRID.getCode())){
+                GridField gridField=formDataArray.getObject(i, GridField.class);
+                List<Columns> columnsList=gridField.getColumns();
+                if(CollUtil.isNotEmpty(columnsList)){
+                    columnsList.forEach(t->{
+                        JSONArray newColumnsArray=
+                        JSONArray columnsArray = JSON.parseArray(t.getList());
+                        for(int j=0;j<columnsArray.size();j++){
+                            //获取组件类型
+                            String tag= JSON.parseObject(columnsArray.getString(j)).getString("tag");
+                            if(tag.equals(FormFieldTypeEnums.INPUT.getCode())){
+                                InputField inputField = columnsArray.getObject(j, InputField.class);
+                                String value = formFieldObject.getString(inputField.getId());
+                                inputField.setDefaultValue(value);
+                                inputField.setDocument("这个是帮助文档");
+                                columnsArray.add(inputField);
+                            }
+                        }
+                        System.out.println("----------");
+                    });
+                }
           }
         }
        
