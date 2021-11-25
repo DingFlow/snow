@@ -195,7 +195,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             map.put("toUser", getUserInfo(processInstance.getStartUserId()).getUserName());
             map.put("starttime", DateUtil.formatDateTime(processInstance.getStartTime()));
             map.put("processInstance", processInstance.getProcessDefinitionName());
-            map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
             map.put("datetime", DateUtil.formatDateTime(new Date()));
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
                     .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())

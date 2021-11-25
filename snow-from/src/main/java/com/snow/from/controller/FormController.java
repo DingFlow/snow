@@ -1,27 +1,29 @@
 package com.snow.from.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.snow.common.constant.CacheConstants;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.enums.FormFieldTypeEnums;
+import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.domain.SysFormInstance;
-import com.snow.from.domain.field.*;
 import com.snow.from.domain.request.FormFieldRequest;
 import com.snow.from.domain.request.FormRequest;
-import com.snow.from.domain.response.BaseFormDataResponse;
 import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
 import com.snow.from.service.impl.SysFormInstanceServiceImpl;
+import com.snow.from.util.FormUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,9 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,7 +49,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping()
 @Slf4j
-public class FormController extends BaseFieldController{
+public class FormController{
 
     @Autowired
     private SysFormInstanceServiceImpl sysFormInstanceService;
@@ -142,9 +148,7 @@ public class FormController extends BaseFieldController{
                                      @RequestParam String formField){
 
         //把用户填写的值赋值到表单里面去
-        String newFormData = warpFormField(formData, formField);
-        String s=null;
-        s.getBytes();
+        String newFormData = FormUtils.fillFormFieldValue(formData, formField);
         Long userId = ShiroUtils.getUserId();
         SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
         sysFormDataRecord.setBelongUserId(String.valueOf(userId));
@@ -172,7 +176,7 @@ public class FormController extends BaseFieldController{
         SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.valueOf(sysFormDataRecord.getFormId()));
         map.put("id",id);
         map.put("name",sysFormInstance.getFormName());
-        map.put("createTime",DateUtil.formatDateTime(sysFormInstance.getCreateTime()));
+        map.put("createTime",DateUtil.formatDateTime(sysFormDataRecord.getCreateTime()));
         return "formDetail";
     }
 
@@ -194,16 +198,71 @@ public class FormController extends BaseFieldController{
      * @param formData 表单数据
      */
     private void saveFormField(Long formId,String formData ){
-        List<FormFieldRequest> formFieldRequestList = JSON.parseArray(formData, FormFieldRequest.class);
-        for (int i=0;i<formFieldRequestList.size();i++){
-            FormFieldRequest formFieldRequest = formFieldRequestList.get(i);
-            SysFormField sysFormField = BeanUtil.copyProperties(formFieldRequest, SysFormField.class,"id");
-            sysFormField.setFromId(formId);
-            sysFormField.setFieldKey(formFieldRequest.getId());
-            sysFormField.setFieldName(formFieldRequest.getLabel());
-            sysFormField.setFieldType(formFieldRequest.getTag());
-            sysFormField.setFieldHtml(JSON.parseArray(formData).getString(i));
-            sysFormFieldService.insertSysFormField(sysFormField);
+        //解析表单
+        JSONArray formDataArray = JSON.parseArray(formData);
+        for(int i=0;i<formDataArray.size();i++){
+            JSONObject fieldObject=formDataArray.getJSONObject(i);
+            //一行多列布局
+            if(fieldObject.getString("tag").equals(FormFieldTypeEnums.GRID.getCode())){
+                JSONObject gridObject = formDataArray.getJSONObject(i);
+                JSONArray columnArray= gridObject.getJSONArray("columns");
+                for(int j=0;j<columnArray.size();j++){
+                    JSONObject columnObject = columnArray.getJSONObject(j);
+                    JSONArray listArray = columnObject.getJSONArray("list");
+                    for(int k=0;k<listArray.size();k++){
+                        JSONObject listObject=listArray.getJSONObject(k);
+                        FormFieldRequest formFieldRequest = listObject.toJavaObject(FormFieldRequest.class);
+                        saveSysFormField(formFieldRequest,formId,JSON.toJSONString(listObject));
+                    }
+                }
+            }
+            //正常单行布局
+            else {
+                FormFieldRequest formFieldRequest = fieldObject.toJavaObject(FormFieldRequest.class);
+                saveSysFormField(formFieldRequest,formId,JSON.toJSONString(fieldObject));
+            }
         }
     }
+
+    /**
+     * 保存
+     */
+    public void saveSysFormField( FormFieldRequest formFieldRequest,Long formId,String jsonString){
+        SysFormField sysFormField = BeanUtil.copyProperties(formFieldRequest, SysFormField.class,"id");
+        sysFormField.setFromId(formId);
+        sysFormField.setFieldKey(formFieldRequest.getId());
+        sysFormField.setFieldName(formFieldRequest.getLabel());
+        sysFormField.setFieldType(formFieldRequest.getTag());
+        sysFormField.setFieldHtml(jsonString);
+        sysFormFieldService.insertSysFormField(sysFormField);
+    }
+
+    /**
+     * 生成二维码
+     */
+    @GetMapping("/createQRCode")
+    public void createQRCode(@RequestParam("id") int id, HttpServletResponse response){
+        Object domain = CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN, "http://localhost");
+        QrConfig config = new QrConfig(500, 500);
+        // 设置边距，既二维码和背景之间的边距
+        config.setMargin(3);
+        // 设置前景色，既二维码颜色（青色）
+        config.setForeColor(Color.CYAN);
+        // 设置背景色（灰色）
+        config.setBackColor(Color.GRAY);
+        config.setQrVersion(10);
+       // config.setImg("https://qimetons.oss-cn-beijing.aliyuncs.com/45a22bcc93644dfe8bcacf690fe133f3.png");
+        // 生成二维码
+        BufferedImage bufferedImage = QrCodeUtil.generate(StrUtil.format("{}/toFormRecordDetail?id={}",domain,id), config);
+        try {
+            //以PNG格式向客户端发送
+            ServletOutputStream os = response.getOutputStream();
+            ImageIO.write(bufferedImage, "PNG",os);
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            throw new RuntimeException("生成二维码异常");
+        }
+    }
+
 }

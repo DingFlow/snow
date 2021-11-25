@@ -412,7 +412,7 @@ layui.define(['layer'], function (exports) {
             defaultValue: null,
             width:"100%",
             readonly: false,
-            disabled: false,//这里就是readonly的医生
+            disabled: false,
             required: true,
             document: ''
         },

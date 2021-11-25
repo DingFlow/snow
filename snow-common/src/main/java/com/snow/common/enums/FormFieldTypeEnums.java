@@ -35,6 +35,8 @@ public enum FormFieldTypeEnums {
 
     COLOR_PICKER("colorpicker","颜色选择器"),
 
+    ICON_PICKER("iconPicker","颜色选择器"),
+
     CRON("cron","Cron表达式"),
 
     SIGN("sign","签名组件"),
