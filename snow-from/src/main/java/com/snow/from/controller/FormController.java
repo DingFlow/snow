@@ -63,24 +63,24 @@ public class FormController{
      * 跳转form表单首页
      * @return 首页url路径
      */
-    @GetMapping("/formIndex")
+    @GetMapping("formIndex")
     public String fromPreview() {
-        return "/formIndex";
+        return "formIndex";
     }
 
-    @GetMapping("/preview.html")
+    @GetMapping("preview.html")
     public String preview() {
-        return "/preview";
+        return "preview";
     }
 
-    @GetMapping("/handwrittenSignature.html")
+    @GetMapping("handwrittenSignature.html")
     public String handwrittenSignature() {
-        return "/handwrittenSignature";
+        return "handwrittenSignature";
     }
 
-    @GetMapping("/editorMenu.html")
+    @GetMapping("editorMenu.html")
     public String editorMenu() {
-        return "/editorMenu";
+        return "editorMenu";
     }
 
     /**
@@ -129,12 +129,12 @@ public class FormController{
      * 预览
      * @return 预览页
      */
-    @GetMapping("/fromPreview")
+    @GetMapping("fromPreview")
     public String fromPreview(@RequestParam Long id, ModelMap mmap) {
         SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(id);
         mmap.put("formId",id);
         mmap.put("name",sysFormInstance.getFormName());
-        return "/fromPreview";
+        return "fromPreview";
     }
 
     /**

@@ -81,7 +81,7 @@ public class SysFormInstanceController extends BaseController
     public String fromPreview(@PathVariable("id") Long id,ModelMap mmap)
     {
         mmap.put("formId",id);
-        return "/fromPreview";
+        return "fromPreview";
     }
     /**
      * 获取表单内容

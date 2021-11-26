@@ -52,7 +52,7 @@
                      <h4 class="modal-title text-primary">表单二维码</h4>
                  </div>
                  <div class="modal-body">
-                     <div class="form-group">
+                     <div class="form-group" style="margin-left: 40px">
                          <img  class="imgcode" width="85%"/>
                      </div>
                  </div>
@@ -102,7 +102,7 @@
                         actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="fromDetail(\'' + row.id+ '\')"><i class="fa fa-add"></i>填写表单</a> ');
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="formRecordDetail(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>查看表单</a> ');
-                        actions.push('<a class="btn btn-success btn-xs" data-toggle="modal"  data-target="#formQRCode" th:data-id="' + row.id+ '" ><i class="fa fa-add"></i>二维码</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" data-toggle="modal"  data-target="#formQRCode" onclick="createQRCode(\'' + row.id+ '\')" ><i class="fa fa-add"></i>二维码</a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
@@ -126,17 +126,12 @@
         }
 
         function createQRCode(id) {
-            var detailUrl="/createQRCode?id="+id;
-            $.modal.open("表单二维码", detailUrl);
+            var url ="/createQRCode?id="+id;
+            $(".imgcode").attr("src", url);
         }
 
         $('#formQRCode').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
-            console.log("=====>"+JSON.stringify(button));
-            var id = button.data('id')
-            console.log("=====>"+id);
-            var url ="/createQRCode?id="+id;
-            $(".imgcode").attr("src", url);
         });
 
     </script>
