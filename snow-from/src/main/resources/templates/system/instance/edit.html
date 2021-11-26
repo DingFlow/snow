@@ -7,7 +7,7 @@
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-instance-edit" th:object="${sysFormInstance}">
             <input name="id" th:field="*{id}" type="hidden">
-            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i>请注意: 表单修改目前只能修改基础属性</span>
+
             <div class="form-group">    
                 <label class="col-sm-3 control-label ">表单code：</label>
                 <div class="col-sm-8">
@@ -24,6 +24,12 @@
                 <label class="col-sm-3 control-label ">表单url：</label>
                 <div class="col-sm-8">
                     <input name="fromUrl" th:field="*{fromUrl}" class="form-control" type="text" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label "></label>
+                <div class="col-sm-8">
+                    <span class="help-block m-b-none text-warning"><i class="fa fa-info-circle"></i> 请注意：表单修改目前只能修改基础属性</span>
                 </div>
             </div>
         </form>
