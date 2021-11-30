@@ -340,16 +340,21 @@ $(function() {
     }
     $("[data-toggle='tooltip']").tooltip();
 
-	if([[${isNewNotice}]]){
-		/*公告停留半分钟*/
-		layer.open({
-			type : 2,
-			shadeClose : true,
-			time:30000,
-			title : "公告",
-			area : ["70%", "80%"],
-			content : ["/system/notice/newNotice/"+1, 'yes']
-		})
+    //首次加载的时候弹出公告页
+    if(window.name==''){
+		window.name='isRefresh';
+	}else if(window.name='isRefresh'){
+		if([[${isNewNotice}]]){
+			/*公告停留半分钟*/
+			layer.open({
+				type : 2,
+				shadeClose : true,
+				time:30000,
+				title : "公告",
+				area : ["70%", "80%"],
+				content : ["/system/notice/newNotice/"+1, 'yes']
+			})
+		}
 	}
 });
 </script>

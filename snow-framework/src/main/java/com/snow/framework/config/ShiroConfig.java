@@ -284,6 +284,8 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/captcha/captchaImage**", "anon");
         filterChainDefinitionMap.put("/dingTalk/dingTalkCallBack", "anon");
         filterChainDefinitionMap.put("/third/oauth/**", "anon");
+        //填写表单
+        filterChainDefinitionMap.put("/fromPreview", "anon");
 
         //注册校验
         filterChainDefinitionMap.put("/system/user/checkLoginNameUnique", "anon");

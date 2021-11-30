@@ -1,15 +1,12 @@
 package com.snow.web.controller.system;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.snow.common.config.Global;
 import com.snow.common.constant.ShiroConstants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.text.Convert;
-import com.snow.common.enums.DingFlowTaskType;
-import com.snow.common.enums.MessageEventType;
 import com.snow.common.enums.NoticeType;
 import com.snow.common.utils.CookieUtils;
 import com.snow.common.utils.DateUtils;
@@ -38,10 +35,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 首页 业务处理
@@ -172,7 +167,7 @@ public class SysIndexController extends BaseController
         sysNotice.setNoticeType(NoticeType.NOTICE_TYPE.getCode());
         List<SysNotice> sysNotices = sysNoticeService.selectNoticeList(sysNotice);
         mmap.put("sysNotices",sysNotices);
-        if(CollectionUtil.isNotEmpty(sysNotices)&&sysNotices.size()>5){
+        if(CollUtil.isNotEmpty(sysNotices)&&sysNotices.size()>5){
             mmap.put("sysNoticeList",sysNotices.subList(0,5));
         }else {
             mmap.put("sysNoticeList",sysNotices);
