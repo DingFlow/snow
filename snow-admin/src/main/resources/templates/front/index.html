@@ -33,21 +33,24 @@
             <p>借助钉钉，致力于流程，让流程更简单</p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6 text-center  wow zoomIn">
-          <img th:src="@{/img/landing/xinwen.png}" alt="dashboard" class="img-responsive">
-        </div>
-        <div class="col-md-6 text-center wow fadeInLeft">
-            <div>
-              <!--  <i class="fa fa-mobile features-icon"></i>-->
-                <h2>青春万岁！——庆祝中国共产党成立100周年</h2>
-                <p>　　1921年7月23日至31日，从上海望志路树德里106号（今兴业路76号）到嘉兴南湖的小游船，毛泽东、董必武、何叔衡、陈潭秋、王尽美、邓恩铭、李汉俊、李达、张国焘、刘仁静、陈公博、周佛海、包惠僧等13位同志代表全国各地50多名共产党员，召开了中国共产党第一次全国代表大会。中国共产党的诞生是中国历史上开天辟地的大事，中国革命的面貌从此焕然一新...</p>
-                <p>
-                    <a class="btn btn-lg btn-primary" href="/front/news/communist_party" target="_blank" role="button">阅读更多</a>
-                </p>
+    <div th:each="news,iterStat : ${newsList}">
+        <div class="row">
+            <div class="col-md-6 text-center  wow zoomIn">
+                <img th:src="@{/img/landing/xinwen.png}" alt="dashboard" class="img-responsive">
+            </div>
+            <div class="col-md-6 text-center wow fadeInLeft">
+                <div>
+                    <!--  <i class="fa fa-mobile features-icon"></i>-->
+                    <h2>[[${news.noticeTitle}]]</h2>
+
+                    <p th:utext="${#strings.substring(news.noticeContent,0,100)}+'...'"></p>
+                    <br/>
+                    <p>
+                        <a class="btn btn-lg btn-primary" th:href="@{'/front/news/'+${news.noticeId}}" target="_blank" role="button">阅读更多</a>
+                    </p>
+                </div>
             </div>
         </div>
-
     </div>
 
 </section>
@@ -239,14 +242,17 @@
                             <p> 6. 新增手机号，姓名，身份证，秘钥等重要隐私信息脱敏 </p>
                             <p> 7. 重构部分代码 </p>
                             <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
-                            <span class="vertical-date"> <!--明天 <br/> --><small>2021年05月17日</small> </span>
+                            <span class="vertical-date"> <!--明天 <br/> --><small>2021年11月14日</small> </span>
                         </div>
                     </div>
 
+
                     <div class="vertical-timeline-block">
                         <div class="vertical-timeline-icon navy-bg">
-                            <i class="fa fa-briefcase"></i>
+                            <i class="fa fa-file-text"></i>
                         </div>
+
+                        <div class="vertical-timeline-content">
                             <h2>V1.7 2021-07-04</h2>
                             <p> 1. 集成微信、支付宝扫码登录功能 </p>
                             <p> 2. 新增DingFlow官网 </p>
@@ -262,7 +268,7 @@
 
                     <div class="vertical-timeline-block">
                         <div class="vertical-timeline-icon navy-bg">
-                            <i class="fa fa-file-text"></i>
+                            <i class="fa fa-cogs"></i>
                         </div>
 
                         <div class="vertical-timeline-content">
@@ -290,8 +296,8 @@
                             <p> 1. 集成开源积木报表</p>
                             可在线设计各类报表（表格类报表和图表类报表) </p>
                             <p> 2. 新增业务管理模块
-                               新增客户准入流程，添加客户流入客户公海，发起准入流程，准入客户进入客户私海，可业务员拜访跟进，未准入客户进入黑名单
-                               原数据大屏并入业务管理 </p>
+                                新增客户准入流程，添加客户流入客户公海，发起准入流程，准入客户进入客户私海，可业务员拜访跟进，未准入客户进入黑名单
+                                原数据大屏并入业务管理 </p>
                             <p> 3. 新增消息中心 </p>
                             <p> 4. 在线邮件更改为站内邮件，不在调用邮件发送功能，便于系统内用户沟通，跟进业务 </p>
                             <p> 5. 修复流程父角色查询所属子角色异常情况 </p>
@@ -303,6 +309,7 @@
                     </div>
 
                 </div>
+
             </div>
 
         </div>

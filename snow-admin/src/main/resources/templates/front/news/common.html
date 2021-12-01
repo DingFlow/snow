@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>DingFlow</title>
+    <meta name="description" content="DingFlow">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <!-- 360浏览器急速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">label.error{position:inherit}.ui.horizontal.divider::before,.ui.horizontal.divider::after{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaAAAAACCAYAAACuTHuKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1OThBRDY4OUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1OThBRDY4QUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjU5OEFENjg3Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU5OEFENjg4Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+VU513gAAADVJREFUeNrs0DENACAQBDBIWLGBJQby/mUcJn5sJXQmOQMAAAAAAJqt+2prAAAAAACg2xdgANk6BEVuJgyMAAAAAElFTkSuQmCC")}.ui.horizontal.divider::after{background-position:left 1em top 50%}.ui.horizontal.divider::before,.ui.horizontal.divider::after{content:'';display:table-cell;position:relative;top:50%;width:50%;background-repeat:no-repeat}.ui.horizontal.divider::before{background-position:right 1em top 50%}.ui.horizontal.list{display:inline-block;font-size:0}ul.ui.list:last-child,ol.ui.list:last-child,.ui.list:last-child{margin-bottom:0;padding-bottom:0}ul.ui.list,ol.ui.list,.ui.list{list-style-type:none;margin:1em 0;padding:0}.login-oauth__list{display:-webkit-box!important;display:-ms-flexbox!important;display:flex!important;-webkit-box-pack:center!important;-ms-flex-pack:center!important;justify-content:center!important}.login-login-oauth__container{margin-top:20px}.ui.horizontal.login-login__oauth-title{font-weight:normal}.ui.divider{margin:1.4rem 0rem;line-height:1;height:0;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,0.85);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}.ui.horizontal.divider{display:table;white-space:nowrap;height:auto;margin:'';line-height:1;text-align:center}.ui.horizontal.list>.item:first-child,.ui.horizontal.list>.item:last-child{padding-top:.3em;padding-bottom:.3em}.ui.horizontal.list>.item:first-child{margin-left:0!important;padding-left:0!important}.login-oauth__list>.item{margin-left:40px!important}.ui.list .item a>img{width:32px;height:32px}</style>
+
+</head>
+<body id="page-top" class="landing-page no-skin-config">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <th:block th:include="include :: front-header" />
+
+    <div class="row" style="margin-top: 50px">
+        <div class="col-sm-12 text-center" >
+            <h1>
+                   <span class="title">
+                        <h1>[[${sysNotice.noticeTitle}]]</h1>
+                    </span>
+            </h1>
+            <h5>
+                [[${#dates.format(sysNotice.createTime, 'yyyy-MM-dd HH:mm:ss')}]]
+            </h5>
+        </div>
+        <br/>
+        <div class="main clearfix">
+            <div class="col-md-1 text-center  wow zoomIn">
+            </div>
+            <div class="col-md-10  wow zoomIn">
+                <div id="detail" th:utext="${sysNotice.noticeContent}">
+                </div>
+        </div>
+            <div class="col-md-1 text-center  wow zoomIn">
+            </div>
+    </div>
+</div>
+<th:block th:include="include :: front-footer" />
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

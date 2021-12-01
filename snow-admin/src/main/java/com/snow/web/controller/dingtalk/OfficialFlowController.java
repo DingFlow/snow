@@ -1,7 +1,7 @@
 package com.snow.web.controller.dingtalk;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.dingtalk.api.response.OapiProcessListbyuseridResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.google.common.collect.Lists;
@@ -167,7 +167,7 @@ public class OfficialFlowController extends BaseController {
         //获取操作记录
         List<OapiProcessinstanceGetResponse.OperationRecordsVo> operationRecords = processInstanceDetail.getOperationRecords();
         List<DingOperationRecordResponse> dingOperationRecordVOList=Lists.newArrayList();
-        if(CollectionUtil.isNotEmpty(operationRecords)){
+        if(CollUtil.isNotEmpty(operationRecords)){
             operationRecords.forEach(t->{
                 DingOperationRecordResponse dingOperationRecordVO=new DingOperationRecordResponse();
                 BeanUtil.copyProperties(t,dingOperationRecordVO);
@@ -190,7 +190,7 @@ public class OfficialFlowController extends BaseController {
         //获取任务节点
         List<OapiProcessinstanceGetResponse.TaskTopVo> tasks = processInstanceDetail.getTasks();
         List<DingTaskResponse> dingTaskVOList=Lists.newArrayList();
-        if(CollectionUtil.isNotEmpty(tasks)){
+        if(CollUtil.isNotEmpty(tasks)){
             tasks.stream().filter(t->!t.getTaskStatus().equals(DingFlowTaskType.CANCELED.getCode())).collect(Collectors.toList()).forEach(t->{
                 DingTaskResponse dingTaskVO=new DingTaskResponse();
                 BeanUtil.copyProperties(t,dingTaskVO);
