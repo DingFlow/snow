@@ -138,6 +138,16 @@ public class FormController{
     }
 
     /**
+     * 跳转绑定流程页
+     * @return 跳转绑定流程页
+     */
+    @GetMapping("bindProcess")
+    public String bindProcess(@RequestParam Long id, ModelMap mmap) {
+        SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(id);
+        mmap.put("sysFormInstance",sysFormInstance);
+        return "system/instance/bindProcess";
+    }
+    /**
      * 保存表单填写记录
      * @return
      */

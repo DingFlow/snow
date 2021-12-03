@@ -2,9 +2,11 @@ package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,6 +23,7 @@ import com.snow.flowable.common.enums.FlowInstanceEnum;
 import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
+import com.snow.flowable.domain.response.ProcessDefinitionResponse;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.flowable.service.FlowableUserService;
@@ -45,6 +48,7 @@ import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.DeploymentQuery;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
@@ -1025,6 +1029,19 @@ public class FlowableServiceImpl implements FlowableService {
     public Set<FlowDefEnum> getAllFlowDefEnumsSet() {
         FlowDefEnum[] values = FlowDefEnum.values();
         return Sets.newHashSet(values);
+    }
+
+    @Override
+    public List<ProcessDefinitionResponse> getProcessDefByKey(String processDefinitionKey) {
+        ProcessDefinitionQuery processDefinitionQuery=repositoryService.createProcessDefinitionQuery();
+        if(StrUtil.isNotBlank(processDefinitionKey)){
+            processDefinitionQuery.processDefinitionKey(StrUtil.format("%{}%", processDefinitionKey));
+        }
+        List<ProcessDefinition> list = processDefinitionQuery
+                .latestVersion()
+                .active()
+                .list();
+        return cn.hutool.core.convert.Convert.toList(ProcessDefinitionResponse.class,list);
     }
 
 

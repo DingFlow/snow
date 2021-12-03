@@ -3,6 +3,7 @@ package com.snow.flowable.service;
 import com.snow.common.core.page.PageModel;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.domain.*;
+import com.snow.flowable.domain.response.ProcessDefinitionResponse;
 import com.snow.system.domain.ActDeModel;
 import com.snow.system.domain.SysUser;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEvent;
@@ -205,4 +206,11 @@ public interface FlowableService {
      * @return
      */
      Set<FlowDefEnum> getAllFlowDefEnumsSet();
+
+    /**
+     * 根据流程定义key获取流程
+     * @param processDefinitionKey 流程定义
+     * @return 流程集合
+     */
+     List<ProcessDefinitionResponse> getProcessDefByKey(String processDefinitionKey);
 }

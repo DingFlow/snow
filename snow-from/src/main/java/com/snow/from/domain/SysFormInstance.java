@@ -30,6 +30,11 @@ public class SysFormInstance extends BaseEntity
     private String formName;
 
     /**
+     * 流程定义key
+     */
+    private String processKey;
+
+    /**
      * 表单内容
      */
     private String fromContentHtml;

@@ -103,6 +103,7 @@
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="fromDetail(\'' + row.id+ '\')"><i class="fa fa-add"></i>填写表单</a> ');
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="formRecordDetail(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>查看表单</a> ');
                         actions.push('<a class="btn btn-success btn-xs" data-toggle="modal"  data-target="#formQRCode" onclick="createQRCode(\'' + row.id+ '\')" ><i class="fa fa-add"></i>二维码</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="bindProcess(\'' + row.id+ '\')"><i class="fa fa-add"></i>绑定流程</a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
@@ -119,7 +120,9 @@
             var detailUrl="/formIndex";
             $.modal.openTab("设计表单", detailUrl);
         }
-
+        function bindProcess(id) {
+            $.modal.open("绑定流程", "/bindProcess?id="+id);
+        }
         function formRecordDetail(id) {
             var detailUrl="/from/instance/formRecord?id="+id;
             $.modal.openTab("表单数据列表", detailUrl);

@@ -22,7 +22,7 @@
         <!-- 通用工具-->
         <dependency>
             <groupId>com.snow</groupId>
-            <artifactId>snow-framework</artifactId>
+            <artifactId>snow-flowable</artifactId>
         </dependency>
 
 

@@ -126,6 +126,16 @@ public class SysFormInstanceController extends BaseController
     }
 
     /**
+     * 绑定流程key
+     */
+    @RequiresPermissions("system:instance:bindProcess")
+    @PostMapping("/bindProcess")
+    @ResponseBody
+    public AjaxResult bindProcess(SysFormInstance sysFormInstance) {
+        return toAjax(sysFormInstanceService.updateSysFormInstance(sysFormInstance));
+    }
+
+    /**
      * 跳转表单记录
      * @param id 记录id
      * @param mmap 传给前端的数据
