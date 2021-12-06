@@ -2,7 +2,6 @@ package com.snow.from.service;
 
 import com.snow.flowable.domain.response.ProcessDefinitionResponse;
 import com.snow.flowable.service.FlowableService;
-import com.snow.system.domain.SysDictData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

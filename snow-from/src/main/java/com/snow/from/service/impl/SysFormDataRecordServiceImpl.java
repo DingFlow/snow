@@ -77,6 +77,12 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
         return sysFormDataRecordMapper.updateSysFormDataRecord(sysFormDataRecord);
     }
 
+    @Override
+    public int updateSysFormDataRecordByNo(SysFormDataRecord sysFormDataRecord) {
+        sysFormDataRecord.setUpdateTime(DateUtils.getNowDate());
+        return sysFormDataRecordMapper.updateSysFormDataRecordByNo(sysFormDataRecord);
+    }
+
     /**
      * 删除单数据记录对象
      * 

@@ -42,6 +42,10 @@ public class SequenceConstants {
      */
     public static final String OA_TASK_SEQUENCE="OA_RW";
 
+    /**
+     * 表单
+     */
+    public static final String OA_FORM_SEQUENCE="BD";
 
     /**
      * 工号前缀

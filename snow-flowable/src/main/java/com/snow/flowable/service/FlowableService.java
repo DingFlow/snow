@@ -85,7 +85,6 @@ public interface FlowableService {
      * @param startProcessDTO
      * @return
      */
-    @Deprecated
     ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO);
 
     /**
@@ -213,4 +212,12 @@ public interface FlowableService {
      * @return 流程集合
      */
      List<ProcessDefinitionResponse> getProcessDefByKey(String processDefinitionKey);
+
+    /**
+     * 获取流程历史参数
+     * @param processId 流程实例id
+     * @param key 参数key
+     * @return 参数值
+     */
+     Object getHisVariable(String processId, String key);
 }

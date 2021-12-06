@@ -52,6 +52,14 @@ public interface SysFormDataRecordMapper
     public int updateSysFormDataRecord(SysFormDataRecord sysFormDataRecord);
 
     /**
+     * 修改单数据记录（单号）
+     *
+     * @param sysFormDataRecord 单数据记录
+     * @return 结果
+     */
+    public int updateSysFormDataRecordByNo(SysFormDataRecord sysFormDataRecord);
+
+    /**
      * 删除单数据记录
      * 
      * @param id 单数据记录ID

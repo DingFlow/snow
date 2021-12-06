@@ -42,9 +42,15 @@ public class FlowConstants {
      */
     public static final String START_USER_ID="startUserId";
 
+    /**
+     * 表单数据
+     */
+    public static final String FORM_DATA="formData";
 
-
-
+    /**
+     * 流程类型
+     */
+    public static final String PROCESS_TYPE="oaProcessType";
     /** 动态流程图颜色定义 **/
     public static final Color COLOR_NORMAL = new Color(0, 205, 0);
     public static final Color COLOR_CURRENT = new Color(255, 0, 0);

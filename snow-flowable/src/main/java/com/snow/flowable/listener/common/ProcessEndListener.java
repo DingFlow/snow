@@ -1,13 +1,18 @@
 package com.snow.flowable.listener.common;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.snow.common.constant.MessageConstants;
+import com.snow.common.core.domain.ProcessEventRequest;
 import com.snow.common.enums.MessageEventType;
+import com.snow.common.enums.ProcessStatus;
+import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
+import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.service.FlowableService;
 import com.snow.common.core.domain.MessageEventDTO;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +55,23 @@ public class ProcessEndListener implements FlowableEventListener {
             if(ObjectUtil.isNull(processDefinition)){
                 return;
             }
+            //获取流程类型
+            Object processType = flowableService.getHisVariable(flowableEngineEvent.getProcessInstanceId(), FlowConstants.PROCESS_TYPE);
+            //修改表单流程的状态---针对表单流程
+            if(ObjectUtil.isNull(processType)&&processType.equals(FlowTypeEnum.FORM_PROCESS.getCode())){
+                HistoricProcessInstance processInstance = flowableService.getHistoricProcessInstanceById(flowableEngineEvent.getProcessInstanceId());
+                ProcessEventRequest processEventRequest=new ProcessEventRequest(processInstance);
+                processEventRequest.setBusinessKey(processInstance.getBusinessKey());
+                //获取最后一个节点是通过还是驳回
+                Object isPass = flowableService.getHisVariable(flowableEngineEvent.getProcessInstanceId(), FlowConstants.IS_PASS);
+                if(ObjectUtil.isNotNull(isPass)&&(boolean)isPass){
+                    processEventRequest.setProcessStatus(ProcessStatus.PASS.name());
+                }else {
+                    processEventRequest.setProcessStatus(ProcessStatus.REJECT.name());
+                }
+                applicationContext.publishEvent(processEventRequest);
+            }
+
             String key = Optional.ofNullable(processDefinition.getKey()).orElse("");
             for (FlowDefEnum flowDefEnum : flowableService.getAllFlowDefEnumsSet()) {
                 //在流程中存在的才监听
@@ -59,8 +81,6 @@ public class ProcessEndListener implements FlowableEventListener {
                     sendInnerMessage(processInstance);
                 }
             }
-
-
         }
 
     }

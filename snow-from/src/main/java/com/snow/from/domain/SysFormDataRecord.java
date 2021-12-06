@@ -17,6 +17,11 @@ public class SysFormDataRecord extends BaseEntity
     /** 主键ID */
     private Integer id;
 
+    /**
+     * 表单记录编号
+     */
+    private String formNo;
+
     /** 表单定义code */
     private String formId;
 
@@ -34,6 +39,11 @@ public class SysFormDataRecord extends BaseEntity
      * 表单字典
      */
     private String formField;
+
+    /**
+     * 表单状态
+     */
+    private String formStatus;
 
     /** 表单url */
     private String formUrl;

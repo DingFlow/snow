@@ -7,6 +7,8 @@
     <resultMap type="SysFormDataRecord" id="SysFormDataRecordResult">
         <result property="id"    column="id"    />
         <result property="formId"    column="form_id"    />
+        <result property="formNo"    column="form_no"    />
+        <result property="formStatus"    column="form_status"    />
         <result property="formData"    column="form_data"    />
         <result property="formField"    column="form_field"    />
         <result property="formUrl"    column="form_url"    />
@@ -19,13 +21,15 @@
     </resultMap>
 
     <sql id="selectSysFormDataRecordVo">
-        select id, form_id, form_data, form_field,form_url, belong_user_id, create_by, create_time, update_time, update_by, version from sys_form_data_record
+        select id, form_id,form_no, form_data,form_status, form_field,form_url, belong_user_id, create_by, create_time, update_time, update_by, version from sys_form_data_record
     </sql>
 
     <select id="selectSysFormDataRecordList" parameterType="SysFormDataRecord" resultMap="SysFormDataRecordResult">
         <include refid="selectSysFormDataRecordVo"/>
         <where>
             <if test="formId != null  and formId != ''"> and form_id = #{formId}</if>
+            <if test="formNo != null  and formNo != ''"> and form_no = #{formNo}</if>
+            <if test="formStatus != null  and formStatus != ''"> and form_status = #{formStatus}</if>
             <if test="formData != null  and formData != ''"> and form_data = #{formData}</if>
             <if test="formUrl != null  and formUrl != ''"> and form_url = #{formUrl}</if>
             <if test="belongUserId != null  and belongUserId != ''"> and belong_user_id = #{belongUserId}</if>
@@ -54,6 +58,8 @@
         insert into sys_form_data_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="formId != null and formId != ''">form_id,</if>
+            <if test="formNo != null  and formNo != ''">  form_no,</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status ,</if>
             <if test="formData != null">form_data,</if>
             <if test="formField != null">form_field,</if>
             <if test="formUrl != null and formUrl != ''">form_url,</if>
@@ -66,6 +72,8 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="formId != null and formId != ''">#{formId},</if>
+            <if test="formNo != null  and formNo != ''">  #{formNo},</if>
+            <if test="formStatus != null  and formStatus != ''"> #{formStatus},</if>
             <if test="formData != null">#{formData},</if>
             <if test="formField != null">#{formField},</if>
             <if test="formUrl != null and formUrl != ''">#{formUrl},</if>
@@ -82,6 +90,8 @@
         update sys_form_data_record
         <trim prefix="SET" suffixOverrides=",">
             <if test="formId != null and formId != ''">form_id = #{formId},</if>
+            <if test="formNo != null  and formNo != ''">  form_no = #{formNo},</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status = #{formStatus},</if>
             <if test="formData != null">form_data = #{formData},</if>
             <if test="formField != null">form_field=#{formField},</if>
             <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
@@ -93,6 +103,23 @@
             <if test="version != null">version = #{version},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateSysFormDataRecordByNo" parameterType="SysFormDataRecord">
+        update sys_form_data_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formData != null">form_data = #{formData},</if>
+            <if test="formField != null">form_field=#{formField},</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status = #{formStatus},</if>
+            <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="version != null">version = #{version},</if>
+        </trim>
+        where form_no = #{formNo}
     </update>
 
     <delete id="deleteSysFormDataRecordById" parameterType="Integer">

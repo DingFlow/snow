@@ -1,8 +1,8 @@
 package com.snow.from.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.extra.qrcode.QrConfig;
@@ -10,10 +10,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.snow.common.constant.CacheConstants;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.enums.FormFieldTypeEnums;
 import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.StringUtils;
+import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowTypeEnum;
+import com.snow.flowable.domain.StartProcessDTO;
+import com.snow.flowable.service.FlowableService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
@@ -24,7 +29,9 @@ import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
 import com.snow.from.service.impl.SysFormFieldServiceImpl;
 import com.snow.from.service.impl.SysFormInstanceServiceImpl;
 import com.snow.from.util.FormUtils;
+import com.snow.system.service.ISysSequenceService;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +45,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,6 +67,12 @@ public class FormController{
 
     @Autowired
     private SysFormDataRecordServiceImpl sysFormDataRecordService;
+
+    @Autowired
+    private FlowableService flowableService;
+
+    @Autowired
+    private ISysSequenceService sequenceService;
     /**
      * 跳转form表单首页
      * @return 首页url路径
@@ -156,7 +170,8 @@ public class FormController{
     public AjaxResult saveFormRecord(@RequestParam String formId ,
                                      @RequestParam String formData,
                                      @RequestParam String formField){
-
+        //生成单号
+        String formNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_FORM_SEQUENCE);
         //把用户填写的值赋值到表单里面去
         String newFormData = FormUtils.fillFormFieldValue(formData, formField);
         Long userId = ShiroUtils.getUserId();
@@ -170,6 +185,7 @@ public class FormController{
         Integer maxVersion = sysFormDataRecordService.getMaxVersionByUsrId(userId);
         //版本号+1组成最新版本号
         sysFormDataRecord.setVersion(Optional.ofNullable(maxVersion).orElse(0)+1);
+        sysFormDataRecord.setFormNo(formNo);
         sysFormDataRecordService.insertSysFormDataRecord(sysFormDataRecord);
         return AjaxResult.success();
     }
@@ -200,6 +216,31 @@ public class FormController{
     @ResponseBody
     public AjaxResult getFormRecordDetail(Integer id){
         SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordById(id);
+        return AjaxResult.success(sysFormDataRecord.getFormData());
+    }
+
+    /**
+     * 发起流程
+     * @param id 表单记录id
+     * @return 是否发起成功
+     */
+    @PostMapping("/form/startProcess")
+    @ResponseBody
+    public AjaxResult startProcess(Integer id){
+        SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordById(id);
+        SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.parseLong(sysFormDataRecord.getFormId()));
+        StartProcessDTO startProcessDTO=new StartProcessDTO();
+        startProcessDTO.setStartUserId(String.valueOf(ShiroUtils.getUserId()));
+        startProcessDTO.setBusinessKey(sysFormDataRecord.getFormNo());
+        startProcessDTO.setProcessDefinitionKey(sysFormInstance.getProcessKey());
+        String formData=sysFormDataRecord.getFormData();
+        String formField = sysFormDataRecord.getFormField();
+        Map<String, Object> variables = Convert.toMap(String.class, Object.class, JSON.parseArray(formField));
+        variables.put(FlowConstants.FORM_DATA,formData);
+        variables.put(FlowConstants.PROCESS_TYPE,FlowTypeEnum.FORM_PROCESS.getCode());
+        startProcessDTO.setVariables(variables);
+        ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
+        log.info("@@表单编号：{},发起流程：{}",sysFormDataRecord.getFormNo(),JSON.toJSONString(processInstance));
         return AjaxResult.success(sysFormDataRecord.getFormData());
     }
     /**

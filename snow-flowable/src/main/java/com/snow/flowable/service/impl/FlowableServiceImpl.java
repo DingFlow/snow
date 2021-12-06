@@ -1,6 +1,7 @@
 package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.BetweenFormater;
@@ -58,6 +59,7 @@ import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.ui.modeler.domain.Model;
 import org.flowable.ui.modeler.service.ModelServiceImpl;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -314,13 +316,13 @@ public class FlowableServiceImpl implements FlowableService {
     public ProcessInstance startProcessInstanceByKey(StartProcessDTO startProcessDTO) {
         ProcessInstance processInstance=null;
         String startUserId=startProcessDTO.getStartUserId();
-        if(!StringUtils.isEmpty(startUserId)){
+        if(StrUtil.isNotBlank(startUserId)){
             identityService.setAuthenticatedUserId(startUserId);
         }
         Map<String, Object> paramMap =CollectionUtils.isEmpty(startProcessDTO.getVariables())?Maps.newHashMap():startProcessDTO.getVariables();
         paramMap.put(FlowConstants.START_USER_ID,startUserId);
 
-        if(!CollectionUtils.isEmpty(paramMap)){
+        if(CollUtil.isNotEmpty(paramMap)){
             processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey(),paramMap);
         }else {
             processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey());
@@ -1044,7 +1046,19 @@ public class FlowableServiceImpl implements FlowableService {
         return cn.hutool.core.convert.Convert.toList(ProcessDefinitionResponse.class,list);
     }
 
-
+    public Object getHisVariable(String processId, String key) {
+        Object variable = null;
+        List<HistoricVariableInstance> list = historyService
+                .createHistoricVariableInstanceQuery()
+                .taskId(processId)
+                .list();
+        for (HistoricVariableInstance historicVariableInstance:list) {
+            if (historicVariableInstance.getVariableName().equals(key)) {
+                variable = historicVariableInstance.getValue();
+            }
+        }
+        return variable;
+    }
     /**
      * 构建ProcessInstanceVO对象
      * @param processInstanceVO

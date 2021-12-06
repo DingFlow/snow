@@ -51,6 +51,13 @@ public interface ISysFormDataRecordService
     public int updateSysFormDataRecord(SysFormDataRecord sysFormDataRecord);
 
     /**
+     * 修改表单记录通过单号
+     * @param sysFormDataRecord 单数据记录
+     * @return
+     */
+    public int updateSysFormDataRecordByNo(SysFormDataRecord sysFormDataRecord);
+
+    /**
      * 批量删除单数据记录
      * 
      * @param ids 需要删除的数据ID
