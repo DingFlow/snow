@@ -54,4 +54,5 @@ public class SysFormDataRecord extends BaseEntity
 
     /** 版本号 */
     private Integer version;
+
 }

@@ -207,7 +207,9 @@ public class SysFormInstanceController extends BaseController
             SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getBelongUserId()));
             formDataRecordResponse.setFormName(sysFormInstance.getFormName());
             formDataRecordResponse.setBelongUserName(sysUser.getUserName());
+            formDataRecordResponse.setProcessFlag(StrUtil.isNotBlank(sysFormInstance.getProcessKey()));
             formDataRecordResponseList.add(formDataRecordResponse);
+
         });
         return formDataRecordResponseList;
     }

@@ -47,4 +47,9 @@ public class FormDataRecordResponse extends BaseEntity implements Serializable {
 
     /** 版本号 */
     private Integer version;
+
+    /**
+     * 流程标识
+     */
+    private Boolean processFlag=false;
 }

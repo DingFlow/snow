@@ -224,8 +224,9 @@ public class FormController{
      * @param id 表单记录id
      * @return 是否发起成功
      */
-    @PostMapping("/form/startProcess")
+    @GetMapping("/form/startProcess")
     @ResponseBody
+    @Transactional
     public AjaxResult startProcess(Integer id){
         SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordById(id);
         SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.parseLong(sysFormDataRecord.getFormId()));
@@ -235,13 +236,13 @@ public class FormController{
         startProcessDTO.setProcessDefinitionKey(sysFormInstance.getProcessKey());
         String formData=sysFormDataRecord.getFormData();
         String formField = sysFormDataRecord.getFormField();
-        Map<String, Object> variables = Convert.toMap(String.class, Object.class, JSON.parseArray(formField));
+        Map<String, Object> variables = Convert.toMap(String.class, Object.class, JSON.parse(formField));
         variables.put(FlowConstants.FORM_DATA,formData);
         variables.put(FlowConstants.PROCESS_TYPE,FlowTypeEnum.FORM_PROCESS.getCode());
         startProcessDTO.setVariables(variables);
         ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
         log.info("@@表单编号：{},发起流程：{}",sysFormDataRecord.getFormNo(),JSON.toJSONString(processInstance));
-        return AjaxResult.success(sysFormDataRecord.getFormData());
+        return AjaxResult.success();
     }
     /**
      * 构建子表数据

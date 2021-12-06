@@ -68,6 +68,10 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
+                        console.log("======="+JSON.stringify(row));
+                        if(row.processFlag){
+                            actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="startProcess(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>发起流程</a> ');
+                        }
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="formRecordDetail(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>详情</a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
@@ -88,6 +92,13 @@
         function formRecordDetail(id) {
             var detailUrl="/toFormRecordDetail?id="+id;
             $.modal.openTab("表单详情", detailUrl);
+        }
+
+        function startProcess(id) {
+            var url="/form/startProcess?id="+id;
+            $.modal.confirm("确定发起该条" + table.options.modalName + "流程吗？", function() {
+                $.operate.get(url);
+            });
         }
     </script>
 </body>

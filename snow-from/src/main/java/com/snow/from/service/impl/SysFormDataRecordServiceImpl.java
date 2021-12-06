@@ -1,8 +1,11 @@
 package com.snow.from.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.snow.common.core.text.Convert;
 import com.snow.common.utils.DateUtils;
 import com.snow.from.domain.SysFormDataRecord;
+import com.snow.from.domain.SysFormInstance;
 import com.snow.from.mapper.SysFormDataRecordMapper;
 import com.snow.from.service.ISysFormDataRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
 {
     @Autowired
     private SysFormDataRecordMapper sysFormDataRecordMapper;
+
+    @Autowired
+    private SysFormInstanceServiceImpl sysFormInstanceService;
 
     /**
      * 查询单数据记录
@@ -48,7 +54,8 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
     @Override
     public List<SysFormDataRecord> selectSysFormDataRecordList(SysFormDataRecord sysFormDataRecord)
     {
-        return sysFormDataRecordMapper.selectSysFormDataRecordList(sysFormDataRecord);
+        List<SysFormDataRecord>  sysFormDataRecordList=sysFormDataRecordMapper.selectSysFormDataRecordList(sysFormDataRecord);
+        return sysFormDataRecordList;
     }
 
     /**
