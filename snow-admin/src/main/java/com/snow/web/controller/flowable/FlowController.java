@@ -6,7 +6,9 @@ import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowInstanceEnum;
+import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.AppFormService;
 import com.snow.flowable.service.FlowableTaskService;
@@ -15,6 +17,7 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @program: snow
@@ -54,12 +58,23 @@ public class FlowController extends BaseController {
     @GetMapping("/toFinishTask")
     public String toFinishTask(String taskId,ModelMap mmap) {
         Task task =  flowableTaskService.getTask(taskId);
-        //获取业务参数
-        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
-        mmap.put("appFrom", appFrom);
-        mmap.put("taskId", taskId);
-        mmap.put("processInstanceId", task.getProcessInstanceId());
-        return task.getFormKey();
+        Object hisVariable = flowableService.getHisVariable(task.getProcessInstanceId(), FlowConstants.PROCESS_TYPE);
+        Object processType = Optional.ofNullable(hisVariable).orElse(FlowTypeEnum.API_PROCESS.getCode());
+        if(String.valueOf(processType).equals(FlowTypeEnum.FORM_PROCESS.getCode())){
+            Object formData = flowableService.getHisVariable(task.getProcessInstanceId(), FlowConstants.FORM_DATA);
+            mmap.put("taskId", taskId);
+            mmap.put("processInstanceId", task.getProcessInstanceId());
+            mmap.put("formData", formData);
+            return "formProcessDetail";
+        }else {
+            //获取业务参数
+            AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
+            mmap.put("appFrom", appFrom);
+            mmap.put("taskId", taskId);
+            mmap.put("processInstanceId", task.getProcessInstanceId());
+            return task.getFormKey();
+        }
+
     }
 
     /**
