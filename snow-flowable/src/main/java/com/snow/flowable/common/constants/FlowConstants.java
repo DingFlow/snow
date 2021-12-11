@@ -48,6 +48,10 @@ public class FlowConstants {
     public static final String FORM_DATA="formData";
 
     /**
+     * DingFlow表单id
+     */
+    public static final String DF_FORM_ID="dingFlowFormId";
+    /**
      * 流程类型
      */
     public static final String PROCESS_TYPE="oaProcessType";

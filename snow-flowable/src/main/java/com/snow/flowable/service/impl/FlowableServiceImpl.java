@@ -21,6 +21,7 @@ import com.snow.common.utils.bean.BeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.common.enums.FlowInstanceEnum;
+import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.config.ICustomProcessDiagramGenerator;
 import com.snow.flowable.domain.*;
@@ -1050,7 +1051,7 @@ public class FlowableServiceImpl implements FlowableService {
         Object variable = null;
         List<HistoricVariableInstance> list = historyService
                 .createHistoricVariableInstanceQuery()
-                .taskId(processId)
+                .processInstanceId(processId)
                 .list();
         for (HistoricVariableInstance historicVariableInstance:list) {
             if (historicVariableInstance.getVariableName().equals(key)) {
@@ -1079,7 +1080,9 @@ public class FlowableServiceImpl implements FlowableService {
         //设置流程发起人
         SysUser sysUser = sysUserService.selectUserById(Long.parseLong(processInstanceVO.getStartUserId()));
         processInstanceVO.setStartUserName(sysUser.getUserName());
-
+        //获取流程类型
+        Object processType = processVariables.getOrDefault(FlowConstants.PROCESS_TYPE, FlowTypeEnum.API_PROCESS.getCode());
+        processInstanceVO.setProcessType(String.valueOf(processType));
         //流程状态查询 ACT_RU_EXECUTION
         List<Execution> list = runtimeService.createExecutionQuery().processInstanceId(processInstanceVO.getId()).list();
         if(CollectionUtils.isEmpty(list)){

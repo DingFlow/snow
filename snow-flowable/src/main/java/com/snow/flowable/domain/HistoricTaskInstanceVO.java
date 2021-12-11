@@ -89,7 +89,10 @@ public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
 
     private String deleteReason;
 
-
+    /**
+     * 流程类型
+     */
+    private String processType;
 
 
     private String fromDetailUrl;

@@ -45,6 +45,7 @@
          var activeProcessInstanceFlag = [[${@permission.hasPermi('system:flow:activeProcessInstance')}]];
          var suspendProcessInstanceFlag = [[${@permission.hasPermi('system:flow:suspendProcessInstance')}]];
          var cancelProcessInstanceFlag = [[${@permission.hasPermi('system:flow:cancelProcessInstance')}]];
+         var processType = [[${@dict.getType('sys_process_type')}]];
          var prefixFlow = ctx + "flow";
 
          $(function() {
@@ -69,7 +70,15 @@
                      },
                      {
                          field: 'id',
-                         title: '实例id'
+                         title: '实例id',
+                         visible: false
+                     },
+                     {
+                         field: 'processType',
+                         title: '流程类型',
+                         formatter: function(value, row, index) {
+                             return $.table.selectDictLabel(processType, value);
+                         }
                      },
                      {
                          field: 'processDefinitionName',
@@ -116,6 +125,12 @@
                              var actions = [];
                              var isFinished= row.isFinished;
                              var processInstanceStatus= row.processInstanceStatus;
+                             var processType=row.processType;
+                             if(processType=='FORM_PROCESS'){
+                                 actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartFormProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }else {
+                                 actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }
                              if(processInstanceStatus==1&&isFinished==0){
                                  actions.push('<a class="btn btn-danger btn-xs ' + suspendProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.suspendProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>挂起</a> ');
                              }
@@ -125,7 +140,6 @@
                              if(isFinished==0) {
                                  actions.push('<a class="btn btn-warning btn-xs ' + cancelProcessInstanceFlag + '" href="javascript:void(0)" onclick="cancelProcessInstance(\'' + row.id + '\')"><i class="fa fa-delicious"></i>取消</a> ');
                              }
-                             actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
                              return actions.join('');
                          }
                      }]
@@ -140,6 +154,10 @@
              $.modal.openTab("流程详情", preViewUrl);
          }
 
+         function myStartFormProcessDetail(processInstanceId) {
+             var preViewUrl='/startFormProcessDetail?processInstanceId='+processInstanceId;
+             $.modal.openTab("流程详情", preViewUrl);
+         }
          function fromDetailUrl(detailUrl) {
              $.modal.openTab("详情", detailUrl);
 

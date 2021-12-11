@@ -86,6 +86,11 @@ public class TaskVO implements Serializable {
     private String formKey;
 
     /**
+     * 流程类型
+     */
+    private String processType;
+
+    /**
      * 流程实例id
      */
     private String processInstanceId;

@@ -11,6 +11,7 @@ import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.common.utils.bean.MyBeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
+import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.common.skipTask.TaskSkipService;
 import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
@@ -140,6 +141,10 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
             taskVO.setStartUserName(sysUser.getUserName());
             taskVO.setBusinessKey(historicProcessInstance.getBusinessKey());
             taskVO.setStartTime(historicProcessInstance.getStartTime());
+            //设置流程类型
+            Object hisVariable = flowableService.getHisVariable(t.getProcessInstanceId(), FlowConstants.PROCESS_TYPE);
+            Object processType = Optional.ofNullable(hisVariable).orElse(FlowTypeEnum.API_PROCESS.getCode());
+            taskVO.setProcessType(String.valueOf(processType));
             return taskVO;
         }).collect(Collectors.toList());
         PageModel<TaskVO> pageModel = new PageModel<> ();
@@ -187,6 +192,10 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                 historicTaskInstanceVO.setIsPass(String.valueOf(isPass));
                 historicTaskInstanceVO.setIsStart(String.valueOf(isStart));
             });
+            //设置流程类型
+            Object hisVariable = flowableService.getHisVariable(t.getProcessInstanceId(), FlowConstants.PROCESS_TYPE);
+            Object processType = Optional.ofNullable(hisVariable).orElse(FlowTypeEnum.API_PROCESS.getCode());
+            historicTaskInstanceVO.setProcessType(String.valueOf(processType));
             ProcessInstanceVO processInstanceVo = flowableService.getProcessInstanceVoById(t.getProcessInstanceId());
             historicTaskInstanceVO.setProcessName(processInstanceVo.getProcessDefinitionName());
             historicTaskInstanceVO.setBusinessKey(processInstanceVo.getBusinessKey());

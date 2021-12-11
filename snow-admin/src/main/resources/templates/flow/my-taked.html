@@ -36,6 +36,7 @@
      <script th:inline="javascript">
          var prefix = ctx + "modeler";
          var prefixFlow = ctx + "flow";
+         var processType = [[${@dict.getType('sys_process_type')}]];
          $(function() {
              var options = {
                  url: prefixFlow + "/getMyTakePartInTask",
@@ -57,6 +58,13 @@
                      {
                          field: 'processName',
                          title: '流程名称'
+                     },
+                     {
+                         field: 'processType',
+                         title: '流程类型',
+                         formatter: function(value, row, index) {
+                             return $.table.selectDictLabel(processType, value);
+                         }
                      },
                      {
                          field: 'taskName',
@@ -105,7 +113,13 @@
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
-                             actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             var processType=row.processType;
+                             if(processType=='FORM_PROCESS'){
+                                 actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskFormDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }else {
+                                 actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }
+
                              return actions.join('');
                          }
                      }]
@@ -116,6 +130,10 @@
 
          function taskDetail(taskId) {
              var url=prefixFlow+'/getMyTaskedDetail?taskId='+taskId;
+             $.modal.openTab("已办任务详情", url);
+         }
+         function taskFormDetail(taskId) {
+             var url='getMyTaskedDetail?taskId='+taskId;
              $.modal.openTab("已办任务详情", url);
          }
 

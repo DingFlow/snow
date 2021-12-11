@@ -1,11 +1,8 @@
 package com.snow.from.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.snow.common.core.text.Convert;
 import com.snow.common.utils.DateUtils;
 import com.snow.from.domain.SysFormDataRecord;
-import com.snow.from.domain.SysFormInstance;
 import com.snow.from.mapper.SysFormDataRecordMapper;
 import com.snow.from.service.ISysFormDataRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,16 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
     public SysFormDataRecord selectSysFormDataRecordById(Integer id)
     {
         return sysFormDataRecordMapper.selectSysFormDataRecordById(id);
+    }
+
+    /**
+     * 查询单数据记录
+     *
+     * @param formNo 单数据记录编号
+     * @return 单数据记录
+     */
+    public SysFormDataRecord selectSysFormDataRecordByFormNo(String formNo){
+        return sysFormDataRecordMapper.selectSysFormDataRecordByFormNo(formNo);
     }
 
     @Override

@@ -11,8 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
+import org.flowable.engine.delegate.event.FlowableProcessStartedEvent;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -37,22 +40,17 @@ public class ProcessStartListener implements FlowableEventListener {
 
     @Override
     public void onEvent(FlowableEvent flowableEvent) {
-        if (flowableEvent instanceof FlowableEngineEntityEvent) {
-            FlowableEngineEntityEvent flowableEngineEvent = (FlowableEngineEntityEvent) flowableEvent;
-            ProcessDefinitionEntity processDefinition = flowableService.getProcessDefinition(flowableEngineEvent);
-            if(ObjectUtil.isNull(processDefinition)){
-                return;
-            }
-            //获取流程类型
-            Object processType = flowableService.getHisVariable(flowableEngineEvent.getProcessInstanceId(), FlowConstants.PROCESS_TYPE);
+        if (flowableEvent instanceof FlowableProcessStartedEvent) {
+            FlowableProcessStartedEvent flowableProcessStartedEvent = (FlowableProcessStartedEvent) flowableEvent;
+
+            ExecutionEntity execution = (ExecutionEntity) flowableProcessStartedEvent.getEntity();
+            ProcessInstance processInstance = execution.getProcessInstance();
+
             //修改表单流程的状态---针对表单流程
-            if(ObjectUtil.isNull(processType)&&processType.equals(FlowTypeEnum.FORM_PROCESS.getCode())){
-                HistoricProcessInstance processInstance = flowableService.getHistoricProcessInstanceById(flowableEngineEvent.getProcessInstanceId());
-                ProcessEventRequest processEventRequest=new ProcessEventRequest(processInstance);
-                processEventRequest.setBusinessKey(processInstance.getBusinessKey());
-                processEventRequest.setProcessStatus(ProcessStatus.CHECKING.name());
-                applicationContext.publishEvent(processEventRequest);
-            }
+            ProcessEventRequest processEventRequest=new ProcessEventRequest(processInstance);
+            processEventRequest.setBusinessKey(processInstance.getBusinessKey());
+            processEventRequest.setProcessStatus(ProcessStatus.CHECKING.name());
+            applicationContext.publishEvent(processEventRequest);
 
         }
 

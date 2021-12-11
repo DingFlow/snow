@@ -29,7 +29,7 @@ public class GlobalListenerConfig implements ApplicationListener<ContextRefreshe
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
         FlowableEventDispatcher dispatcher = configuration.getEventDispatcher();
         //流程开始
-        dispatcher.addEventListener(taskCreateListener, FlowableEngineEventType.PROCESS_STARTED);
+        dispatcher.addEventListener(processStartListener, FlowableEngineEventType.PROCESS_STARTED);
         // 流程结束事件
         dispatcher.addEventListener(processEndListener, FlowableEngineEventType.PROCESS_COMPLETED);
         //任务创建

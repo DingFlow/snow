@@ -1,6 +1,5 @@
 package com.snow.from.service;
 
-import com.alibaba.fastjson.JSON;
 import com.snow.common.core.domain.ProcessEventRequest;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.service.impl.SysFormDataRecordServiceImpl;
@@ -24,7 +23,7 @@ public class FormProcessHandler implements ApplicationListener<ProcessEventReque
 
     @Override
     public void onApplicationEvent(ProcessEventRequest processEventRequest) {
-        log.info("@@流程状态变更监听器监听到的数据：{}", JSON.toJSON(processEventRequest));
+        log.info("@@流程状态变更监听器监听到的数据主键：{}", processEventRequest.getBusinessKey());
         SysFormDataRecord sysFormDataRecord=new SysFormDataRecord();
         sysFormDataRecord.setFormNo(processEventRequest.getBusinessKey());
         sysFormDataRecord.setFormStatus(processEventRequest.getProcessStatus());

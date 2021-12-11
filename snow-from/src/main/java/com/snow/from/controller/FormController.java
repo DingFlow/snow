@@ -3,12 +3,15 @@ package com.snow.from.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.extra.qrcode.QrConfig;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.domain.AjaxResult;
@@ -17,8 +20,9 @@ import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowTypeEnum;
-import com.snow.flowable.domain.StartProcessDTO;
+import com.snow.flowable.domain.*;
 import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.from.domain.SysFormDataRecord;
 import com.snow.from.domain.SysFormField;
@@ -31,7 +35,10 @@ import com.snow.from.service.impl.SysFormInstanceServiceImpl;
 import com.snow.from.util.FormUtils;
 import com.snow.system.service.ISysSequenceService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +52,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -70,6 +78,9 @@ public class FormController{
 
     @Autowired
     private FlowableService flowableService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @Autowired
     private ISysSequenceService sequenceService;
@@ -237,12 +248,132 @@ public class FormController{
         String formData=sysFormDataRecord.getFormData();
         String formField = sysFormDataRecord.getFormField();
         Map<String, Object> variables = Convert.toMap(String.class, Object.class, JSON.parse(formField));
+        variables.put(FlowConstants.DF_FORM_ID,sysFormDataRecord.getFormId());
         variables.put(FlowConstants.FORM_DATA,formData);
         variables.put(FlowConstants.PROCESS_TYPE,FlowTypeEnum.FORM_PROCESS.getCode());
         startProcessDTO.setVariables(variables);
         ProcessInstance processInstance = flowableService.startProcessInstanceByKey(startProcessDTO);
-        log.info("@@表单编号：{},发起流程：{}",sysFormDataRecord.getFormNo(),JSON.toJSONString(processInstance));
+        log.info("@@表单编号：{},发起流程id：{}",sysFormDataRecord.getFormNo(),processInstance.getId());
         return AjaxResult.success();
+    }
+
+    /**
+     * 生成二维码
+     */
+    @GetMapping("/createQRCode")
+    public void createQRCode(@RequestParam("id") int id, HttpServletResponse response){
+        Object domain = CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN, "http://localhost");
+        QrConfig config = new QrConfig(500, 500);
+        // 设置边距，既二维码和背景之间的边距
+        config.setMargin(3);
+        // 设置前景色，既二维码颜色（青色）
+        config.setForeColor(Color.CYAN);
+        // 设置背景色（灰色）
+        config.setBackColor(Color.GRAY);
+        config.setQrVersion(10);
+       // config.setImg("https://qimetons.oss-cn-beijing.aliyuncs.com/45a22bcc93644dfe8bcacf690fe133f3.png");
+        // 生成二维码
+        BufferedImage bufferedImage = QrCodeUtil.generate(StrUtil.format("{}/toFormRecordDetail?id={}",domain,id), config);
+        try {
+            //以PNG格式向客户端发送
+            ServletOutputStream os = response.getOutputStream();
+            ImageIO.write(bufferedImage, "PNG",os);
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            throw new RuntimeException("生成二维码异常");
+        }
+    }
+
+    /**
+     * 跳转待办页
+     * @param taskId 任务id
+     * @param mmap 返回参数
+     * @return 页面
+     */
+    @GetMapping("/toFinishTask")
+    public String toFinishTask(String taskId,ModelMap mmap) {
+        Task task =  flowableTaskService.getTask(taskId);
+        HistoricProcessInstance historicProcessInstance = flowableService.getHistoricProcessInstanceById(task.getProcessInstanceId());
+        Object formData = flowableService.getHisVariable(task.getProcessInstanceId(), FlowConstants.FORM_DATA);
+        Object formId = flowableService.getHisVariable(task.getProcessInstanceId(), FlowConstants.DF_FORM_ID);
+        if(ObjectUtil.isNotEmpty(formId)){
+            SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.parseLong(String.valueOf(formId)));
+            mmap.put("name", sysFormInstance.getFormName());
+        }
+        mmap.put("taskId", taskId);
+        mmap.put("businessKey", historicProcessInstance.getBusinessKey());
+        mmap.put("processInstanceId", task.getProcessInstanceId());
+        mmap.put("formData", String.valueOf(formData));
+        return "formProcessDetail";
+    }
+
+    /**
+     * 流程表单详情
+     * @param processInstanceId 流程实例id
+     * @return 表单数据
+     */
+    @PostMapping("/form/getProcessFormData")
+    @ResponseBody
+    public AjaxResult getProcessFormData(String processInstanceId){
+        Object formData = flowableService.getHisVariable(processInstanceId, FlowConstants.FORM_DATA);
+        return AjaxResult.success(String.valueOf(formData));
+    }
+
+    /**
+     * 提交任务
+     * @param finishTaskDTO 前端参数
+     */
+    @PostMapping("/form/submitTask")
+    @ResponseBody
+    @RepeatSubmit
+    public AjaxResult submitTask(FinishTaskDTO finishTaskDTO){
+        finishTaskDTO.setUserId(String.valueOf(ShiroUtils.getUserId()));
+        finishTaskDTO.setIsUpdateBus(true);
+        flowableTaskService.submitTask(finishTaskDTO);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 跳转已办任务详情
+     * @param taskId 任务id
+     * @param modelMap 返回map
+     * @return 返回页面
+     */
+    @GetMapping("/getMyTaskedDetail")
+    public String getMyHisTaskedDetail(String taskId,ModelMap modelMap) {
+        //获取任务实例
+        HistoricTaskInstanceVO hisTask = flowableTaskService.getHisTask(taskId);
+        Object formId = flowableService.getHisVariable(hisTask.getProcessInstanceId(), FlowConstants.DF_FORM_ID);
+        if(ObjectUtil.isNotEmpty(formId)){
+            SysFormInstance sysFormInstance = sysFormInstanceService.selectSysFormInstanceById(Long.parseLong(String.valueOf(formId)));
+            modelMap.put("name", sysFormInstance.getFormName());
+        }
+        //获取流程实例
+        ProcessInstanceVO processInstanceVo = flowableService.getProcessInstanceVoById(hisTask.getProcessInstanceId());
+        SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordByFormNo(processInstanceVo.getBusinessKey());
+        modelMap.put("hisTask",hisTask);
+        modelMap.put("appId",sysFormDataRecord.getId());
+        modelMap.put("processInstance",processInstanceVo);
+        return "/myTaskedDetail";
+    }
+
+    /**
+     * 跳转我发起的流程详情
+     */
+    @GetMapping("/startFormProcessDetail")
+    @RequiresPermissions("system:flow:myStartProcessDetail")
+    public String myStartProcessDetail(String processInstanceId,ModelMap modelMap) {
+        ProcessInstanceVO processInstanceVo = flowableService.getProcessInstanceVoById(processInstanceId);
+        HistoricTaskInstanceDTO historicTaskInstanceDTO=new HistoricTaskInstanceDTO();
+        historicTaskInstanceDTO.setProcessInstanceId(processInstanceId);
+        List<HistoricTaskInstanceVO> historicTaskInstanceList= flowableTaskService.getHistoricTaskInstanceNoPage(historicTaskInstanceDTO);
+        SysFormDataRecord sysFormDataRecord = sysFormDataRecordService.selectSysFormDataRecordByFormNo(processInstanceVo.getBusinessKey());
+        modelMap.put("historicTaskInstanceList",historicTaskInstanceList);
+        modelMap.put("processInstanceId",processInstanceId);
+        modelMap.put("processInstance",processInstanceVo);
+        modelMap.put("appId",sysFormDataRecord.getId());
+        return "/startFormProcessDetail";
     }
     /**
      * 构建子表数据
@@ -287,34 +418,6 @@ public class FormController{
         sysFormField.setFieldType(formFieldRequest.getTag());
         sysFormField.setFieldHtml(jsonString);
         sysFormFieldService.insertSysFormField(sysFormField);
-    }
-
-    /**
-     * 生成二维码
-     */
-    @GetMapping("/createQRCode")
-    public void createQRCode(@RequestParam("id") int id, HttpServletResponse response){
-        Object domain = CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN, "http://localhost");
-        QrConfig config = new QrConfig(500, 500);
-        // 设置边距，既二维码和背景之间的边距
-        config.setMargin(3);
-        // 设置前景色，既二维码颜色（青色）
-        config.setForeColor(Color.CYAN);
-        // 设置背景色（灰色）
-        config.setBackColor(Color.GRAY);
-        config.setQrVersion(10);
-       // config.setImg("https://qimetons.oss-cn-beijing.aliyuncs.com/45a22bcc93644dfe8bcacf690fe133f3.png");
-        // 生成二维码
-        BufferedImage bufferedImage = QrCodeUtil.generate(StrUtil.format("{}/toFormRecordDetail?id={}",domain,id), config);
-        try {
-            //以PNG格式向客户端发送
-            ServletOutputStream os = response.getOutputStream();
-            ImageIO.write(bufferedImage, "PNG",os);
-            os.flush();
-            os.close();
-        } catch (IOException e) {
-            throw new RuntimeException("生成二维码异常");
-        }
     }
 
 }

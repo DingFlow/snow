@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('我发起的流程详情')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sequence-edit" >
+            <input name="processInstanceId"  id="processInstanceId"  th:value="${processInstanceId}" type="hidden" >
+            <input name="appId"  id="appId"  th:value="${appId}" type="hidden" >
+            <div class="ibox float-e-margins">
+                <h4 class="form-header h4">流程概况</h4>
+                <div class="vertical-timeline-block" >
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-5 col-md-offset-1">
+                            <label class="col-sm-3 control-label">流程名称：</label>
+                            <div class="form-control-static"  th:text="${processInstance.processDefinitionName}">
+                            </div>
+                        </div>
+                        <div class="col-xs-4 col-sm-5">
+                            <label class="col-sm-3 control-label">流程状态：</label>
+                            <div class="form-control-static" th:if="${processInstance.isFinished==0}">
+                                <span class="badge badge-info">进行中</span>
+                            </div>
+                            <div class="form-control-static" th:if="${processInstance.isFinished==1}">
+                                <span class="badge badge-success">结束</span>
+                            </div>
+                            <div class="form-control-static" th:if="${processInstance.isFinished==2}">
+                                <span class="badge badge-warning">取消</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-5 col-md-offset-1">
+                            <label class="col-sm-3 control-label">发起人：</label>
+                            <div class="form-control-static"  th:text="${processInstance.startUserName}">
+                            </div>
+                        </div>
+                        <div class="col-xs-4 col-sm-5">
+                            <label class="col-sm-3 control-label">流程已用时：</label>
+                            <div class="form-control-static" th:text="${processInstance.processSpendTime}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-5 col-md-offset-1">
+                            <label class="col-sm-3 control-label">开始时间：</label>
+                            <div class="form-control-static" th:text="${#dates.format(processInstance.startTime, 'yyyy-MM-dd hh:mm:ss')}">
+                            </div>
+                        </div>
+                        <div class="col-xs-4 col-sm-5">
+                            <label class="col-sm-3 control-label">结束时间：</label>
+                            <div class="form-control-static" th:text="${#dates.format(processInstance.endTime, 'yyyy-MM-dd hh:mm:ss')}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-5 col-md-offset-1" th:if="${processInstance.isFinished==2}">
+                            <label class="col-sm-3 control-label">取消原因：</label>
+                            <div class="form-control-static" th:text="${processInstance.deleteReason}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-5 col-md-offset-1">
+                            <label class="col-sm-3 control-label">业务单详情：</label>
+                            <div class="form-control-static" >
+                                <a  href="javascript:void(0)" onclick="getProcessDiagram()">
+                                    [[${processInstance.businessKey}]]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <h4 class="form-header h4">流程图</h4>
+                <div class="vertical-timeline-block" >
+                     <img  class="imgcode" width="85%"/>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins form-horizontal">
+                <h4 class="form-header h4">审批节点</h4>
+                <div id="ibox-content">
+                    <div id="vertical-timeline" class="vertical-container light-timeline light-dark">
+                        <div class="vertical-timeline-block" th:each="task,iterStat : ${historicTaskInstanceList}">
+                            <div class="vertical-timeline-icon navy-bg">
+                                <i class="fa fa-tasks"></i>
+                            </div>
+                            <div class="vertical-timeline-content ">
+                                <h2 th:text="${task.taskName }"></h2>
+                                <br class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-4" th:if="${task.isStart} == ''">
+                                                <label  >审批结果：</label>
+                                                <label th:switch="${task.isPass}">
+                                                    <span  class="btn-outline btn-danger" th:case="'false'">驳回</span>
+                                                    <span  class="btn-outline btn-success"  th:case="'true'">通过</span>
+                                                    <span  class="btn-outline btn-info" th:case=" ''">待审核</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-4" th:if="${task.isStart} != ''">
+                                                <label  >状态：</label>
+                                                <label th:switch="${task.isStart}">
+                                                    <span  class="btn-outline btn-danger" th:case="'false'">结束</span>
+                                                    <span  class="btn-outline btn-success"  th:case="'true'">开始</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-4" th:if="${task.assigneeName} != null">
+                                                    <label >审批人：</label>
+                                                    <span th:text="${task.assigneeName}"></span>
+                                            </div>
+
+                                            <div class="col-md-4" th:if="${task.handleTaskTime} != null">
+                                                <label>任务历时：</label>
+                                                <label>
+                                                    <span th:text="${task.handleTaskTime}"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                </br>
+                                        <div class="row" >
+                                           <div class="col-md-12">
+                                            <label>可审批人：</label>
+                                            <span th:each="userName:${task.handleUserList}">
+                                                <label th:if="${userName} ne ''">&nbsp;&nbsp
+                                                <span th:text="${userName}"></span>
+                                                </label>
+                                            </span>
+                                           </div>
+                                        </div>
+                                </br>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <span class="vertical-date">
+                                                <label>任务时间：</label> <small th:text="${#dates.format(task.startTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                                                <label>~</label> <small th:text="${#dates.format(task.completeTime, 'yyyy-MM-dd HH:mm:ss')}"></small>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                </br>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div th:each="comment:${task.commentList}">
+                                            <label>审批意见：</label>
+                                            <label th:if="${comment.fullMessage} ne ''">
+                                                <span th:text="${comment.fullMessage}"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
+
+        function getProcessDiagram() {
+            var appId= $("#appId").val();
+            $.modal.open('业务单', "toFormRecordDetail?id="+appId);
+        }
+    </script>
+</body>
+</html>

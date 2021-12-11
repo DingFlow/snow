@@ -131,6 +131,10 @@ public class ProcessInstanceVO  implements Serializable {
      */
     private Integer processInstanceStatus;
 
+    /**
+     * 流程类型
+     */
+    private String processType;
 
     public static List<ProcessInstanceVO> warpList(List<HistoricProcessInstance> historicProcessInstanceList){
        return historicProcessInstanceList.stream().map(t->{

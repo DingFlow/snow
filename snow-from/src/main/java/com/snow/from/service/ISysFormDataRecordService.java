@@ -21,6 +21,13 @@ public interface ISysFormDataRecordService
     public SysFormDataRecord selectSysFormDataRecordById(Integer id);
 
     /**
+     * 查询单数据记录
+     *
+     * @param formNo 单数据记录编号
+     * @return 单数据记录
+     */
+    public SysFormDataRecord selectSysFormDataRecordByFormNo(String formNo);
+    /**
      * 获取最大版本号
      * @param userId 用户id
      * @return 最大版本号

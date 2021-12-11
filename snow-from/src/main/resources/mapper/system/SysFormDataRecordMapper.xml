@@ -49,6 +49,12 @@
     </select>
 
 
+    <select id="selectSysFormDataRecordByFormNo" parameterType="String" resultMap="SysFormDataRecordResult">
+        <include refid="selectSysFormDataRecordVo"/>
+        where form_no = #{formNo}
+    </select>
+
+
     <select id="getMaxVersionByUsrId" parameterType="Long" resultType="integer">
         select max(version) from sys_form_data_record
         where belong_user_id = #{belongUserId}

@@ -22,6 +22,11 @@ public class FormDataRecordResponse extends BaseEntity implements Serializable {
     private String formId;
 
     /**
+     * 表单编号
+     */
+    private String formNo;
+
+    /**
      * 表单名称
      */
     private String formName;
@@ -48,6 +53,10 @@ public class FormDataRecordResponse extends BaseEntity implements Serializable {
     /** 版本号 */
     private Integer version;
 
+    /**
+     * 表单状态
+     */
+    private String formStatus;
     /**
      * 流程标识
      */
