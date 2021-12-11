@@ -8,13 +8,28 @@
 
         <div class="row">
             <div class="col-sm-12 search-collapse">
-                <span class="help-block m-b-none text-warning"><i class="fa fa-info-circle"></i> DingFlow表单流程操作步骤:</span>
-                <span class="help-block m-b-none text-warning">1. 流程设计: 点击流程管理-->系统流程管理-->模型管理-->设计流程 按钮,绘制您的流程图;绘制任务节点时，统一要求通过条件:${isPass==true}
+                <div class="ibox-content">
+                    <ul  class="unstyled">
+                        <li>
+                            <h4 class="help-block m-b-none text-primary"><i class="fa fa-info-circle"></i> DingFlow表单流程操作步骤:</h4>
+                            <ul  class="unstyled">
+                                <li>
+                                    <span class="help-block m-b-none text-primary">1. 流程设计: 点击<span class=" text-danger">流程管理-->系统流程管理-->模型管理-->设计流程</span> 按钮,绘制您的流程图;绘制任务节点时，统一要求通过条件:${isPass==true}
                 驳回条件：${isPass==false}
                 </span>
-                <span class="help-block m-b-none text-warning">2. 设计表单: 点击下方蓝色的设计表单按钮,设计自己的业务表单;目前表单控件不支持图片和文件上传;</span>
-                <span class="help-block m-b-none text-warning">3. 关联流程和表单: 点击表单列表的关联流程按钮,选择您设计好的流程,提交即可</span>
-                <span class="help-block m-b-none text-warning">到此，即可发起流程，正常审批。如果您的业务比较复杂，建议您使用DingFlow Api流程方式编码完成</span>
+                                </li>
+                                <li>
+                                    <span class="help-block m-b-none text-primary">2. 设计表单: 点击下方蓝色的<span class=" text-danger">设计表单</span>按钮,设计自己的业务表单;目前表单控件不支持图片和文件上传;</span>
+                                </li>
+                                <li>
+                                    <span class="help-block m-b-none text-primary">3. 关联流程和表单: 点击表单列表的<span class=" text-danger">绑定流程</span>按钮,选择您设计好的流程,提交即可</span>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <span class="help-block m-b-none text-primary">到此，即可发起流程，正常审批。如果您的业务比较复杂，建议您使用DingFlow Api流程方式自行编码完成</span>
+                    </ul>
+                </div>
             </div>
             <div class="col-sm-12 search-collapse">
                 <form id="formId">

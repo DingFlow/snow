@@ -28,7 +28,6 @@ import com.snow.dingtalk.service.UserService;
 import com.snow.dingtalk.service.WorkRecodeService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaTask;
-import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.ISysUserService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
@@ -259,7 +258,6 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());
         }
     }
-
 
 
     public Client createTodoClient(){
