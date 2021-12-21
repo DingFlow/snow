@@ -1,7 +1,6 @@
 package com.snow;
 
 import com.snow.flowable.common.SpringContextUtil;
-import org.flowable.ui.common.rest.idm.remote.RemoteAccountResource;
 import org.flowable.ui.modeler.properties.FlowableModelerAppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,35 +10,26 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 
 /**
  * 启动程序
- * 
+ *
  * @author snow
  */
 @SpringBootApplication(
         exclude= {
                 DataSourceAutoConfiguration.class,
                 SecurityAutoConfiguration.class,
-                SecurityAutoConfiguration.class,
                 UserDetailsServiceAutoConfiguration.class,
                 LiquibaseAutoConfiguration.class
-        }
-)
-@ComponentScan(basePackages = {"com.snow",
-        "org.flowable.ui"
+        },
+        scanBasePackages = {"com.snow","org.flowable.ui" }
 
-},
-        excludeFilters= @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RemoteAccountResource.class})
 )
 public class SnowApplication
 {
     public static void main(String[] args)
     {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
-        //SpringApplication.run(SnowApplication.class, args);
         ApplicationContext context=SpringApplication.run(SnowApplication.class, args);
         SpringContextUtil.setApplicationContext(context);
 

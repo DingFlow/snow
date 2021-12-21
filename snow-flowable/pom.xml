@@ -28,6 +28,16 @@
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter</artifactId>
             <version>${flowable.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--flowable整合设计器-->
@@ -35,6 +45,16 @@
             <groupId>org.flowable</groupId>
             <artifactId>flowable-ui-modeler-rest</artifactId>
             <version>${flowable.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

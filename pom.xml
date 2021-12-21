@@ -22,7 +22,6 @@
         <druid.version>1.1.14</druid.version>
         <bitwalker.version>1.19</bitwalker.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <swagger.version>2.9.2</swagger.version>
         <pagehelper.boot.version>1.2.5</pagehelper.boot.version>
         <fastjson.version>1.2.70</fastjson.version>
         <oshi.version>3.9.1</oshi.version>
@@ -101,6 +100,20 @@
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>${pagehelper.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis-spring</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.jsqlparser</groupId>
+                        <artifactId>jsqlparser</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- 获取系统信息 -->
@@ -110,29 +123,6 @@
                 <version>${oshi.version}</version>
             </dependency>
 
-            <!-- swagger2-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-annotations</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-models</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- swagger2-UI-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
             
             <!--io常用工具类 -->
             <dependency>
