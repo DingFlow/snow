@@ -21,15 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用请求处理
- * 
+ *
  * @author snow
  */
 @Controller
-public class CommonController
-{
+public class CommonController {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
-
-
 
     @Autowired
     private StorageService storageService;
@@ -37,7 +34,7 @@ public class CommonController
 
     /**
      * 通用下载请求
-     * 
+     *
      * @param fileKey 文件名称
      */
     @GetMapping("common/download")
@@ -72,8 +69,7 @@ public class CommonController
      */
     @GetMapping("/common/download/resource")
     public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
-            throws Exception
-    {
+            throws Exception {
         // 本地资源路径
         String localPath = Global.getProfile();
         // 数据库资源地址
