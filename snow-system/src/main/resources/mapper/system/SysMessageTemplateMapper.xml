@@ -11,6 +11,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="templateBody"    column="template_body"    />
         <result property="templateDesc"    column="template_desc"    />
         <result property="templateType"    column="template_type"    />
+        <result property="pcUrl"    column="pc_url"    />
+        <result property="appUrl"    column="app_url"    />
+        <result property="iconClass"    column="icon_class"    />
         <result property="templateStatus"    column="template_status"    />
         <result property="isDelete"    column="is_delete"    />
         <result property="createBy"    column="create_by"    />
@@ -20,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysMessageTemplateVo">
-        select id, template_code, template_name, template_body, template_desc, template_type, template_status, is_delete, create_by, create_time, update_by, update_time from sys_message_template
+        select id, template_code, template_name, template_body, pc_url,app_url,icon_class,template_desc, template_type, template_status, is_delete, create_by, create_time, update_by, update_time from sys_message_template
     </sql>
 
     <select id="selectSysMessageTemplateList" parameterType="SysMessageTemplate" resultMap="SysMessageTemplateResult">
@@ -54,6 +57,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateBody != null and templateBody != ''">template_body,</if>
             <if test="templateDesc != null">template_desc,</if>
             <if test="templateType != null">template_type,</if>
+            <if test="pcUrl != null">pc_url,</if>
+            <if test="appUrl != null">app_url,</if>
+            <if test="iconClass != null">icon_class,</if>
             <if test="templateStatus != null">template_status,</if>
             <if test="isDelete != null">is_delete,</if>
             <if test="createBy != null">create_by,</if>
@@ -67,6 +73,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateBody != null and templateBody != ''">#{templateBody},</if>
             <if test="templateDesc != null">#{templateDesc},</if>
             <if test="templateType != null">#{templateType},</if>
+            <if test="pcUrl != null">#{pcUrl},</if>
+            <if test="appUrl != null">#{appUrl},</if>
+            <if test="iconClass != null">#{iconClass},</if>
             <if test="templateStatus != null">#{templateStatus},</if>
             <if test="isDelete != null">#{isDelete},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -84,7 +93,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateBody != null and templateBody != ''">template_body = #{templateBody},</if>
             <if test="templateDesc != null">template_desc = #{templateDesc},</if>
             <if test="templateType != null">template_type = #{templateType},</if>
+            <if test="pcUrl != null">pc_url=#{pcUrl},</if>
+            <if test="appUrl != null">app_url=#{appUrl},</if>
             <if test="templateStatus != null">template_status = #{templateStatus},</if>
+            <if test="iconClass != null">icon_class=#{iconClass},</if>
             <if test="isDelete != null">is_delete = #{isDelete},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

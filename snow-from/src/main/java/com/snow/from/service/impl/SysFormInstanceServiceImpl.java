@@ -88,8 +88,7 @@ public class SysFormInstanceServiceImpl implements ISysFormInstanceService
      * @return 结果
      */
     @Override
-    public int deleteSysFormInstanceByIds(String ids)
-    {
+    public int deleteSysFormInstanceByIds(String ids) {
         return sysFormInstanceMapper.deleteSysFormInstanceByIds(Convert.toStrArray(ids));
     }
 

@@ -67,7 +67,6 @@ public class SysSyncLogController extends BaseController
         ExcelUtil<SysDingtalkSyncLog> util = new ExcelUtil<SysDingtalkSyncLog>(SysDingtalkSyncLog.class);
         return util.exportExcel(list, "log");
     }
-
     /**
      * 新增钉钉同步日志记录
      */

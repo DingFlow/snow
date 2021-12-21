@@ -12,6 +12,11 @@ public class UserConstants
      */
     public static final String SYS_USER = "SYS_USER";
 
+    /**
+     * 系统标识IDkey
+     */
+    public static final String  SYS_ADMIN_ID_KEY = "sys.admin.id";
+
     /** 正常状态 */
     public static final String NORMAL = "0";
 
@@ -99,10 +104,11 @@ public class UserConstants
     public static final String REGISTER_USER_TYPE = "01";
 
     /**
-     * 用户类型
+     * 角色类型
      */
     public static final Integer SYSTEM_ROLE_TYPE = 1;
     public static final Integer FLOW_ROLE_TYPE = 2;
+
 
     /**
      * 手机号码格式限制
@@ -113,4 +119,15 @@ public class UserConstants
      * 邮箱格式限制
      */
     public static final String EMAIL_PATTERN = "^((([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+(\\.([a-z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(\\\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|\\d|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.)+(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])|(([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])([a-z]|\\d|-|\\.|_|~|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])*([a-z]|[\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF])))\\.?";
+
+    /**
+     * 前台退出
+     */
+    public static final String FRONT_LOGIN_OUT_URL = "/front/index";
+
+    /**
+     * 官网角色
+     */
+    public static final Long FRONT_ROLE_TYPE_ID = 118L;
+
 }

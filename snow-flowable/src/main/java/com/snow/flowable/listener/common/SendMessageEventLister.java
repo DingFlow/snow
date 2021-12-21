@@ -6,17 +6,19 @@ import cn.hutool.core.thread.ExecutorBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.MessageConstants;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.DingTalkMessageType;
-import com.snow.dingtalk.model.WorkrecordAddRequest;
+import com.snow.common.utils.CacheUtils;
+import com.snow.dingtalk.model.request.WorkrecordAddRequest;
 import com.snow.flowable.common.SpringContextUtil;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.listener.AbstractEventListener;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.framework.web.domain.common.SysSendMessageDTO;
-import com.snow.framework.web.service.MailService;
+import com.snow.framework.web.service.MailMessageService;
 import com.snow.framework.web.service.NewsTriggerService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
@@ -162,7 +164,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     String userId = String.valueOf(t.getUserId());
                     if (!StringUtils.isEmpty(userId)) {
                         WorkrecordAddRequest workrecordAddRequest = initWorkRecordAddRequest(userId, event);
-                        SyncEvent syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_CREATE);
+                        SyncEvent<WorkrecordAddRequest> syncEventGroup = new SyncEvent(workrecordAddRequest, DingTalkListenerType.WORK_RECODE_OLD_CREATE);
                         applicationContext.publishEvent(syncEventGroup);
                     }
                 });
@@ -179,7 +181,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessStartedEmailMessage(FlowableProcessStartedEvent event) {
-        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
@@ -189,11 +191,11 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
             ProcessInstance processInstance = execution.getProcessInstance();
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("toUser", getUserInfo(processInstance.getStartUserId()).getUserName());
             map.put("starttime", DateUtil.formatDateTime(processInstance.getStartTime()));
             map.put("processInstance", processInstance.getProcessDefinitionName());
-            map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
             map.put("datetime", DateUtil.formatDateTime(new Date()));
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
                     .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
@@ -213,7 +215,7 @@ public class SendMessageEventLister extends AbstractEventListener {
     public void sendTaskCreateEmailMessage(FlowableEngineEntityEvent event) {
 
         FlowableService flowableService = (FlowableService) SpringContextUtil.getBean(FlowableService.class);
-        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
         ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
         ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
         //根据任务ID获取任务获选人
@@ -229,11 +231,11 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             executor.execute(() ->
                     flowCandidates.forEach(t -> {
-                        Map<String, String> map = new HashMap<>();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("toUser", t.getUserName());
                         map.put("startUser", getUserInfo(processInstance.getStartUserId()).getUserName());
                         map.put("processInstance", processDefinition.getName());
-                        map.put("url", "http://localhost/flow/findTasksByUserId");
+                        map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/findTasksByUserId");
                         map.put("datetime", DateUtil.formatDateTime(new Date()));
                         SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.TASK_CREATED_CODE)
                                 .receiver(t.getEmail())
@@ -265,11 +267,11 @@ public class SendMessageEventLister extends AbstractEventListener {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
             ProcessInstance processInstance = execution.getProcessInstance();
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("toUser", getUserInfo(processInstance.getStartUserId()).getUserName());
             map.put("starttime", DateUtil.formatDateTime(processInstance.getStartTime()));
             map.put("processInstance", processInstance.getProcessDefinitionName());
-            map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+            map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
             map.put("datetime", DateUtil.formatDateTime(new Date()));
 
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
@@ -290,7 +292,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessCompletedEmailMessage(FlowableEngineEntityEvent event) {
-        MailService mailService = (MailService) SpringContextUtil.getBean(MailService.class);
+        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
@@ -298,7 +300,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
-            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
                     .paramMap(map)
@@ -323,7 +325,7 @@ public class SendMessageEventLister extends AbstractEventListener {
 
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
-            Map<String, String> map = buildSendProcessCompletedParam(hisProcessInstance);
+            Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
 
             SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiverSet(Sets.newHashSet(getUserInfo(hisProcessInstance.getStartUserId()).getDingUserId()))
@@ -342,15 +344,15 @@ public class SendMessageEventLister extends AbstractEventListener {
      *
      * @param hisProcessInstance
      */
-    private Map<String, String> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance) {
-        Map<String, String> map = new HashMap<>();
+    private Map<String, Object> buildSendProcessCompletedParam(HistoricProcessInstance hisProcessInstance) {
+        Map<String, Object> map = new HashMap<>();
         map.put("toUser", getUserInfo(hisProcessInstance.getStartUserId()).getUserName());
         map.put("starttime", DateUtil.formatDateTime(hisProcessInstance.getStartTime()));
         map.put("orderNo", hisProcessInstance.getBusinessKey());
         map.put("processInstance", hisProcessInstance.getProcessDefinitionName());
         String spendTime = DateUtil.formatBetween(hisProcessInstance.getStartTime(), new Date(), BetweenFormater.Level.SECOND);
         map.put("time", spendTime);
-        map.put("url", "http://localhost/flow/getMyHistoricProcessInstance");
+        map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
         map.put("datetime", DateUtil.formatDateTime(new Date()));
         return map;
     }
@@ -374,7 +376,7 @@ public class SendMessageEventLister extends AbstractEventListener {
         // workrecordAddRequest.setBizId(processInstance.getBusinessKey());
         workrecordAddRequest.setUrl(entity.getFormKey());
         workrecordAddRequest.setPcUrl(entity.getFormKey());
-        workrecordAddRequest.setSourceName("DING-FLOW");
+        workrecordAddRequest.setSourceName("DingFlow");
         workrecordAddRequest.setPcOpenType(2L);
         workrecordAddRequest.setTitle(processDefinition.getName());
         workrecordAddRequest.setCreateTime(entity.getCreateTime().getTime());

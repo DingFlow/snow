@@ -22,9 +22,15 @@
         <!-- 通用工具-->
         <dependency>
             <groupId>com.snow</groupId>
-            <artifactId>snow-framework</artifactId>
+            <artifactId>snow-flowable</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
 
 </project>

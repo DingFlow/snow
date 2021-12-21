@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('客户列表')" />
+</head>
+<body class="gray-bg">
+     <div class="wrapper wrapper-content animated fadeIn" >
+         <div class="row">
+             <div class="col-sm-12">
+                 <div class="tabs-container">
+                     <ul class="nav nav-tabs">
+                         <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">客户公海</a>
+                         </li>
+                         <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">我的客户</a>
+                         </li>
+                         <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">黑名单客户</a>
+                         </li>
+                     </ul>
+                     <div class="tab-content">
+                         <div id="tab-1" class="tab-pane active">
+                             <div class="panel-body">
+                                 <div class="col-sm-12 search-collapse">
+                                     <form id="formId3">
+                                         <div class="select-list">
+                                             <ul>
+                                                 <li>
+                                                     <label>客户编号：</label>
+                                                     <input type="text" name="customerNo" id="seasCustomerNo"/>
+                                                 </li>
+                                                 <li>
+                                                     <label>客户名称：</label>
+                                                     <input type="text" name="customerName" id="seasCustomerName"/>
+                                                 </li>
+                                                 <li>
+                                                     <label>所属行业：</label>
+                                                     <select name="customerIndustry"  id="seasCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                         <option value="">所有</option>
+                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                     </select>
+                                                 </li>
+                                                 <li>
+                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId3','bootstrap-table3')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId3','bootstrap-table3')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                 </li>
+                                             </ul>
+                                         </div>
+                                     </form>
+                                 </div>
+
+                                 <div class="btn-group-sm" id="toolbar1" role="group">
+                                     <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:customer:add">
+                                         <i class="fa fa-plus"></i> 添加
+                                     </a>
+                                     <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:customer:edit">
+                                         <i class="fa fa-edit"></i> 修改
+                                     </a>
+                                     <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:customer:remove">
+                                         <i class="fa fa-remove"></i> 删除
+                                     </a>
+                                     <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:customer:export">
+                                         <i class="fa fa-download"></i> 导出
+                                     </a>
+                                 </div>
+                                 <div class="col-sm-12 select-table table-striped">
+                                     <table id="bootstrap-table3"></table>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div id="tab-2" class="tab-pane">
+                             <div class="panel-body">
+                                 <div class="col-sm-12 search-collapse">
+                                     <form id="myformId">
+                                         <div class="select-list">
+                                             <ul>
+                                                 <li>
+                                                     <label>客户编号：</label>
+                                                     <input type="text" name="customerNo" id="myCustomerNo"/>
+                                                 </li>
+                                                 <li>
+                                                     <label>客户名称：</label>
+                                                     <input type="text" name="customerName" id="myCustomerName"/>
+                                                 </li>
+                                                 <li>
+                                                     <label>所属行业：</label>
+                                                     <select name="customerIndustry" id="myCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                         <option value="">所有</option>
+                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                     </select>
+                                                 </li>
+                                                 <li>
+                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('myformId','bootstrap-table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('myformId','bootstrap-table1')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                 </li>
+                                             </ul>
+                                         </div>
+                                     </form>
+                                 </div>
+                                 <div class="btn-group-sm" id="toolbar2" role="group">
+                                     <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:customer:export">
+                                         <i class="fa fa-download"></i> 导出
+                                     </a>
+                                 </div>
+                                 <div class="col-sm-12 select-table table-striped">
+                                     <table id="bootstrap-table1"></table>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div id="tab-3" class="tab-pane">
+                             <div class="panel-body">
+                                 <div class="col-sm-12 search-collapse">
+                                     <form id="formId2">
+                                         <div class="select-list">
+                                             <ul>
+                                                 <li>
+                                                     <label>客户编号：</label>
+                                                     <input type="text" name="customerNo" id="blackCustomerNo"/>
+                                                 </li>
+                                                 <li>
+                                                     <label>客户名称：</label>
+                                                     <input type="text" name="customerName" id="blackCustomerName"/>
+                                                 </li>
+
+
+                                                 <li>
+                                                     <label>所属行业：</label>
+                                                     <select name="customerIndustry"   id="blackCustomerIndustry" th:with="type=${@dict.getType('sys_industry_type')}">
+                                                         <option value="">所有</option>
+                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                                     </select>
+                                                 </li>
+
+                                                 <li>
+                                                     <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('formId2','bootstrap-table2')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                     <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('formId2','bootstrap-table2')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                                 </li>
+                                             </ul>
+                                         </div>
+                                     </form>
+                                 </div>
+
+                                 <div class="col-sm-12 select-table table-striped">
+                                     <table id="bootstrap-table2"></table>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+
+                 </div>
+             </div>
+         </div>
+        <div class="row">
+
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:customer:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:customer:remove')}]];
+        var detailFlag = [[${@permission.hasPermi(' system:customer:detail')}]];
+        var visitLogAdd = [[${@permission.hasPermi('system:customer:visitLogAdd')}]];
+
+        var customerStatusDatas = [[${@dict.getType('sys_customer_status')}]];
+        var customerIndustryDatas = [[${@dict.getType('sys_industry_type')}]];
+
+        var visitTypeDatas = [[${@dict.getType('sys_customer_visit_type')}]];
+        var prefix = ctx + "system/customer";
+        $(function() {
+            var options = {
+                id:"bootstrap-table3",
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "客户",
+                toolbar: "toolbar1",
+                queryParams:queryParams,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'customerNo',
+                    title: '客户编号'
+                },
+
+                {
+                    field: 'customerName',
+                    title: '客户名称'
+                },
+                {
+                    field: 'customerIndustry',
+                    title: '所属行业',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(customerIndustryDatas, value);
+                    }
+                },
+                {
+                    field: 'customerAreaCode',
+                    title: '详细地址',
+                    formatter: function(value, row, index) {
+                        var address=row.customerProvinceName+row.customerCityName+row.customerAreaName+row.customerAddress;
+                        return $.table.tooltip(address);
+                    }
+                },
+                {
+                    field: 'customerStatus',
+                    title: '客户状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(customerStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'customerLinkeUser',
+                    title: '联系人'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                        if(row.customerStatus=='WAIT_ADMIT') {
+                          actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起准入流程</a> ');
+                          actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+            function queryParams(params) {
+                var search = $.table.queryParams(params);
+                search["isHighSeas"]=1
+                search.customerNo = $("#seasCustomerNo").val();
+                search.customerName = $("#seasCustomerName").val();
+                search.customerIndustry = $("#seasCustomerIndustry").val();
+                return search;
+
+            }
+
+
+            var options1 = {
+                id: "bootstrap-table1",
+                url: prefix + "/myList",
+                createUrl: prefix + "/visitAdd/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                toolbar: "toolbar2",
+                queryParams:queryParamMy,
+                detailView: true,
+                onExpandRow : function(index, row, $detail) {
+                    initChildTable(index, row, $detail);
+                },
+
+                modalName: "",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: '主键ID',
+                        visible: false
+                    },
+                    {
+                        field: 'customerNo',
+                        title: '客户编号'
+                    },
+
+                    {
+                        field: 'customerName',
+                        title: '客户名称'
+                    },
+                    {
+                        field: 'customerIndustry',
+                        title: '所属行业',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(customerIndustryDatas, value);
+                        }
+                    },
+                    {
+                        field: 'customerAreaCode',
+                        title: '详细地址',
+                        formatter: function(value, row, index) {
+                            var address=row.customerProvinceName+row.customerCityName+row.customerAreaName+row.customerAddress;
+                            return $.table.tooltip(address);
+                        }
+                    },
+                    {
+                        field: 'customerStatus',
+                        title: '客户状态',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(customerStatusDatas, value);
+                        }
+                    },
+                    {
+                        field: 'customerManagerName',
+                        title: '客户负责人'
+                    },
+                    {
+                        field: 'customerLinkeUser',
+                        title: '联系人'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + visitLogAdd + '" href="javascript:void(0)" onclick="$.operate.add(\'' + row.id + '\')"><i class="fa fa-plus"></i>填写日志</a> ');
+                            actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+
+                            return actions.join('');
+                        }
+                    }]
+            };
+            $.table.init(options1);
+            function queryParamMy(params) {
+                var search = $.table.queryParams(params);
+                search.customerNo = $("#myCustomerNo").val();
+                search.customerName = $("#myCustomerName").val();
+                search.customerIndustry = $("#myCustomerIndustry").val();
+                return search;
+
+            }
+            var options2 = {
+                id: "bootstrap-table2",
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                modalName: "客户",
+                queryParams: queryParam,
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: '主键ID',
+                        visible: false
+                    },
+                    {
+                        field: 'customerNo',
+                        title: '客户编号'
+                    },
+
+                    {
+                        field: 'customerName',
+                        title: '客户名称'
+                    },
+                    {
+                        field: 'customerIndustry',
+                        title: '所属行业',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(customerIndustryDatas, value);
+                        }
+                    },
+                    {
+                        field: 'customerAreaCode',
+                        title: '详细地址',
+                        formatter: function(value, row, index) {
+                            var address=row.customerProvinceName+row.customerCityName+row.customerAreaName+row.customerAddress;
+                            return $.table.tooltip(address);
+                        }
+                    },
+                    {
+                        field: 'customerStatus',
+                        title: '客户状态',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(customerStatusDatas, value);
+                        }
+                    },
+                    {
+                        field: 'customerLinkeUser',
+                        title: '联系人'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                            if(row.customerStatus=='WAIT_ADMIT') {
+                                actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>发起准入流程</a> ');
+                                actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            }
+                            return actions.join('');
+                        }
+                    }]
+
+            };
+            $.table.init(options2);
+
+            function queryParam(params) {
+                var search = $.table.queryParams(params);
+                search["customerStatus"]="BLACKLIST"
+                search.customerNo = $("#blackCustomerNo").val();
+                search.customerName = $("#blackCustomerName").val();
+                search.customerIndustry = $("#blackCustomerIndustry").val();
+                return search;
+
+            }
+
+
+        });
+
+        initChildTable = function(index, row, $detail) {
+            var childTable = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+            $(childTable).bootstrapTable({
+                url: prefix + "/visitLogList",
+                method: 'post',
+                sidePagination: "server",
+                contentType: "application/x-www-form-urlencoded",
+                queryParams : {
+                    customerNo: row.customerNo
+                },
+                columns: [
+                    {
+                        field: 'id',
+                        title: '主键ID',
+                        visible: false
+                    },
+                    {
+                        field: 'index',
+                        align: 'center',
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                            return columnIndex + $.table.serialNumber(index);
+                        }
+                    },
+                    {
+                        field: 'customerNo',
+                        title: '拜访客户编号'
+                    },
+                    {
+                        field: 'visitType',
+                        title: '拜访类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(visitTypeDatas, value);
+                        }
+                    },
+                    {
+                        field: 'visitContent',
+                        title: '拜访内容',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value);
+                        }
+
+                    },
+
+                    {
+                        field: 'visitResult',
+                        title: '拜访结果',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value);
+                        }
+                    },
+
+                  /*  {
+                        field: 'acceptUser',
+                        title: '拜访结果推送人'
+                    },*/
+                    {
+                        field: 'visitTime',
+                        title: '拜访时间'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="editLog(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="removeLog(\''+row.id+'\')"><i class="fa fa-remove"></i>删除</a>');
+                            return actions.join('');
+                        }
+                    }]
+
+            });
+
+        };
+
+        function removeLog(id) {
+            $.modal.confirm("确定删除该条拜访记录信息吗？", function() {
+                var url = prefix + '/visitLogRemove';
+                $.operate.submit(url, "post", "json",  { "ids": id });
+            });
+        }
+
+        function editLog(id) {
+            var url = prefix + '/visitLogEdit/'+id;
+            $.modal.open("修改拜访记录信息", url);
+        }
+
+    </script>
+</body>
+</html>

@@ -9,8 +9,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="emailNo"    column="email_no"    />
         <result property="emailSubject"    column="email_subject"    />
         <result property="emailContent"    column="email_content"    />
-        <result property="emailTo"    column="email_to"    />
-        <result property="emailFrom"    column="email_from"    />
         <result property="sendTime"    column="send_time"    />
         <result property="emailType"    column="email_type"    />
         <result property="emailStatus"    column="email_status"    />
@@ -20,44 +18,81 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="belongUserId"    column="belong_user_id"    />
-        <result property="isRead"    column="is_read"    />
         <result property="isDelete"    column="is_delete"    />
         <result property="fileUrl"    column="file_url"    />
-        <result property="isSuccess"    column="is_success"    />
-        <result property="errorInfo"    column="error_info"    />
     </resultMap>
 
     <sql id="selectSysOaEmailVo">
-        select id, email_no, email_subject, email_content, is_success,email_to, email_from, send_time, email_type, email_status, email_label, create_by, create_time, update_time, update_by, belong_user_id, is_read, is_delete, file_url from sys_oa_email
+        select id, email_no, email_subject, email_content, send_time, email_type, email_status, email_label, create_by, create_time, update_time, update_by, belong_user_id,  is_delete, file_url from sys_oa_email
     </sql>
 
     <select id="selectSysOaEmailList" parameterType="SysOaEmail" resultMap="SysOaEmailResult">
         <include refid="selectSysOaEmailVo"/>
-        <where>  
+        <where>
+            <if test="emailNoList !=null and emailNoList.size() > 0">
+                and	email_no in
+                <foreach item="item" index="index" collection="emailNoList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="idList !=null and idList.size() > 0">
+                and	id in
+                <foreach item="item" index="index" collection="idList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="emailNo != null  and emailNo != ''"> and email_no = #{emailNo}</if>
             <if test="emailSubject != null  and emailSubject != ''"> and email_subject = #{emailSubject}</if>
             <if test="emailContent != null  and emailContent != ''"> and email_content = #{emailContent}</if>
-            <if test="emailTo != null  and emailTo != ''"> and email_to = #{emailTo}</if>
-            <if test="emailFrom != null  and emailFrom != ''"> and email_from = #{emailFrom}</if>
             <if test="sendTime != null "> and send_time = #{sendTime}</if>
             <if test="emailStatus != null "> and email_status = #{emailStatus}</if>
             <if test="emailLabel != null "> and email_label = #{emailLabel}</if>
-            <if test="isRead != null "> and is_read = #{isRead}</if>
-            <if test="isSuccess != null "> and is_success = #{isSuccess}</if>
+
         </where>
+        order by send_time desc
     </select>
 
-    <select id="selectImportantEmailList" parameterType="SysOaEmail" resultMap="SysOaEmailResult">
-        <include refid="selectSysOaEmailVo"/>
 
-        where  (email_to = #{emailTo} or email_from = #{emailFrom}) and email_status =3
+    <select id="selectEmailList" resultType="com.snow.system.domain.SysOaEmailVO" parameterType="com.snow.system.domain.SysOaEmailDO">
 
+        select o.id as id,o.email_no as emailNo, email_subject as emailSubject,o.email_content as emialContent,o.send_time as sendTime,o.email_type as emailType,
+        o.email_status as emailStatus,o.email_label as emailLabel,
+        m.producer_id as producerId,m.consumer_id as consumerId,m.message_read_status as messageReadStatus
+        from  sys_message_transition m left join sys_oa_email o
+        on o.email_no =m.message_outside_id
+        <where>
+            <if test="emailNoList !=null and emailNoList.size() > 0">
+                and	o.email_no in
+                <foreach item="item" index="index" collection="emailNoList"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emailNo != null  and emailNo != ''"> and o.email_no = #{emailNo}</if>
+            <if test="emailSubject != null  and emailSubject != ''"> and o.email_subject like concat ('%', #{emailSubject},'%')</if>
 
+            <if test="sendTime != null "> and o.send_time = #{sendTime}</if>
+            <if test="emailStatus != null "> and o.email_status = #{emailStatus}</if>
+            <if test="emailLabel != null "> and o.email_label = #{emailLabel}</if>
+            <if test="producerOrConsumerId != null  and producerOrConsumerId != ''">
+                and (m.producer_id = #{producerOrConsumerId} or m.consumer_id = #{producerOrConsumerId})
+            </if>
+            <if test="consumerId != null  and consumerId != ''"> and m.consumer_id = #{consumerId}</if>
+            <if test="messageType != null  and messageType != ''"> and m.message_type = #{messageType}</if>
+        </where>
+
+        <if test="sortField != null  and sortField != ''">
+                 order by ${sortField}
+        </if>
     </select>
-    
+
     <select id="selectSysOaEmailById" parameterType="Long" resultMap="SysOaEmailResult">
         <include refid="selectSysOaEmailVo"/>
         where id = #{id}
+    </select>
+
+    <select id="selectSysOaEmailByEmailNo" parameterType="String" resultMap="SysOaEmailResult">
+        <include refid="selectSysOaEmailVo"/>
+        where email_no = #{EmailNo}
     </select>
         
     <insert id="insertSysOaEmail" parameterType="SysOaEmail" useGeneratedKeys="true" keyProperty="id">
@@ -66,8 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emailNo != null">email_no,</if>
             <if test="emailSubject != null">email_subject,</if>
             <if test="emailContent != null">email_content,</if>
-            <if test="emailTo != null">email_to,</if>
-            <if test="emailFrom != null">email_from,</if>
+
             <if test="sendTime != null">send_time,</if>
             <if test="emailType != null">email_type,</if>
             <if test="emailStatus != null">email_status,</if>
@@ -77,18 +111,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="belongUserId != null">belong_user_id,</if>
-            <if test="isRead != null">is_read,</if>
             <if test="isDelete != null">is_delete,</if>
             <if test="fileUrl != null">file_url,</if>
-            <if test="isSuccess != null "> is_success,</if>
-            <if test="errorInfo != null">error_info,</if>
+
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="emailNo != null">#{emailNo},</if>
             <if test="emailSubject != null">#{emailSubject},</if>
             <if test="emailContent != null">#{emailContent},</if>
-            <if test="emailTo != null">#{emailTo},</if>
-            <if test="emailFrom != null">#{emailFrom},</if>
             <if test="sendTime != null">#{sendTime},</if>
             <if test="emailType != null">#{emailType},</if>
             <if test="emailStatus != null">#{emailStatus},</if>
@@ -98,11 +128,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="belongUserId != null">#{belongUserId},</if>
-            <if test="isRead != null">#{isRead},</if>
             <if test="isDelete != null">#{isDelete},</if>
             <if test="fileUrl != null">#{fileUrl},</if>
-            <if test="isSuccess != null ">#{isSuccess},</if>
-            <if test="errorInfo != null">#{errorInfo},</if>
          </trim>
     </insert>
 
@@ -112,8 +139,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emailNo != null">email_no = #{emailNo},</if>
             <if test="emailSubject != null">email_subject = #{emailSubject},</if>
             <if test="emailContent != null">email_content = #{emailContent},</if>
-            <if test="emailTo != null">email_to = #{emailTo},</if>
-            <if test="emailFrom != null">email_from = #{emailFrom},</if>
             <if test="sendTime != null">send_time = #{sendTime},</if>
             <if test="emailType != null">email_type = #{emailType},</if>
             <if test="emailStatus != null">email_status = #{emailStatus},</if>
@@ -123,11 +148,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
-            <if test="isRead != null">is_read = #{isRead},</if>
             <if test="isDelete != null">is_delete = #{isDelete},</if>
             <if test="fileUrl != null">file_url = #{fileUrl},</if>
-            <if test="isSuccess != null ">  is_success = #{isSuccess},</if>
-            <if test="errorInfo != null">error_info = #{errorInfo},</if>
         </trim>
         where id = #{id}
     </update>
@@ -138,8 +160,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emailNo != null">email_no = #{emailNo},</if>
             <if test="emailSubject != null">email_subject = #{emailSubject},</if>
             <if test="emailContent != null">email_content = #{emailContent},</if>
-            <if test="emailTo != null">email_to = #{emailTo},</if>
-            <if test="emailFrom != null">email_from = #{emailFrom},</if>
             <if test="sendTime != null">send_time = #{sendTime},</if>
             <if test="emailType != null">email_type = #{emailType},</if>
             <if test="emailStatus != null">email_status = #{emailStatus},</if>
@@ -149,11 +169,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
-            <if test="isRead != null">is_read = #{isRead},</if>
             <if test="isDelete != null">is_delete = #{isDelete},</if>
             <if test="fileUrl != null">file_url = #{fileUrl},</if>
-            <if test="isSuccess != null ">  is_success = #{isSuccess},</if>
-            <if test="errorInfo != null">error_info = #{errorInfo},</if>
         </trim>
         where email_no = #{emailNo}
     </update>

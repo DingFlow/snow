@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ总池</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+    <link th:href="@{/ajax/libs/layui/layui.css}" rel="stylesheet"/>
+    <link  href="../static/ajax/libs/layer/theme/moon/style.css" th:href="@{/ajax/libs/layer/theme/moon/style.css}" rel="stylesheet"/>
+    <link href="../static/ajax/libs/ionRangeSlider/ion.rangeSlider.css" th:href="@{/ajax/libs/ionRangeSlider/ion.rangeSlider.css}"  rel="stylesheet">
+    <link href="../static/ajax/libs/ionRangeSlider/ion.rangeSlider.skinFlat.css" th:href="@{/ajax/libs/ionRangeSlider/ion.rangeSlider.skinFlat.css}" rel="stylesheet">
+    <th:block th:include="include :: summernote-css" />
+</head>
+
+<body class="gray-bg">
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <ol class="breadcrumb">
+            <br/>
+            <li>
+                <a th:href="@{/front/home}">主页</a>
+            </li>
+            <li>
+                <a>FAQ管理</a>
+            </li>
+            <li class="active">
+                <strong>我的FAQ</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrapper wrapper-content animated fadeInUp">
+
+                <div class="faq-item" th:each="sysOaFaq,iterStat : ${dataTable.rows}">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <a data-toggle="collapse" th:href="'faq.html#'+${sysOaFaq.faqNo}" class="faq-question" th:text="${sysOaFaq.faqTitle}"></a>
+                            <small> <i class="fa fa-clock-o"></i> <label class="control-label" th:text="${#dates.format(sysOaFaq.createTime, 'yyyy-MM-dd HH:mm:ss')}"/></small>
+
+                        </div>
+                        <div class="col-md-3">
+                            <span class="small font-bold" th:text="${@dict.getLabel('sys_faq_type', sysOaFaq.faqSource)}"></span>
+                            <div class="tag-list" th:each="sysOaFaqLabel,iterStat : ${sysOaFaq.sysOaFaqLabelList}">
+                                <span class="tag-item" th:text="${sysOaFaqLabel.faqLabel}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <label th:switch="${sysOaFaq.faqStatus}">
+                                <h4  class="faq-question-status badge badge-primary"  th:case="3">已完结</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-sm-12">
+                            <div th:id="${sysOaFaq.faqNo}" class="panel-collapse collapse faq-answer">
+                                <div th:each="sysOaFaqAnswer,iterStat : ${sysOaFaq.SysOaFaqAnswerList}">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                        <!--    <span class="text-primary"> 第<label th:text="${iterStat.index}+1"/>条</span>-->
+                                            <small class="faq-question-status"><i class="fa fa-comments-o"></i> <span th:text="${@user.getName(sysOaFaqAnswer.createBy)}"></span> 于<span th:text="${#dates.format(sysOaFaqAnswer.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>回复了您：</small>
+
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==0}">
+                                            <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal"  data-target="#isAdoptAnswer" th:data-whatever="${sysOaFaqAnswer.faqNo}"  th:data-id="${sysOaFaqAnswer.id}"><i class="fa fa-pencil"></i>&nbsp;&nbsp;<span class="bold">采纳打分</span></button>
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==1}">
+                                            <span class="badge badge-warning"><span th:text="${sysOaFaqAnswer.answerFraction}"></span>分</span>
+                                            <span class="badge badge-primary">已被采纳</span>
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==2}">
+                                            <span class="badge badge-success">未被采纳</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p th:text="${sysOaFaqAnswer.answerAnswer}">
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5  style="font-size:15px;color:#379bb;border-bottom:1px solid #ddd;margin:8px 10px 25px 10px;padding-bottom:5px"></h5>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="footPage" style="text-align: center;"></div>
+
+            <div class="modal fade" id="isAdoptAnswer" tabindex="-1" role="dialog"  aria-labelledby="exampleModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content animated fadeIn">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title text-primary">采纳打分</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="faqNo" class="control-label">编号:</label>
+                                <input type="text" class="form-control " id="faqNo" name="faqNo" readonly>
+                            </div>
+                            <input type="hidden" class="form-control" id="answerId" name="id">
+                            <div class="form-group">
+                                <label for="faqNo" class="control-label">打分:</label>
+                                <input type="text" class="js-range-answerFraction" name="answerFraction"  value="0" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" onclick="saveAnswerFraction()">打分</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+    <script th:src="@{/js/content.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+     <script th:src="@{/ajax/libs/layui/layui.js}"></script>
+     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+     <!-- 遮罩层 -->
+     <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+     <script th:src="@{/js/plugins/ionRangeSlider/ion.rangeSlider.min.js}"></script>
+    <th:block th:include="include :: summernote-js" />
+
+    <script>
+        $(document).ready(function(){
+            $("#loading-example-btn").click(function(){
+                btn=$(this);
+                simpleLoad(btn,true);
+                simpleLoad(btn,false)
+            });
+            $(".js-range-answerFraction").ionRangeSlider({
+                type: "single",
+                min: 0,
+                max: 10,
+                step:1, //步长，也可以设置为小数
+                postfix:"分",
+                onStart: function (data) {//回调
+                },
+                onChange: function (data) {
+                },
+                onFinish: function (data) { //拖动结束回调
+                    $(".js-range-answerFraction").val(data.fromNumber);
+                    console.log('onFinish：'+JSON.stringify(data))
+                },
+                onUpdate: function (data) {
+                    console.log('onUpdate：'+JSON.stringify(data))
+                }
+
+            });
+        });
+
+
+        function simpleLoad(btn,state){
+            if(state){
+                btn.children().addClass("fa-spin");btn.contents().last().replaceWith("Loading")
+            }else{
+                setTimeout(function(){btn.children().removeClass("fa-spin");btn.contents().last().replaceWith(" Refresh")},2000)
+            }
+        };
+        $('#isAdoptAnswer').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // 触发事件的按钮
+            var faqNo = button.data('whatever')
+            var id = button.data('id')
+            $("#answerId").val(id);
+            $("#faqNo").val(faqNo);
+        });
+
+        function saveAnswerFraction(){
+            var answerFraction= $(".js-range-answerFraction").val();
+            var faqNo= $("#faqNo").val();
+            var id=$("#answerId").val();
+            console.log("id=============>"+id);
+            if(answerFraction=="0"){
+                $.modal.msgWarning("请先拖动打分滑块进行打分后再提交！");
+                return false;
+            }
+            var config = {
+                url: "/front/faq/answerFraction",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "answerFraction": parseFloat(answerFraction),
+                    "faqNo":faqNo,
+                    "id":id
+                },
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍后...");
+                },
+                success: function(result) {
+                    if (typeof callback == "function") {
+                        callback(result);
+                    }
+                    if (result.code == web_status.SUCCESS) {
+                        $.modal.alertSuccess(result.msg);
+                        location.reload();
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config)
+        }
+
+        layui.use('laypage', function(){
+            var laypage = layui.laypage;
+            laypage.render({
+                elem: 'footPage'
+                ,count: [[${dataTable.total}]]
+                ,curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                    var page = location.search.match(/pageNum=(\d+)/);
+                    return page ? page[1] : 1;
+                }()
+                ,jump: function(obj, first){
+                    //首次不执行
+                    if(!first){
+                        window.location.href="?pageNum="+obj.curr+"&pageSize=10"
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

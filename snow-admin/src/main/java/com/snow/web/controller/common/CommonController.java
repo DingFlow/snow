@@ -21,49 +21,27 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用请求处理
- * 
+ *
  * @author snow
  */
 @Controller
-public class CommonController
-{
+public class CommonController {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
-
-
 
     @Autowired
     private StorageService storageService;
 
+
     /**
      * 通用下载请求
-     * 
-     * @param fileName 文件名称
-     * @param delete 是否删除
+     *
+     * @param fileKey 文件名称
      */
     @GetMapping("common/download")
-    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
-    {
-        try
-        {
-            if (!FileUtils.isValidFilename(fileName))
-            {
-                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
-            }
-            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
-            String filePath = Global.getDownloadPath() + fileName;
-
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader("Content-Disposition",
-                    "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, realFileName));
-            FileUtils.writeBytes(filePath, response.getOutputStream());
-            if (delete)
-            {
-                FileUtils.deleteFile(filePath);
-            }
-        }
-        catch (Exception e)
-        {
+    public void fileDownload(String fileKey ,HttpServletResponse response, HttpServletRequest request) {
+        try {
+           storageService.load(fileKey);
+        } catch (Exception e) {
             log.error("下载文件失败", e);
         }
     }
@@ -73,19 +51,15 @@ public class CommonController
      */
     @PostMapping("/common/upload")
     @ResponseBody
-    public AjaxResult uploadFile(MultipartFile file)
-    {
-        try
-        {
+    public AjaxResult uploadFile(MultipartFile file) {
+        try {
             SysFile store = storageService.store(file);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileKey",store.getKey());
             ajax.put("fileName", store.getName());
             ajax.put("url", store.getUrl());
             return ajax;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -95,8 +69,7 @@ public class CommonController
      */
     @GetMapping("/common/download/resource")
     public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
-            throws Exception
-    {
+            throws Exception {
         // 本地资源路径
         String localPath = Global.getProfile();
         // 数据库资源地址

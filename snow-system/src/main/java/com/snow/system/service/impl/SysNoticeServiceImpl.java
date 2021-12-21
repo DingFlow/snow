@@ -42,6 +42,11 @@ public class SysNoticeServiceImpl implements ISysNoticeService
         return noticeMapper.selectNoticeById(noticeId);
     }
 
+    @Override
+    public SysNotice selectNewNoticeByNoticeType(String noticeType) {
+        return noticeMapper.selectNewNoticeByNoticeType(noticeType);
+    }
+
     /**
      * 查询公告列表
      * 
@@ -80,8 +85,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     @Override
     public int updateNotice(SysNotice notice)
     {
-        SyncEvent syncEvent = new SyncEvent(notice, DingTalkListenerType.BLACKBOARD_UPDATE);
-        applicationContext.publishEvent(syncEvent);
         return noticeMapper.updateNotice(notice);
     }
 

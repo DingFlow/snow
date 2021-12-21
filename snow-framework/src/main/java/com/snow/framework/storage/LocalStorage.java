@@ -1,19 +1,27 @@
 package com.snow.framework.storage;
+
+import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.config.ServerConfig;
 import com.snow.common.constant.Constants;
+import com.snow.common.exception.BusinessException;
 import com.snow.common.exception.file.FileNameLengthLimitExceededException;
 import com.snow.common.exception.file.FileSizeLimitExceededException;
 import com.snow.common.exception.file.InvalidExtensionException;
 import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.file.FileUploadUtils;
+import com.snow.common.utils.file.FileUtils;
 import com.snow.common.utils.file.MimeTypeUtils;
+import com.snow.system.domain.SysFile;
+import com.snow.system.service.impl.SysFileServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -36,6 +44,9 @@ public class LocalStorage implements Storage {
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private SysFileServiceImpl sysFileService;
 
     /**
      * 默认大小 50M
@@ -244,8 +255,28 @@ public class LocalStorage implements Storage {
     }
 
     @Override
-    public Path load(String keyName) {
-        return null;
+    public void load(String fileKey) {
+        try {
+            HttpServletResponse response = ServletUtils.getResponse();
+            SysFile sysFile = sysFileService.selectSysFileByKey(fileKey);
+            if (ObjectUtil.isEmpty(sysFile)){
+                throw new BusinessException("该文件不存在");
+            }
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition",
+                    "attachment;fileName=" + sysFile.getName());
+            //替换映射的url
+            String url=sysFile.getUrl();
+            StringBuilder stringBuilderUrl=new StringBuilder(url);
+            //http://localhost/profile/upload/2021/03/23/2fa432e166334f158f7547200b1bf6c7.jpg
+            String str1=url.substring(0, stringBuilderUrl.indexOf("/upload"));
+            StringBuilder replace = stringBuilderUrl.replace(0, str1.length(), address);
+            FileUtils.writeBytes(replace.toString(), response.getOutputStream());
+        }catch (Exception e){
+            e.getStackTrace();
+        }
+
     }
 
     @Override

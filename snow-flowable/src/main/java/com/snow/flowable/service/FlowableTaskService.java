@@ -5,6 +5,7 @@ import com.snow.flowable.domain.*;
 import com.snow.system.domain.SysUser;
 import org.flowable.task.api.Task;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,6 +24,22 @@ public interface FlowableTaskService {
      * @return
      */
     PageModel<TaskVO> findTasksByUserId(String userId, TaskBaseDTO taskBaseDTO);
+
+    /**
+     * 查询历史任务实例(分页)
+     * 可查询我经办的
+     * @param historicTaskInstanceDTO
+     * @return
+     */
+    PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO);
+
+    /**
+     * 获取历史任务
+     * @param
+     * @return
+     */
+    List<HistoricTaskInstanceVO> getHistoricTaskInstanceNoPage(HistoricTaskInstanceDTO historicTaskInstanceDTO);
+
 
     /**
      * 根据任务ID获取关联待办人待办组的人
@@ -44,6 +61,13 @@ public interface FlowableTaskService {
      * @return
      */
     Task getTask(String taskId);
+
+    /**
+     * 根据id查询历史任务
+     * @param taskId 任务id
+     * @return
+     */
+    HistoricTaskInstanceVO getHisTask(String taskId);
     /**
      * 完成任务
      * @param finishTaskDTO

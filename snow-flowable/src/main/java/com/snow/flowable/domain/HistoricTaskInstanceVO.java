@@ -47,12 +47,6 @@ public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
 
 
     /**
-     * 用户ID
-     */
-    private String assignee;
-
-
-    /**
      * 用户名称
      */
     private String assigneeName;
@@ -95,9 +89,10 @@ public class HistoricTaskInstanceVO extends TaskVO implements Serializable {
 
     private String deleteReason;
 
-
-
-    private String owner;
+    /**
+     * 流程类型
+     */
+    private String processType;
 
 
     private String fromDetailUrl;

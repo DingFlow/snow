@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="ancestors"  column="ancestors"   />
 		<result property="deptName"   column="dept_name"   />
 		<result property="orderNum"   column="order_num"   />
-		<result property="leader"     column="leader"      />
+		<result property="leader"     column="leader"    typeHandler="com.snow.framework.config.JsonStringListTypeHandler"   />
 		<result property="phone"      column="phone"       />
 		<result property="email"      column="email"       />
 		<result property="status"     column="status"      />
@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="createTime" column="create_time" />
 		<result property="updateBy"   column="update_by"   />
 		<result property="updateTime" column="update_time" />
+
 	</resultMap>
 	
 	<sql id="selectDeptVo">
@@ -83,7 +84,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select count(*) from sys_dept where status = 0 and del_flag = '0' and find_in_set(#{deptId}, ancestors)
 	</select>
 	
-	<insert id="insertDept" parameterType="SysDept">
+	<insert id="insertDept"   parameterType="SysDept">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="deptId">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
  		insert into sys_dept(
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="parentId != null and parentId != 0">parent_id,</if>
@@ -102,7 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="deptName != null and deptName != ''">#{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">#{orderNum},</if>
- 			<if test="leader != null and leader != ''">#{leader},</if>
+ 			<if test="leader != null and leader != ''">#{leader,typeHandler=com.snow.framework.config.JsonStringListTypeHandler},</if>
  			<if test="phone != null and phone != ''">#{phone},</if>
  			<if test="email != null and email != ''">#{email},</if>
  			<if test="status != null">#{status},</if>
@@ -114,11 +118,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateDept" parameterType="SysDept">
  		update sys_dept
  		<set>
+			<if test="newDeptId != null and newDeptId != 0">dept_id= #{newDeptId},</if>
  			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
  			<if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
- 			<if test="leader != null">leader = #{leader},</if>
+ 			<if test="leader != null">leader = #{leader,typeHandler=com.snow.framework.config.JsonStringListTypeHandler},</if>
  			<if test="phone != null">phone = #{phone},</if>
  			<if test="email != null">email = #{email},</if>
  			<if test="status != null and status != ''">status = #{status},</if>

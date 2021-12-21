@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Deque;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
+import com.snow.common.constant.UserConstants;
+import com.snow.common.enums.UserType;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.session.SessionException;
@@ -46,34 +49,28 @@ public class LogoutFilter extends org.apache.shiro.web.filter.authc.LogoutFilter
     }
 
     @Override
-    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception
-    {
-        try
-        {
+    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        try {
             Subject subject = getSubject(request, response);
             String redirectUrl = getRedirectUrl(request, response, subject);
-            try
-            {
-                SysUser user = ShiroUtils.getSysUser();
-                if (StringUtils.isNotNull(user))
-                {
-                    String loginName = user.getLoginName();
-                    // 记录用户退出日志
-                    AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
-                    // 清理缓存
-                    cache.remove(loginName);
-                }
+
+            SysUser user = ShiroUtils.getSysUser();
+            if (StringUtils.isNotNull(user)) {
+                String loginName = user.getLoginName();
+                // 记录用户退出日志
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
+                // 清理缓存
+                cache.remove(loginName);
                 // 退出登录
                 subject.logout();
+                String userType = user.getUserType();
+                if(userType.equals(UserType.SYS_USER_TYPE.getCode())){
+                    issueRedirect(request, response, redirectUrl);
+                }else if (userType.equals(UserType.FRONT_USER_TYPE.getCode())){
+                    issueRedirect(request, response, UserConstants.FRONT_LOGIN_OUT_URL);
+                }
             }
-            catch (SessionException ise)
-            {
-                log.error("logout fail.", ise);
-            }
-            issueRedirect(request, response, redirectUrl);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("Encountered session exception during logout.  This can generally safely be ignored.", e);
         }
         return false;

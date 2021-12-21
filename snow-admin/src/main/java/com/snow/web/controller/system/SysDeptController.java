@@ -1,6 +1,10 @@
 package com.snow.web.controller.system;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import cn.hutool.core.collection.CollUtil;
+import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +40,9 @@ public class SysDeptController extends BaseController
 
     @Autowired
     private ISysDeptService deptService;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     @RequiresPermissions("system:dept:view")
     @GetMapping()
@@ -87,6 +94,15 @@ public class SysDeptController extends BaseController
     public String edit(@PathVariable("deptId") Long deptId, ModelMap mmap)
     {
         SysDept dept = deptService.selectDeptById(deptId);
+        //组装用户名
+        List<String> leader = dept.getLeader();
+        if(CollUtil.isNotEmpty(leader)){
+            List<String> leadsNameList = leader.stream().map(t -> {
+                return sysUserService.selectUserByDingUserId(t).getUserName();
+            }).collect(Collectors.toList());
+            dept.setLeader(leadsNameList);
+        }
+
         if (StringUtils.isNotNull(dept) && 100L == deptId)
         {
             dept.setParentName("无");
@@ -199,5 +215,15 @@ public class SysDeptController extends BaseController
     {
         List<Ztree> ztrees = deptService.roleDeptTreeData(role);
         return ztrees;
+    }
+
+
+    /**
+     * 选择用户
+     */
+    @GetMapping("/selectUser/{deptId}")
+    public String selectUser(@PathVariable(value = "deptId")Long deptId, ModelMap mmap) {
+        mmap.put("deptId",deptId);
+        return prefix + "/selectUser";
     }
 }

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>DingFlow</title>
+    <meta name="description" content="DingFlow">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <!-- 360浏览器急速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">label.error{position:inherit}.ui.horizontal.divider::before,.ui.horizontal.divider::after{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaAAAAACCAYAAACuTHuKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1OThBRDY4OUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1OThBRDY4QUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjU5OEFENjg3Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU5OEFENjg4Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+VU513gAAADVJREFUeNrs0DENACAQBDBIWLGBJQby/mUcJn5sJXQmOQMAAAAAAJqt+2prAAAAAACg2xdgANk6BEVuJgyMAAAAAElFTkSuQmCC")}.ui.horizontal.divider::after{background-position:left 1em top 50%}.ui.horizontal.divider::before,.ui.horizontal.divider::after{content:'';display:table-cell;position:relative;top:50%;width:50%;background-repeat:no-repeat}.ui.horizontal.divider::before{background-position:right 1em top 50%}.ui.horizontal.list{display:inline-block;font-size:0}ul.ui.list:last-child,ol.ui.list:last-child,.ui.list:last-child{margin-bottom:0;padding-bottom:0}ul.ui.list,ol.ui.list,.ui.list{list-style-type:none;margin:1em 0;padding:0}.login-oauth__list{display:-webkit-box!important;display:-ms-flexbox!important;display:flex!important;-webkit-box-pack:center!important;-ms-flex-pack:center!important;justify-content:center!important}.login-login-oauth__container{margin-top:20px}.ui.horizontal.login-login__oauth-title{font-weight:normal}.ui.divider{margin:1.4rem 0rem;line-height:1;height:0;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,0.85);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}.ui.horizontal.divider{display:table;white-space:nowrap;height:auto;margin:'';line-height:1;text-align:center}.ui.horizontal.list>.item:first-child,.ui.horizontal.list>.item:last-child{padding-top:.3em;padding-bottom:.3em}.ui.horizontal.list>.item:first-child{margin-left:0!important;padding-left:0!important}.login-oauth__list>.item{margin-left:40px!important}.ui.list .item a>img{width:32px;height:32px}</style>
+
+</head>
+<body id="page-top" class="landing-page no-skin-config">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <th:block th:include="include :: front-header" />
+
+    <div class="row" style="margin-top: 50px">
+        <div class="col-sm-12 text-center" >
+            <h1>
+                   <span class="title">
+                        <h1>青春万岁！——庆祝中国共产党成立100周年</h1>
+                    </span>
+            </h1>
+
+        </div>
+        <div class="main clearfix">
+            <div class="col-md-1 text-center  wow zoomIn">
+            </div>
+            <div class="col-md-10  wow zoomIn">
+                <div id="detail">
+
+                    <p>　　1921年7月23日至31日，从上海望志路树德里106号（今兴业路76号）到嘉兴南湖的小游船，毛泽东、董必武、何叔衡、陈潭秋、王尽美、邓恩铭、李汉俊、李达、张国焘、刘仁静、陈公博、周佛海、包惠僧等13位同志代表全国各地50多名共产党员，召开了中国共产党第一次全国代表大会。中国共产党的诞生是中国历史上开天辟地的大事，中国革命的面貌从此焕然一新。</p>
+                    <p>　　历史川流不息，精神代代相传。习近平总书记在庆祝中国共产党成立100周年大会上，首次提出伟大建党精神并作出深刻阐释，号召全党继续弘扬光荣传统、赓续红色血脉，永远把伟大建党精神继承下去、发扬光大，在全党全社会激扬起继往开来、不懈奋斗的精神力量。</p>
+                    <p>　　我们党从小到大、由弱到强的历程，是一部重整河山、改天换地的革命史、奋斗史，也是一部淬炼升华、感天动地的精神锻造史。树高千丈总有根，河流万里总有源。一百年前，中国共产党的先驱们创建了中国共产党，形成了坚持真理、坚守理想，践行初心、担当使命，不怕牺牲、英勇斗争，对党忠诚、不负人民的伟大建党精神，这是中国共产党的精神之源。一百年来，一代代中国共产党人弘扬伟大建党精神，在长期奋斗中构建起中国共产党人的精神谱系，锤炼出鲜明的政治品格。百年回望，精神火炬始终熊熊燃烧，照亮充满艰辛的奋斗征程。伟大建党精神是立党兴党强党的精神原点、思想基点，也应成为中国共产党人的安身之魂、立命之本。大力弘扬伟大建党精神，内化于心、外化于行，我们迈进新征程、奋进新时代就有了源源不竭的强大动力。</p>
+                    <p>　　大力弘扬伟大建党精神，要坚持真理、坚守理想。百年风雨兼程，百年波澜壮阔。我们党一路走来，无论是处于顺境还是逆境，从未动摇对马克思主义的坚定信仰，从未放弃对共产主义和社会主义的执着追求。习近平总书记多次强调，信仰、信念、信心，任何时候都至关重要。只有坚持真理、坚守理想，始终保持志不改、道不变的坚定，我们才能牢牢把握正确前进方向，在全面建设社会主义现代化国家的新征程上攻坚克难、行稳致远。</p>
+                    <p>　　大力弘扬伟大建党精神，要践行初心、担当使命。一百年来，正是因为一代代中国共产党人用行动践初心、以生命赴使命，我们党才能团结带领人民战胜一个又一个风险挑战，创造一个又一个人间奇迹。初心易得，始终难守。奋进新征程，勇担新使命，就要时时以党的创新理论滋养初心、引领使命，从党的非凡历史中感悟初心、激励使命，在严肃党内政治生活中锤炼初心、砥砺使命，把初心和使命变成锐意进取、开拓创新的精气神和埋头苦干、真抓实干的原动力。</p>
+                    <p>　　大力弘扬伟大建党精神，要不怕牺牲、英勇斗争。要奋斗就要奉献，就会有牺牲。据不完全统计，从1921年至1949年，全国有名可查和其家属受到优抚待遇的党员烈士达370多万人。世界上没有哪个党像我们党这样，遭遇过如此多的艰难险阻，经历过如此多的生死考验，付出过如此多的惨烈牺牲。在艰苦卓绝的奋斗历程中，我们党锤炼了不畏强敌、不惧风险、敢于斗争、勇于胜利的风骨和品质。新征程上，少不了“娄山关”“腊子口”，“黑天鹅”“灰犀牛”也会不期而至。必须增强忧患意识、始终居安思危，敢于斗争，善于斗争，逢山开道、遇水架桥，勇于战胜一切风险挑战。</p>
+                    <p>　　大力弘扬伟大建党精神，要对党忠诚、不负人民。对党忠诚，是共产党人首要的政治品质。我们党自成立以来历经艰险磨难，没有被困难压垮，也没有被敌人打倒，靠的就是千千万万党员的忠诚。党的根基在人民，血脉在人民，力量在人民。“离开了人民，我们就会一事无成。”要始终坚持人民至上，立志为党分忧、为国尽责、为民造福，以实际行动诠释对党的忠诚之心、对人民的赤子之心。永远保持同人民群众的血肉联系，始终同人民想在一起、干在一起，风雨同舟、同甘共苦，我们党就一定能带领人民创造新的历史伟业。</p>
+                </div>
+        </div>
+            <div class="col-md-1 text-center  wow zoomIn">
+            </div>
+    </div>
+</div>
+<th:block th:include="include :: front-footer" />
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

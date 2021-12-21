@@ -17,7 +17,7 @@
                                     <input type="text" name="tradeNo"/>
                                 </li>
                                 <li>
-                                    <label>商家订单号：</label>
+                                    <label>订单号：</label>
                                     <input type="text" name="orderNo"/>
                                 </li>
                                 <li>
@@ -39,16 +39,16 @@
                                 </select>
                             </li>
                             <li>
-                                <label>收支类型：</label>
-                                <select name="incomeExpenditureType" th:with="type=${@dict.getType('income_expenditure_type')}">
+                                <label>真实收支：</label>
+                                <select name="realIncomeExpenditureType" th:with="type=${@dict.getType('real_income_expenditure_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
 
                             <li>
-                                <label>资金状态：</label>
-                                <select name="capitalStatus" th:with="type=${@dict.getType('capital_status')}">
+                                <label>财务用途：</label>
+                                <select name="realFinanceType" th:with="type=${@dict.getType('real_finance_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
@@ -76,8 +76,14 @@
                 <a class="btn btn-info" onclick="$.table.importExcelAlipay()" shiro:hasPermission="system:flow:import">
                     <i class="fa fa-upload"></i> 导入
                 </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:flow:export">
+               <!-- <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:flow:export">
                     <i class="fa fa-download"></i> 导出
+                </a>-->
+                <a class="btn btn-primary" onclick="designDicType('134')" shiro:hasPermission="system:flow:designTradeType">
+                    <i class="fa fa-sort-numeric-desc"></i> 设计收支类型
+                </a>
+                <a class="btn btn-warning" onclick="designDicType('135')" shiro:hasPermission="system:flow:designTradeType">
+                    <i class="fa fa-cny"></i> 设计财务用途
                 </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
@@ -93,6 +99,8 @@
         var tradeTypeDatas = [[${@dict.getType('trade_type')}]];
         var tradeStatusDatas = [[${@dict.getType('trade_status_type')}]];
         var incomeExpenditureTypeDatas = [[${@dict.getType('income_expenditure_type')}]];
+        var realIncomeExpenditureTypeDatas = [[${@dict.getType('finance_real_sz_type')}]];
+        var realFinanceTypeDatas = [[${@dict.getType('real_finance_type')}]];
         var capitalStatusDatas = [[${@dict.getType('capital_status')}]];
         var billTypeDatas = [[${@dict.getType('bill_type')}]];
         var prefix = ctx + "system/flow";
@@ -107,7 +115,10 @@
                 importUrl: prefix + "/importData",
                 importTemplateUrl: prefix + "/importTemplate",
                 modalName: "财务账单流水",
-                columns: [{
+                showFooter: true,
+                footerStyle: footerStyle,
+                columns:
+                [{
                     checkbox: true
                 },
                 {
@@ -119,11 +130,7 @@
                     field: 'tradeNo',
                     title: '交易号',
                     formatter: function(value, row, index) {
-                        if(value==null||value==''){
-                            return '';
-                        }else {
-                            return value.substr(0,8);
-                        }
+                        return $.table.tooltip(value);
                     }
 
                 },
@@ -131,25 +138,28 @@
                     field: 'orderNo',
                     title: '商家订单号',
                     formatter: function(value, row, index) {
-                        if(value==null||value==''){
-                            return '';
-                        }else {
-                            return value.substr(0,8);
-                        }
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'goodsName',
+                    title: '商品',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
                     }
                 },
                     {
-                        field: 'goodsName',
-                        title: '商品'
-                    },
-                    {
-                        field: 'tradePrice',
-                        title: '交易金额'
+                        field: 'realFinanceType',
+                        title: '财务用途',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(realFinanceTypeDatas, value);
+                        }
                     },
                 {
-                    field: 'payTime',
-                    title: '交易支付时间'
-                },
+                    field: 'tradePrice',
+                    title: '交易金额(元)'
+                 },
+
                     {
                         field: 'billType',
                         title: '账单类型',
@@ -166,7 +176,10 @@
                 },
                 {
                     field: 'counterparty',
-                    title: '交易对方'
+                    title: '交易对方',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
                 },
 
                 {
@@ -178,16 +191,60 @@
                 },
                 {
                     field: 'incomeExpenditureType',
-                    title: '收支类型',
+                    title: '账单收支类型',
                     formatter: function(value, row, index) {
                        return $.table.selectDictLabel(incomeExpenditureTypeDatas, value);
+                    },
+                    footerFormatter:function (value) {
+                        var tradePrice = 0;
+                        for (var i in value) {
+                            //支出
+                            if(value[i].realIncomeExpenditureType==2){
+                                tradePrice+=parseFloat(value[i].tradePrice);
+                            }
+                        }
+                        return "总收入：" + tradePrice;
                     }
                 },
+                    {
+                        field: 'realIncomeExpenditureType',
+                        title: '真实收支类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(realIncomeExpenditureTypeDatas, value);
+                        },
+                        footerFormatter:function (value) {
+                            var tradePrice = 0;
+                            for (var i in value) {
+                                //支出
+                                if(value[i].realIncomeExpenditureType==1){
+                                    tradePrice+=parseFloat(value[i].tradePrice);
+                                }
+                            }
+                            return "总支出：" + tradePrice;
+                        }
+                    },
+                    {
+                        field: 'payTime',
+                        title: '交易时间',
+                        footerFormatter:function (value) {
+                            var tradePrice = 0;
+                            for (var i in value) {
+                                //支出
+                                if(value[i].realIncomeExpenditureType==1){
+                                    tradePrice-=parseFloat(value[i].tradePrice);
+                                }else if(value[i].realIncomeExpenditureType==2){
+                                    tradePrice += parseFloat(value[i].tradePrice);
+                                }
 
+                            }
+                            return "总金额：" + tradePrice;
+                        }
+                    },
+/*
                 {
                     field: 'belongUserName',
                     title: '所属人'
-                },
+                },*/
                 {
                     title: '操作',
                     align: 'center',
@@ -201,6 +258,23 @@
             };
             $.table.init(options);
         });
+        function importTemplate(fileName) {
+            window.location.href =  "/common/downloadExcel?fileName="+fileName;
+        }
+
+        /*字典列表-详细*/
+        function designDicType(dictId) {
+            var url = '/system/dict/detail/' + dictId;
+            $.modal.openTab("字典数据", url);
+        }
+
+        function footerStyle(column) {
+            return {
+                tradePrice: {
+                    css: { color: 'red', 'font-weight': 'normal' }
+                }
+            }[column.field]
+        }
     </script>
 </body>
 <!-- 导入区域 -->
@@ -209,12 +283,20 @@
         <div class="col-xs-offset-1">
             <div class="row">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">导入数据：</label>
-                    <div class="col-sm-4">
-                        <input type="file" id="file" name="file"/>
+                    <label class="col-sm-3 control-label">下载模板：</label>
+                    <div class="col-sm-3">
+                        <a onclick="importTemplate('alipay_record_excel.xlsx')" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i> 下载支付宝模板</a>
                     </div>
-                    <div class="col-sm-4">
-                        <a onclick="$.table.importTemplate()" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i>  下载模板</a>
+                    <div class="col-sm-3">
+                        <a onclick="importTemplate('wechat_excel')" class="btn  btn-xs btn-danger"><i class="fa fa-file-excel-o"></i> 下载微信模板</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">导入数据：</label>
+                    <div class="col-sm-5">
+                        <input type="file" id="file" name="file"/>
                     </div>
                 </div>
             </div>
@@ -246,7 +328,7 @@
             </div>
             </div>
             <font color="red" class="pull-left mt10">
-                提示：仅允许导入“xls”或“xlsx”格式文件！
+                提示：仅允许导入“xls”或“xlsx”格式文件！支付宝和微信导出的账单是csv格式，请转换成支持的格式再导入。<h4>切记：千万不要直接改文件后缀名字！！！</h4>
             </font>
         </div>
     </form>

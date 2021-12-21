@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Mailbox</title>
+    <title>Mailbox</title>
 
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
@@ -17,7 +17,6 @@
 </head>
 
 <body>
-
     <div id="wrapper">
         <div class="wrapper wrapper-content gray-bg">
         <div class="row">
@@ -50,7 +49,7 @@
 
                             <div class="col-sm-10"><input type="text" class="form-control" id="subject" name="subject"></div>
                         </div>
-                        </form>
+                    </form>
 
                 </div>
 
@@ -88,6 +87,7 @@
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
     <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
     <th:block th:include="include :: summernote-js" />
+
     <script type="text/javascript">
         var prefix ="../system/email";
 
@@ -100,7 +100,6 @@
             $.get(prefix+"/getSysOaEmailData", function(data) {
                 if (data.code == web_status.SUCCESS ) {
                     var sysOaEmailData=data.data;
-                    console.log(JSON.stringify(sysOaEmailData))
                     $("#readTotal").text(sysOaEmailData.readTotal);
                     $("#draftsTotal").text(sysOaEmailData.draftsTotal);
                 }  else if (data.code == web_status.WARNING) {
@@ -142,7 +141,7 @@
             data.append("file", file);
             $.ajax({
                 type: "POST",
-                url: "common/upload",
+                url: "../common/upload",
                 data: data,
                 cache: false,
                 contentType: false,
@@ -185,14 +184,49 @@
                 $.modal.msgWarning("请输入邮件内容");
                 return false;
             }
-           $.operate.save(prefix + "/sendSysEmail",{
-               "emailLabel":emailLabel,
-               "emailTo": emailTo,
-               "emailSubject":subject,
-               "emailStatus":emailStatus,
-               "emailContent":$("#emailContent").val()
-           });
+            var config = {
+                url: prefix + "/sendSysEmail",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "emailLabel":emailLabel,
+                    "emailTo": emailTo,
+                    "emailSubject":subject,
+                    "emailStatus":emailStatus,
+                    "emailContent":$("#emailContent").val()
+                },
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍后...");
+                    $.modal.disable();
+                },
+                success: function(result) {
+                    if (typeof callback == "function") {
+                        callback(result);
+                    }
+                    if (result.code == web_status.SUCCESS) {
+                        if(emailStatus==1){
+                            $.modal.msg("草稿保存成功，即将跳转到草稿箱", modal_status.SUCCESS);
+                            setTimeout(function(){
+                                window.location.href="/system/email/mailbox/1";
+                            },3000);
+                        }
+                        else if(emailStatus==0){
+                            $.modal.msg("邮件发送成功，即将跳转到发件箱", modal_status.SUCCESS);
+                            setTimeout(function(){
+                                window.location.href="/system/email/mailbox/7";
+                            },3000);
+                        }
 
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    }  else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                    $.modal.enable();
+                }
+            };
+            $.ajax(config)
         }
     </script>
 </body>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('消息中心')" />
+</head>
+<body class="gray-bg">
+     <div class="wrapper wrapper-content animated fadeIn">
+         <div class="row m-b-lg ">
+             <div class="col-sm-12">
+                 <div class="tabs-container">
+
+                     <div class="tabs-left">
+                         <ul class="nav nav-tabs">
+                             <li class="active">
+                                 <a data-toggle="tab" href="#tab-1"> 拜访日志    <span class="label label-info pull-right">[[${visitLogCount}]]</span></a>
+
+                             </li>
+
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-2"> 站内邮件   <span class="label label-info pull-right" >[[${emailListCount}]]</span></a>
+
+                             </li>
+
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-3"> 流程待办  <span class="label label-info pull-right" >[[${todoTaskCount}]]</span></a>
+                             </li>
+
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-4"> 流程完结  <span class="label label-info pull-right" >[[${processEndCount}]]</span></a>
+                             </li>
+
+                             <li class="">
+                                 <a data-toggle="tab" href="#tab-5"> 系统任务  <span class="label label-info pull-right" >[[${sysTaskCount}]]</span></a>
+                             </li>
+
+                         </ul>
+                         <div class="tab-content ">
+                             <div id="tab-1" class="tab-pane active">
+                                 <div class="panel-body">
+                                     <h3>拜访日志</h3>
+                                     <div id="vertical-timeline" class="vertical-container light-timeline" th:each="visitLog,iterStat : ${visitLogs}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${visitLog.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${visitLog.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                      <strong th:text="${#dates.format(visitLog.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <label > [[${visitLog.messageContent}]]</label>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${visitLog.id}]],[[${visitLog.pcUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${visitLog.spendTime}]]</small>
+                                                 </p>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div id="tab-2" class="tab-pane">
+                                 <div class="panel-body">
+                                     <h3>站内邮件</h3>
+                                     <div id="vertical-timeline1" class="vertical-container light-timeline" th:each="email,iterStat : ${emailList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${email.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${email.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(email.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <label  >
+                                                    <a class="text-info" href="#"></i> @[[${email.producerUser.userName}]]</a>
+                                                 </label>
+                                                 <label > 发来一条站内邮件，请及时查看。</label>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${email.id}]],${email.redirectUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${email.spendTime}]]</small>
+                                                 </p>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div id="tab-3" class="tab-pane">
+                                 <div class="panel-body">
+                                     <h3>流程待办</h3>
+                                     <div id="vertical-timeline2" class="vertical-container light-timeline" th:each="todoTask,iterStat : ${todoTaskList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${todoTask.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${todoTask.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(todoTask.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <p >[[${todoTask.messageContent}]]</p>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success" th:onclick="messageDetail([[${todoTask.id}]],[[${todoTask.pcUrl}]]);"> 查看详情 </a>
+                                                 <p>
+                                                     <!--<small class="badge badge-warning"> <i class="fa fa-clock-o"></i>[[${todoTask.spendTime}]]</small>-->
+                                                 </p>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div id="tab-4" class="tab-pane">
+                                 <div class="panel-body">
+                                     <h3>流程完结</h3>
+                                     <div id="vertical-timeline4" class="vertical-container light-timeline" th:each="processEnd,iterStat : ${processEndList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${processEnd.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${processEnd.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(processEnd.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <p >[[${processEnd.messageContent}]]</p>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success"  th:onclick="messageDetail([[${processEnd.id}]],[[${processEnd.pcUrl}]]);"> 查看详情 </a>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div id="tab-5" class="tab-pane">
+                                 <div class="panel-body">
+                                     <h3>系统任务</h3>
+                                     <div id="vertical-timeline5" class="vertical-container light-timeline" th:each="sysTask,iterStat : ${sysTaskList}">
+                                         <div class="vertical-timeline-block">
+                                             <div class="vertical-timeline-icon blue-bg">
+                                                 <i th:class="${sysTask.iconClass}"></i>
+                                             </div>
+
+                                             <div class="vertical-timeline-content">
+                                                 <p>
+                                                     <label th:switch="${sysTask.messageReadStatus}">
+                                                         <span  class="label label-danger" th:case="'0'">未读</span>
+                                                         <span  class="label label-success"  th:case="'1'">已读</span>
+                                                     </label>
+                                                     <strong th:text="${#dates.format(sysTask.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong>
+                                                 </p>
+                                                 <p >[[${sysTask.messageContent}]]</p>
+                                                 <a href="javascript:void(0)"  class="btn btn-sm btn-success"  th:onclick="messageDetail([[${sysTask.id}]],[[${sysTask.pcUrl}]]);"> 查看详情 </a>
+                                             </div>
+                                             <hr>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                 </div>
+
+
+             </div>
+         </div>
+     </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+
+        function messageDetail(id,url){
+            //先标记为已读
+            markRead(id);
+            //在跳转到页面
+            layer.open({
+                type : 2,
+                shadeClose : true,
+                title : "消息详情",
+                area : ["70%", "80%"],
+                content : [url, 'yes']
+            })
+
+        }
+
+        function markRead(id){
+            var config = {
+                url: "/system/messageCenter/remarkRead",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "id":id
+                },
+                success: function(result) {
+                    if (typeof callback == "function") {
+                        callback(result);
+                    }
+                    if (result.code == web_status.SUCCESS) {
+                        $(".messageReadStatus badge badge-primary").show();
+                        $(".messageReadStatus badge badge-danger").hide();
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                }
+            };
+            $.ajax(config)
+        }
+    </script>
+</body>
+</html>

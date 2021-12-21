@@ -4,6 +4,7 @@ import java.util.List;
 import com.snow.common.core.domain.Ztree;
 import com.snow.system.domain.SysDept;
 import com.snow.system.domain.SysRole;
+import com.snow.system.domain.SysUser;
 
 /**
  * 部门管理 服务层
@@ -107,4 +108,12 @@ public interface ISysDeptService
      * @return 结果
      */
     public String checkDeptNameUnique(SysDept dept);
+
+
+    /**
+     * 根据用户查询部门领导
+     * @param userId
+     * @return
+     */
+    public List<SysUser> selectLeadsByUserId(Long userId) ;
 }

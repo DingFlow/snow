@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('单数据记录列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <input type="hidden" name="id" id="id" th:value="${id}">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>版本号：</label>
+                                <input type="text" name="version" id="version"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var removeFlag = [[${@permission.hasPermi('system:record:remove')}]];
+        var prefix = ctx + "/from/instance";
+        $(function() {
+            var options = {
+                url: "/from/instance/recordList",
+                removeUrl:  "/from/instance/removeRecord",
+                queryParams:queryParams,
+                modalName: "数据记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'formId',
+                    title: '表单ID'
+                },
+                    {
+                        field: 'formNo',
+                        title: '表单编号'
+                    },
+                    {
+                        field: 'formName',
+                        title: '表单名称'
+                    },
+                    {
+                        field: 'formStatus',
+                        title: '表单状态'
+                    },
+                {
+                    field: 'belongUserName',
+                    title: '填写人'
+                },
+                {
+                    field: 'version',
+                    title: '版本号'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        var formStatus=row.formStatus;
+                        console.log("======="+JSON.stringify(row));
+                        if(row.processFlag&&formStatus=='NORMAL'){
+                            actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="startProcess(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>发起流程</a> ');
+                        }
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="formRecordDetail(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>详情</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+
+            function queryParams(params) {
+                var search = $.table.queryParams(params);
+                search["formId"]=$("#id").val();
+                search.version = $("#version").val();
+                return search;
+            }
+            $.table.init(options);
+
+        });
+
+        function formRecordDetail(id) {
+            var detailUrl="/toFormRecordDetail?id="+id;
+            $.modal.openTab("表单详情", detailUrl);
+        }
+
+        function startProcess(id) {
+            var url="/form/startProcess?id="+id;
+            $.modal.confirm("确定发起该条" + table.options.modalName + "流程吗？", function() {
+                $.operate.get(url);
+            });
+        }
+    </script>
+</body>
+</html>

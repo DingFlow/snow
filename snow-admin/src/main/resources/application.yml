@@ -9,12 +9,12 @@ snow:
   # 实例演示开关
   demoEnabled: true
   # 获取ip地址开关
-  addressEnabled: false
+  addressEnabled: true
 
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 80
+  port: 9527
   servlet:
     # 应用的访问路径
     context-path: /
@@ -31,6 +31,7 @@ logging:
   level:
     com.snow: debug
     org.springframework: warn
+    org.jeecg.modules.jmreport: debug
 
 # 用户配置
 user:
@@ -72,9 +73,9 @@ spring:
     #mail主机
     host: smtp.126.com
     #用户名
-    username:
+    username: qimingjin@126.com
     #开启POP3之后设置的客户端授权码
-    password:
+    password: JSHBRRRDBNHPXPFB
     default-encoding: UTF-8
 
 
@@ -145,11 +146,18 @@ swagger:
   # 是否开启swagger
   enabled: true
 
+#登录后是否显示最新的公告
+is:
+  notice: true
+  #是否开启同步钉钉
+  sync:
+     dingtalk: false
+
 flowable:
   #关闭定时任务JOB
   async-executor-activate: false
   #  将databaseSchemaUpdate设置为true。当Flowable发现库与数据库表结构不一致时，会自动将数据库表结构升级至新版本。
-  database-schema-update: true
+  database-schema-update: false
   common:
       app:
         idm-url: http://localhost:80
@@ -161,3 +169,18 @@ flowable:
 sys:
    file:
      active: local
+
+minidao:
+  base-package: org.jeecg.modules.jmreport.desreport.dao*
+  db-type: mysql
+  show-sql: true
+#JimuReport[上传配置]
+jeecg :
+  # local|minio|alioss
+  uploadType: local
+  # local
+  path :
+    #文件路径
+    upload: /opt/upload
+
+

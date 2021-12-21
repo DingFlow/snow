@@ -38,12 +38,16 @@
 </div>
     <th:block th:include="include :: footer" />
      <th:block th:include="include :: select2-js" />
+
      <script th:inline="javascript">
          var detailFlag = [[${@permission.hasPermi('system:flow:myStartProcessDetail')}]];
          var processInstanceStatusDatas = [[${@dict.getType('process_instance_status')}]];
          var activeProcessInstanceFlag = [[${@permission.hasPermi('system:flow:activeProcessInstance')}]];
          var suspendProcessInstanceFlag = [[${@permission.hasPermi('system:flow:suspendProcessInstance')}]];
+         var cancelProcessInstanceFlag = [[${@permission.hasPermi('system:flow:cancelProcessInstance')}]];
+         var processType = [[${@dict.getType('sys_process_type')}]];
          var prefixFlow = ctx + "flow";
+
          $(function() {
              var options = {
                  url: prefixFlow + "/getMyHistoricProcessInstance",
@@ -62,6 +66,18 @@
                          title: '序号',
                          formatter: function (value, row, index) {
                              return index+1;
+                         }
+                     },
+                     {
+                         field: 'id',
+                         title: '实例id',
+                         visible: false
+                     },
+                     {
+                         field: 'processType',
+                         title: '流程类型',
+                         formatter: function(value, row, index) {
+                             return $.table.selectDictLabel(processType, value);
                          }
                      },
                      {
@@ -109,30 +125,109 @@
                              var actions = [];
                              var isFinished= row.isFinished;
                              var processInstanceStatus= row.processInstanceStatus;
+                             var processType=row.processType;
+                             if(processType=='FORM_PROCESS'){
+                                 actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartFormProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }else {
+                                 actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="myStartProcessDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }
                              if(processInstanceStatus==1&&isFinished==0){
                                  actions.push('<a class="btn btn-danger btn-xs ' + suspendProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.suspendProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>挂起</a> ');
                              }
                              if(processInstanceStatus==2&&isFinished==0){
                                  actions.push('<a class="btn btn-success btn-xs ' + activeProcessInstanceFlag + '" href="javascript:void(0)" onclick="$.operate.activeProcessInstance(\'' + row.id + '\')"><i class="fa fa-eye"></i>激活</a> ');
                              }
-                             actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="getProcessDiagram(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a>');
+                             if(isFinished==0) {
+                                 actions.push('<a class="btn btn-warning btn-xs ' + cancelProcessInstanceFlag + '" href="javascript:void(0)" onclick="cancelProcessInstance(\'' + row.id + '\')"><i class="fa fa-delicious"></i>取消</a> ');
+                             }
                              return actions.join('');
                          }
                      }]
              };
              $.table.init(options);
+
+
          });
 
-         function getProcessDiagram(processInstanceId) {
+         function myStartProcessDetail(processInstanceId) {
              var preViewUrl=prefixFlow+'/myStartProcessDetail?processInstanceId='+processInstanceId;
-             $.modal.openTab("详情", preViewUrl);
+             $.modal.openTab("流程详情", preViewUrl);
          }
 
+         function myStartFormProcessDetail(processInstanceId) {
+             var preViewUrl='/startFormProcessDetail?processInstanceId='+processInstanceId;
+             $.modal.openTab("流程详情", preViewUrl);
+         }
          function fromDetailUrl(detailUrl) {
              $.modal.openTab("详情", detailUrl);
 
          }
-
+         // 取消流程
+         function cancelProcessInstance(id) {
+             layer.open({
+                 type: 1,
+                 area: ['500px', '350px'],
+                 fix: false,
+                 //不固定
+                 maxmin: false,
+                 shade: 0.3,
+                 title: '取消流程',
+                 content: $('#deleteProcessInstanceTpl').html(),
+                 btn: ['<i class="fa fa-check"></i>提交', '<i class="fa fa-remove"></i> 取消'],
+                 // 弹层外区域关闭
+                 shadeClose: true,
+                 btn1: function(index, layero){
+                     var reason = layero.find('#reason').val();
+                     if(reason==''||reason==null){
+                         $.modal.msgWarning("取消理由不能为空");
+                         return false;
+                     }
+                     var index = layer.load(2, {shade: false});
+                     $.modal.disable();
+                     var formData = new FormData(layero.find('form')[0]);
+                     formData.set("id",id);
+                     $.ajax({
+                         url: prefixFlow+"/deleteProcessInstance",
+                         data: formData,
+                         cache: false,
+                         contentType: false,
+                         processData: false,
+                         type: 'POST',
+                         success: function (result) {
+                             if (result.code == web_status.SUCCESS) {
+                                 $.modal.closeAll();
+                                 $.modal.alertSuccess(result.msg);
+                                 $.table.refresh();
+                             } else {
+                                 layer.close(index);
+                                 $.modal.enable();
+                                 $.modal.alertError(result.msg);
+                             }
+                         }
+                     });
+                 }
+             });
+         }
      </script>
 </body>
+<!-- 导入区域 -->
+<script id="deleteProcessInstanceTpl" type="text/template">
+    <form enctype="multipart/form-data" class=" form-horizontal m mt20 mb10" >
+        <div class="col-xs-offset-1">
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">取消理由：</label>
+                    <div class="col-sm-8">
+                        <textarea name="reason"  id="reason" class="form-control" rows="7" placeholder="请输入取消理由..." required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!--<font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>-->
+        </div>
+    </form>
+
+</script>
 </html>

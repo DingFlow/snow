@@ -87,11 +87,12 @@
             $(this).fileinput({
                 'uploadUrl': '/common/upload',
                 initialPreviewAsData: true,
-                allowedFileExtensions: ['jpg', 'gif', 'png',".docx","doc","ppt","pptx","xls","xlsx","vsd","rtf","wps","pdf","txt"],//接收的文件后缀
+                allowedFileExtensions: ['jpg', 'gif', 'png',".docx","doc","ppt","pptx","xls","xlsx","vsd","rtf","wps","pdf","txt","zip"],//接收的文件后缀
                 initialPreview: [val],
                 maxFileCount: 1,
                 autoReplace: true
             }).on('fileuploaded', function (event, data, previewId, index) {
+				console.log("===================>"+JSON.stringify(data));
                 files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
                // $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
             }).on('fileremoved', function (event, id, index) {

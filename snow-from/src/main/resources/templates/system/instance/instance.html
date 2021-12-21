@@ -5,13 +5,38 @@
 </head>
 <body class="gray-bg">
      <div class="container-div">
+
         <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <div class="ibox-content">
+                    <ul  class="unstyled">
+                        <li>
+                            <h4 class="help-block m-b-none text-primary"><i class="fa fa-info-circle"></i> DingFlow表单流程操作步骤:</h4>
+                            <ul  class="unstyled">
+                                <li>
+                                    <span class="help-block m-b-none text-primary">1. 流程设计: 点击<span class=" text-danger">流程管理-->系统流程管理-->模型管理-->设计流程</span> 按钮,绘制您的流程图;绘制任务节点时，统一要求通过条件:${isPass==true}
+                驳回条件：${isPass==false}
+                </span>
+                                </li>
+                                <li>
+                                    <span class="help-block m-b-none text-primary">2. 设计表单: 点击下方蓝色的<span class=" text-danger">设计表单</span>按钮,设计自己的业务表单;目前表单控件不支持图片和文件上传;</span>
+                                </li>
+                                <li>
+                                    <span class="help-block m-b-none text-primary">3. 关联流程和表单: 点击表单列表的<span class=" text-danger">绑定流程</span>按钮,选择您设计好的流程,提交即可</span>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <span class="help-block m-b-none text-primary">到此，即可发起流程，正常审批。如果您的业务比较复杂，建议您使用DingFlow Api流程方式自行编码完成</span>
+                    </ul>
+                </div>
+            </div>
             <div class="col-sm-12 search-collapse">
                 <form id="formId">
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>code：</label>
+                                <label>表单ID：</label>
                                 <input type="text" name="formCode"/>
                             </li>
                             <li>
@@ -43,6 +68,25 @@
             </div>
         </div>
     </div>
+
+     <div class="modal fade" id="formQRCode" tabindex="-1" role="dialog"  aria-hidden="true">
+         <div class="modal-dialog">
+             <div class="modal-content animated fadeIn">
+                 <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                     <h4 class="modal-title text-primary">表单二维码</h4>
+                 </div>
+                 <div class="modal-body">
+                     <div class="form-group" style="margin-left: 40px">
+                         <img  class="imgcode" width="85%"/>
+                     </div>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                 </div>
+             </div>
+         </div>
+     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('system:instance:edit')}]];
@@ -52,7 +96,6 @@
         $(function() {
             var options = {
                 url: prefix + "/list",
-                createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 modalName: "表单",
@@ -66,19 +109,26 @@
                 },
                 {
                     field: 'formCode',
-                    title: '表单定义code'
+                    title: '表单ID'
                 },
                 {
                     field: 'formName',
                     title: '表单名称'
                 },
                 {
+                    field: 'createByName',
+                    title: '创建人'
+                },
+                 {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
                         actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="fromDetail(\'' + row.id+ '\')"><i class="fa fa-edit"></i>详情</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="fromDetail(\'' + row.id+ '\')"><i class="fa fa-add"></i>填写表单</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="formRecordDetail(\'' + row.id+ '\')"><i class="fa fa-eyes"></i>查看表单</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" data-toggle="modal"  data-target="#formQRCode" onclick="createQRCode(\'' + row.id+ '\')" ><i class="fa fa-add"></i>二维码</a> ');
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="bindProcess(\'' + row.id+ '\')"><i class="fa fa-add"></i>绑定流程</a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
@@ -88,15 +138,30 @@
         });
 
         function fromDetail(id) {
-            var detailUrl="/from/instance/fromPreview/"+id;
-            $.modal.openTab("详情", detailUrl);
-
+            var detailUrl="/fromPreview?id="+id;
+            $.modal.openFull("填写表单", detailUrl);
         }
         function designFrom() {
-            var detailUrl="/from/interface";
+            var detailUrl="/formIndex";
             $.modal.openTab("设计表单", detailUrl);
-
         }
+        function bindProcess(id) {
+            $.modal.open("绑定流程", "/bindProcess?id="+id);
+        }
+        function formRecordDetail(id) {
+            var detailUrl="/from/instance/formRecord?id="+id;
+            $.modal.openTab("表单数据列表", detailUrl);
+        }
+
+        function createQRCode(id) {
+            var url ="/createQRCode?id="+id;
+            $(".imgcode").attr("src", url);
+        }
+
+        $('#formQRCode').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+        });
+
     </script>
 </body>
 </html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaFaqMapper">
+    
+    <resultMap type="SysOaFaq" id="SysOaFaqResult">
+        <result property="faqNo"    column="faq_no"    />
+        <result property="faqTitle"    column="faq_title"    />
+        <result property="faqType"    column="faq_type"    />
+        <result property="faqSource"    column="faq_source"    />
+        <result property="faqStatus"    column="faq_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysOaFaqVo">
+        select  faq_no, faq_title, faq_type, faq_source,faq_status, create_time, end_time, create_by, update_by, update_time, is_delete from sys_oa_faq
+    </sql>
+
+    <select id="selectSysOaFaqList" parameterType="SysOaFaq" resultMap="SysOaFaqResult">
+        <include refid="selectSysOaFaqVo"/>
+        <where>
+            is_delete=0
+            <if test="faqNo != null  and faqNo != ''"> and faq_no = #{faqNo}</if>
+            <if test="faqTitle != null  and faqTitle != ''"> and faq_title = #{faqTitle}</if>
+            <if test="faqType != null "> and faq_type = #{faqType}</if>
+            <if test="faqStatus != null "> and faq_status = #{faqStatus}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="createBy != null">and create_by = #{createBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysOaFaqByFaqNo" parameterType="String" resultMap="SysOaFaqResult">
+        <include refid="selectSysOaFaqVo"/>
+        where faq_no = #{faqNo} and  is_delete=0
+    </select>
+        
+    <insert id="insertSysOaFaq" parameterType="SysOaFaq">
+        insert into sys_oa_faq
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="faqNo != null">faq_no,</if>
+            <if test="faqTitle != null and faqTitle != ''">faq_title,</if>
+            <if test="faqType != null">faq_type,</if>
+            <if test="faqSource != null">faq_source,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="faqStatus != null "> faq_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="faqNo != null">#{faqNo},</if>
+            <if test="faqTitle != null and faqTitle != ''">#{faqTitle},</if>
+            <if test="faqType != null">#{faqType},</if>
+            <if test="faqSource != null">#{faqSource},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="faqStatus != null "> #{faqStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaFaq" parameterType="SysOaFaq">
+        update sys_oa_faq
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="faqTitle != null and faqTitle != ''">faq_title = #{faqTitle},</if>
+            <if test="faqType != null">faq_type = #{faqType},</if>
+            <if test="faqSource != null">faq_source = #{faqSource},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="faqStatus != null ">faq_status=#{faqStatus},</if>
+        </trim>
+        where faq_no = #{faqNo}
+    </update>
+
+    <delete id="deleteSysOaFaqByFaqNo" parameterType="String">
+        update  sys_oa_faq set is_delete=1 where faq_no = #{faqNo}
+    </delete>
+
+    <delete id="deleteSysOaFaqByFaqNos" parameterType="String">
+        update sys_oa_faq  set is_delete=1 where faq_no in
+        <foreach item="faqNo" collection="array" open="(" separator="," close=")">
+            #{faqNo}
+        </foreach>
+    </delete>
+</mapper>

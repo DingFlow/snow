@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: jsonview-css" />
+
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t">
+		<input name="id" th:value="${sysOaCustomer.id}" type="hidden">
+        <h2 class="form-header h2" align="center" >客户信息</h2>
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">客户编号：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerNo}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">标题：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerName}">
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">所属行业：</label>
+                <span class="form-control-static" th:text="${@dict.getLabel('sys_industry_type',sysOaCustomer.customerIndustry)}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">客户来源：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerSource}">
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5 ">
+                <label class="control-label">客户状态：</label>
+                <span class="form-control-static" th:text="${@dict.getLabel('sys_customer_status',sysOaCustomer.customerStatus)}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">联系人：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerLinkeUser}" >
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-5 col-sm-5">
+                <label class=" control-label">联系电话：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerPhone}">
+                </span>
+            </div>
+            <div class="col-xs-5 col-sm-5">
+                <label class="control-label">联系邮箱：</label>
+                <span class="form-control-static" th:text="${sysOaCustomer.customerEmail}">
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-1 col-sm-1 "></div>
+            <div class="col-xs-6 col-sm-6">
+                <label class="control-label">详细地址：</label>
+                <span class="form-control-static" >
+                    [[${sysOaCustomer.customerProvinceName}]][[${sysOaCustomer.customerCityName}]][[${sysOaCustomer.customerAreaName}]][[${sysOaCustomer.customerAddress}]]
+                </span>
+            </div>
+            <div class="col-xs-4 col-sm-4" th:if="${sysOaCustomer.customerStatus eq 'ADMITED'} ">
+                <label class="control-label">客户负责人：</label>
+                <span class="form-control-static" th:text="${@user.getName(sysOaCustomer.customerManager)}">
+            </span>
+            </div>
+        </div>
+        <h2 class="form-header h2" align="center" >拜访记录</h2>
+        <div class=" timeline">
+
+            <div class="timeline-item" >
+                <div class="row" th:each="logs,iterStat:${sysOaCustomerVisitLogs}">
+                    <div class="col-xs-3 date">
+                        <i class="fa fa-phone"></i>
+                        <small class="text-navy"  th:text="${#dates.format(logs.visitTime, 'yyyy-MM-dd')}"></small>
+                    </div>
+                    <div class="col-xs-7 content">
+                        <p>
+                            <strong>1.拜访类型：</strong>
+                            <span class="m-b-xs" th:text="${@dict.getLabel('sys_customer_visit_type',logs.visitType)}">
+                        </span>
+                        </p>
+
+                        <p>
+                            <strong>2.拜访内容：</strong>
+                        </p>
+                        <p class="m-b-xs" th:text="${logs.visitContent}">
+                        </p>
+                        <p>
+                            <strong>3.拜访结果：</strong>
+                        </p>
+
+                        <p th:text="${logs.visitResult}">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+	</form>
+    </div>
+    <th:block th:include="include :: footer" />
+
+
+</body>
+</html>

@@ -1,35 +1,27 @@
 package com.snow.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import cn.hutool.core.collection.CollUtil;
+import com.snow.common.annotation.DataScope;
+import com.snow.common.constant.UserConstants;
+import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingTalkListenerType;
-import com.snow.system.domain.SysUserPost;
-import com.snow.system.domain.SysUserRole;
+import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.security.Md5Utils;
+import com.snow.system.domain.*;
 import com.snow.system.event.SyncEvent;
+import com.snow.system.mapper.*;
+import com.snow.system.service.ISysConfigService;
+import com.snow.system.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.snow.common.annotation.DataScope;
-import com.snow.common.constant.UserConstants;
-import com.snow.common.core.text.Convert;
-import com.snow.common.exception.BusinessException;
-import com.snow.common.utils.StringUtils;
-import com.snow.common.utils.security.Md5Utils;
-import com.snow.system.domain.SysPost;
-import com.snow.system.domain.SysRole;
-import com.snow.system.domain.SysUser;
-import com.snow.system.mapper.SysPostMapper;
-import com.snow.system.mapper.SysRoleMapper;
-import com.snow.system.mapper.SysUserMapper;
-import com.snow.system.mapper.SysUserPostMapper;
-import com.snow.system.mapper.SysUserRoleMapper;
-import com.snow.system.service.ISysConfigService;
-import com.snow.system.service.ISysUserService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 用户 业务层处理
@@ -225,7 +217,7 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserRole(user.getUserId(), user.getRoleIds());
         //同步用户数据
         if(user.getIsSyncDingTalk()){
-            SyncEvent syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
+            SyncEvent<SysUser> syncEvent = new SyncEvent(user, DingTalkListenerType.USER_CREATE);
             applicationContext.publishEvent(syncEvent);
         }
         return rows;
@@ -263,6 +255,12 @@ public class SysUserServiceImpl implements ISysUserService
         userPostMapper.deleteUserPostByUserId(userId);
         // 新增用户与岗位管理
         insertUserPost(user);
+        if(user.getIsSyncDingTalk()){
+            SysUser sysUser = selectUserById(userId);
+            user.setDingUserId(sysUser.getDingUserId());
+            SyncEvent<SysUser> syncEvent = new SyncEvent(user, DingTalkListenerType.USER_UPDATE);
+            applicationContext.publishEvent(syncEvent);
+        }
         return userMapper.updateUser(user);
     }
 
@@ -287,7 +285,20 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
-        userRoleMapper.deleteUserRoleByUserId(userId);
+        List<SysUserRole> sysUserRoles = userRoleMapper.selectUserRoleByUserId(userId);
+        if(CollUtil.isNotEmpty(sysUserRoles)){
+            sysUserRoles.forEach(t->{
+                SysRole sysRole = roleMapper.selectRoleById(t.getRoleId());
+                if(sysRole.getRoleType()==1){
+                    SysUserRole sysUserRole=new SysUserRole();
+                    sysUserRole.setRoleId(t.getRoleId());
+                    sysUserRole.setUserId(userId);
+                    userRoleMapper.deleteUserRoleInfo(sysUserRole);
+                }
+            });
+        }
+
+        // userRoleMapper.deleteUserRoleByUserId(userId);
         insertUserRole(userId, roleIds);
     }
 
@@ -542,5 +553,16 @@ public class SysUserServiceImpl implements ISysUserService
     public int changeStatus(SysUser user)
     {
         return userMapper.updateUser(user);
+    }
+
+    /**
+     * 根据用户编号查询授权列表
+     *
+     * @param userId 登录账户
+     * @return 授权列表
+     */
+    public List<SysAuthUser> selectAuthUserListByUserId(Long userId)
+    {
+        return userMapper.selectAuthUserListByUserId(userId);
     }
 }

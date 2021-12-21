@@ -23,8 +23,32 @@ public class SequenceConstants {
     public static final String OA_RESIGN_SEQUENCE="OA_LZ";
 
     /**
+     * FAQ单
+     */
+    public static final String OA_FAQ_SEQUENCE="OA_FAQ";
+
+    /**
      * 邮件编码
      */
     public static final String OA_EMAIL_SEQUENCE="OA_YJ";
 
+    /**
+     * 客户
+     */
+    public static final String OA_CUSTOMER_SEQUENCE="OA_KH";
+
+    /**
+     * 任务单
+     */
+    public static final String OA_TASK_SEQUENCE="OA_RW";
+
+    /**
+     * 表单
+     */
+    public static final String OA_FORM_SEQUENCE="BD";
+
+    /**
+     * 工号前缀
+     */
+    public static final String OA_SNOW="SNOW";
 }

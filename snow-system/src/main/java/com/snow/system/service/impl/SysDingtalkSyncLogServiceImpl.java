@@ -1,17 +1,17 @@
 package com.snow.system.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import com.snow.common.core.text.Convert;
+import com.snow.system.domain.SysDingtalkSyncLog;
+import com.snow.system.domain.SysDingtalkSyncSituationVO;
+import com.snow.system.mapper.SysDingtalkSyncLogMapper;
+import com.snow.system.service.ISysDingtalkSyncLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import com.snow.system.domain.SysDingtalkSyncSituationVO;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.snow.system.mapper.SysDingtalkSyncLogMapper;
-import com.snow.system.domain.SysDingtalkSyncLog;
-import com.snow.system.service.ISysDingtalkSyncLogService;
-import com.snow.common.core.text.Convert;
 
 /**
  * 钉钉同步日志记录Service业务层处理
@@ -109,7 +109,7 @@ public class SysDingtalkSyncLogServiceImpl implements ISysDingtalkSyncLogService
 
         List<SysDingtalkSyncLog> sysDingtalkSyncLogs = sysDingtalkSyncLogMapper.selectSysDingtalkSyncLogList(sysDingtalkSyncLog);
         SysDingtalkSyncSituationVO.SysDingtalkSyncSituationVOBuilder sysDingtalkSyncSituationVOBuilder = SysDingtalkSyncSituationVO.builder();
-        if(CollectionUtils.isNotEmpty(sysDingtalkSyncLogs)){
+        if(CollUtil.isNotEmpty(sysDingtalkSyncLogs)){
             long successCount = sysDingtalkSyncLogs.stream().filter(t -> t.getStatus() == 0).count();
             long failureCount = sysDingtalkSyncLogs.stream().filter(t -> t.getStatus() == 1).count();
             sysDingtalkSyncSituationVOBuilder.successNums(successCount).failureNums(failureCount);

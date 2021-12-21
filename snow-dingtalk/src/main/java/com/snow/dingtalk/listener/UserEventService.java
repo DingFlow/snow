@@ -31,6 +31,9 @@ public class UserEventService implements ISyncDingTalkInfo {
         else if( code.equals(DingTalkListenerType.USER_DELETE.getCode())){
             userService.deleteUser((String) syncEvent.getSource());
         }
+        else if(code.equals(DingTalkListenerType.USER_UPDATE.getCode())){
+            userService.updateUserV2((SysUser) syncEvent.getSource());
+        }
 
     }
 }

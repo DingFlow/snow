@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * 财务支付宝流水对象 finance_alipay_flow
- * 
+ *
  * @author snow
  * @date 2020-11-09
  */
@@ -24,6 +25,7 @@ public class FinanceAlipayFlow extends BaseEntity
 
     /** 交易号 */
     @ExcelProperty(index = 1)
+    @NotBlank(message = "交易号不能为空")
     private String tradeNo;
 
     /** 商家订单号 */
@@ -99,4 +101,15 @@ public class FinanceAlipayFlow extends BaseEntity
     private Integer billType;
 
 
+    /**
+     * 真实账务类型
+     */
+    private Integer realFinanceType;
+
+    /**
+     * 真实收支类型
+     */
+    private Integer realIncomeExpenditureType;
+
+    private String year;
 }

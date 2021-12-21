@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysSocialUserMapper">
+    
+    <resultMap type="SysSocialUser" id="SysSocialUserResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="accessToken"    column="access_token"    />
+        <result property="expireIn"    column="expire_in"    />
+        <result property="refreshToken"    column="refresh_token"    />
+        <result property="openId"    column="open_id"    />
+        <result property="unionId"    column="union_id"    />
+        <result property="scope"    column="scope"    />
+        <result property="code"    column="code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="source"    column="source"    />
+    </resultMap>
+
+    <sql id="selectSysSocialUserVo">
+        select id, user_id, access_token, expire_in, refresh_token, open_id, union_id, scope, code, create_by, create_time, update_by, update_time, remark, source from sys_social_user
+    </sql>
+
+    <select id="selectSysSocialUserList" parameterType="SysSocialUser" resultMap="SysSocialUserResult">
+        <include refid="selectSysSocialUserVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="accessToken != null  and accessToken != ''"> and access_token = #{accessToken}</if>
+            <if test="expireIn != null "> and expire_in = #{expireIn}</if>
+            <if test="refreshToken != null  and refreshToken != ''"> and refresh_token = #{refreshToken}</if>
+            <if test="openId != null  and openId != ''"> and open_id = #{openId}</if>
+            <if test="unionId != null  and unionId != ''"> and union_id = #{unionId}</if>
+            <if test="scope != null  and scope != ''"> and scope = #{scope}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="source != null  and source != ''"> and source = #{source}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysSocialUserById" parameterType="Long" resultMap="SysSocialUserResult">
+        <include refid="selectSysSocialUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysSocialUser" parameterType="SysSocialUser" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_social_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="accessToken != null and accessToken != ''">access_token,</if>
+            <if test="expireIn != null">expire_in,</if>
+            <if test="refreshToken != null">refresh_token,</if>
+            <if test="openId != null">open_id,</if>
+            <if test="unionId != null">union_id,</if>
+            <if test="scope != null">scope,</if>
+            <if test="code != null">code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="source != null">source,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="accessToken != null and accessToken != ''">#{accessToken},</if>
+            <if test="expireIn != null">#{expireIn},</if>
+            <if test="refreshToken != null">#{refreshToken},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="unionId != null">#{unionId},</if>
+            <if test="scope != null">#{scope},</if>
+            <if test="code != null">#{code},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="source != null">#{source},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysSocialUser" parameterType="SysSocialUser">
+        update sys_social_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="accessToken != null and accessToken != ''">access_token = #{accessToken},</if>
+            <if test="expireIn != null">expire_in = #{expireIn},</if>
+            <if test="refreshToken != null">refresh_token = #{refreshToken},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+            <if test="unionId != null">union_id = #{unionId},</if>
+            <if test="scope != null">scope = #{scope},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="source != null">source = #{source},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysSocialUserById" parameterType="Long">
+        delete from sys_social_user where id = #{id}
+    </delete>
+
+    <delete id="deleteSysSocialUserByIds" parameterType="String">
+        delete from sys_social_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

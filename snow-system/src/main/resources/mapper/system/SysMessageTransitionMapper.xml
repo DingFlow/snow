@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysMessageTransitionMapper">
+    
+    <resultMap type="SysMessageTransition" id="SysMessageTransitionResult">
+        <result property="id"    column="id"    />
+        <result property="producerId"    column="producer_id"    />
+        <result property="consumerId"    column="consumer_id"    />
+        <result property="messageType"    column="message_type"    />
+        <result property="messageOutsideId"    column="message_outside_id"    />
+        <result property="templateCode"    column="template_code"    />
+        <result property="messageContent"    column="message_content"    />
+        <result property="messageShow"    column="message_show"    />
+        <result property="pcUrl"    column="pc_url"    />
+        <result property="appUrl"    column="app_url"    />
+        <result property="iconClass"    column="icon_class"    />
+        <result property="messageStatus"    column="message_status"    />
+        <result property="messageReadStatus"    column="message_read_status"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysMessageTransitionVo">
+        select id, producer_id, consumer_id, message_type, message_outside_id,
+               template_code,message_content,message_show,pc_url,app_url,icon_class,
+               message_status, message_read_status, is_delete, create_by, create_time, update_by, update_time from sys_message_transition
+    </sql>
+
+    <select id="selectSysMessageTransitionList" parameterType="SysMessageTransition" resultMap="SysMessageTransitionResult">
+        <include refid="selectSysMessageTransitionVo"/>
+        <where>  
+            <if test="producerId != null  and producerId != ''"> and producer_id = #{producerId}</if>
+            <if test="producerOrConsumerId != null  and producerOrConsumerId != ''">
+             and (producer_id = #{producerOrConsumerId} or consumer_id = #{producerOrConsumerId})
+            </if>
+            <if test="consumerId != null  and consumerId != ''"> and consumer_id = #{consumerId}</if>
+            <if test="messageType != null  and messageType != ''"> and message_type = #{messageType}</if>
+            <if test="messageOutsideId != null  and messageOutsideId != ''"> and message_outside_id = #{messageOutsideId}</if>
+            <if test="messageStatus != null "> and message_status = #{messageStatus}</if>
+            <if test="messageReadStatus != null "> and message_read_status = #{messageReadStatus}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+            <if test="messageShow != null "> and message_show = #{messageShow}</if>
+            <if test="templateCode != null and templateCode != ''"> and template_code = #{templateCode}</if>
+        </where>
+        <if test="orderBy != null  and orderBy != ''">
+            order by ${orderBy}
+        </if>
+    </select>
+
+    <select id="selectSysMessageTransitionById" parameterType="Long" resultMap="SysMessageTransitionResult">
+        <include refid="selectSysMessageTransitionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysMessageTransition" parameterType="SysMessageTransition" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_message_transition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="producerId != null and producerId != ''">producer_id,</if>
+            <if test="consumerId != null">consumer_id,</if>
+            <if test="messageType != null and messageType != ''">message_type,</if>
+            <if test="messageOutsideId != null">message_outside_id,</if>
+            <if test="messageStatus != null">message_status,</if>
+            <if test="messageReadStatus != null">message_read_status,</if>
+            <if test="templateCode != null">template_code,</if>
+            <if test="messageContent != null">message_content,</if>
+            <if test="messageShow != null">message_show,</if>
+            <if test="pcUrl != null">pc_url,</if>
+            <if test="appUrl != null">app_url,</if>
+            <if test="iconClass != null">icon_class,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="producerId != null and producerId != ''">#{producerId},</if>
+            <if test="consumerId != null">#{consumerId},</if>
+            <if test="messageType != null and messageType != ''">#{messageType},</if>
+            <if test="messageOutsideId != null">#{messageOutsideId},</if>
+            <if test="messageStatus != null">#{messageStatus},</if>
+            <if test="messageReadStatus != null">#{messageReadStatus},</if>
+            <if test="templateCode != null">#{templateCode},</if>
+            <if test="messageContent != null">#{messageContent},</if>
+            <if test="messageShow != null">#{messageShow},</if>
+            <if test="pcUrl != null">#{pcUrl},</if>
+            <if test="appUrl != null">#{appUrl},</if>
+            <if test="iconClass != null">#{iconClass},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysMessageTransition" parameterType="SysMessageTransition">
+        update sys_message_transition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="producerId != null and producerId != ''">producer_id = #{producerId},</if>
+            <if test="consumerId != null">consumer_id = #{consumerId},</if>
+            <if test="messageType != null and messageType != ''">message_type = #{messageType},</if>
+            <if test="messageOutsideId != null">message_outside_id = #{messageOutsideId},</if>
+            <if test="messageStatus != null">message_status = #{messageStatus},</if>
+            <if test="messageReadStatus != null">message_read_status = #{messageReadStatus},</if>
+            <if test="templateCode != null">template_code=#{templateCode},</if>
+            <if test="messageContent != null">message_content=#{messageContent},</if>
+            <if test="messageShow != null">message_show=#{messageShow},</if>
+            <if test="pcUrl != null">pc_url=#{pcUrl},</if>
+            <if test="appUrl != null">app_url=#{appUrl},</if>
+            <if test="iconClass != null">icon_class=#{iconClass},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateByCondition" parameterType="SysMessageTransition">
+        update sys_message_transition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="producerId != null and producerId != ''">producer_id = #{producerId},</if>
+            <if test="consumerId != null">consumer_id = #{consumerId},</if>
+            <if test="messageType != null and messageType != ''">message_type = #{messageType},</if>
+            <if test="messageOutsideId != null">message_outside_id = #{messageOutsideId},</if>
+            <if test="messageStatus != null">message_status = #{messageStatus},</if>
+            <if test="messageReadStatus != null">message_read_status = #{messageReadStatus},</if>
+            <if test="templateCode != null">template_code=#{templateCode},</if>
+            <if test="messageContent != null">message_content=#{messageContent},</if>
+            <if test="messageShow != null">message_show=#{messageShow},</if>
+            <if test="pcUrl != null">pc_url=#{pcUrl},</if>
+            <if test="appUrl != null">app_url=#{appUrl},</if>
+            <if test="iconClass != null">icon_class=#{iconClass},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where message_outside_id = #{messageOutsideId}
+        <if test="producerId != null and producerId != ''"> and producer_id = #{producerId}</if>
+        <if test="consumerId != null"> and consumer_id = #{consumerId}</if>
+        <if test="messageType != null and messageType != ''"> and message_type = #{messageType}</if>
+    </update>
+
+    <delete id="deleteSysMessageTransitionById" parameterType="Long">
+        delete from sys_message_transition where id = #{id}
+    </delete>
+
+    <delete id="deleteSysMessageTransitionByIds" parameterType="String">
+        delete from sys_message_transition where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSysMessageTransitionByOutsideId" parameterType="List">
+        delete from sys_message_transition where id in
+        <foreach item="item" index="index" collection="outsideIdList"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and messageType="SEND_EMAIL"
+    </delete>
+</mapper>

@@ -73,6 +73,14 @@ public class FlowModelerController extends BaseController
         return prefix + "/deployment";
     }
 
+    @RequiresPermissions("modeler:deployment:detail")
+    @GetMapping("/getDeploymentDetail/{id}")
+    public String getDeploymentDetail(@PathVariable("id")String id , ModelMap modelMap) {
+        DeploymentVO deploymentDetailById = flowableService.getDeploymentDetailById(id);
+        modelMap.put("deploymentVO",deploymentDetailById);
+        return prefix + "/deployment-detail";
+    }
+
     /**
      * 查询发布实例列表
      */

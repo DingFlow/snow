@@ -7,10 +7,19 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-flow-add">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">账单类型：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('bill_type')}">
+                        <input type="radio" th:id="${'billType_' + dict.dictCode}" name=" billType" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'billType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">交易号：</label>
                 <div class="col-sm-8">
-                    <input name="tradeNo" class="form-control" type="text">
+                    <input name="tradeNo" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">    
@@ -23,8 +32,7 @@
                 <label class="col-sm-3 control-label">交易创建时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="tradeCreateTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="tradeCreateTime" class="datetime-input form-control" placeholder="yyyy-MM-dd HH:mm:ss" type="text" required>
                     </div>
                 </div>
             </div>
@@ -32,17 +40,55 @@
                 <label class="col-sm-3 control-label">交易支付时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="payTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="payTime" class="datetime-input form-control" placeholder="yyyy-MM-dd HH:mm:ss" type="text" required>
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">最近修改时间：</label>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">收支类型：</label>
                 <div class="col-sm-8">
-                    <div class="input-group date">
-                        <input name="lastModifyTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <div class="radio-box" th:each="dict : ${@dict.getType('income_expenditure_type')}">
+                        <input type="radio" th:id="${'incomeExpenditureType_' + dict.dictCode}" name="incomeExpenditureType" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'incomeExpenditureType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">真实收支类型：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('finance_real_sz_type')}">
+                        <input type="radio" th:id="${'realIncomeExpenditureType_' + dict.dictCode}" name="realIncomeExpenditureType" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'realIncomeExpenditureType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">商品：</label>
+                <div class="col-sm-8">
+                    <input name="goodsName"  class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">交易金额：</label>
+                <div class="col-sm-8">
+                    <input name="tradePrice" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">财务用途：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('real_finance_type')}">
+                        <input type="radio" th:id="${'realFinanceType_' + dict.dictCode}" name="realFinanceType" th:value="${dict.dictValue}" th:checked="${dict.default}" >
+                        <label th:for="${'realFinanceType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">交易状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('trade_status_type')}">
+                        <input type="radio" th:id="${'tradeStatus_' + dict.dictCode}" name="tradeStatus" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'tradeStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
                 </div>
             </div>
@@ -61,36 +107,14 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-group">    
                 <label class="col-sm-3 control-label">交易对方：</label>
                 <div class="col-sm-8">
                     <input name="counterparty" class="form-control" type="text">
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">交易金额：</label>
-                <div class="col-sm-8">
-                    <input name="tradePrice" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">交易状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('trade_status_type')}">
-                        <input type="radio" th:id="${'tradeStatus_' + dict.dictCode}" name="tradeStatus" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'tradeStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">收支类型：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('income_expenditure_type')}">
-                        <input type="radio" th:id="${'incomeExpenditureType_' + dict.dictCode}" name="incomeExpenditureType" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'incomeExpenditureType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
+
             <div class="form-group">    
                 <label class="col-sm-3 control-label">服务费：</label>
                 <div class="col-sm-8">
@@ -110,12 +134,6 @@
                         <input type="radio" th:id="${'capitalStatus_' + dict.dictCode}" name="capitalStatus" th:value="${dict.dictValue}" th:checked="${dict.default}">
                         <label th:for="${'capitalStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">所属人：</label>
-                <div class="col-sm-8">
-                    <input name="belongUserId" class="form-control" type="text">
                 </div>
             </div>
             <div class="form-group">    
@@ -147,7 +165,7 @@
         }
 
         $("input[name='tradeCreateTime']").datetimepicker({
-            format: "yyyy-mm-dd",
+            format: "yyyy-mm-dd hh:mm:ss",
             minView: "month",
             autoclose: true
         });

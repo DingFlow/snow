@@ -12,8 +12,8 @@ import java.util.Map;
 
 /**
  * @author qimingjin
- * @Title:
- * @Description:
+ * @Title: 自动任务注册
+ * @Description: 项目启动时读取所有继承AbstractSkipTask抽象类的实现类，按照配置规则注册到table,在TaskSkipService获取值
  * @date 2021/1/11 10:11
  */
 @Service

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('编辑外部联系人')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-dept-edit" th:object="${extContactUser}">
+			<h4 class="form-header h4">基本信息</h4>
+			<input class="form-control" type="hidden" name="userId" th:field="*{userid}">
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">姓名：</label>
+						<div class="col-sm-8">
+							<input class="form-control" type="text" name="deptName" th:field="*{name}" id="deptName" required>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">负责人：</label>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<input class="form-control" type="hidden" name="followerUserId"  id="followerUserId" required>
+								<input class="form-control" type="text" name="followerUserName" onclick="selectUserInfo()" th:value="${extContactUser.followerUserId}" id="followerUserName" readonly="true">
+								<span class="input-group-addon"><i class="fa fa-search"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">手机号码：</label>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<input id="mobile" name="mobile" placeholder="请输入手机号码" th:field="*{mobile}" class="form-control" type="text" maxlength="11" required>
+								<span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">邮箱：</label>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<input id="email" name="email" class="form-control email" th:field="*{email}"  type="text" maxlength="20" placeholder="请输入邮箱" required>
+								<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">企业名称：</label>
+						<div class="col-sm-8">
+							<input class="form-control" type="text" name="companyName" th:field="*{companyName}" placeholder="请输入企业名称" required>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-xs-4 control-label is-required">岗位：</label>
+						<div class="col-xs-8">
+							<input id="title" name="title" class="form-control" type="text" th:field="*{title}" maxlength="20" placeholder="请输入岗位" required>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">地址：</label>
+						<div class="col-sm-8">
+							<input id="address" name="address" class="form-control" type="text" maxlength="120" placeholder="请输入地址" required>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">其他信息</h4>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label">备注：</label>
+						<div class="col-xs-10">
+							<textarea name="remark" maxlength="500" th:value="${extContactUser.remark}" class="form-control" rows="3"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script type="text/javascript">
+		var prefix = ctx + "ding/extContactUser";
+
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.save(prefix + "/edit", $('#form-dept-edit').serialize());
+	        }
+	    }
+
+		function selectUserInfo() {
+			var url = "/system/dept/selectUser/0";
+			$.modal.open("选择用户",url,"","",doSubmitOne);
+		}
+
+		function doSubmitOne(index, layero){
+			var body = layer.getChildFrame('body', index);
+			var iframeWin = layero.find('iframe')[0];
+			iframeWin.contentWindow.submitHandler(index, layero);
+			$("#followerUserId").val(body.find('#dingUserId').val());
+			$("#followerUserName").val(body.find('#userName').val());
+			layer.close(index);
+		}
+	</script>
+</body>
+</html>

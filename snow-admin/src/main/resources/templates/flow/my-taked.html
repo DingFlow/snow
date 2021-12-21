@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('我参与的流程')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <div class="row">
+                        <ul>
+                            <li>
+                                <label>单号：</label>
+                                <input type="text" name="businessKeyLike"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+
+</div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-js" />
+     <script th:inline="javascript">
+         var prefix = ctx + "modeler";
+         var prefixFlow = ctx + "flow";
+         var processType = [[${@dict.getType('sys_process_type')}]];
+         $(function() {
+             var options = {
+                 url: prefixFlow + "/getMyTakePartInTask",
+                 modalName: "我的已办",
+                 striped: true,      //是否显示行间隔色
+                 showToggle: false,
+                 loadingFontSize:20,
+                 showRefresh: false,                   // 是否显示刷新按钮
+                 showColumns: false,                   // 是否显示隐藏某列下拉框
+                 showToggle: false,
+                 showSearch: false,                     // 是否显示检索信息
+                 columns: [
+                     {
+                         title: '序号',
+                         formatter: function (value, row, index) {
+                             return index+1;
+                         }
+                     },
+                     {
+                         field: 'processName',
+                         title: '流程名称'
+                     },
+                     {
+                         field: 'processType',
+                         title: '流程类型',
+                         formatter: function(value, row, index) {
+                             return $.table.selectDictLabel(processType, value);
+                         }
+                     },
+                     {
+                         field: 'taskName',
+                         title: '任务名称'
+                     },
+                     {
+                         field: 'isPass',
+                         title: '处理结果',
+                         formatter: function(value, row, index) {
+                             if(value=="true"){
+                                 return '<span class="text-success">通过</span> ';
+                             }else if(value=="false"){
+                                 return '<span class="text-danger" >驳回</span> ';
+                             }
+                             return '<span class="text-primary" >其他</span> ';
+                         }
+                     },
+                     {
+                         field: 'businessKey',
+                         title: '单号',
+                         formatter: function(value, row, index) {
+                             var fromDetailUrl= row.fromDetailUrl;
+                             return '<a class="success" href="javascript:void(0)"  onclick="fromDetailUrl(\''+fromDetailUrl+'\')">'+value+'</a> ';
+                         }
+
+                     },
+                     {
+                         field: 'startUserName',
+                         title: '流程发起人'
+                     },
+                     {
+                         field: 'startTime',
+                         title: '创建时间'
+                     },
+
+                     {
+                         field: 'completeTime',
+                         title: '完成时间'
+                     },
+                     {
+                         field: 'handleTaskTime',
+                         title: '任务耗时'
+                     },
+                     {
+                         title: '操作',
+                         align: 'center',
+                         formatter: function(value, row, index) {
+                             var actions = [];
+                             var processType=row.processType;
+                             if(processType=='FORM_PROCESS'){
+                                 actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskFormDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }else {
+                                 actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="taskDetail(\'' + row.taskId + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                             }
+
+                             return actions.join('');
+                         }
+                     }]
+             };
+             $.table.init(options);
+
+         });
+
+         function taskDetail(taskId) {
+             var url=prefixFlow+'/getMyTaskedDetail?taskId='+taskId;
+             $.modal.openTab("已办任务详情", url);
+         }
+         function taskFormDetail(taskId) {
+             var url='getMyTaskedDetail?taskId='+taskId;
+             $.modal.openTab("已办任务详情", url);
+         }
+
+         function fromDetailUrl(url) {
+             $.modal.openTab("详情", url);
+         }
+     </script>
+</body>
+</html>

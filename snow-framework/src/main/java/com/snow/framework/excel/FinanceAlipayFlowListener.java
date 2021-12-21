@@ -1,9 +1,12 @@
 package com.snow.framework.excel;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.snow.common.enums.FinanceTradeType;
+import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
@@ -11,7 +14,6 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.service.IFinanceAlipayFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,13 +74,21 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     @Override
     public void invoke(FinanceAlipayFlowImport financeAlipayFlowImport, AnalysisContext analysisContext) {
 
+        //没有读取到金额直接返回
+        if(StringUtils.isNull(financeAlipayFlowImport.getTradePrice())){
+            return;
+        }
         list.add(financeAlipayFlowImport);
     }
 
     //读取excel表头信息
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
-        System.out.println("表头信息："+headMap);
+        String firstHead = headMap.get(0);
+        Integer rowIndex = context.readRowHolder().getRowIndex();
+        if(!firstHead.equals("支付宝交易记录明细查询")&&rowIndex==0){
+            throw new BusinessException("非标准化模板请勿导入，请下载标准模板或使用支付宝导出的原账单模板");
+        }
     }
 
     //读取完成后执行
@@ -93,20 +103,25 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     public void saveData(){
 
         List<FinanceAlipayFlow> financeAlipayFlowList = list.stream().map(t -> {
+            //数据校验（交易号）
+            FinanceAlipayFlow financeAlipayFlow1 = financeAlipayFlowService.selectFinanceAlipayFlowByTradeNo(t.getTradeNo());
+            if(StringUtils.isNotNull(financeAlipayFlow1)){
+                throw new BusinessException("交易号：【"+t.getTradeNo()+"】已存在请勿重复导入数据");
+            }
             FinanceAlipayFlow financeAlipayFlow = new FinanceAlipayFlow();
             BeanUtils.copyProperties(t, financeAlipayFlow);
             String payTime = t.getPayTime();
             String tradeCreateTime = t.getTradeCreateTime();
             String lastModifyTime = t.getLastModifyTime();
-            if (!StringUtils.isEmpty(payTime)) {
+            if (StringUtils.isNotEmpty(payTime)) {
                 Date date = DateUtils.parseDate(payTime);
                 financeAlipayFlow.setPayTime(date);
             }
-            if (!StringUtils.isEmpty(tradeCreateTime)) {
+            if (StringUtils.isNotEmpty(tradeCreateTime)) {
                 Date date = DateUtils.parseDate(tradeCreateTime);
                 financeAlipayFlow.setTradeCreateTime(date);
             }
-            if (!StringUtils.isEmpty(lastModifyTime)) {
+            if (StringUtils.isNotEmpty(lastModifyTime)) {
                 Date date = DateUtils.parseDate(lastModifyTime);
                 financeAlipayFlow.setLastModifyTime(date);
             }
@@ -126,10 +141,13 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             String incomeExpenditureType = t.getIncomeExpenditureType();
             if (StringUtils.isEmpty(incomeExpenditureType)) {
                 financeAlipayFlow.setIncomeExpenditureType(0);
+                financeAlipayFlow.setRealIncomeExpenditureType(0);
             } else if (incomeExpenditureType.equals("收入")) {
                 financeAlipayFlow.setIncomeExpenditureType(2);
+                financeAlipayFlow.setRealIncomeExpenditureType(2);
             } else if (incomeExpenditureType.equals("支出")) {
                 financeAlipayFlow.setIncomeExpenditureType(1);
+                financeAlipayFlow.setRealIncomeExpenditureType(1);
             }
             String tradeStatus = t.getTradeStatus();
             if (StringUtils.isEmpty(tradeStatus)) {

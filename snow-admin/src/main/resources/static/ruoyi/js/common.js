@@ -103,7 +103,53 @@ $(function() {
 		    });
 		});
 	}
-	
+    //时间 带时分秒的
+    if ($(".datetime-input").length > 0) {
+        layui.use('laydate', function () {
+            var com = layui.laydate;
+            $(".datetime-input").each(function (index, item) {
+                var time = $(item);
+                // 控制控件外观
+                var type = time.attr("data-type") || 'datetime';
+                // 控制回显格式
+                var format = time.attr("data-format") || 'yyyy-MM-dd HH:mm:ss';
+                // 控制日期控件按钮
+                var buttons = time.attr("data-btn") || 'clear|now|confirm', newBtnArr = [];
+                // 日期控件选择完成后回调处理
+                var callback = time.attr("data-callback") || {};
+                if (buttons) {
+                    if (buttons.indexOf("|") > 0) {
+                        var btnArr = buttons.split("|"), btnLen = btnArr.length;
+                        for (var j = 0; j < btnLen; j++) {
+                            if ("clear" === btnArr[j] || "now" === btnArr[j] || "confirm" === btnArr[j]) {
+                                newBtnArr.push(btnArr[j]);
+                            }
+                        }
+                    } else {
+                        if ("clear" === buttons || "now" === buttons || "confirm" === buttons) {
+                            newBtnArr.push(buttons);
+                        }
+                    }
+                } else {
+                    newBtnArr = ['clear', 'now', 'confirm'];
+                }
+                com.render({
+                    elem: item,
+                    theme: 'molv',
+                    trigger: 'click',
+                    type: type,
+                    format: format,
+                    btns: newBtnArr,
+                    done: function (value, data) {
+                        if (typeof window[callback] != 'undefined'
+                            && window[callback] instanceof Function) {
+                            window[callback](value, data);
+                        }
+                    }
+                });
+            });
+        });
+    }
 	// laydate time-input 时间控件绑定
 	if ($(".time-input").length > 0) {
 		layui.use('laydate', function () {
@@ -301,6 +347,51 @@ function createMenuItem(dataUrl, menuName) {
         window.parent.$.modal.loading("数据加载中，请稍后...");
         $('.mainContent iframe:visible', topWindow).load(function () {
         	window.parent.$.modal.closeLoading();
+        });
+
+        // 添加选项卡
+        $('.menuTabs .page-tabs-content', topWindow).append(str);
+        scrollToTab($('.menuTab.active', topWindow));
+    }
+    return false;
+}
+/** 创建选项卡 */
+function createNoPanelMenuItem(dataUrl, menuName) {
+    dataIndex = $.common.random(1, 100),
+        flag = true;
+    if (dataUrl == undefined || $.trim(dataUrl).length == 0) return false;
+    var topWindow = $(window.parent.document);
+    // 选项卡菜单已存在
+    $('.menuTab', topWindow).each(function() {
+        if ($(this).data('id') == dataUrl) {
+            if (!$(this).hasClass('active')) {
+                $(this).addClass('active').siblings('.menuTab').removeClass('active');
+                scrollToTab(this);
+                $('.page-tabs-content').animate({ marginLeft: ""}, "fast");
+                // 显示tab对应的内容区
+                $('.mainContent .RuoYi_iframe', topWindow).each(function() {
+                    if ($(this).data('id') == dataUrl) {
+                        $(this).show().siblings('.RuoYi_iframe').hide();
+                        return false;
+                    }
+                });
+            }
+            flag = false;
+            return false;
+        }
+    });
+    // 选项卡菜单不存在
+    if (flag) {
+        var str = '<a href="javascript:;" class="active menuTab" data-id="' + dataUrl + '" >' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        $('.menuTab', topWindow).removeClass('active');
+
+        // 添加选项卡对应的iframe
+        var str1 = '<iframe class="RuoYi_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '"  seamless></iframe>';
+        $('.mainContent', topWindow).find('iframe.RuoYi_iframe').hide().parents('.mainContent').append(str1);
+
+        window.parent.$.modal.loading("数据加载中，请稍后...");
+        $('.mainContent iframe:visible', topWindow).load(function () {
+            window.parent.$.modal.closeLoading();
         });
 
         // 添加选项卡

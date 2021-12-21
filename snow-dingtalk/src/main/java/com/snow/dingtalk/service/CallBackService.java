@@ -25,9 +25,9 @@ public interface CallBackService {
 
     /**
      * 删除事件
-     * @param dingtalkCallBack
+     *
      */
-    void deleteCallBack(DingtalkCallBack dingtalkCallBack);
+    void deleteCallBack();
 
     /**
      * 获取回调失败结果

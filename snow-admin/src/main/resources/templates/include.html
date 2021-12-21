@@ -22,6 +22,7 @@
     <a id="scroll-up" href="#" class="btn btn-sm display"><i class="fa fa-angle-double-up"></i></a>
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/base64.min.js}"></script>
 	<!-- bootstrap-table 表格插件 -->
 	<script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js?v=20200727}"></script>
 	<script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js?v=20200727}"></script>
@@ -289,3 +290,135 @@
 		</div>
 	</div>
 </div>
+
+<!--官网头部nabar-->
+<div  th:fragment="front-header">
+<div class="navbar-wrapper">
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header page-scroll">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">切换导航</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" th:href="@{/front/main}">DingFlow</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a class="page-scroll" href="/front/index#page-top">主页</a></li>
+					<li><a class="page-scroll" href="/front/index#features">简介</a></li>
+					<li><a class="page-scroll" href="/front/index#team">团队</a></li>
+					<li><a class="page-scroll" href="/front/index#testimonials">获奖</a></li>
+					<li><a class="page-scroll" href="/front/index#pricing">价格</a></li>
+					<li><a class="page-scroll" href="/front/index#contact">联系</a></li>
+					<li><a class="page-scroll" href="http://dingflow.xyz:3000" target="_blank">文档</a></li>
+					<li><a class="page-scroll" href="http://dingflow.xyz:8082" target="_blank">博客</a></li>
+					<li shiro:guest=""><a  data-toggle="modal" class="page-scroll"   href="#modal-form">登录</a></li>
+					<li shiro:user=""><a class="page-scroll" th:href="@{/front/main}">我的主页</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>
+<div id="inSlider" class="carousel carousel-fade" data-ride="carousel" >
+	<ol class="carousel-indicators">
+		<li data-target="#inSlider" data-slide-to="0" class="active"></li>
+		<li data-target="#inSlider" data-slide-to="1"></li>
+	</ol>
+	<div class="carousel-inner" role="listbox">
+		<div class="item active">
+			<div class="container">
+				<div class="carousel-caption">
+					<h1>借助钉钉，<br/>致力于流程，<br/>让流程更简单</h1>
+					<p>Snow社区致力于Java学习，目前包括DingFlow系统和SonwBlog博客</p>
+					<p>
+						<a class="btn btn-lg btn-primary" href="https://gitee.com/qimingjin" target="_blank" role="button">阅读更多</a>
+						<a class="caption-link" href="#" role="button">灵感主题</a>
+					</p>
+				</div>
+				<div class="carousel-image wow zoomIn">
+					<img th:src="@{/img/landing/laptop.png}"  alt="laptop"/>
+				</div>
+			</div>
+			<!-- Set background for slide in css -->
+			<div class="header-back one"></div>
+
+		</div>
+		<div class="item">
+			<div class="container">
+				<div class="carousel-caption blank">
+					<h1>我们致力于 <br/>中小企业快速数字化转型</h1>
+					<p>借助钉钉，致力于流程，让流程更简单。</p>
+					<p><a class="btn btn-lg btn-primary" href="http://snowblog.shop.csj361.com" role="button">学到更多</a></p>
+				</div>
+			</div>
+			<!-- Set background for slide in css -->
+			<div class="header-back two"></div>
+		</div>
+	</div>
+	<a class="left carousel-control" href="#inSlider" role="button" data-slide="prev">
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		<span class="sr-only">Previous</span>
+	</a>
+	<a class="right carousel-control" href="#inSlider" role="button" data-slide="next">
+		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+		<span class="sr-only">Next</span>
+	</a>
+</div>
+</div>
+
+<section id="contact" class="gray-section contact" th:fragment="front-footer">
+	<div class="container">
+		<div class="row m-b-lg">
+			<div class="col-lg-12 text-center">
+				<div class="navy-line"></div>
+				<h1>联系我们</h1>
+			</div>
+		</div>
+		<div class="row m-b-lg">
+			<div class="col-lg-3 col-lg-offset-3">
+				<address>
+					<strong><span class="navy">启明文化创意有限公司</span></strong><br/>
+					<!-- 北京市东城区某街道<br/>
+                     北京, 100000<br/>-->
+					<abbr title="QQ群">   <i class="fa fa-qq" aria-hidden="true"></i></abbr> <span> 577813338</span><br/>
+					<abbr title="邮箱">   <i class="fa fa-envelope" aria-hidden="true"></i></abbr> qimingjin@126.com
+				</address>
+			</div>
+			<div class="col-lg-4">
+				<p class="text-color">
+					DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。该管理系统致力于和钉钉数据打通，企业即可通过钉钉移动化办公，也可通过系统开发满足自身不同需求。
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0f39a32c5ffd44069dcbc8c1861bfe54.jpg" width="250px" height="250px" class="btn btn-primary"/>
+			</div>
+		</div>
+		<br/>
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<a href="mailto:test@email.com" class="btn btn-primary">寄给我们邮件</a>
+				<p class="m-t-sm">
+					或者跟随我们在社交平台上
+				</p>
+				<ul class="list-inline social-icon">
+					<li><a href="#"><i class="fa fa-twitter"></i></a>
+					</li>
+					<li><a href="#"><i class="fa fa-facebook"></i></a>
+					</li>
+					<li><a href="#"><i class="fa fa-linkedin"></i></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
+				<p><strong>&copy; 启明文化创意有限公司</strong><br/></p>
+			</div>
+		</div>
+	</div>
+</section>

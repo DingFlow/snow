@@ -2,6 +2,9 @@ package com.snow.web.controller.system;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.snow.framework.shiro.auth.LoginType;
+import com.snow.framework.shiro.auth.UserToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -39,7 +42,8 @@ public class SysLoginController extends BaseController
     @ResponseBody
     public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe)
     {
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        //UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe,"1");
+        UserToken token = new UserToken(username, password, LoginType.PASSWORD, rememberMe);
         Subject subject = SecurityUtils.getSubject();
         try
         {

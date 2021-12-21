@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('自定义页面展示')" />
+    <link rel="stylesheet" href="./layui/css/layui.css" />
+    <link rel="stylesheet" href="./ayq/modules/formDesigner.css" />
+    <link rel="stylesheet" href="./ayq/modules/cron.css" />
+    <link rel="stylesheet" href="./ayq/modules/labelGeneration.css" />
+    <link rel="stylesheet" href="./ayq/modules/formPreview.css" />
+</head>
+
+<body >
+<div >
+    <input type="hidden" name="id" id="id" th:value="${id}">
+    <input class="form-control" type="hidden" id="processInstanceId"  th:value="${processInstanceId}"/>
+    <div style="margin: 20px 20px;padding: 20px 20px;">
+        <h4 class="form-header h4">表单信息</h4>
+        <div style="margin-top: 20px" class="layui-row">
+            <h2 th:text="${name}" style="text-align: center"></h2>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset8">
+                <h5>表单编号：[[${businessKey}]]</h5>
+            </div>
+        </div>
+        <br/>
+        <div  id="testdemo" style="margin-top: 20px">
+
+        </div>
+        <h4 class="form-header h4">流程图</h4>
+        <div class="vertical-timeline-block" style="margin-left: 10%" >
+            <img  class="imgcode" width="85%"/>
+        </div>
+        <h4 class="form-header h4">填写信息</h4>
+        <form class="form-horizontal m-t"  id="signupForm">
+            <input class="form-control" type="hidden"  name="taskId" th:value="${taskId}"/>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">审批结果：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('process_check_status')}">
+                        <input type="radio" th:id="${dict.dictCode}" name="isPass" th:value="${dict.dictValue}" required>
+                        <label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">审批意见：</label>
+                <div class="col-sm-8">
+                    <textarea name="comment" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-6 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-success" onclick="submitCheckHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<div class="importjsoncodeview" style="display: none;">
+    <textarea class="site-demo-text" id="import-json-code-view"></textarea>
+    <a href="javascript:;" class="layui-btn layui-btn-normal" style="margin-right:20px;" id="import-json-code">导入数据</a>
+</div>
+<div class="getFormData" style="display: none;">
+    <textarea class="site-demo-text" id="get-form-data"></textarea>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" src="./layui/layui.js"></script>
+<script type="text/javascript" src="./ayq/modules/Sortable/Sortable.js"> </script>
+<script type="text/javascript" src="./ayq/modules/iceEditor/iceEditor.js"></script>
+<script type="text/javascript" src="./ayq/modules/formPreview.js"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ruoyi/js/common.js?v=4.3.1}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=4.3.1}"></script>
+<script>
+    $(function () {
+        var processInstanceId= $("#processInstanceId").val();
+        var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+        $(".imgcode").attr("src", url);
+    });
+    var files=new Array();
+    $(".file-upload").each(function (i) {
+        var val = $("input[name='" + this.id + "']").val();
+        $(this).fileinput({
+            'uploadUrl': '/common/upload',
+            initialPreviewAsData: true,
+            allowedFileExtensions: ['jpg', 'gif', 'png',".docx","doc","ppt","pptx","xls","xlsx","vsd","rtf","wps","pdf","txt"],//接收的文件后缀
+            initialPreview: [val],
+            maxFileCount: 1,
+            autoReplace: true
+        }).on('fileuploaded', function (event, data, previewId, index) {
+            files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+        }).on('fileremoved', function (event, id, index) {
+            $("input[name='" + event.currentTarget.id + "']").val('')
+        })
+        $(this).fileinput('_initFileActions');
+    });
+
+    <!--提交审核结果-->
+    function submitCheckHandler() {
+        var data = $("#signupForm").serializeArray();
+        console.log(JSON.stringify(data));
+
+        for(var i=0;i<data.length;i++){
+            if(data[i].name=='isPass'&&(data[i].value==''||data[i].value==null)){
+                $.modal.alertError("请填写审批结果");
+                return false;
+            }
+            if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                $.modal.alertError("请填写审批意见");
+                return false;
+            }
+        }
+        if(files!=null||files!=''){
+            for(var i=0;i<files.length;i++){
+                data.push({"name": "files["+i+"].key", "value":files[i].key});
+                data.push({"name": "files["+i+"].name", "value":files[i].name});
+                data.push({"name": "files["+i+"].url", "value":files[i].url});
+            }
+        }
+        $.operate.saveTab("/form/submitTask", data);
+    }
+    var demojs = [];
+    //JavaScript代码区域
+    layui.config(
+        {base: './ayq/modules/'}).use(['formPreviewDetail', 'form','layer','upload'], function () {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var upload  = layui.upload;
+        var index = layui.index;
+        var formPreview = layui.formPreviewDetail;
+        var form = layui.form;
+        var render;
+        if (window.localStorage.getItem('layui_form_json') !== undefined) {
+            var processInstanceId=$("#processInstanceId").val();
+            var config = {
+                url: "/form/getProcessFormData",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "processInstanceId":processInstanceId
+                },
+                success: function(result) {
+                    if (result.code === 0) {
+                        demojs = JSON.parse(result.msg);
+                        render = formPreview.render({
+                            elem: '#testdemo',
+                            data: demojs,
+                        });
+                        render.globalDisable();
+                        var images = render.getImages();
+                        for (var i = 0; i < images.length; i++) {
+                            upload.render({
+                                elem: '#' + images[i].select
+                                , url: '' + images[i].uploadUrl + ''
+                                , multiple: true
+                                , before: function (obj) {
+                                    layer.msg('图片上传中...', {
+                                        icon: 16,
+                                        shade: 0.01,
+                                        time: 0
+                                    })
+                                }
+                                , done: function (res) {
+                                    layer.close(layer.msg());//关闭上传提示窗口
+                                    //上传完毕
+                                    $('#uploader-list-' + item.id).append(
+                                        '<div id="" class="file-iteme">' +
+                                        '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                                        '<img style="width: 100px;height: 100px;" src=' + res.data.src + '>' +
+                                        '<div class="info">' + res.data.title + '</div>' +
+                                        '</div>'
+                                    );
+                                }
+                            });
+                        }
+
+                        var filesData = render.getFiles();
+                        for (var i = 0; i < filesData.length; i++) {
+                            upload.render({
+                                elem: '#' + filesData[i].select
+                                , elemList: $('#list-' + filesData[i].select) //列表元素对象
+                                , url: '' + filesData[i].uploadUrl + ''
+                                , accept: 'file'
+                                , multiple: true
+                                , number: 3
+                                , auto: false
+                                , bindAction: '#listAction-' + filesData[i].select
+                                , choose: function (obj) {
+                                    var that = this;
+                                    var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                                    //读取本地文件
+                                    obj.preview(function (index, file, result) {
+                                        var tr = $(['<tr id="upload-' + index + '">'
+                                            , '<td>' + file.name + '</td>'
+                                            , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                                            , '<td><div class="layui-progress" lay-filter="progress-demo-' + index + '"><div class="layui-progress-bar" lay-percent=""></div></div></td>'
+                                            , '<td>'
+                                            , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                                            , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                                            , '</td>'
+                                            , '</tr>'].join(''));
+
+                                        //单个重传
+                                        tr.find('.demo-reload').on('click', function () {
+                                            obj.upload(index, file);
+                                        });
+
+                                        //删除
+                                        tr.find('.demo-delete').on('click', function () {
+                                            delete files[index]; //删除对应的文件
+                                            tr.remove();
+                                            uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                                        });
+
+                                        that.elemList.append(tr);
+                                        element.render('progress'); //渲染新加的进度条组件
+                                    });
+                                }
+                                , done: function (res, index, upload) { //成功的回调
+                                    var that = this;
+                                    //if(res.code == 0){ //上传成功
+                                    var tr = that.elemList.find('tr#upload-' + index)
+                                        , tds = tr.children();
+                                    tds.eq(3).html(''); //清空操作
+                                    delete this.files[index]; //删除文件队列已经上传成功的文件
+                                    return;
+                                    //}
+                                    this.error(index, upload);
+                                }
+                                , allDone: function (obj) { //多文件上传完毕后的状态回调
+                                    console.log(obj)
+                                }
+                                , error: function (index, upload) { //错误回调
+                                    var that = this;
+                                    var tr = that.elemList.find('tr#upload-' + index)
+                                        , tds = tr.children();
+                                    tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                                }
+                                , progress: function (n, elem, e, index) {
+                                    element.progress('progress-demo-' + index, n + '%'); //执行进度条。n 即为返回的进度百分比
+                                }
+                            });
+                        }
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
+                    }
+                }
+            };
+            $.ajax(config);
+        }
+
+    });
+
+</script>
+</body>
+
+</html>

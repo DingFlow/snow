@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaTaskDistributeMapper">
+    
+    <resultMap type="SysOaTaskDistribute" id="SysOaTaskDistributeResult">
+        <result property="id"    column="id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="taskDistributeId"    column="task_distribute_id"    />
+        <result property="taskExecuteId"    column="task_execute_id"    />
+        <result property="taskExecuteStatus"    column="task_execute_status"    />
+        <result property="taskCompleteTime"    column="task_complete_time"    />
+        <result property="taskStartTime"    column="task_start_time"    />
+        <result property="taskSuspendTime"    column="task_suspend_time"    />
+        <result property="taskFeedback"    column="task_feedback"    />
+        <result property="revision"    column="revision"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysOaTaskDistributeVo">
+        select id, task_no, task_distribute_id, task_execute_id, task_execute_status, task_complete_time, task_start_time, task_suspend_time, task_feedback, revision, create_by, is_delete, create_time, update_by, update_time from sys_oa_task_distribute
+    </sql>
+
+    <select id="selectSysOaTaskDistributeList" parameterType="SysOaTaskDistribute" resultMap="SysOaTaskDistributeResult">
+        <include refid="selectSysOaTaskDistributeVo"/>
+        <where>  
+            <if test="taskNo != null  and taskNo != ''"> and task_no = #{taskNo}</if>
+            <if test="taskDistributeId != null  and taskDistributeId != ''"> and task_distribute_id = #{taskDistributeId}</if>
+            <if test="taskExecuteId != null  and taskExecuteId != ''"> and task_execute_id = #{taskExecuteId}</if>
+            <if test="taskExecuteStatus != null  and taskExecuteStatus != ''"> and task_execute_status = #{taskExecuteStatus}</if>
+            <if test="taskExecuteStatusList!= null and taskExecuteStatusList.size()>0">
+                AND task_execute_status IN
+                <foreach item="item" index="index" collection="taskExecuteStatusList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="taskCompleteTime != null "> and task_complete_time = #{taskCompleteTime}</if>
+            <if test="taskStartTime != null "> and task_start_time = #{taskStartTime}</if>
+            <if test="taskSuspendTime != null "> and task_suspend_time = #{taskSuspendTime}</if>
+            <if test="taskFeedback != null  and taskFeedback != ''"> and task_feedback = #{taskFeedback}</if>
+            <if test="revision != null "> and revision = #{revision}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysOaTaskDistributeById" parameterType="Long" resultMap="SysOaTaskDistributeResult">
+        <include refid="selectSysOaTaskDistributeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysOaTaskDistributeByTaskNo" parameterType="Long" resultMap="SysOaTaskDistributeResult">
+        <include refid="selectSysOaTaskDistributeVo"/>
+        where task_no = #{taskNo} and is_delete=0
+    </select>
+        
+    <insert id="insertSysOaTaskDistribute" parameterType="SysOaTaskDistribute" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_task_distribute
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskNo != null and taskNo != ''">task_no,</if>
+            <if test="taskDistributeId != null">task_distribute_id,</if>
+            <if test="taskExecuteId != null">task_execute_id,</if>
+            <if test="taskExecuteStatus != null">task_execute_status,</if>
+            <if test="taskCompleteTime != null">task_complete_time,</if>
+            <if test="taskStartTime != null">task_start_time,</if>
+            <if test="taskSuspendTime != null">task_suspend_time,</if>
+            <if test="taskFeedback != null">task_feedback,</if>
+            <if test="revision != null">revision,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskNo != null and taskNo != ''">#{taskNo},</if>
+            <if test="taskDistributeId != null">#{taskDistributeId},</if>
+            <if test="taskExecuteId != null">#{taskExecuteId},</if>
+            <if test="taskExecuteStatus != null">#{taskExecuteStatus},</if>
+            <if test="taskCompleteTime != null">#{taskCompleteTime},</if>
+            <if test="taskStartTime != null">#{taskStartTime},</if>
+            <if test="taskSuspendTime != null">#{taskSuspendTime},</if>
+            <if test="taskFeedback != null">#{taskFeedback},</if>
+            <if test="revision != null">#{revision},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaTaskDistribute" parameterType="SysOaTaskDistribute">
+        update sys_oa_task_distribute
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskNo != null and taskNo != ''">task_no = #{taskNo},</if>
+            <if test="taskDistributeId != null">task_distribute_id = #{taskDistributeId},</if>
+            <if test="taskExecuteId != null">task_execute_id = #{taskExecuteId},</if>
+            <if test="taskExecuteStatus != null">task_execute_status = #{taskExecuteStatus},</if>
+            <if test="taskCompleteTime != null">task_complete_time = #{taskCompleteTime},</if>
+            <if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
+            <if test="taskSuspendTime != null">task_suspend_time = #{taskSuspendTime},</if>
+            <if test="taskFeedback != null">task_feedback = #{taskFeedback},</if>
+            <if test="revision != null">revision = #{revision},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysOaTaskDistributeById" parameterType="Long">
+        delete from sys_oa_task_distribute where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaTaskDistributeByIds" parameterType="String">
+        delete from sys_oa_task_distribute where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('faq问题列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>问题标题：</label>
+                                <input type="text" name="faqTitle"/>
+                            </li>
+                            <li>
+                                <label>问题类型：</label>
+                                <select name="faqType" th:with="type=${@dict.getType('sys_faq_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label>完结时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginEndTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endEndTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:faq:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:faq:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:faq:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:faq:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:faq:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:faq:remove')}]];
+        var editAnswerFlag = [[${@permission.hasPermi('system:answer:edit')}]];
+        var removeAnswerFlag = [[${@permission.hasPermi('system:answer:remove')}]];
+        var faqTypeDatas = [[${@dict.getType('sys_faq_type')}]];
+        var faqStatuseDatas = [[${@dict.getType('sys_faq_status')}]];
+        var faqAnserAdoptStatusDatas = [[${@dict.getType('sys_faq_anser_adopt_status')}]];
+        var prefix = ctx + "system/faq";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                detailView: true,
+                onExpandRow : function(index, row, $detail) {
+                    initChildTable(index, row, $detail);
+                },
+                modalName: "faq问题",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'faqNo',
+                    title: 'faq编码',
+                    visible: true
+                },
+                {
+                    field: 'faqTitle',
+                    title: '问题标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'faqType',
+                    title: '所属产品',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(faqTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'faqStatus',
+                    title: '问题状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(faqStatuseDatas, value);
+                    }
+                },
+                {
+                    field: 'endTime',
+                    title: '完结时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="replayAnswer(\'' + row.faqNo + '\')"><i class="fa fa-edit"></i>答复</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.faqNo + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.faqNo + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        initChildTable = function(index, row, $detail) {
+            var childTable = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+            $(childTable).bootstrapTable({
+                url: prefix + "/sysOaFaqAnswerList",
+                method: 'post',
+                sidePagination: "server",
+                contentType: "application/x-www-form-urlencoded",
+                queryParams : {
+                    faqNo: row.faqNo
+                },
+                columns: [
+                    {
+                        field: 'id',
+                        title: '主键ID',
+                        visible: false
+                    },
+                    {
+                        field: 'index',
+                        align: 'center',
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                            return columnIndex + $.table.serialNumber(index);
+                        }
+                    },
+                    {
+                        field: 'answerAnswer',
+                        title: '问题答案',
+                        formatter: function(value, row, index) {
+                            return $.table.tooltip(value);
+                        }
+                    },
+                    {
+                        field: 'answerFraction',
+                        title: '答案分数'
+                    },
+                    {
+                        field: 'isAdopt',
+                        title: '是否采纳',
+                        formatter: function(value, row, index) {
+                            return $.table.selectDictLabel(faqAnserAdoptStatusDatas, value);
+                        }
+                    },
+                    {
+                        field: 'answerLikes',
+                        title: '点赞数'
+                    },
+                    {
+                        field: 'answerRidicule',
+                        title: '吐槽数'
+                    },
+                    {
+                        field: 'adoptTime',
+                        title: '采纳时间'
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editAnswerFlag + '" href="javascript:void(0)" onclick="editAnswer(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeAnswerFlag + '" href="javascript:void(0)" onclick="removeAnswer(\''+row.id+'\')"><i class="fa fa-remove"></i>删除</a>');
+                            return actions.join('');
+                        }
+                    }]
+
+            });
+
+        };
+
+
+        function replayAnswer(faqNo) {
+            table.set();
+            $.modal.open("答复FAQ" , "/system/answer/add?faqNo="+faqNo);
+        }
+
+        function editAnswer(id) {
+            table.set();
+            $.modal.open("编辑FAQ答案" , "/system/answer/edit?id="+id);
+        }
+
+        function removeAnswer(id) {
+            $.modal.confirm("确定删除该条信息吗？", function() {
+                $.operate.submit("/system/answer/remove", "post", "json",  { "id": id });
+            });
+        }
+    </script>
+</body>
+</html>

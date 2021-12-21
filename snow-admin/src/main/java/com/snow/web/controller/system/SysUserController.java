@@ -3,6 +3,7 @@ package com.snow.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.snow.common.constant.SequenceConstants;
 import com.snow.system.service.impl.SysSequenceServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,7 @@ public class SysUserController extends BaseController
     public String add(ModelMap mmap)
     {
 
-        String jobNumber = sysSequenceService.getNewSequenceNo("SNOW");
+        String jobNumber = sysSequenceService.getNewSequenceNo(SequenceConstants.OA_SNOW);
         mmap.put("jobNumber",jobNumber);
         mmap.put("roles", roleService.selectRoleAll().stream().filter(r -> !r.isAdmin()&&r.getRoleType().equals(UserConstants.SYSTEM_ROLE_TYPE)).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostAll());
@@ -231,8 +232,9 @@ public class SysUserController extends BaseController
         SysUser user = userService.selectUserById(userId);
         // 获取用户所属的角色列表
         List<SysRole> roles = roleService.selectRolesByUserId(userId);
+        List<SysRole> newRoles = roles.stream().filter(t -> t.getRoleType() == 1).collect(Collectors.toList());
         mmap.put("user", user);
-        mmap.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        mmap.put("roles", SysUser.isAdmin(userId) ? newRoles : newRoles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         return prefix + "/authRole";
     }
 
@@ -315,5 +317,14 @@ public class SysUserController extends BaseController
     {
         SysUser sysUser = userService.selectUserById(id);
         return AjaxResult.success(sysUser);
+    }
+
+    /**
+     * 多选用户
+     * @return
+     */
+    @GetMapping("/selectMultiUser")
+    public String selectMultiUser() {
+        return prefix + "/selectMultiUser";
     }
 }

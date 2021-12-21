@@ -5,6 +5,7 @@ import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author qimingjin
@@ -16,13 +17,19 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SyncEventListener implements ApplicationListener<SyncEvent> {
 
+    @Value("${is.sync.dingtalk:false}")
+    private Boolean isSyncDingTalk;
+
+
     @Override
     public void onApplicationEvent(SyncEvent syncEvent) {
-        log.info("进入监听器.....");
-        SyncDingTalkInfoFactory syncEventListenerFactory = new SyncDingTalkInfoFactory();
-        ISyncDingTalkInfo syncDingTalkService = syncEventListenerFactory.getSyncDingTalkService(syncEvent);
-        syncDingTalkService.syncDingTalkInfoEvent(syncEvent);
-        log.info("监听到的事件类型:"+JSON.toJSONString(syncEvent));
+        log.info(" @@进入钉钉模块监听器.....,配置的开关为：{}",isSyncDingTalk);
+        if(isSyncDingTalk){
+            log.info("监听到的事件类型:"+JSON.toJSONString(syncEvent));
+            SyncDingTalkInfoFactory syncEventListenerFactory = new SyncDingTalkInfoFactory();
+            ISyncDingTalkInfo syncDingTalkService = syncEventListenerFactory.getSyncDingTalkService(syncEvent);
+            syncDingTalkService.syncDingTalkInfoEvent(syncEvent);
+        }
     }
 
  

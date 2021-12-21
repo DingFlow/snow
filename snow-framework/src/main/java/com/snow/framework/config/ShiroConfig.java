@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.Filter;
 
+import com.snow.common.constant.Constants;
 import com.snow.framework.shiro.realm.UserRealm;
 import com.snow.framework.shiro.session.OnlineSessionDAO;
 import com.snow.framework.shiro.session.OnlineSessionFactory;
@@ -175,6 +176,7 @@ public class ShiroConfig
     public UserRealm userRealm(EhCacheManager cacheManager)
     {
         UserRealm userRealm = new UserRealm();
+        userRealm.setAuthorizationCacheName(Constants.SYS_AUTH_CACHE);
         userRealm.setCacheManager(cacheManager);
         return userRealm;
     }
@@ -258,8 +260,7 @@ public class ShiroConfig
      * Shiro过滤器配置
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager)
-    {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // Shiro的核心安全接口,这个属性是必须的
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -283,15 +284,29 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/captcha/captchaImage**", "anon");
         filterChainDefinitionMap.put("/dingTalk/dingTalkCallBack", "anon");
         filterChainDefinitionMap.put("/third/oauth/**", "anon");
+        //填写表单
+        filterChainDefinitionMap.put("/fromPreview", "anon");
+
+        //注册校验
+        filterChainDefinitionMap.put("/system/user/checkLoginNameUnique", "anon");
+        filterChainDefinitionMap.put("/system/user/checkPhoneUnique", "anon");
+        filterChainDefinitionMap.put("/system/user/checkEmailUnique", "anon");
 
         filterChainDefinitionMap.put("/dingTalk/dingFlowRobot", "anon");
         // 退出 logout地址，shiro去清除session
         filterChainDefinitionMap.put("/logout", "logout");
-        // 不需要拦截的访问
+        // 不需要拦截的访问 -需要过 captchaValidate拦截
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
-
+        filterChainDefinitionMap.put("/front/index", "anon,captchaValidate");
+        //前端登录
+        filterChainDefinitionMap.put("/front/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+        //前端注册
+        filterChainDefinitionMap.put("/front/register", "anon,captchaValidate");
+        //新闻跳转页
+        filterChainDefinitionMap.put("/front/news/**", "anon");
+
         // 系统权限列表
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 

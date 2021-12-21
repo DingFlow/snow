@@ -2,6 +2,8 @@ package com.snow.system.mapper;
 
 import java.util.List;
 import com.snow.system.domain.SysOaEmail;
+import com.snow.system.domain.SysOaEmailDO;
+import com.snow.system.domain.SysOaEmailVO;
 
 /**
  * 邮件Mapper接口
@@ -19,6 +21,9 @@ public interface SysOaEmailMapper
      */
     public SysOaEmail selectSysOaEmailById(Long id);
 
+
+    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+
     /**
      * 查询邮件列表
      * 
@@ -27,12 +32,14 @@ public interface SysOaEmailMapper
      */
     public List<SysOaEmail> selectSysOaEmailList(SysOaEmail sysOaEmail);
 
+
     /**
-     * 查询重要邮件
-     * @param sysOaEmail
+     * 查询邮件列表
+     * @param sysOaEmailDO
      * @return
      */
-    public List<SysOaEmail> selectImportantEmailList(SysOaEmail sysOaEmail);
+    public List<SysOaEmailVO> selectEmailList(SysOaEmailDO sysOaEmailDO);
+
 
     /**
      * 新增邮件

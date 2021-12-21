@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('分配角色选择用户')" />
+</head>
+
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-11 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								用户名称：<input type="text" name="userName"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<form class="form-horizontal m" id="form-resign-add">
+	        <div class="col-sm-12 select-table table-striped">
+				<input id="id"   name="id"    type="hidden" />
+				<input id="userName" name="userName"  type="hidden" />
+				<input id="dingUserId" name="dingUserId"  type="hidden" />
+				<input id="email" name="email"  type="hidden" />
+				<input name="deptId" type="hidden" th:value="${deptId}" />
+			    <table id="bootstrap-table"></table>
+			</div>
+			</form>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		$(function() {
+			var options = {
+		        url: "/system/user/list",
+		        queryParams: queryParams,
+		        sortName: "createTime",
+		        sortOrder: "desc",
+		        modalName: "用户",
+		        showSearch: false,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+		        clickToSelect: true,
+                singleSelect:false,
+		        rememberSelected: true,
+		        columns: [{
+		        	field: 'state',
+		            checkbox: true
+		        },
+		        {
+		            field: 'userId',
+		            title: '用户ID',
+		            visible: false
+		        },
+		        {
+		            field: 'userName',
+		            title: '用户名称'
+		        },
+		        {
+		            field: 'email',
+		            title: '邮箱'
+		        },
+				{
+					field: 'dingUserId',
+					title: '邮箱',
+					visible: false
+				}]
+		    };
+		    $.table.init(options);
+		});
+		
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.deptId = [[${deptId}]];
+			return search;
+		}
+		
+		/* 添加用户-选择用户-提交 */
+		function submitHandler() {
+
+			var rows = $.table.selectFirstColumns();
+            var id=$.table.selectNColumns(1);
+            var userName=$.table.selectNColumns(2);
+            var email=$.table.selectNColumns(3);
+			var dingUserId=$.table.selectNColumns(4);
+			if (rows.length == 0) {
+       			$.modal.alertWarning("请至少选择一条记录");
+       			return;
+       		}
+            $("#id").val(id);
+            $("#userName").val(userName);
+            $("#email").val(email);
+            $("#dingUserId").val(dingUserId);
+		}
+	</script>
+</body>
+</html>

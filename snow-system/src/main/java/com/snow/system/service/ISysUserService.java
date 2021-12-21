@@ -1,10 +1,10 @@
 package com.snow.system.service;
 
-import java.util.List;
-import java.util.Set;
-
+import com.snow.system.domain.SysAuthUser;
 import com.snow.system.domain.SysUser;
 import com.snow.system.domain.SysUserRole;
+
+import java.util.List;
 
 /**
  * 用户 业务层
@@ -220,4 +220,11 @@ public interface ISysUserService
      * @return 结果
      */
     public int changeStatus(SysUser user);
+    /**
+     * 根据用户编号查询授权列表
+     *
+     * @param userId 登录账户
+     * @return 授权列表
+     */
+    public List<SysAuthUser> selectAuthUserListByUserId(Long userId);
 }

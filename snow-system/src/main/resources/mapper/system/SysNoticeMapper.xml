@@ -15,12 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"       column="update_by"       />
         <result property="updateTime"     column="update_time"     />
         <result property="remark"         column="remark"          />
-        <result property="blackboardId"         column="blackboard_id" />
+        <result property="noticeUrl"         column="notice_url" />
 
     </resultMap>
     
     <sql id="selectNoticeVo">
-        select notice_id, notice_title,blackboard_id, notice_type, notice_content, status, create_by, create_time, update_by, update_time, remark
+        select notice_id, notice_title, notice_type, notice_content, status, create_by, create_time, update_by, update_time,notice_url, remark
 		from sys_notice
     </sql>
     
@@ -28,7 +28,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNoticeVo"/>
         where notice_id = #{noticeId}
     </select>
-    
+
+    <select id="selectNewNoticeByNoticeType" parameterType="String" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        where status =0 and notice_type = #{noticeType}
+
+        order by create_time desc
+        limit 0,1
+
+    </select>
+
     <select id="selectNoticeList" parameterType="SysNotice" resultMap="SysNoticeResult">
         <include refid="selectNoticeVo"/>
         <where>
@@ -41,11 +50,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="createBy != null and createBy != ''">
 				AND create_by like concat('%', #{createBy}, '%')
 			</if>
-            <if test="blackboardId != null and blackboardId != ''">
-                AND blackboard_id = #{blackboardId}
-            </if>
 
 		</where>
+        order by create_time desc
     </select>
     
     <insert id="insertNotice" parameterType="SysNotice" keyProperty="noticeId" useGeneratedKeys="true" >
@@ -56,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="status != null and status != '' ">status, </if>
 			<if test="remark != null and remark != ''">remark,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
-           <if test="blackboardId != null and blackboardId != ''">blackboard_id,</if>
+           <if test="noticeUrl != null and noticeUrl != ''">notice_url,</if>
  			create_time
  		)values(
 			<if test="noticeTitle != null and noticeTitle != ''">#{noticeTitle}, </if>
@@ -65,7 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="status != null and status != ''">#{status}, </if>
 			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
-            <if test="blackboardId != null and blackboardId != ''">#{blackboardId},</if>
+            <if test="noticeUrl != null and noticeUrl != ''">#{noticeUrl},</if>
  			sysdate()
 		)
     </insert>
@@ -78,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="noticeContent != null">notice_content = #{noticeContent}, </if>
             <if test="status != null and status != ''">status = #{status}, </if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="blackboardId != null and blackboardId != ''">blackboard_id=#{blackboardId},</if>
+            <if test="noticeUrl != null and noticeUrl != ''">notice_url=#{noticeUrl},</if>
  			update_time = sysdate()
         </set>
         where notice_id = #{noticeId}

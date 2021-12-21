@@ -44,6 +44,7 @@
          var todoList = [[${@permission.hasPermi('flow:get:todoList')}]];
          var transferTask = [[${@permission.hasPermi('flow:process:transferTask')}]];
          var delegateTask = [[${@permission.hasPermi('flow:process:delegateTask')}]];
+         var processType = [[${@dict.getType('sys_process_type')}]];
          $(function() {
              var options = {
                  id: "bootstrap-table",
@@ -67,6 +68,13 @@
                          field: 'taskId',
                          title: 'taskId',
                          visible: false
+                     },
+                     {
+                         field: 'processType',
+                         title: '流程类型',
+                         formatter: function(value, row, index) {
+                             return $.table.selectDictLabel(processType, value);
+                         }
                      },
                      {
                          field: 'processDefinitionName',
@@ -101,9 +109,15 @@
                          align: 'center',
                          formatter: function(value, row, index) {
                              var actions = [];
+                             var processType=row.processType;
                              actions.push('<a class="btn btn-warning btn-xs ' + delegateTask + '" href="javascript:void(0)" onclick="selectDelegateTaskUser(\''+row.taskId+'\')"><i class="fa fa-wifi"></i>委派</a> ');
                              actions.push('<a class="btn btn-primary btn-xs ' + transferTask + '" href="javascript:void(0)" onclick="selectTransferTaskUser(\''+row.taskId+'\')"><i class="fa fa-tasks"></i>转办</a> ');
-                             actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                             if(processType=='FORM_PROCESS'){
+                                 actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelFormTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                             }else {
+                                 actions.push('<a class="btn btn-success btn-xs ' + todoList + '" href="javascript:void(0)" onclick="cancelApiTask(\''+row.taskId+'\')"><i class="fa fa-edit"></i>处理</a> ');
+                             }
+
                              return actions.join('');
                          }
                      }]
@@ -111,8 +125,13 @@
              $.table.init(options);
          });
 
-         function cancelTask(taskId) {
+         function cancelApiTask(taskId) {
              var preViewUrl=prefixFlow+'/toFinishTask?taskId='+taskId;
+             $.modal.openTab("审批", preViewUrl);
+         }
+
+         function cancelFormTask(taskId) {
+             var preViewUrl='toFinishTask?taskId='+taskId;
              $.modal.openTab("审批", preViewUrl);
          }
 

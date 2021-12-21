@@ -8,7 +8,8 @@ package com.snow.common.enums;
  */
 public enum DingTalkMessageType {
     TEXT(1, "text"),
-    LINK(2, "link");
+    LINK(2, "link"),
+    MARKDOWN(3,"markdown");
 
     private final Integer code;
     private final String info;

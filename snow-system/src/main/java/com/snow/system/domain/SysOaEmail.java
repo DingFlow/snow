@@ -1,6 +1,8 @@
 package com.snow.system.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
@@ -22,6 +24,7 @@ public class SysOaEmail extends BaseEntity
     /** id */
     private Long id;
 
+    private List idList;
     /** 邮件编号 */
     @Excel(name = "邮件编号")
     private String emailNo;
@@ -34,17 +37,12 @@ public class SysOaEmail extends BaseEntity
     @Excel(name = "邮件内容")
     private String emailContent;
 
-    /** 收件人 */
-    @Excel(name = "收件人")
     private String emailTo;
     /**
      * 收件人
      */
-    private SysUser emailToUser;
+    private List<SysUser> emailToUser;
 
-    /** 发件人 */
-    @Excel(name = "发件人")
-    private String emailFrom;
 
     /**
      * 发件人邮件
@@ -70,11 +68,7 @@ public class SysOaEmail extends BaseEntity
     /** 所属人id */
     private String belongUserId;
 
-    private String belongUserName;
-
-    /** 是否已读（0--未读，1--已读） */
-    @Excel(name = "是否已读", readConverterExp = "0=--未读，1--已读")
-    private Long isRead;
+    private SysUser belongUser;
 
     /** 删除标识（0--正常，1--删除） */
     private Long isDelete;
@@ -82,18 +76,18 @@ public class SysOaEmail extends BaseEntity
     /** 附件 */
     private String fileUrl;
 
-    /**
-     * 是否成功（0--成功）
-     */
-    private Integer isSuccess;
-
-    /**
-     * 失败信息
-     */
-    private String errorInfo;
 
     /**
      * 查询类型
      */
     private Integer mailSearchType;
+
+    private List emailNoList;
+
+    /**
+     *花费时间
+     */
+    private String spendTime;
+
+    private SysMessageTransition sysMessageTransition;
 }

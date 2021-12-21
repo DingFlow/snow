@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.from.mapper.SysFormDataRecordMapper">
+
+    <resultMap type="SysFormDataRecord" id="SysFormDataRecordResult">
+        <result property="id"    column="id"    />
+        <result property="formId"    column="form_id"    />
+        <result property="formNo"    column="form_no"    />
+        <result property="formStatus"    column="form_status"    />
+        <result property="formData"    column="form_data"    />
+        <result property="formField"    column="form_field"    />
+        <result property="formUrl"    column="form_url"    />
+        <result property="belongUserId"    column="belong_user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="version"    column="version"    />
+    </resultMap>
+
+    <sql id="selectSysFormDataRecordVo">
+        select id, form_id,form_no, form_data,form_status, form_field,form_url, belong_user_id, create_by, create_time, update_time, update_by, version from sys_form_data_record
+    </sql>
+
+    <select id="selectSysFormDataRecordList" parameterType="SysFormDataRecord" resultMap="SysFormDataRecordResult">
+        <include refid="selectSysFormDataRecordVo"/>
+        <where>
+            <if test="formId != null  and formId != ''"> and form_id = #{formId}</if>
+            <if test="formNo != null  and formNo != ''"> and form_no = #{formNo}</if>
+            <if test="formStatus != null  and formStatus != ''"> and form_status = #{formStatus}</if>
+            <if test="formData != null  and formData != ''"> and form_data = #{formData}</if>
+            <if test="formUrl != null  and formUrl != ''"> and form_url = #{formUrl}</if>
+            <if test="belongUserId != null  and belongUserId != ''"> and belong_user_id = #{belongUserId}</if>
+            <if test="formIdList != null">
+                and form_id in
+                <foreach item="formId" collection="array" open="(" separator="," close=")">
+                    #{formId}
+                </foreach>
+            </if>
+            <if test="version != null "> and version = #{version}</if>
+        </where>
+    </select>
+
+    <select id="selectSysFormDataRecordById" parameterType="Integer" resultMap="SysFormDataRecordResult">
+        <include refid="selectSysFormDataRecordVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectSysFormDataRecordByFormNo" parameterType="String" resultMap="SysFormDataRecordResult">
+        <include refid="selectSysFormDataRecordVo"/>
+        where form_no = #{formNo}
+    </select>
+
+
+    <select id="getMaxVersionByUsrId" parameterType="Long" resultType="integer">
+        select max(version) from sys_form_data_record
+        where belong_user_id = #{belongUserId}
+    </select>
+
+    <insert id="insertSysFormDataRecord" parameterType="SysFormDataRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_form_data_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="formId != null and formId != ''">form_id,</if>
+            <if test="formNo != null  and formNo != ''">  form_no,</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status ,</if>
+            <if test="formData != null">form_data,</if>
+            <if test="formField != null">form_field,</if>
+            <if test="formUrl != null and formUrl != ''">form_url,</if>
+            <if test="belongUserId != null">belong_user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="version != null">version,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="formId != null and formId != ''">#{formId},</if>
+            <if test="formNo != null  and formNo != ''">  #{formNo},</if>
+            <if test="formStatus != null  and formStatus != ''"> #{formStatus},</if>
+            <if test="formData != null">#{formData},</if>
+            <if test="formField != null">#{formField},</if>
+            <if test="formUrl != null and formUrl != ''">#{formUrl},</if>
+            <if test="belongUserId != null">#{belongUserId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="version != null">#{version},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysFormDataRecord" parameterType="SysFormDataRecord">
+        update sys_form_data_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formId != null and formId != ''">form_id = #{formId},</if>
+            <if test="formNo != null  and formNo != ''">  form_no = #{formNo},</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status = #{formStatus},</if>
+            <if test="formData != null">form_data = #{formData},</if>
+            <if test="formField != null">form_field=#{formField},</if>
+            <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="version != null">version = #{version},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateSysFormDataRecordByNo" parameterType="SysFormDataRecord">
+        update sys_form_data_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formData != null">form_data = #{formData},</if>
+            <if test="formField != null">form_field=#{formField},</if>
+            <if test="formStatus != null  and formStatus != ''">  form_status = #{formStatus},</if>
+            <if test="formUrl != null and formUrl != ''">form_url = #{formUrl},</if>
+            <if test="belongUserId != null">belong_user_id = #{belongUserId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="version != null">version = #{version},</if>
+        </trim>
+        where form_no = #{formNo}
+    </update>
+
+    <delete id="deleteSysFormDataRecordById" parameterType="Integer">
+        delete from sys_form_data_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSysFormDataRecordByIds" parameterType="String">
+        delete from sys_form_data_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

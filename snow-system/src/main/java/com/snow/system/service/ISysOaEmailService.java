@@ -2,6 +2,8 @@ package com.snow.system.service;
 
 import java.util.List;
 import com.snow.system.domain.SysOaEmail;
+import com.snow.system.domain.SysOaEmailDO;
+import com.snow.system.domain.SysOaEmailVO;
 
 /**
  * 邮件Service接口
@@ -19,13 +21,32 @@ public interface ISysOaEmailService
      */
     public SysOaEmail selectSysOaEmailById(Long id);
 
+    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+
+
+    /**
+     * 获取我的收件未读消息
+     * @param userId
+     * @return
+     */
+    public List<SysOaEmail> getMyNoReadOaEmailList(String userId);
+
     /**
      * 查询邮件列表
      * 
      * @param sysOaEmail 邮件
      * @return 邮件集合
      */
+    @Deprecated
     public List<SysOaEmail> selectSysOaEmailList(SysOaEmail sysOaEmail);
+
+
+    /**
+     * 查询邮件列表
+     * @param sysOaEmailDO
+     * @return
+     */
+    public List<SysOaEmailVO> selectEmailList(SysOaEmailDO sysOaEmailDO);
 
     /**
      * 新增邮件
@@ -58,13 +79,6 @@ public interface ISysOaEmailService
      * @return 结果
      */
     public int deleteSysOaEmailById(Long id);
-
-    /**
-     * 查询重要邮件
-     * @param sysOaEmail
-     * @return
-     */
-    public List<SysOaEmail> selectImportantEmailList(SysOaEmail sysOaEmail);
 
 
 

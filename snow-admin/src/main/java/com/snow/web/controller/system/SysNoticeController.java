@@ -71,7 +71,7 @@ public class SysNoticeController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysNotice notice)
     {
-        notice.setCreateBy(ShiroUtils.getLoginName());
+        notice.setCreateBy(ShiroUtils.getSysUser().getUserName());
         return toAjax(noticeService.insertNotice(notice));
     }
 
@@ -94,7 +94,7 @@ public class SysNoticeController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SysNotice notice)
     {
-        notice.setUpdateBy(ShiroUtils.getLoginName());
+        notice.setUpdateBy(ShiroUtils.getSysUser().getUserName());
         return toAjax(noticeService.updateNotice(notice));
     }
 
@@ -108,5 +108,27 @@ public class SysNoticeController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(noticeService.deleteNoticeByIds(ids));
+    }
+
+
+    /**
+     * 查看公告详情
+     */
+    @GetMapping("/detail/{noticeId}")
+    public String detail(@PathVariable("noticeId") Long noticeId, ModelMap mmap)
+    {
+        mmap.put("notice", noticeService.selectNoticeById(noticeId));
+        return prefix + "/detail";
+    }
+
+    /**
+     * 根据公告类型查询最新的公告
+     * @param noticeType
+     * @return
+     */
+    @GetMapping("/newNotice/{noticeType}")
+    public String selectNewNoticeByNoticeType(@PathVariable("noticeType") String noticeType, ModelMap mmap){
+        mmap.put("notice", noticeService.selectNewNoticeByNoticeType(noticeType));
+        return prefix + "/detail";
     }
 }

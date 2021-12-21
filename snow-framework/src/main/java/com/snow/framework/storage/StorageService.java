@@ -55,15 +55,14 @@ public class StorageService {
         long size = file.getSize();
         String key = generateKey(fileName);
         storage.store(key,file);
-        SysUser sysUser = ShiroUtils.getSysUser();
         String url = generateUrl(key);
         SysFile storageInfo = new SysFile();
         storageInfo.setName(fileName);
         storageInfo.setSize(size);
         storageInfo.setType(contentType);
-        storageInfo.setKey(key);
+        storageInfo.setKey(key.substring(0,key.indexOf(",")));
         storageInfo.setUrl(url);
-        storageInfo.setCreateBy(sysUser.getUserName());
+        storageInfo.setCreateBy(ShiroUtils.getLoginName());
         sysFileService.insertSysFile(storageInfo);
 
         return storageInfo;
@@ -84,8 +83,8 @@ public class StorageService {
         return storage.loadAll();
     }
 
-    public Path load(String keyName) {
-        return storage.load(keyName);
+    public void load(String keyName) {
+         storage.load(keyName);
     }
 
     public Resource loadAsResource(String keyName) {

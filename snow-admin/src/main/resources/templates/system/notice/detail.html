@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('公告详情')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content  animated fadeInRight article">
+	<div class="row">
+		<div class="col-lg-10 col-lg-offset-1">
+			<div class="ibox">
+				<div class="ibox-content">
+					<div class="pull-right">
+						<a class="btn btn-white btn-xs" type="button" href="https://gitee.com/qimingjin/snow" target="_blank">码云</a>
+						<a class="btn btn-white btn-xs" type="button" href="http://dingflow.xyz:3000">社区</a>
+						<a class="btn btn-white btn-xs" type="button" href="http://dingflow.xyz:8082/">博客</a>
+					</div>
+					<div class="text-center article-title">
+						<h1>
+							[[${notice.noticeTitle}]]
+						</h1>
+						<span class="text-muted"><i class="fa fa-clock-o"></i> [[${#dates.format(notice.createTime, 'yyyy-MM-dd hh:mm:ss')}]]</span>
+					</div>
+					<p th:utext="${notice.noticeContent}">
+					</p>
+
+					<hr>
+					<div class="row">
+						<h5 style="text-align: center" class="text-danger">借助钉钉，致力于流程，让流程更简单</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <th:block th:include="include :: footer" />
+</body>
+</html>

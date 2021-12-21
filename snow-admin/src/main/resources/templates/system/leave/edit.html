@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('修改请假单')" />
+    <th:block th:include="include :: header('发起请假申请')" />
     <th:block th:include="include :: datetimepicker-css" />
     <th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
@@ -18,22 +18,22 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">请假名称：</label>
                 <div class="col-sm-8">
-                    <input name="name" th:field="*{name}" class="form-control" type="text">
+                    <input name="name" th:field="*{name}" class="form-control" type="text" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-sm-3 control-label">请假理由：</label>
                 <div class="col-sm-8">
-                    <textarea name="reason" class="form-control">[[*{reason}]]</textarea>
+                    <textarea name="reason" class="form-control" required>[[*{reason}]]</textarea>
                 </div>
             </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">开始时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="startTime" id="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="startTime" id="startTime" th:value="${#dates.format(sysOaLeave.startTime, 'yyyy-MM-dd HH:mm:ss')}" class=" datetime-input form-control" placeholder="yyyy-MM-dd" type="text" required>
+
                     </div>
                 </div>
             </div>
@@ -41,8 +41,7 @@
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
                     <div class="input-group date">
-                        <input name="endTime" id="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}"  class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="endTime" id="endTime" th:value="${#dates.format(sysOaLeave.endTime, 'yyyy-MM-dd HH:mm:ss')}"  class="datetime-input form-control" placeholder="结束时间" type="text" required>
                     </div>
                 </div>
             </div>
@@ -57,9 +56,13 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">附件：</label>
                 <div class="col-sm-8">
-                    <input type="hidden" name="fileUrl" th:field="*{fileUrl}">
+                    <input type="hidden" name="fileUrl" id="filekey" th:field="*{fileUrl}">
+                    <div class="form-control-static">
+                        <a id="fileName"></a>
+                        <button id="preview">预览</button>
+                    </div>
                     <div class="file-loading">
-                        <input class="form-control file-upload" id="fileUrl" name="file" type="file">
+                        <input class="form-control file-upload" id="fileUrl"  name="file" type="file">
                     </div>
                 </div>
             </div>
@@ -80,18 +83,17 @@
             }
         }
 
-        $("input[name='startTime']").datetimepicker({
-            format: "yyyy-mm-dd hh:ii:ss",
-            minView: "hour",
-            autoclose: true
+        $(function() {
+            var filekey=$("#fileKey").val()
+            var data= $.common.getFileByKey(filekey);
+            console.log(JSON.stringify(data))
+            $("#preview").click(function () {
+                preview(data.url);
+            })
         });
-
-        $("input[name='endTime']").datetimepicker({
-            format: "yyyy-mm-dd hh:ii:ss",
-            minView: "hour",
-            autoclose: true
-        });
-
+        function preview(url) {
+            window.open('http://47.98.36.102:8012/onlinePreview?url='+encodeURIComponent(Base64.encode(url)));
+        }
         $(".file-upload").each(function (i) {
             var val = $("input[name='" + this.id + "']").val()
             $(this).fileinput({
@@ -101,12 +103,14 @@
                 maxFileCount: 1,
                 autoReplace: true
             }).on('fileuploaded', function (event, data, previewId, index) {
-                $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+                $("input[name='" + event.currentTarget.id + "']").val(data.response.fileKey)
             }).on('fileremoved', function (event, id, index) {
                 $("input[name='" + event.currentTarget.id + "']").val('')
             })
             $(this).fileinput('_initFileActions');
         });
+
+
 
         function formatBetweenTime(date1,date2) {
             var date3 = date2.getTime() - date1.getTime() //时间差的毫秒数
@@ -126,20 +130,20 @@
             var seconds = Math.round(leave3 / 1000)
             return days+"天"+hours+"小时"+minutes+"分钟"+seconds+"秒";
         }
-
+        $(function() {
+           var filekey=$("#filekey").val();
+           var data= $.common.getFileByKey(filekey);
+           $('#fileName').attr('href',"../../../common/download?fileKey="+filekey);
+           $("#fileName").text(data.name);
+        });
     </script>
     <script th:inline="javascript">
         $('#endTime').blur(function () {
             var startTime =$("#startTime").val();
-            console.log(startTime)
             var endTime = $("#endTime").val();
-            console.log(endTime)
-
             var formatBetweenTime1 = formatBetweenTime(new Date(startTime),new Date(endTime));
             $("#leaveTime").val(formatBetweenTime1);
         });
-
-
     </script>
 </body>
 </html>

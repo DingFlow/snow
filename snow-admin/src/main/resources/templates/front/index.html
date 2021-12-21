@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>DingFlow - 官网</title>
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <link href="/static/css/login.min.css" th:href="@{/css/login.min.css}" rel="stylesheet"/>
+    <style type="text/css">label.error{position:inherit}.ui.horizontal.divider::before,.ui.horizontal.divider::after{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABaAAAAACCAYAAACuTHuKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1OThBRDY4OUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo1OThBRDY4QUNDMTYxMUU0OUE3NUVGOEJDMzMzMjE2NyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjU5OEFENjg3Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU5OEFENjg4Q0MxNjExRTQ5QTc1RUY4QkMzMzMyMTY3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+VU513gAAADVJREFUeNrs0DENACAQBDBIWLGBJQby/mUcJn5sJXQmOQMAAAAAAJqt+2prAAAAAACg2xdgANk6BEVuJgyMAAAAAElFTkSuQmCC")}.ui.horizontal.divider::after{background-position:left 1em top 50%}.ui.horizontal.divider::before,.ui.horizontal.divider::after{content:'';display:table-cell;position:relative;top:50%;width:50%;background-repeat:no-repeat}.ui.horizontal.divider::before{background-position:right 1em top 50%}.ui.horizontal.list{display:inline-block;font-size:0}ul.ui.list:last-child,ol.ui.list:last-child,.ui.list:last-child{margin-bottom:0;padding-bottom:0}ul.ui.list,ol.ui.list,.ui.list{list-style-type:none;margin:1em 0;padding:0}.login-oauth__list{display:-webkit-box!important;display:-ms-flexbox!important;display:flex!important;-webkit-box-pack:center!important;-ms-flex-pack:center!important;justify-content:center!important}.login-login-oauth__container{margin-top:20px}.ui.horizontal.login-login__oauth-title{font-weight:normal}.ui.divider{margin:1.4rem 0rem;line-height:1;height:0;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:rgba(0,0,0,0.85);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}.ui.horizontal.divider{display:table;white-space:nowrap;height:auto;margin:'';line-height:1;text-align:center}.ui.horizontal.list>.item:first-child,.ui.horizontal.list>.item:last-child{padding-top:.3em;padding-bottom:.3em}.ui.horizontal.list>.item:first-child{margin-left:0!important;padding-left:0!important}.login-oauth__list>.item{margin-left:40px!important}.ui.list .item a>img{width:32px;height:32px}</style>
+    <script>
+        if(window.top!==window.self){alert('未登录或登录超时。请重新登录');window.top.location=window.location};
+    </script>
+</head>
+<body id="page-top" class="landing-page no-skin-config">
+
+<th:block th:include="include :: front-header" />
+<section id="features" class="container services">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>企业简报</h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
+        </div>
+    </div>
+    <div th:each="news,iterStat : ${newsList}">
+        <div class="row">
+            <div class="col-md-6 text-center  wow zoomIn">
+                <img th:src="@{/img/landing/xinwen.png}" alt="dashboard" class="img-responsive">
+            </div>
+            <div class="col-md-6 text-center wow fadeInLeft">
+                <div>
+                    <!--  <i class="fa fa-mobile features-icon"></i>-->
+                    <h2>[[${news.noticeTitle}]]</h2>
+
+                    <p th:utext="${#strings.substring(news.noticeContent,0,100)}+'...'"></p>
+                    <br/>
+                    <p>
+                        <a class="btn btn-lg btn-primary" th:href="@{'/front/news/'+${news.noticeId}}" target="_blank" role="button">阅读更多</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section  class="container features">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>系统简介</h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
+        </div>
+    </div>
+    <div class="row features-block">
+        <div class="col-lg-6 features-text wow fadeInLeft">
+            <!--<small>DingFlow</small>-->
+            <h2>DingFlow</h2>
+            <p>　　DingFlow项目也叫Snow系统。项目之初是笔者的一个flowable学习demo，取其雪之意为之Snow。后来在公司集成钉钉接口时，偶然间发现钉钉自带工作流插件，便想利用业余时间打造一款开源的面向中小型企业管理系统。该管理系统能和钉钉数据打通，企业可以通过钉钉移动化办公，也可通过系统开发满足自身不同需求。DingFlow取其DingTalk和Flowable的前四个单词组成。寓意着构建钉钉工作流一体化。目前系统还处于初始孵化阶段，虽然目标很明确，但是具体的实施方案还不够详细。笔者也呼吁有能之士能参与进来一起携手做好DingFlow。</p>
+            <a href="" class="btn btn-primary">学到更多</a>
+        </div>
+        <div class="col-lg-6 text-right wow fadeInRight">
+            <img th:src="@{/img/landing/dashboard.png}" alt="dashboard" class="img-responsive pull-right">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>丰富的模块系统<br/> <span class="navy"> 与许多自定义组合</span> </h1>
+            <p>借助钉钉，致力于流程，让流程更简单</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h2>系统模块</h2>
+            <p> 用户管理：用户是系统操作者，该功能主要完成系统用户配置并能实现钉钉用户数据同步。</p>
+            <p> 部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限并能实现钉钉部门数据同步。</p>
+            <p> 菜单管理：配置系统菜单，操作权限，按钮权限标识等。</p>
+            <p> 角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。</p>
+            <p> 字典管理：对系统中经常使用的一些较为固定的数据进行维护。</p>
+            <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>流程模块</h2>
+            <p>流程模型管理：集成flowable流程设计器，在线一键发布</p>
+            <p>流程消息管理：通过邮件、钉钉发送待办，已办，办结节点信息</p>
+            <p>流程组管理：结合系统角色，设计流程节点代办人</p>
+            <p>采购流程管理：主子表设计，结合导入功能融合流程使整个采购流程透明化</p>
+            <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>钉钉模块</h2>
+            <p>回调事件管理：无需钉钉开发者后台配置回调事件，可直接在系统注册钉钉回调事件和路径</p>
+            <p>用户数据同步：系统用户数据与钉钉用户数据打通，定时双向同步</p>
+            <p>部门数据同步：系统部门数据与钉钉部门数据打通，定时双向同步</p>
+            <p>通知数据同步：系统发送通知后，实时同步到钉钉系统通知</p>
+            <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
+        </div>
+        <div class="col-sm-3">
+            <h2>消息模块</h2>
+            <p>流程消息管理：各流程按需配置消息通知方式，可选钉钉和邮件</p>
+            <p>消息模板管理：DingFlow消息是由消息模板统一配置，可随时更改通知内容，支持freeMark式参数化配置</p>
+            <p>消息中心管理：统一消息中心管理消息，让你使用起来不在迷茫无措</p>
+            <p><a class="navy-link" href="#" role="button">细节 &raquo;</a></p>
+        </div>
+    </div>
+
+
+</section>
+
+<section id="team" class="gray-section team">
+    <div class="container">
+        <div class="row m-b-lg">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>我们的队伍</h1>
+                <p>借助钉钉，致力于流程，让流程更简单</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 wow fadeInLeft">
+                <div class="team-member">
+                    <img th:src="@{/img/landing/avatar3.jpg}" class="img-responsive img-circle img-small" alt="">
+                    <h4><span class="navy">阿西</span> 后端开发工程师</h4>
+                    <p><strong>个性签名：</strong> 有些事不是努力就可以改变的，五十块的人民币设计的再好看，也没有一百块的招人喜欢</p>
+                    <ul class="list-inline social-icon">
+                        <li><a href="#"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="team-member wow zoomIn">
+                    <img th:src="@{/img/landing/avatar1.jpg}" class="img-responsive img-circle" alt="">
+                    <h4><span class="navy">阿吉</span> 后端开发工程师</h4>
+                    <p><strong>个性签名：</strong> 天下英雄出我辈，一入江湖岁月催。鸿图霸道业谈笑间，不胜人生一场醉。 提剑跨骑内挥鬼雨，白骨如山鸟惊飞。尘世如潮人如水，只叹江湖几人回</p>
+                    <ul class="list-inline social-icon">
+                        <li><a href="#"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-4 wow fadeInRight">
+                <div class="team-member">
+                    <img th:src="@{/img/landing/avatar2.jpg}" class="img-responsive img-circle img-small" alt="">
+                    <h4><span class="navy">阿衰</span> web前端开发工程师</h4>
+                    <p><strong>个性签名：</strong>路还长，青春这碗饭吃个几年也就没了。留点本事吧，谁都会老的</p>
+                    <ul class="list-inline social-icon">
+                        <li><a href="#"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+      <!--  <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
+                <p>描述描述描述</p>
+            </div>
+        </div>-->
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>未来规划</h1>
+                <p>一个好的产品，需要不断的注入新的活力。关注用户需求，不断展望未来</p>
+            </div>
+        </div>
+        <div class="row features-block">
+            <div class="col-lg-3 features-text wow fadeInLeft">
+                <small>DingFlow</small>
+                <h2>VUE版DingFlow</h2>
+                <p>　　在讲颜值的时代，前后端分离的技术将会被运用的越来越广泛，DingFlow将会在后续推出VUE版。</p>
+                <a href="" class="btn btn-primary">Learn more</a>
+            </div>
+            <div class="col-lg-6 text-right m-t-n-lg wow zoomIn">
+                <img th:src="@{/img/landing/iphone.jpg}" class="img-responsive" alt="dashboard">
+            </div>
+            <div class="col-lg-3 features-text  wow fadeInRight">
+                <small>DingFlow</small>
+                <h2>企业微信版DingFlow</h2>
+                <p>　　未来会通过搭载企业微信，构建一套私域企业流量后台管理系统。通过简单的分流、引流转化微信客户为企业客户，结合强大的后台支持，灵活的运营模式，建立企业与客户的强联系，让企业的盈利模式有了多种不同的选择。</p>
+                <a href="" class="btn btn-primary">Learn more</a>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="timeline gray-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>版本发布公告</h1>
+                <!--<p>描述描述描述 </p>-->
+            </div>
+        </div>
+        <div class="row features-block">
+
+            <div class="col-lg-12">
+                <div id="vertical-timeline" class="vertical-container light-timeline center-orientation">
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h2>V1.8 2021-11-14</h2>
+                            <p> 1. 新增系统任务模块 </p>
+                            <p> 2. 解耦系统与钉钉的强依赖，新增是否同步配置 </p>
+                            <p> 3. 新增钉钉外部联系人模块 </p>
+                            <p> 4. 完善系统用户和钉钉用户同步机制 </p>
+                            <p> 5. 新增流程待办，流程完结，系统任务站内信消息通知 </p>
+                            <p> 6. 新增手机号，姓名，身份证，秘钥等重要隐私信息脱敏 </p>
+                            <p> 7. 重构部分代码 </p>
+                            <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
+                            <span class="vertical-date"> <!--明天 <br/> --><small>2021年11月14日</small> </span>
+                        </div>
+                    </div>
+
+
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h2>V1.7 2021-07-04</h2>
+                            <p> 1. 集成微信、支付宝扫码登录功能 </p>
+                            <p> 2. 新增DingFlow官网 </p>
+                            <p> 3. 官网注册、登录功能</p>
+                            <p> 4. 新增官网FAQ管理：登录官网可在线提FAQ </p>
+                            <p> 5. 重构钉钉回调注册管理 </p>
+                            <p> 6. 重构消息中心模块,支持站内信 </p>
+                            <p> 7. 修复分配系统角色时会自动删除流程角色 </p>
+                            <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
+                            <span class="vertical-date"> <!--今天 <br/>--> <small>2021年07月04日</small> </span>
+                        </div>
+                    </div>
+
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h2>V1.6 2021-05-17</h2>
+                            <p> 1. 集成钉钉扫码登录功能 </p>
+                            <p> 2. 新增省市区管理 </p>
+                            <p> 3. 优化部门管理，支持部门修改和删除钉钉数据双向同步，解决新增添加两次数据
+                                新增根据用户查询部门主管接口 </p>
+                            <p> 4. 优化请假流程和离职流程，让流程更贴近业务。
+                                上级部门主管审批：由当前申请人的直接上级主管审批，不在是流程组配置 </p>
+                            <p> 5. 优化部分界面和查询方式 </p>
+                            <p> 6. 修复部分jar冲突，解决流程报错和部分页面报错 </p>
+                            <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
+                            <span class="vertical-date"> <!--明天 <br/> --><small>2021年05月17日</small> </span>
+                        </div>
+                    </div>
+
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h2>V1.5 2021-05-05</h2>
+                            <p> 1. 集成开源积木报表</p>
+                            可在线设计各类报表（表格类报表和图表类报表) </p>
+                            <p> 2. 新增业务管理模块
+                                新增客户准入流程，添加客户流入客户公海，发起准入流程，准入客户进入客户私海，可业务员拜访跟进，未准入客户进入黑名单
+                                原数据大屏并入业务管理 </p>
+                            <p> 3. 新增消息中心 </p>
+                            <p> 4. 在线邮件更改为站内邮件，不在调用邮件发送功能，便于系统内用户沟通，跟进业务 </p>
+                            <p> 5. 修复流程父角色查询所属子角色异常情况 </p>
+                            <p> 6. 修复添加用户时部门树筛选异常 </p>
+                            <p> 7. 新增Snow社区在线文档（地址见友情链接）</p>
+                            <a href="#" class="btn btn-xs btn-primary"> 更多信息</a>
+                            <span class="vertical-date"> <!--星期一 <br/>--> <small>2021年05月05日</small> </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<section id="testimonials" class="navy-section testimonials" style="margin-top: 0">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center wow zoomIn">
+                <i class="fa fa-comment big-icon"></i>
+                <h1>
+                    我们的用户说
+                </h1>
+                <div class="testimonials-text">
+                    <i>"这个后台程序真心不错！"</i>
+                </div>
+                <small>
+                    <strong>2021年07月03日 - 阿里巴巴</strong>
+                </small>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="comments gray-section" style="margin-top: 0">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>我们的合作伙伴说</h1>
+                <p>数十家于DingFlow系统合作后，都给予高度认可和评价</p>
+            </div>
+        </div>
+        <div class="row features-block">
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "借助钉钉，致力于流程，让流程更简单"
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" th:src="@{/img/landing/avatar3.jpg}">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            小明
+                        </div>
+                        <small class="text-muted">企鹅公司</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "我们将能助您一臂之力彰显您的企业价值和社会责任，赢得更多客户的认同和员工的信赖。"
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" th:src="@{/img/landing/avatar1.jpg}">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            小明
+                        </div>
+                        <small class="text-muted">企鹅公司</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "借助钉钉，致力于流程，让流程更简单"
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" th:src="@{/img/landing/avatar2.jpg}">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            小明
+                        </div>
+                        <small class="text-muted">企鹅公司</small>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>越来越多的超大功能</h1>
+                <p>经过团队日夜敲打设计DingFlow系统日趋完善 </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-1 features-text">
+                <small>DingFlow</small>
+                <h2>智能报表 </h2>
+                <i class="fa fa-bar-chart big-icon pull-right"></i>
+                <p>DingFlow系统集成积木报表，可在线设计企业日常需求报销报表，工资报表，各种柱状图，树状图，圆饼图等。</p>
+            </div>
+            <div class="col-lg-5 features-text">
+                <small>DingFlow</small>
+                <h2>工单管理 </h2>
+                <i class="fa fa-bolt big-icon pull-right"></i>
+                <p>DingFlow依托前端官网产品，针对售后反馈设计智能工单系统。由用户登录官网前台提交工单，经过DingFlow流程自动化分配，及时高效处理问题。</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5 col-lg-offset-1 features-text">
+                <small>DingFlow</small>
+                <h2>财务管理 </h2>
+                <i class="fa fa-clock-o big-icon pull-right"></i>
+                <p>针对日常消费账单，DingFlow系统支持支付宝和微信原模板一件导入，智能分析日常消费</p>
+            </div>
+            <div class="col-lg-5 features-text">
+                <small>DingFlow</small>
+                <h2>流程管理 </h2>
+                <i class="fa fa-users big-icon pull-right"></i>
+                <p>DingFlow自带流程管理系统支持流程组动态化配置，同时集成DingTlak流程。</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+<section id="pricing" class="pricing">
+    <div class="container">
+        <div class="row m-b-lg">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>软件定价</h1>
+                <p>DingFlow系统是作者在若依框架的基础上结合中小企业现状改造的一款小型企业内部管理系统，针对不同用户需求可联系作者做定制化开发</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled">
+                    <li class="pricing-title">
+                        基础
+                    </li>
+                    <li class="pricing-desc">
+                        基础版描述
+                    </li>
+                    <li class="pricing-price">
+                        <span>￥16</span> / 月
+                    </li>
+                    <li>
+                        主页
+                    </li>
+                    <li>
+                        应用
+                    </li>
+                    <li>
+                        好友
+                    </li>
+                    <li>
+                        日历
+                    </li>
+                    <li>
+                        AngularJs
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        标准
+                    </li>
+                    <li class="pricing-desc">
+                        标注版描述
+                    </li>
+                    <li class="pricing-price">
+                        <span>￥22</span> / 月
+                    </li>
+                    <li>
+                        主页
+                    </li>
+                    <li>
+                        应用
+                    </li>
+                    <li>
+                        好友
+                    </li>
+                    <li>
+                        日历
+                    </li>
+                    <li>
+                        AngularJs
+                    </li>
+                    <li>
+                        <strong>支持平台</strong>
+                    </li>
+                    <li class="plan-action">
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled">
+                    <li class="pricing-title">
+                        企业版
+                    </li>
+                    <li class="pricing-desc">
+                        企业版描述
+                    </li>
+                    <li class="pricing-price">
+                        <span>￥160</span> / 月
+                    </li>
+                    <li>
+                        主页
+                    </li>
+                    <li>
+                        应用
+                    </li>
+                    <li>
+                        好友
+                    </li>
+                    <li>
+                        日历
+                    </li>
+                    <li>
+                        AngularJs
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-xs" th:href="@{/front/register}">注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row m-t-lg">
+            <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg">
+                <p>*描述描述</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<th:block th:include="include :: front-footer" />
+
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6 b-r"><h3 class="m-t-none m-b">登录</h3>
+                         <p>借助钉钉，致力于流程，让流程更简单</p>
+                        <form id="signupForm" autocomplete="off">
+                            <div class="form-group"><!--<label>用户名</label>  --><input type="text"   name="username" class="form-control uname"     placeholder="请输入用户名"     /></div>
+                            <div class="form-group"><!--<label>密码</label> --><input type="password"  name="password"  placeholder="请输入密码" class="form-control pword"></div>
+                            <div class="row m-t form-group">
+                                <div class="col-xs-6">
+                                    <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <a href="javascript:void(0);" title="点击更换验证码">
+                                        <img th:src="@{../captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>
+                                    </a>
+                                </div>
+                                </div>
+                                <div class="checkbox-custom form-group" th:classappend="${captchaEnabled==false} ? 'm-t'">
+                                    <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>
+                                </div>
+                                <div class="form-group">
+                                    <a class="btn btn-sm btn-primary pull-right m-t-n-xs  btn-block"  id="btnSubmit" data-loading="正在验证登录，请稍后..."><strong>登录</strong></a>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-6"><h4>非企业用户?</h4>
+                            <p>您可以创建一个帐户:</p>
+                            <p class="text-center">
+                                <a th:href="@{/front/register}" target="_blank"><i class="fa fa-sign-in big-icon"></i></a>
+                            </p>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Mainly scripts -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/inspinia.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<!-- Custom and plugin javascript -->
+<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+<script th:src="@{/js/plugins/wow/wow.min.js}"></script>
+<script src="/static/ajax/libs/validate/jquery.validate.min.js" th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script src="/static/ajax/libs/validate/messages_zh.min.js" th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script src="/static/ajax/libs/layer/layer.min.js" th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script src="/static/ajax/libs/blockUI/jquery.blockUI.js" th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script src="/static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.3.1}"></script>
+<script src="/static/ruoyi/front-login.js" th:src="@{/ruoyi/front-login.js}"></script>
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+
+        $('body').scrollspy({
+            target: '.navbar-fixed-top',
+            offset: 80
+        });
+
+        // Page scrolling feature
+        $('a.page-scroll').bind('click', function(event) {
+            var link = $(this);
+            $('html, body').stop().animate({
+                scrollTop: $(link.attr('href')).offset().top - 50
+            }, 500);
+            event.preventDefault();
+            $("#navbar").collapse('hide');
+        });
+    });
+
+    var cbpAnimatedHeader = (function() {
+        var docElem = document.documentElement,
+                header = document.querySelector( '.navbar-default' ),
+                didScroll = false,
+                changeHeaderOn = 200;
+        function init() {
+            window.addEventListener( 'scroll', function( event ) {
+                if( !didScroll ) {
+                    didScroll = true;
+                    setTimeout( scrollPage, 250 );
+                }
+            }, false );
+        }
+        function scrollPage() {
+            var sy = scrollY();
+            if ( sy >= changeHeaderOn ) {
+                $(header).addClass('navbar-scroll')
+            }
+            else {
+                $(header).removeClass('navbar-scroll')
+            }
+            didScroll = false;
+        }
+        function scrollY() {
+            return window.pageYOffset || docElem.scrollTop;
+        }
+        init();
+
+    })();
+
+    // Activate WOW.js plugin for animation on scrol
+    new WOW().init();
+
+</script>
+
+</body>
+</html>

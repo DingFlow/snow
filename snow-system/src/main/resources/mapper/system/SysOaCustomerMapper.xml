@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaCustomerMapper">
+    
+    <resultMap type="SysOaCustomer" id="SysOaCustomerResult">
+        <result property="id"    column="id"    />
+        <result property="customerNo"    column="customer_no"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="customerAddress"    column="customer_address"    />
+        <result property="customerProvinceName"    column="customer_province_name"    />
+        <result property="customerProvinceCode"    column="customer_province_code"    />
+        <result property="customerCityName"    column="customer_city_name"    />
+        <result property="customerCityCode"    column="customer_city_code"    />
+        <result property="customerAreaName"    column="customer_area_name"    />
+        <result property="customerAreaCode"    column="customer_area_code"    />
+        <result property="customerStatus"    column="customer_status"    />
+        <result property="customerSource"    column="customer_source"    />
+        <result property="customerPhone"    column="customer_phone"    />
+        <result property="customerEmail"    column="customer_email"    />
+        <result property="customerIndustry"    column="customer_industry"    />
+        <result property="customerManager"    column="customer_manager"    />
+        <result property="customerLinkeUser"    column="customer_linke_user"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysOaCustomerVo">
+        select id, customer_no, customer_name, customer_address, customer_province_name, customer_province_code, customer_city_name, customer_city_code, customer_area_name, customer_area_code, customer_status, customer_source, customer_phone, customer_email, customer_industry, customer_manager, customer_linke_user, create_by, is_delete, create_time, update_by, update_time from sys_oa_customer
+    </sql>
+
+    <select id="selectSysOaCustomerList" parameterType="SysOaCustomer" resultMap="SysOaCustomerResult">
+        <include refid="selectSysOaCustomerVo"/>
+        <where>  
+            <if test="customerNo != null  and customerNo != ''"> and customer_no = #{customerNo}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="customerAddress != null  and customerAddress != ''"> and customer_address = #{customerAddress}</if>
+            <if test="customerProvinceName != null  and customerProvinceName != ''"> and customer_province_name like concat('%', #{customerProvinceName}, '%')</if>
+            <if test="customerProvinceCode != null  and customerProvinceCode != ''"> and customer_province_code = #{customerProvinceCode}</if>
+            <if test="customerCityName != null  and customerCityName != ''"> and customer_city_name like concat('%', #{customerCityName}, '%')</if>
+            <if test="customerCityCode != null  and customerCityCode != ''"> and customer_city_code = #{customerCityCode}</if>
+            <if test="customerAreaName != null  and customerAreaName != ''"> and customer_area_name like concat('%', #{customerAreaName}, '%')</if>
+            <if test="customerAreaCode != null  and customerAreaCode != ''"> and customer_area_code = #{customerAreaCode}</if>
+            <if test="customerStatus != null  and customerStatus != ''"> and customer_status = #{customerStatus}</if>
+            <if test="customerSource != null  and customerSource != ''"> and customer_source = #{customerSource}</if>
+            <if test="customerPhone != null  and customerPhone != ''"> and customer_phone = #{customerPhone}</if>
+            <if test="customerEmail != null  and customerEmail != ''"> and customer_email = #{customerEmail}</if>
+            <if test="customerIndustry != null  and customerIndustry != ''"> and customer_industry = #{customerIndustry}</if>
+            <if test="customerManager != null  and customerManager != ''"> and customer_manager = #{customerManager}</if>
+            <if test="customerLinkeUser != null  and customerLinkeUser != ''"> and customer_linke_user = #{customerLinkeUser}</if>
+            <if test="isHighSeas == 1"> and (customer_status = 'WAIT_ADMIT' or customer_status='ADMIT_ING') </if>
+        </where>
+        order by update_time desc
+    </select>
+    
+    <select id="selectSysOaCustomerById" parameterType="Long" resultMap="SysOaCustomerResult">
+        <include refid="selectSysOaCustomerVo"/>
+        where id = #{id} and is_delete=0
+    </select>
+
+    <select id="selectSysOaCustomerByCustomerName" parameterType="String" resultMap="SysOaCustomerResult">
+        <include refid="selectSysOaCustomerVo"/>
+        where customer_name= #{customerName} and is_delete=0
+    </select>
+
+    <select id="selectSysOaCustomerByCustomerNo" parameterType="String" resultMap="SysOaCustomerResult">
+        <include refid="selectSysOaCustomerVo"/>
+        where customer_no = #{customerNo} and is_delete=0
+    </select>
+        
+    <insert id="insertSysOaCustomer" parameterType="SysOaCustomer" useGeneratedKeys="true" keyProperty="ID">
+        insert into sys_oa_customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">customer_no,</if>
+            <if test="customerName != null and customerName != ''">customer_name,</if>
+            <if test="customerAddress != null">customer_address,</if>
+            <if test="customerProvinceName != null">customer_province_name,</if>
+            <if test="customerProvinceCode != null">customer_province_code,</if>
+            <if test="customerCityName != null">customer_city_name,</if>
+            <if test="customerCityCode != null">customer_city_code,</if>
+            <if test="customerAreaName != null">customer_area_name,</if>
+            <if test="customerAreaCode != null">customer_area_code,</if>
+            <if test="customerStatus != null">customer_status,</if>
+            <if test="customerSource != null">customer_source,</if>
+            <if test="customerPhone != null">customer_phone,</if>
+            <if test="customerEmail != null">customer_email,</if>
+            <if test="customerIndustry != null">customer_industry,</if>
+            <if test="customerManager != null">customer_manager,</if>
+            <if test="customerLinkeUser != null">customer_linke_user,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">#{customerNo},</if>
+            <if test="customerName != null and customerName != ''">#{customerName},</if>
+            <if test="customerAddress != null">#{customerAddress},</if>
+            <if test="customerProvinceName != null">#{customerProvinceName},</if>
+            <if test="customerProvinceCode != null">#{customerProvinceCode},</if>
+            <if test="customerCityName != null">#{customerCityName},</if>
+            <if test="customerCityCode != null">#{customerCityCode},</if>
+            <if test="customerAreaName != null">#{customerAreaName},</if>
+            <if test="customerAreaCode != null">#{customerAreaCode},</if>
+            <if test="customerStatus != null">#{customerStatus},</if>
+            <if test="customerSource != null">#{customerSource},</if>
+            <if test="customerPhone != null">#{customerPhone},</if>
+            <if test="customerEmail != null">#{customerEmail},</if>
+            <if test="customerIndustry != null">#{customerIndustry},</if>
+            <if test="customerManager != null">#{customerManager},</if>
+            <if test="customerLinkeUser != null">#{customerLinkeUser},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaCustomer" parameterType="SysOaCustomer">
+        update sys_oa_customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">customer_no = #{customerNo},</if>
+            <if test="customerName != null and customerName != ''">customer_name = #{customerName},</if>
+            <if test="customerAddress != null">customer_address = #{customerAddress},</if>
+            <if test="customerProvinceName != null">customer_province_name = #{customerProvinceName},</if>
+            <if test="customerProvinceCode != null">customer_province_code = #{customerProvinceCode},</if>
+            <if test="customerCityName != null">customer_city_name = #{customerCityName},</if>
+            <if test="customerCityCode != null">customer_city_code = #{customerCityCode},</if>
+            <if test="customerAreaName != null">customer_area_name = #{customerAreaName},</if>
+            <if test="customerAreaCode != null">customer_area_code = #{customerAreaCode},</if>
+            <if test="customerStatus != null">customer_status = #{customerStatus},</if>
+            <if test="customerSource != null">customer_source = #{customerSource},</if>
+            <if test="customerPhone != null">customer_phone = #{customerPhone},</if>
+            <if test="customerEmail != null">customer_email = #{customerEmail},</if>
+            <if test="customerIndustry != null">customer_industry = #{customerIndustry},</if>
+            <if test="customerManager != null">customer_manager = #{customerManager},</if>
+            <if test="customerLinkeUser != null">customer_linke_user = #{customerLinkeUser},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+
+    </update>
+
+    <update id="updateSysOaCustomerByCustomerNo" parameterType="SysOaCustomer">
+        update sys_oa_customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerNo != null and customerNo != ''">customer_no = #{customerNo},</if>
+            <if test="customerName != null and customerName != ''">customer_name = #{customerName},</if>
+            <if test="customerAddress != null">customer_address = #{customerAddress},</if>
+            <if test="customerProvinceName != null">customer_province_name = #{customerProvinceName},</if>
+            <if test="customerProvinceCode != null">customer_province_code = #{customerProvinceCode},</if>
+            <if test="customerCityName != null">customer_city_name = #{customerCityName},</if>
+            <if test="customerCityCode != null">customer_city_code = #{customerCityCode},</if>
+            <if test="customerAreaName != null">customer_area_name = #{customerAreaName},</if>
+            <if test="customerAreaCode != null">customer_area_code = #{customerAreaCode},</if>
+            <if test="customerStatus != null">customer_status = #{customerStatus},</if>
+            <if test="customerSource != null">customer_source = #{customerSource},</if>
+            <if test="customerPhone != null">customer_phone = #{customerPhone},</if>
+            <if test="customerEmail != null">customer_email = #{customerEmail},</if>
+            <if test="customerIndustry != null">customer_industry = #{customerIndustry},</if>
+            <if test="customerManager != null">customer_manager = #{customerManager},</if>
+            <if test="customerLinkeUser != null">customer_linke_user = #{customerLinkeUser},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where customer_no = #{customerNo}
+
+    </update>
+
+    <delete id="deleteSysOaCustomerById" parameterType="Long">
+        delete from sys_oa_customer where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaCustomerByIds" parameterType="String">
+        delete from sys_oa_customer where id in
+        <foreach item="ID" collection="array" open="(" separator="," close=")">
+            #{ID}
+        </foreach>
+    </delete>
+
+</mapper>

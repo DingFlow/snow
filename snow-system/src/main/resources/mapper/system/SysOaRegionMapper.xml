@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaRegionMapper">
+    
+    <resultMap type="SysOaRegion" id="SysOaRegionResult">
+        <result property="code"    column="code"    />
+        <result property="pCode"    column="p_code"    />
+        <result property="name"    column="name"    />
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectSysOaRegionVo">
+        select code, p_code, name from sys_oa_region
+    </sql>
+
+    <select id="selectSysOaRegionList" parameterType="SysOaRegion" resultMap="SysOaRegionResult">
+        <include refid="selectSysOaRegionVo"/>
+        <where>  
+            <if test="pCode != null "> and p_code = #{pCode}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+        order by p_code
+    </select>
+    
+    <select id="selectSysOaRegionById" parameterType="Long" resultMap="SysOaRegionResult">
+        select t.code, t.p_code, t.name, p.name as parent_name
+        from sys_oa_region t
+        left join sys_oa_region p on p.code = t.p_code
+        where t.code = #{code}
+    </select>
+        
+    <insert id="insertSysOaRegion" parameterType="SysOaRegion">
+        insert into sys_oa_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">code,</if>
+            <if test="pCode != null">p_code,</if>
+            <if test="name != null and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">#{code},</if>
+            <if test="pCode != null">#{pCode},</if>
+            <if test="name != null and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaRegion" parameterType="SysOaRegion">
+        update sys_oa_region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pCode != null">p_code = #{pCode},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+        </trim>
+        where code = #{code}
+    </update>
+
+    <delete id="deleteSysOaRegionById" parameterType="Long">
+        delete from sys_oa_region where code = #{code}
+    </delete>
+
+    <delete id="deleteSysOaRegionByIds" parameterType="String">
+        delete from sys_oa_region where code in 
+        <foreach item="code" collection="array" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </delete>
+
+</mapper>
