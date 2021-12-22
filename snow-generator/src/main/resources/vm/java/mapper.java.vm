@@ -4,6 +4,7 @@ import java.util.List;
 import ${packageName}.domain.${ClassName};
 #if($table.sub)
 import ${packageName}.domain.${subClassName};
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 #end
 
 /**
@@ -12,7 +13,7 @@ import ${packageName}.domain.${subClassName};
  * @author ${author}
  * @date ${datetime}
  */
-public interface ${ClassName}Mapper 
+public interface ${ClassName}Mapper extends BaseMapper<${ClassName}>
 {
     /**
      * 查询${functionName}

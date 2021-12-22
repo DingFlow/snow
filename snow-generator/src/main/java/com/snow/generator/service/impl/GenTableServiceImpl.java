@@ -241,8 +241,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 数据
      */
     @Override
-    public void generatorCode(String tableName)
-    {
+    public void generatorCode(String tableName) {
         // 查询表信息
         GenTable table = genTableMapper.selectGenTableByName(tableName);
         // 设置主子表信息
@@ -256,21 +255,16 @@ public class GenTableServiceImpl implements IGenTableService
 
         // 获取模板列表
         List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
-        for (String template : templates)
-        {
-            if (!StringUtils.contains(template, "sql.vm"))
-            {
+        for (String template : templates) {
+            if (!StringUtils.contains(template, "sql.vm")) {
                 // 渲染模板
                 StringWriter sw = new StringWriter();
                 Template tpl = Velocity.getTemplate(template, Constants.UTF8);
                 tpl.merge(context, sw);
-                try
-                {
+                try {
                     String path = getGenPath(table, template);
                     FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new BusinessException("渲染模板失败，表名：" + table.getTableName());
                 }
             }

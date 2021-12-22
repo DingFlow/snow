@@ -39,7 +39,7 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
      */
     @Override
     public SysNotice selectNoticeById(Long noticeId) {
-        return getById(noticeId);
+        return noticeMapper.selectById(noticeId);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
         lambda.eq(StrUtil.isNotBlank(notice.getNoticeType()),SysNotice::getNoticeType,notice.getNoticeType());
         lambda.like(StrUtil.isNotBlank(notice.getNoticeTitle()),SysNotice::getNoticeTitle,notice.getNoticeTitle());
         lambda.orderByDesc(SysNotice::getCreateTime);
-        return list(lambda);
+        return noticeMapper.selectList(lambda);
     }
 
     /**

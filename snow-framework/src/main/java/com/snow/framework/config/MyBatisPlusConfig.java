@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.github.pagehelper.PageInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.Properties;
 
 /**
  * Mybatis支持*匹配扫描包
@@ -44,6 +47,20 @@ public class MyBatisPlusConfig
         return paginationInnerInterceptor;
     }
 
+    /**
+     * 初始化PageInterceptor
+     * Mybatis-plus的时候，
+     * 不会再自动生成PageInterceptor这个类，需要手动生成，
+     * @return
+     */
+    @Bean
+    public PageInterceptor pageInterceptor(){
+        PageInterceptor pageInterceptor = new PageInterceptor();
+        Properties properties = new Properties();
+        properties.setProperty("helperDialect", "mysql");
+        pageInterceptor.setProperties(properties);  // 由此可进入源码，
+        return pageInterceptor;
+    }
     /**
      * 乐观锁插件 https://baomidou.com/guide/interceptor-optimistic-locker.html
      */

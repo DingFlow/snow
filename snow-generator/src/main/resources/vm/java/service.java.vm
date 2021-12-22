@@ -3,6 +3,7 @@ package ${packageName}.service;
 import java.util.List;
 import ${packageName}.domain.${ClassName};
 #if($table.tree)
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.common.core.domain.Ztree;
 #end
 
@@ -12,7 +13,7 @@ import com.snow.common.core.domain.Ztree;
  * @author ${author}
  * @date ${datetime}
  */
-public interface I${ClassName}Service 
+public interface I${ClassName}Service extends IService<${ClassName}>
 {
     /**
      * 查询${functionName}
