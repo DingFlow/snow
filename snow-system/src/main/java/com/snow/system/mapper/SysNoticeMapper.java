@@ -1,6 +1,8 @@
 package com.snow.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.system.domain.SysNotice;
 
 /**
@@ -8,7 +10,7 @@ import com.snow.system.domain.SysNotice;
  * 
  * @author snow
  */
-public interface SysNoticeMapper
+public interface SysNoticeMapper extends BaseMapper<SysNotice>
 {
     /**
      * 查询公告信息

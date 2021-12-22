@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.snow.common.constant.Constants;
@@ -121,7 +121,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 结果
      */
     @Override
-    @Transactional
+   // @Transactional
     public void updateGenTable(GenTable genTable)
     {
         String options = JSON.toJSONString(genTable.getParams());
@@ -143,7 +143,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 结果
      */
     @Override
-    @Transactional
+    //@Transactional
     public void deleteGenTableByIds(String ids)
     {
         genTableMapper.deleteGenTableByIds(Convert.toLongArray(ids));
@@ -157,7 +157,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param operName 操作人员
      */
     @Override
-    @Transactional
+   // @Transactional
     public void importGenTable(List<GenTable> tableList, String operName)
     {
         try

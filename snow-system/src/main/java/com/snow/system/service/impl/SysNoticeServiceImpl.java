@@ -1,19 +1,20 @@
 package com.snow.system.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import com.snow.common.enums.DingTalkListenerType;
-import com.snow.system.event.SyncEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.core.text.Convert;
+import com.snow.common.enums.DingTalkListenerType;
 import com.snow.system.domain.SysNotice;
+import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.SysNoticeMapper;
 import com.snow.system.service.ISysNoticeService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 公告 服务层实现
@@ -22,9 +23,9 @@ import javax.annotation.Resource;
  * @date 2018-06-25
  */
 @Service
-public class SysNoticeServiceImpl implements ISysNoticeService
-{
-    @Autowired
+public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice> implements ISysNoticeService {
+
+    @Resource
     private SysNoticeMapper noticeMapper;
 
     @Resource
@@ -37,14 +38,18 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 公告信息
      */
     @Override
-    public SysNotice selectNoticeById(Long noticeId)
-    {
-        return noticeMapper.selectNoticeById(noticeId);
+    public SysNotice selectNoticeById(Long noticeId) {
+        return getById(noticeId);
     }
 
     @Override
     public SysNotice selectNewNoticeByNoticeType(String noticeType) {
-        return noticeMapper.selectNewNoticeByNoticeType(noticeType);
+        LambdaQueryWrapper<SysNotice> lambda = new QueryWrapper<SysNotice>().lambda();
+        lambda.eq(SysNotice::getStatus, "0");
+        lambda.eq(StrUtil.isNotBlank(noticeType),SysNotice::getNoticeType,noticeType);
+        lambda.orderByDesc(SysNotice::getCreateTime);
+        lambda.last("limit 1");
+        return getOne(lambda);
     }
 
     /**
@@ -54,9 +59,13 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 公告集合
      */
     @Override
-    public List<SysNotice> selectNoticeList(SysNotice notice)
-    {
-        return noticeMapper.selectNoticeList(notice);
+    public List<SysNotice> selectNoticeList(SysNotice notice) {
+        LambdaQueryWrapper<SysNotice> lambda = new QueryWrapper<SysNotice>().lambda();
+        lambda.eq(SysNotice::getStatus, "0");
+        lambda.eq(StrUtil.isNotBlank(notice.getNoticeType()),SysNotice::getNoticeType,notice.getNoticeType());
+        lambda.like(StrUtil.isNotBlank(notice.getNoticeTitle()),SysNotice::getNoticeTitle,notice.getNoticeTitle());
+        lambda.orderByDesc(SysNotice::getCreateTime);
+        return list(lambda);
     }
 
     /**
@@ -66,14 +75,12 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 结果
      */
     @Override
-    public int insertNotice(SysNotice notice)
-    {
-        notice.setCreateTime(new Date());
-        int i = noticeMapper.insertNotice(notice);
+    public int insertNotice(SysNotice notice) {
+        int save = noticeMapper.insert(notice);
         //同步钉钉数据
         SyncEvent syncEvent = new SyncEvent(notice, DingTalkListenerType.BLACKBOARD_CREATE);
         applicationContext.publishEvent(syncEvent);
-        return i;
+        return save;
     }
 
     /**
@@ -83,9 +90,8 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 结果
      */
     @Override
-    public int updateNotice(SysNotice notice)
-    {
-        return noticeMapper.updateNotice(notice);
+    public int updateNotice(SysNotice notice) {
+        return noticeMapper.updateById(notice);
     }
 
     /**
@@ -95,9 +101,8 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 结果
      */
     @Override
-    public int deleteNoticeByIds(String ids)
-    {
+    public int deleteNoticeByIds(String ids) {
         //删除通知钉钉删除
-        return noticeMapper.deleteNoticeByIds(Convert.toStrArray(ids));
+        return noticeMapper.deleteBatchIds(Convert.toStrList(ids));
     }
 }
