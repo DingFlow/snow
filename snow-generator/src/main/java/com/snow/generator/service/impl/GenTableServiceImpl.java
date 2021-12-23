@@ -7,9 +7,11 @@ import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.aliyun.oss.ServiceException;
 import com.snow.generator.domain.GenTable;
 import com.snow.generator.domain.GenTableColumn;
 import com.snow.generator.service.IGenTableService;
@@ -151,6 +153,42 @@ public class GenTableServiceImpl implements IGenTableService
     }
 
     /**
+     * 创建表
+     *
+     * @param sql 创建表语句
+     * @return 结果
+     */
+    @Override
+    public boolean createTable(String sql)
+    {
+        return genTableMapper.createTable(sql) == 0;
+    }
+
+    @Override
+    public void createMenu(String tableName) {
+        // 查询表信息
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        // 设置主子表信息
+        setSubTable(table);
+        // 设置主键列信息
+        setPkColumn(table);
+        VelocityInitializer.initVelocity();
+        VelocityContext context = VelocityUtils.prepareContext(table);
+        // 获取模板列表
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        for (String template : templates) {
+            if (StringUtils.contains(template, "sql.vm")) {
+                // 渲染模板
+                StringWriter sw = new StringWriter();
+                Template tpl = Velocity.getTemplate(template, Constants.UTF8);
+                tpl.merge(context, sw);
+                log.info("@@生成菜单时组装的SQL:{}",sw.toString());
+                genTableMapper.createTable(sw.toString());
+            }
+        }
+    }
+
+    /**
      * 导入表结构
      * 
      * @param tableList 导入表列表
@@ -158,33 +196,60 @@ public class GenTableServiceImpl implements IGenTableService
      */
     @Override
     @Transactional
-    public void importGenTable(List<GenTable> tableList, String operName)
-    {
-        try
-        {
-            for (GenTable table : tableList)
-            {
+    public void importGenTable(List<GenTable> tableList, String operName) {
+        try {
+            for (GenTable table : tableList) {
                 String tableName = table.getTableName();
                 GenUtils.initTable(table, operName);
                 int row = genTableMapper.insertGenTable(table);
-                if (row > 0)
-                {
+                if (row > 0) {
                     // 保存列信息
                     List<GenTableColumn> genTableColumns = genTableColumnMapper.selectDbTableColumnsByName(tableName);
-                    for (GenTableColumn column : genTableColumns)
-                    {
+                    for (GenTableColumn column : genTableColumns) {
                         GenUtils.initColumnField(column, table);
                         genTableColumnMapper.insertGenTableColumn(column);
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new BusinessException("导入失败：" + e.getMessage());
         }
     }
+    /**
+     * 同步数据库
+     *
+     * @param tableName 表名称
+     */
+    @Override
+    @Transactional
+    public void synchDb(String tableName)
+    {
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        List<GenTableColumn> tableColumns = table.getColumns();
+        List<String> tableColumnNames = tableColumns.stream().map(GenTableColumn::getColumnName).collect(Collectors.toList());
 
+        List<GenTableColumn> dbTableColumns = genTableColumnMapper.selectDbTableColumnsByName(tableName);
+        if (StringUtils.isEmpty(dbTableColumns))
+        {
+            throw new BusinessException("同步数据失败，原表结构不存在");
+        }
+        List<String> dbTableColumnNames = dbTableColumns.stream().map(GenTableColumn::getColumnName).collect(Collectors.toList());
+
+        dbTableColumns.forEach(column -> {
+            if (!tableColumnNames.contains(column.getColumnName()))
+            {
+                GenUtils.initColumnField(column, table);
+                genTableColumnMapper.insertGenTableColumn(column);
+            }
+        });
+
+        List<GenTableColumn> delColumns = tableColumns.stream()
+                .filter(column -> !dbTableColumnNames.contains(column.getColumnName())).collect(Collectors.toList());
+        if (StringUtils.isNotEmpty(delColumns))
+        {
+            genTableColumnMapper.deleteGenTableColumns(delColumns);
+        }
+    }
     /**
      * 预览代码
      * 
@@ -294,7 +359,7 @@ public class GenTableServiceImpl implements IGenTableService
                 try {
                     String path = getProjectGenPath(table, template);
                     FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new BusinessException("渲染模板失败，表名：" + table.getTableName());
                 }
             }

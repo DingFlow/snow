@@ -67,6 +67,28 @@ public interface IGenTableService
     public void deleteGenTableByIds(String ids);
 
     /**
+     * 创建表
+     *
+     * @param sql 创建表语句
+     * @return 结果
+     */
+    public boolean createTable(String sql);
+
+    /**
+     * 创建菜单
+     *
+     * @param tableName 表名
+     */
+    public void createMenu(String tableName);
+
+    /**
+     * 同步数据库
+     *
+     * @param tableName 表名称
+     */
+    public void synchDb(String tableName);
+
+    /**
      * 导入表结构
      * 
      * @param tableList 导入表列表

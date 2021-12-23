@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-
+import com.snow.common.utils.sql.SqlUtil;
 import com.snow.generator.domain.GenTable;
 import com.snow.generator.domain.GenTableColumn;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -123,7 +124,55 @@ public class GenController extends BaseController
         genTableService.importGenTable(tableList, operName);
         return AjaxResult.success();
     }
+    /**
+     * 创建表结构
+     */
+    @GetMapping("/createTable")
+    public String createTable()
+    {
+        return prefix + "/createTable";
+    }
 
+    @RequiresRoles("admin")
+    @Log(title = "创建表", businessType = BusinessType.OTHER)
+    @PostMapping("/createTable")
+    @ResponseBody
+    public AjaxResult create(String sql) {
+        try {
+            SqlUtil.filterKeyword(sql);
+            List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, DbType.mysql);
+            List<String> tableNames = new ArrayList<>();
+            for (SQLStatement sqlStatement : sqlStatements) {
+                if (sqlStatement instanceof MySqlCreateTableStatement) {
+                    MySqlCreateTableStatement createTableStatement = (MySqlCreateTableStatement) sqlStatement;
+                    if (genTableService.createTable(createTableStatement.toString())) {
+                        String tableName = createTableStatement.getTableName().replaceAll("`", "");
+                        tableNames.add(tableName);
+                    }
+                }
+            }
+            List<GenTable> tableList = genTableService.selectDbTableListByNames(tableNames.toArray(new String[tableNames.size()]));
+            String operName = Convert.toStr(PermissionUtils.getPrincipalProperty("loginName"));
+            genTableService.importGenTable(tableList, operName);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return AjaxResult.error("创建表结构异常[" + e.getMessage() + "]");
+        }
+    }
+
+    /**
+     * 同步数据库
+     */
+    @RequiresPermissions("tool:gen:edit")
+    @Log(title = "代码生成", businessType = BusinessType.UPDATE)
+    @GetMapping("/synchDb/{tableName}")
+    @ResponseBody
+    public AjaxResult synchDb(@PathVariable("tableName") String tableName)
+    {
+        genTableService.synchDb(tableName);
+        return AjaxResult.success();
+    }
     /**
      * 修改代码生成业务
      */
@@ -159,8 +208,7 @@ public class GenController extends BaseController
     @Log(title = "代码生成", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(@Validated GenTable genTable)
-    {
+    public AjaxResult editSave(@Validated GenTable genTable) {
         genTableService.validateEdit(genTable);
         genTableService.updateGenTable(genTable);
         return AjaxResult.success();
@@ -170,8 +218,7 @@ public class GenController extends BaseController
     @Log(title = "代码生成", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
-    public AjaxResult remove(String ids)
-    {
+    public AjaxResult remove(String ids) {
         genTableService.deleteGenTableByIds(ids);
         return AjaxResult.success();
     }
@@ -182,8 +229,7 @@ public class GenController extends BaseController
     @RequiresPermissions("tool:gen:preview")
     @GetMapping("/preview/{tableId}")
     @ResponseBody
-    public AjaxResult preview(@PathVariable("tableId") Long tableId) throws IOException
-    {
+    public AjaxResult preview(@PathVariable("tableId") Long tableId) throws IOException {
         Map<String, String> dataMap = genTableService.previewCode(tableId);
         return AjaxResult.success(dataMap);
     }
@@ -194,8 +240,7 @@ public class GenController extends BaseController
     @RequiresPermissions("tool:gen:code")
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/download/{tableName}")
-    public void download(HttpServletResponse response, @PathVariable("tableName") String tableName) throws IOException
-    {
+    public void download(HttpServletResponse response, @PathVariable("tableName") String tableName) throws IOException {
         byte[] data = genTableService.downloadCode(tableName);
         genCode(response, data);
     }
@@ -207,8 +252,7 @@ public class GenController extends BaseController
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/genCode/{tableName}")
     @ResponseBody
-    public AjaxResult genCode(HttpServletResponse response, @PathVariable("tableName") String tableName)
-    {
+    public AjaxResult genCode(HttpServletResponse response, @PathVariable("tableName") String tableName) {
         genTableService.generatorCode(tableName);
         return AjaxResult.success();
     }
@@ -221,8 +265,7 @@ public class GenController extends BaseController
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/genCodeProject/{tableName}")
     @ResponseBody
-    public AjaxResult genCodeProject(HttpServletResponse response, @PathVariable("tableName") String tableName)
-    {
+    public AjaxResult genCodeProject(HttpServletResponse response, @PathVariable("tableName") String tableName) {
         genTableService.genCodeProject(tableName);
         return AjaxResult.success();
     }
@@ -234,8 +277,7 @@ public class GenController extends BaseController
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/batchGenCode")
     @ResponseBody
-    public void batchGenCode(HttpServletResponse response, String tables) throws IOException
-    {
+    public void batchGenCode(HttpServletResponse response, String tables) throws IOException {
         String[] tableNames = Convert.toStrArray(tables);
         byte[] data = genTableService.downloadCode(tableNames);
         genCode(response, data);

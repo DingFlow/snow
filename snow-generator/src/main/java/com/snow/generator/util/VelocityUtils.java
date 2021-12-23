@@ -153,8 +153,7 @@ public class VelocityUtils
     /**
      * 获取文件名
      */
-    public static String getFileName(String template, GenTable genTable)
-    {
+    public static String getFileName(String template, GenTable genTable) {
         // 文件名称
         String fileName = "";
 
