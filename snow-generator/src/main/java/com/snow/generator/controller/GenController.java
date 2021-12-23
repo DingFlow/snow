@@ -213,6 +213,20 @@ public class GenController extends BaseController
         return AjaxResult.success();
     }
 
+
+    /**
+     * 生成代码（生成到项目）
+     */
+    @RequiresPermissions("tool:gen:code")
+    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
+    @GetMapping("/genCodeProject/{tableName}")
+    @ResponseBody
+    public AjaxResult genCodeProject(HttpServletResponse response, @PathVariable("tableName") String tableName)
+    {
+        genTableService.genCodeProject(tableName);
+        return AjaxResult.success();
+    }
+
     /**
      * 批量生成代码
      */

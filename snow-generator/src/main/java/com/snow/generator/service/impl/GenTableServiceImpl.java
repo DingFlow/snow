@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.snow.common.constant.Constants;
@@ -121,7 +121,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 结果
      */
     @Override
-   // @Transactional
+    @Transactional
     public void updateGenTable(GenTable genTable)
     {
         String options = JSON.toJSONString(genTable.getParams());
@@ -157,7 +157,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param operName 操作人员
      */
     @Override
-   // @Transactional
+    @Transactional
     public void importGenTable(List<GenTable> tableList, String operName)
     {
         try
@@ -271,6 +271,35 @@ public class GenTableServiceImpl implements IGenTableService
         }
     }
 
+    public void genCodeProject(String tableName){
+        // 查询表信息
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        // 设置主子表信息
+        setSubTable(table);
+        // 设置主键列信息
+        setPkColumn(table);
+
+        VelocityInitializer.initVelocity();
+
+        VelocityContext context = VelocityUtils.prepareContext(table);
+
+        // 获取模板列表
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        for (String template : templates) {
+            if (!StringUtils.contains(template, "sql.vm")) {
+                // 渲染模板
+                StringWriter sw = new StringWriter();
+                Template tpl = Velocity.getTemplate(template, Constants.UTF8);
+                tpl.merge(context, sw);
+                try {
+                    String path = getProjectGenPath(table, template);
+                    FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
+                } catch (IOException e) {
+                    throw new BusinessException("渲染模板失败，表名：" + table.getTableName());
+                }
+            }
+        }
+    }
     /**
      * 批量生成代码
      * 
@@ -457,5 +486,16 @@ public class GenTableServiceImpl implements IGenTableService
             return System.getProperty("user.dir") + File.separator + "src" + File.separator + VelocityUtils.getFileName(template, table);
         }
         return genPath + File.separator + VelocityUtils.getFileName(template, table);
+    }
+
+    /**
+     * 获取代码生成项目中的位置
+     *
+     * @param table 业务表信息
+     * @param template 模板文件路径
+     * @return 生成地址
+     */
+    public static String getProjectGenPath(GenTable table, String template) {
+        return System.getProperty("user.dir") + VelocityUtils.getFileName(template, table);
     }
 }

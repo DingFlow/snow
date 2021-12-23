@@ -170,6 +170,8 @@
 			        layer.msg('执行成功,正在生成代码请稍后…', { icon: 1 });
 				} else if(genType === "1") {
 					$.operate.get(prefix + "/genCode/" + tableName);
+				}else if(genType === "2") {
+					$.operate.get(prefix + "/genCodeProject/" + tableName);
 				}
 		    })
 		}

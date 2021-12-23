@@ -4,8 +4,8 @@ import java.util.List;
 import ${packageName}.domain.${ClassName};
 #if($table.sub)
 import ${packageName}.domain.${subClassName};
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 #end
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * ${functionName}Mapper接口
@@ -67,7 +67,7 @@ public interface ${ClassName}Mapper extends BaseMapper<${ClassName}>
     /**
      * 批量删除${subTable.functionName}
      * 
-     * @param customerIds 需要删除的数据ID
+     * @param ${pkColumn.javaField}s 需要删除的数据ID
      * @return 结果
      */
     public int delete${subClassName}By${subTableFkClassName}s(String[] ${pkColumn.javaField}s);
@@ -84,7 +84,7 @@ public interface ${ClassName}Mapper extends BaseMapper<${ClassName}>
     /**
      * 通过${functionName}ID删除${subTable.functionName}信息
      * 
-     * @param roleId 角色ID
+     * @param ${pkColumn.javaField} ID
      * @return 结果
      */
     public int delete${subClassName}By${subTableFkClassName}(${pkColumn.javaType} ${pkColumn.javaField});

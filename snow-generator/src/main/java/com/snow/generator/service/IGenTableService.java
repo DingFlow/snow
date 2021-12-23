@@ -98,6 +98,15 @@ public interface IGenTableService
      */
     public void generatorCode(String tableName);
 
+
+    /**
+     * 生成代码（生成到项目）
+     *
+     * @param tableName 表名称
+     * @return 数据
+     */
+    public void genCodeProject(String tableName);
+
     /**
      * 批量生成代码（下载方式）
      * 

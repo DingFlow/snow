@@ -103,4 +103,14 @@ public class GenConstants
 
     /** 需要 */
     public static final String REQUIRE = "1";
+
+    /**
+     * admin模块地址
+     */
+    public static final String SNOW_ADMIN_ADDRESS = "/snow-admin/src";
+
+    /**
+     * system模块地址
+     */
+    public static final String SNOW_SYSTEM_ADDRESS = "/snow-system/src";
 }
