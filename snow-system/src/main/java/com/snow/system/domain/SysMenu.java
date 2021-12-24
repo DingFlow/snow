@@ -3,6 +3,10 @@ package com.snow.system.domain;
 import java.util.List;
 import java.util.ArrayList;
 import javax.validation.constraints.*;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.snow.common.core.domain.BaseEntity;
@@ -17,6 +21,7 @@ public class SysMenu extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 菜单ID */
+    @TableId(value = "menu_id",type= IdType.AUTO)
     private Long menuId;
 
     /** 菜单名称 */
@@ -54,6 +59,7 @@ public class SysMenu extends BaseEntity
 
 
     /** 子菜单 */
+    @TableField(exist = false)
     private List<SysMenu> children = new ArrayList<SysMenu>();
 
     public Long getMenuId()

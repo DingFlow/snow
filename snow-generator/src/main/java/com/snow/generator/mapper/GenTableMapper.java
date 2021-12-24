@@ -2,6 +2,7 @@ package com.snow.generator.mapper;
 
 import java.util.List;
 import com.snow.generator.domain.GenTable;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 业务 数据层
@@ -88,5 +89,5 @@ public interface GenTableMapper
      * @param sql
      * @return 结果
      */
-    public int createTable(String sql);
+    public int createTable(@Param("sql") String sql);
 }

@@ -1,30 +1,10 @@
 package com.snow.generator.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
-import com.snow.common.utils.sql.SqlUtil;
-import com.snow.generator.domain.GenTable;
-import com.snow.generator.domain.GenTableColumn;
-import org.apache.commons.io.IOUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
@@ -35,8 +15,25 @@ import com.snow.common.core.text.Convert;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.security.PermissionUtils;
+import com.snow.common.utils.sql.SqlUtil;
+import com.snow.generator.domain.GenTable;
+import com.snow.generator.domain.GenTableColumn;
 import com.snow.generator.service.IGenTableColumnService;
 import com.snow.generator.service.IGenTableService;
+import org.apache.commons.io.IOUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 代码生成 操作处理
@@ -150,7 +147,7 @@ public class GenController extends BaseController
             for (SQLStatement sqlStatement : sqlStatements) {
                 if (sqlStatement instanceof MySqlCreateTableStatement) {
                     MySqlCreateTableStatement createTableStatement = (MySqlCreateTableStatement) sqlStatement;
-                    if (genTableService.createTable(createTableStatement.toString())) {
+                    if (genTableService.createTable(StrUtil.removeAll(String.valueOf(createTableStatement),'\r', '\n','\t'))) {
                         String tableName = createTableStatement.getTableName().replaceAll("`", "");
                         tableNames.add(tableName);
                     }
@@ -178,6 +175,20 @@ public class GenController extends BaseController
         genTableService.synchDb(tableName);
         return AjaxResult.success();
     }
+
+    /**
+     * 生成系统菜单
+     */
+    @RequiresPermissions("tool:gen:createMenu")
+    @Log(title = "菜单生成", businessType = BusinessType.INSERT)
+    @GetMapping("/createMenu/{tableName}")
+    @ResponseBody
+    public AjaxResult createMenu(@PathVariable("tableName") String tableName)
+    {
+        genTableService.createMenu(tableName);
+        return AjaxResult.success();
+    }
+
     /**
      * 修改代码生成业务
      */

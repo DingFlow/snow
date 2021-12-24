@@ -1,19 +1,21 @@
 package com.snow.system.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.common.core.domain.Ztree;
 import com.snow.system.domain.SysMenu;
 import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 菜单 业务层
  * 
  * @author snow
  */
-public interface ISysMenuService
+public interface ISysMenuService extends IService<SysMenu>
 {
     /**
      * 根据用户ID查询菜单

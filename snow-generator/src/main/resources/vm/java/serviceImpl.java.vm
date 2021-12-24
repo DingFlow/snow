@@ -57,32 +57,32 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
     @Override
     public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
         LambdaQueryWrapper<${ClassName}> lambda = new QueryWrapper<${ClassName}>().lambda();
-        #foreach($column in $columns)
-        #set($queryType=$column.queryType)
-        #set($javaField=$column.javaField)
-        #set($javaType=$column.javaType)
-        #set($columnName=$column.columnName)
-        #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
-        #if($column.query)
-        #if($column.queryType == "EQ")
-        lambda.eq(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "NE")
-        lambda.ne(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "GT")
-        lambda.gt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "GTE")
-        lambda.ge(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "LT")
-        lambda.lt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "LTE")
-        lambda.le(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "LIKE")
-        lambda.like(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName}(),${className}.get${AttrName}())
-        #elseif($queryType == "BETWEEN")
-        lambda.between(ObjectUtil.isNotNull(${className}.get${AttrName}()),${className}::get${AttrName}(), ${className}.getParams().get("begin${AttrName}"), ${className}.getParams().get("end${AttrName}")  )
-        #end
-        #end
-        #end
+#foreach($column in $columns)
+#set($queryType=$column.queryType)
+#set($javaField=$column.javaField)
+#set($javaType=$column.javaType)
+#set($columnName=$column.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.query)
+#if($column.queryType == "EQ")
+        lambda.eq(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "NE")
+        lambda.ne(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "GT")
+        lambda.gt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "GTE")
+        lambda.ge(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LT")
+        lambda.lt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LTE")
+        lambda.le(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LIKE")
+        lambda.like(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "BETWEEN")
+        lambda.between(ObjectUtil.isNotNull(${className}.get${AttrName}()),${className}::get${AttrName}, ${className}.getParams().get("begin${AttrName}"), ${className}.getParams().get("end${AttrName}"));
+#end
+#end
+#end
         return ${className}Mapper.selectList(lambda);
     }
 
@@ -92,23 +92,23 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
      * @param ${className} ${functionName}
      * @return 结果
      */
-    #if($table.sub)
+#if($table.sub)
     @Transactional
-    #end
+#end
     @Override
     public int insert${ClassName}(${ClassName} ${className}) {
-        #foreach ($column in $columns)
-        #if($column.javaField == 'createTime')
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime')
         ${className}.setCreateTime(DateUtils.getNowDate());
-        #end
-        #end
-        #if($table.sub)
+#end
+#end
+#if($table.sub)
         int rows = ${className}Mapper.insert(${className});
         insert${subClassName}(${className});
         return rows;
-        #else
+#else
         return ${className}Mapper.insert(${className});
-        #end
+#end
     }
 
     /**
@@ -117,20 +117,20 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
      * @param ${className} ${functionName}
      * @return 结果
      */
-     #if($table.sub)
+#if($table.sub)
      @Transactional
-     #end
+#end
     @Override
     public int update${ClassName}(${ClassName} ${className}) {
-        #foreach ($column in $columns)
-        #if($column.javaField == 'updateTime')
+#foreach ($column in $columns)
+#if($column.javaField == 'updateTime')
         ${className}.setUpdateTime(DateUtils.getNowDate());
-        #end
-        #end
-        #if($table.sub)
+#end
+#end
+#if($table.sub)
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${className}.get${pkColumn.capJavaField}());
         insert${subClassName}(${className});
-        #end
+#end
         return ${className}Mapper.updateById(${className});
     }
 
@@ -140,14 +140,14 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
      * @param ids 需要删除的数据ID
      * @return 结果
      */
-     #if($table.sub)
+#if($table.sub)
      @Transactional
-     #end
+#end
      @Override
      public int delete${ClassName}ByIds(String ids) {
-        #if($table.sub)
+#if($table.sub)
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}s(Convert.toStrArray(ids));
-        #end
+#end
         return ${className}Mapper.deleteBatchIds(Convert.toStrList(ids));
      }
 
@@ -159,12 +159,12 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
      */
     @Override
     public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
-        #if($table.sub)
+#if($table.sub)
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${pkColumn.javaField});
-        #end
+#end
         return ${className}Mapper.deleteById(${pkColumn.javaField});
     }
-    #if($table.tree)
+#if($table.tree)
 
         /**
          * 查询${functionName}树列表
@@ -189,8 +189,8 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
             }
             return ztrees;
         }
-    #end
-    #if($table.sub)
+#end
+#if($table.sub)
 
         /**
          * 新增${subTable.functionName}信息
@@ -211,5 +211,5 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
                 }
             }
         }
-    #end
+#end
 }
