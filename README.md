@@ -55,8 +55,8 @@
 ## 项目截图
 <table>
     <tr>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/094981bad3844c25b4e0e9ae5fdfb253.png"/></td>
-            <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/a5b69fa27ba147a89efc229d90e1d27e.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E7%99%BB%E5%BD%95%E9%A1%B5.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/a5b69fa27ba147a89efc229d90e1d27e.png"/></td>
     </tr>
     <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/2bfbd71d08604780aae173307e7446df.png"/></td>
