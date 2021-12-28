@@ -1,21 +1,27 @@
 package com.snow.generator.service.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.snow.common.constant.Constants;
+import com.snow.common.constant.GenConstants;
+import com.snow.common.core.text.CharsetKit;
+import com.snow.common.core.text.Convert;
+import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.DateUtils;
+import com.snow.common.utils.StringUtils;
+import com.snow.common.utils.file.FileUtils;
 import com.snow.generator.domain.GenTable;
 import com.snow.generator.domain.GenTableColumn;
+import com.snow.generator.mapper.GenTableColumnMapper;
+import com.snow.generator.mapper.GenTableMapper;
 import com.snow.generator.service.IGenTableService;
 import com.snow.generator.util.GenUtils;
 import com.snow.generator.util.VelocityInitializer;
 import com.snow.generator.util.VelocityUtils;
+import com.snow.system.domain.SysMenu;
+import com.snow.system.service.ISysMenuService;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -25,17 +31,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.snow.common.constant.Constants;
-import com.snow.common.constant.GenConstants;
-import com.snow.common.core.text.CharsetKit;
-import com.snow.common.core.text.Convert;
-import com.snow.common.exception.BusinessException;
-import com.snow.common.utils.StringUtils;
-import com.snow.common.utils.file.FileUtils;
-import com.snow.generator.mapper.GenTableColumnMapper;
-import com.snow.generator.mapper.GenTableMapper;
+
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 业务 服务层实现
@@ -52,6 +60,9 @@ public class GenTableServiceImpl implements IGenTableService
 
     @Autowired
     private GenTableColumnMapper genTableColumnMapper;
+
+    @Autowired
+    private ISysMenuService sysMenuService;
 
     /**
      * 查询业务信息
@@ -151,6 +162,91 @@ public class GenTableServiceImpl implements IGenTableService
     }
 
     /**
+     * 创建表
+     *
+     * @param sql 创建表语句
+     * @return 结果
+     */
+    @Override
+    public boolean createTable(String sql)
+    {
+        return genTableMapper.createTable(sql) == 0;
+    }
+
+    @Override
+    public void createMenu(String tableName) {
+        // 查询表信息
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        // 设置主子表信息
+        setSubTable(table);
+        // 设置主键列信息
+        setPkColumn(table);
+        //取父级菜单
+        String options = table.getOptions();
+        JSONObject paramsObj = JSON.parseObject(options);
+        String parentMenuId = VelocityUtils.getParentMenuId(paramsObj);
+        //保存菜单
+        SysMenu sysMenu=new SysMenu();
+        sysMenu.setMenuName(table.getFunctionName());
+        sysMenu.setParentId(Long.parseLong(parentMenuId));
+        sysMenu.setOrderNum("1");
+        sysMenu.setUrl(StrUtil.format("/{}/{}",table.getModuleName(),table.getBusinessName()));
+        sysMenu.setMenuType("C");
+        sysMenu.setPerms(StrUtil.format("{}:view",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        sysMenu.setRemark(StrUtil.format("{}菜单",table.getFunctionName()));
+        sysMenu.setCreateBy(table.getCreateBy());
+        sysMenuService.save(sysMenu);
+        //保存权限
+        List<SysMenu> sysMenuList= Lists.newArrayList();
+        SysMenu queryMenu=new SysMenu();
+        queryMenu.setMenuName(StrUtil.format("{}查询",table.getFunctionName()));
+        queryMenu.setParentId(sysMenu.getMenuId());
+        queryMenu.setOrderNum("1");
+        queryMenu.setUrl("#");
+        queryMenu.setMenuType("F");
+        queryMenu.setPerms(StrUtil.format("{}:list",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        queryMenu.setRemark(StrUtil.format("{}查询",table.getFunctionName()));
+        sysMenuList.add(queryMenu);
+        SysMenu insertMenu=new SysMenu();
+        insertMenu.setMenuName(StrUtil.format("{}新增",table.getFunctionName()));
+        insertMenu.setParentId(sysMenu.getMenuId());
+        insertMenu.setOrderNum("2");
+        insertMenu.setUrl("#");
+        insertMenu.setMenuType("F");
+        insertMenu.setPerms(StrUtil.format("{}:add",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        insertMenu.setRemark(StrUtil.format("{}新增",table.getFunctionName()));
+        sysMenuList.add(insertMenu);
+        SysMenu editMenu=new SysMenu();
+        editMenu.setMenuName(StrUtil.format("{}修改",table.getFunctionName()));
+        editMenu.setParentId(sysMenu.getMenuId());
+        editMenu.setOrderNum("3");
+        editMenu.setUrl("#");
+        editMenu.setMenuType("F");
+        editMenu.setPerms(StrUtil.format("{}:edit",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        editMenu.setRemark(StrUtil.format("{}修改",table.getFunctionName()));
+        sysMenuList.add(editMenu);
+        SysMenu deleteMenu=new SysMenu();
+        deleteMenu.setMenuName(StrUtil.format("{}删除",table.getFunctionName()));
+        deleteMenu.setParentId(sysMenu.getMenuId());
+        deleteMenu.setOrderNum("4");
+        deleteMenu.setUrl("#");
+        deleteMenu.setMenuType("F");
+        deleteMenu.setPerms(StrUtil.format("{}:remove",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        deleteMenu.setRemark(StrUtil.format("{}删除",table.getFunctionName()));
+        sysMenuList.add(deleteMenu);
+        SysMenu exportMenu=new SysMenu();
+        exportMenu.setMenuName(StrUtil.format("{}导出",table.getFunctionName()));
+        exportMenu.setParentId(sysMenu.getMenuId());
+        exportMenu.setOrderNum("5");
+        exportMenu.setUrl("#");
+        exportMenu.setMenuType("F");
+        exportMenu.setPerms(StrUtil.format("{}:export",VelocityUtils.getPermissionPrefix(table.getModuleName(), table.getBusinessName())));
+        exportMenu.setRemark(StrUtil.format("{}导出",table.getFunctionName()));
+        sysMenuList.add(exportMenu);
+        sysMenuService.saveBatch(sysMenuList);
+    }
+
+    /**
      * 导入表结构
      * 
      * @param tableList 导入表列表
@@ -158,33 +254,56 @@ public class GenTableServiceImpl implements IGenTableService
      */
     @Override
     @Transactional
-    public void importGenTable(List<GenTable> tableList, String operName)
-    {
-        try
-        {
-            for (GenTable table : tableList)
-            {
+    public void importGenTable(List<GenTable> tableList, String operName) {
+        try {
+            for (GenTable table : tableList) {
                 String tableName = table.getTableName();
                 GenUtils.initTable(table, operName);
                 int row = genTableMapper.insertGenTable(table);
-                if (row > 0)
-                {
+                if (row > 0) {
                     // 保存列信息
                     List<GenTableColumn> genTableColumns = genTableColumnMapper.selectDbTableColumnsByName(tableName);
-                    for (GenTableColumn column : genTableColumns)
-                    {
+                    for (GenTableColumn column : genTableColumns) {
                         GenUtils.initColumnField(column, table);
                         genTableColumnMapper.insertGenTableColumn(column);
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new BusinessException("导入失败：" + e.getMessage());
         }
     }
+    /**
+     * 同步数据库
+     *
+     * @param tableName 表名称
+     */
+    @Override
+    @Transactional
+    public void synchDb(String tableName) {
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        List<GenTableColumn> tableColumns = table.getColumns();
+        List<String> tableColumnNames = tableColumns.stream().map(GenTableColumn::getColumnName).collect(Collectors.toList());
 
+        List<GenTableColumn> dbTableColumns = genTableColumnMapper.selectDbTableColumnsByName(tableName);
+        if (StringUtils.isEmpty(dbTableColumns)) {
+            throw new BusinessException("同步数据失败，原表结构不存在");
+        }
+        List<String> dbTableColumnNames = dbTableColumns.stream().map(GenTableColumn::getColumnName).collect(Collectors.toList());
+
+        dbTableColumns.forEach(column -> {
+            if (!tableColumnNames.contains(column.getColumnName())) {
+                GenUtils.initColumnField(column, table);
+                genTableColumnMapper.insertGenTableColumn(column);
+            }
+        });
+
+        List<GenTableColumn> delColumns = tableColumns.stream()
+                .filter(column -> !dbTableColumnNames.contains(column.getColumnName())).collect(Collectors.toList());
+        if (StringUtils.isNotEmpty(delColumns)) {
+            genTableColumnMapper.deleteGenTableColumns(delColumns);
+        }
+    }
     /**
      * 预览代码
      * 
@@ -241,8 +360,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 数据
      */
     @Override
-    public void generatorCode(String tableName)
-    {
+    public void generatorCode(String tableName) {
         // 查询表信息
         GenTable table = genTableMapper.selectGenTableByName(tableName);
         // 设置主子表信息
@@ -256,27 +374,51 @@ public class GenTableServiceImpl implements IGenTableService
 
         // 获取模板列表
         List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
-        for (String template : templates)
-        {
-            if (!StringUtils.contains(template, "sql.vm"))
-            {
+        for (String template : templates) {
+            if (!StringUtils.contains(template, "sql.vm")) {
                 // 渲染模板
                 StringWriter sw = new StringWriter();
                 Template tpl = Velocity.getTemplate(template, Constants.UTF8);
                 tpl.merge(context, sw);
-                try
-                {
+                try {
                     String path = getGenPath(table, template);
                     FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new BusinessException("渲染模板失败，表名：" + table.getTableName());
                 }
             }
         }
     }
 
+    public void genCodeProject(String tableName){
+        // 查询表信息
+        GenTable table = genTableMapper.selectGenTableByName(tableName);
+        // 设置主子表信息
+        setSubTable(table);
+        // 设置主键列信息
+        setPkColumn(table);
+
+        VelocityInitializer.initVelocity();
+
+        VelocityContext context = VelocityUtils.prepareContext(table);
+
+        // 获取模板列表
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        for (String template : templates) {
+            if (!StringUtils.contains(template, "sql.vm")) {
+                // 渲染模板
+                StringWriter sw = new StringWriter();
+                Template tpl = Velocity.getTemplate(template, Constants.UTF8);
+                tpl.merge(context, sw);
+                try {
+                    String path = getProjectGenPath(table, template);
+                    FileUtils.writeStringToFile(new File(path), sw.toString(), CharsetKit.UTF_8);
+                } catch (Exception e) {
+                    throw new BusinessException("渲染模板失败，表名：" + table.getTableName());
+                }
+            }
+        }
+    }
     /**
      * 批量生成代码
      * 
@@ -463,5 +605,16 @@ public class GenTableServiceImpl implements IGenTableService
             return System.getProperty("user.dir") + File.separator + "src" + File.separator + VelocityUtils.getFileName(template, table);
         }
         return genPath + File.separator + VelocityUtils.getFileName(template, table);
+    }
+
+    /**
+     * 获取代码生成项目中的位置
+     *
+     * @param table 业务表信息
+     * @param template 模板文件路径
+     * @return 生成地址
+     */
+    public static String getProjectGenPath(GenTable table, String template) {
+        return System.getProperty("user.dir") + VelocityUtils.getFileName(template, table);
     }
 }

@@ -35,11 +35,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!-- 阿里数据库连接池 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-        </dependency>
         <!--freemarker-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -62,8 +57,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
         </dependency>
-
-
 
         <!-- thymeleaf模板引擎和shiro框架的整合 -->
         <dependency>

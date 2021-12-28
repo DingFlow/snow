@@ -5,7 +5,15 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.StrUtil;
 import com.snow.common.utils.StringUtils;
 
 /**
@@ -364,6 +372,16 @@ public class Convert
     public static String[] toStrArray(String str)
     {
         return toStrArray(",", str);
+    }
+    /**
+     * 转换为String 集合<br>
+     *
+     * @param str 被转换的值
+     * @return 结果
+     */
+    public static List<String> toStrList(String str)
+    {
+        return StrUtil.isNotBlank(str)? Stream.of(str.split(",")).map(String::valueOf).collect(Collectors.toList()): CollUtil.newArrayList();
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.snow.system.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.system.domain.SysNotice;
 
 /**
@@ -8,7 +10,7 @@ import com.snow.system.domain.SysNotice;
  * 
  * @author snow
  */
-public interface ISysNoticeService
+public interface ISysNoticeService extends IService<SysNotice>
 {
     /**
      * 查询公告信息

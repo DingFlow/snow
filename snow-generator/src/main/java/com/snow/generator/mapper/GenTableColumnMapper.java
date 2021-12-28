@@ -49,4 +49,12 @@ public interface GenTableColumnMapper
      * @return 结果
      */
     public int deleteGenTableColumnByIds(Long[] ids);
+
+    /**
+     * 删除业务字段
+     *
+     * @param genTableColumns 列数据
+     * @return 结果
+     */
+    public int deleteGenTableColumns(List<GenTableColumn> genTableColumns);
 }

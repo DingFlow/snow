@@ -153,10 +153,10 @@ public class VelocityUtils
     /**
      * 获取文件名
      */
-    public static String getFileName(String template, GenTable genTable)
-    {
+    public static String getFileName(String template, GenTable genTable) {
         // 文件名称
         String fileName = "";
+
         // 包路径
         String packageName = genTable.getPackageName();
         // 模块名
@@ -165,65 +165,68 @@ public class VelocityUtils
         String className = genTable.getClassName();
         // 业务名称
         String businessName = genTable.getBusinessName();
+        String javaPath;
+        String mybatisPath;
+        String htmlPath;
+        String controllerPath="";
+        if(genTable.getGenType().equals("2")){
+             javaPath =GenConstants.SNOW_SYSTEM_ADDRESS+"/"+PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
+             controllerPath=GenConstants.SNOW_ADMIN_ADDRESS+"/"+PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
+             mybatisPath =GenConstants.SNOW_SYSTEM_ADDRESS+"/"+ MYBATIS_PATH + "/" + moduleName;
+             htmlPath = GenConstants.SNOW_ADMIN_ADDRESS+"/"+TEMPLATES_PATH + "/" + moduleName + "/" + businessName;
+        }else {
+             javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
+             mybatisPath = MYBATIS_PATH + "/" + moduleName;
+             htmlPath = TEMPLATES_PATH + "/" + moduleName + "/" + businessName;
+        }
 
-        String javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
-        String mybatisPath = MYBATIS_PATH + "/" + moduleName;
-        String htmlPath = TEMPLATES_PATH + "/" + moduleName + "/" + businessName;
 
-        if (template.contains("domain.java.vm"))
-        {
+        if (template.contains("domain.java.vm")) {
             fileName = StringUtils.format("{}/domain/{}.java", javaPath, className);
         }
-        if (template.contains("sub-domain.java.vm") && StringUtils.equals(GenConstants.TPL_SUB, genTable.getTplCategory()))
-        {
+        if (template.contains("sub-domain.java.vm") && StringUtils.equals(GenConstants.TPL_SUB, genTable.getTplCategory())) {
             fileName = StringUtils.format("{}/domain/{}.java", javaPath, genTable.getSubTable().getClassName());
         }
-        else if (template.contains("mapper.java.vm"))
-        {
+        else if (template.contains("mapper.java.vm")) {
             fileName = StringUtils.format("{}/mapper/{}Mapper.java", javaPath, className);
         }
-        else if (template.contains("service.java.vm"))
-        {
+        else if (template.contains("service.java.vm")) {
             fileName = StringUtils.format("{}/service/I{}Service.java", javaPath, className);
         }
-        else if (template.contains("serviceImpl.java.vm"))
-        {
+        else if (template.contains("serviceImpl.java.vm")) {
             fileName = StringUtils.format("{}/service/impl/{}ServiceImpl.java", javaPath, className);
         }
-        else if (template.contains("controller.java.vm"))
-        {
+        else if (template.contains("controller.java.vm")&&genTable.getGenType().equals("2")) {
+            fileName = StringUtils.format("{}/controller/{}Controller.java", controllerPath, className);
+        }
+        else if (template.contains("controller.java.vm")&&(genTable.getGenType().equals("0")||genTable.getGenType().equals("1"))) {
             fileName = StringUtils.format("{}/controller/{}Controller.java", javaPath, className);
         }
-        else if (template.contains("mapper.xml.vm"))
-        {
+        else if (template.contains("mapper.xml.vm")) {
             fileName = StringUtils.format("{}/{}Mapper.xml", mybatisPath, className);
         }
-        else if (template.contains("list.html.vm"))
-        {
+        else if (template.contains("list.html.vm")) {
             fileName = StringUtils.format("{}/{}.html", htmlPath, businessName);
         }
-        else if (template.contains("list-tree.html.vm"))
-        {
+        else if (template.contains("list-tree.html.vm")) {
             fileName = StringUtils.format("{}/{}.html", htmlPath, businessName);
         }
-        else if (template.contains("tree.html.vm"))
-        {
+        else if (template.contains("tree.html.vm")) {
             fileName = StringUtils.format("{}/tree.html", htmlPath);
         }
-        else if (template.contains("add.html.vm"))
-        {
+        else if (template.contains("add.html.vm")) {
             fileName = StringUtils.format("{}/add.html", htmlPath);
         }
-        else if (template.contains("edit.html.vm"))
-        {
+        else if (template.contains("edit.html.vm")) {
             fileName = StringUtils.format("{}/edit.html", htmlPath);
         }
-        else if (template.contains("sql.vm"))
-        {
+        else if (template.contains("sql.vm")) {
             fileName = businessName + "Menu.sql";
         }
         return fileName;
     }
+
+
 
     /**
      * 获取项目文件路径

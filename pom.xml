@@ -19,11 +19,10 @@
         <shiro.version>1.5.3</shiro.version>
         <thymeleaf.extras.shiro.version>2.0.0</thymeleaf.extras.shiro.version>
         <mybatis.boot.version>1.3.2</mybatis.boot.version>
-        <druid.version>1.1.14</druid.version>
+        <druid.version>1.2.8</druid.version>
         <bitwalker.version>1.19</bitwalker.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <swagger.version>2.9.2</swagger.version>
-        <pagehelper.boot.version>1.2.5</pagehelper.boot.version>
+        <pagehelper.boot.version>5.1.10</pagehelper.boot.version>
         <fastjson.version>1.2.70</fastjson.version>
         <oshi.version>3.9.1</oshi.version>
         <commons.io.version>2.5</commons.io.version>
@@ -41,10 +40,10 @@
         <commons.lang.version>2.6</commons.lang.version>
         <lombok.version>1.18.10</lombok.version>
         <zhyd.oauth.version>1.15.6</zhyd.oauth.version>
-        <jsqlparser.version>1.4</jsqlparser.version>
-        <googlecode.aviator.version>2.3.3</googlecode.aviator.version>
+        <jsqlparser.version>3.1</jsqlparser.version>
         <kotlin.stdlib.verson>1.3.70</kotlin.stdlib.verson>
         <zxing.version>3.4.0</zxing.version>
+        <mybatis-plus.version>3.4.2</mybatis-plus.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -112,8 +111,23 @@
             <!-- pagehelper 分页插件 -->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <artifactId>pagehelper</artifactId>
                 <version>${pagehelper.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.jsqlparser</groupId>
+                        <artifactId>jsqlparser</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>${jsqlparser.version}</version>
             </dependency>
 
             <!-- 获取系统信息 -->
@@ -121,30 +135,6 @@
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core</artifactId>
                 <version>${oshi.version}</version>
-            </dependency>
-
-            <!-- swagger2-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-annotations</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-models</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- swagger2-UI-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger.version}</version>
             </dependency>
 
             <!--io常用工具类 -->
@@ -299,12 +289,6 @@
                 <version>1.18.10</version>
             </dependency>
 
-            <!--sql解析组装-->
-            <dependency>
-                <groupId>com.github.jsqlparser</groupId>
-                <artifactId>jsqlparser</artifactId>
-                <version>${jsqlparser.version}</version>
-            </dependency>
 
             <!-- 第三方授权登录 -->
             <dependency>
@@ -318,6 +302,16 @@
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-spring-boot-starter</artifactId>
                 <version>${flowable.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis-spring</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!--flowable整合设计器-->
@@ -325,19 +319,22 @@
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-modeler-rest</artifactId>
                 <version>${flowable.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis-spring</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-json-converter</artifactId>
                 <version>${flowable.version}</version>
-            </dependency>
-
-            <!--Aviator是一个轻量级、高性能的Java表达式执行引擎，它动态地将表达式编译成字节码并运行。可被用于动态的公式计算、规则执行和过滤等场景-->
-            <dependency>
-                <groupId>com.googlecode.aviator</groupId>
-                <artifactId>aviator</artifactId>
-                <version>${googlecode.aviator.version}</version>
             </dependency>
 
             <dependency>
@@ -350,6 +347,13 @@
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
+            </dependency>
+
+            <!--mybatis-plus-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

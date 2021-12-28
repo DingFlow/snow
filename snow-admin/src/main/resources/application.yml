@@ -79,14 +79,14 @@ spring:
     default-encoding: UTF-8
 
 
-# MyBatis
-mybatis:
-    # 搜索指定包别名
-    typeAliasesPackage: com.snow.**.domain
-    # 配置mapper的扫描，找到所有的mapper.xml映射文件
-    mapperLocations: classpath*:META-INF/modeler-mybatis-mappings/*.xml,classpath*:mapper/**/*Mapper.xml
-    # 加载全局的配置文件
-    configLocation: classpath:mybatis/mybatis-config.xml
+
+mybatis-plus:
+  # 搜索指定包别名
+  typeAliasesPackage: com.snow.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:META-INF/modeler-mybatis-mappings/*.xml,classpath*:mapper/**/*Mapper.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis/mybatis-config.xml
 
 
 # PageHelper分页插件
@@ -140,11 +140,6 @@ xss:
   excludes: /system/notice/*
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
-
-# Swagger配置
-swagger:
-  # 是否开启swagger
-  enabled: true
 
 #登录后是否显示最新的公告
 is:

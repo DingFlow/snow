@@ -1,67 +1,94 @@
 package ${packageName}.service.impl;
 
 import java.util.List;
-#if($table.tree)
 import java.util.ArrayList;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.transaction.annotation.Transactional;
+#if($table.tree)
 import com.snow.common.core.domain.Ztree;
 #end
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
-import com.snow.common.utils.DateUtils;
 #break
 #end
 #end
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 #if($table.sub)
-import com.snow.common.utils.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 import ${packageName}.domain.${subClassName};
-#end
+ #end
 import ${packageName}.mapper.${ClassName}Mapper;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.service.I${ClassName}Service;
 import com.snow.common.core.text.Convert;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import javax.annotation.Resource;
 
 /**
  * ${functionName}Service业务层处理
- * 
+ *
  * @author ${author}
  * @date ${datetime}
  */
 @Service
-public class ${ClassName}ServiceImpl implements I${ClassName}Service 
-{
-    @Autowired
+public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${ClassName}> implements I${ClassName}Service {
+    @Resource
     private ${ClassName}Mapper ${className}Mapper;
 
     /**
      * 查询${functionName}
-     * 
+     *
      * @param ${pkColumn.javaField} ${functionName}ID
      * @return ${functionName}
      */
     @Override
-    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField})
-    {
-        return ${className}Mapper.select${ClassName}ById(${pkColumn.javaField});
+    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
+        return ${className}Mapper.selectById(${pkColumn.javaField});
     }
 
     /**
      * 查询${functionName}列表
-     * 
+     *
      * @param ${className} ${functionName}
      * @return ${functionName}
      */
     @Override
-    public List<${ClassName}> select${ClassName}List(${ClassName} ${className})
-    {
-        return ${className}Mapper.select${ClassName}List(${className});
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
+        LambdaQueryWrapper<${ClassName}> lambda = new QueryWrapper<${ClassName}>().lambda();
+#foreach($column in $columns)
+#set($queryType=$column.queryType)
+#set($javaField=$column.javaField)
+#set($javaType=$column.javaType)
+#set($columnName=$column.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.query)
+#if($column.queryType == "EQ")
+        lambda.eq(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "NE")
+        lambda.ne(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "GT")
+        lambda.gt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "GTE")
+        lambda.ge(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LT")
+        lambda.lt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LTE")
+        lambda.le(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "LIKE")
+        lambda.like(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+#elseif($queryType == "BETWEEN")
+        lambda.between(ObjectUtil.isNotNull(${className}.get${AttrName}()),${className}::get${AttrName}, ${className}.getParams().get("begin${AttrName}"), ${className}.getParams().get("end${AttrName}"));
+#end
+#end
+#end
+        return ${className}Mapper.selectList(lambda);
     }
 
     /**
      * 新增${functionName}
-     * 
+     *
      * @param ${className} ${functionName}
      * @return 结果
      */
@@ -69,34 +96,32 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     @Transactional
 #end
     @Override
-    public int insert${ClassName}(${ClassName} ${className})
-    {
+    public int insert${ClassName}(${ClassName} ${className}) {
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime')
         ${className}.setCreateTime(DateUtils.getNowDate());
 #end
 #end
 #if($table.sub)
-        int rows = ${className}Mapper.insert${ClassName}(${className});
+        int rows = ${className}Mapper.insert(${className});
         insert${subClassName}(${className});
         return rows;
 #else
-        return ${className}Mapper.insert${ClassName}(${className});
+        return ${className}Mapper.insert(${className});
 #end
     }
 
     /**
      * 修改${functionName}
-     * 
+     *
      * @param ${className} ${functionName}
      * @return 结果
      */
 #if($table.sub)
-    @Transactional
+     @Transactional
 #end
     @Override
-    public int update${ClassName}(${ClassName} ${className})
-    {
+    public int update${ClassName}(${ClassName} ${className}) {
 #foreach ($column in $columns)
 #if($column.javaField == 'updateTime')
         ${className}.setUpdateTime(DateUtils.getNowDate());
@@ -106,92 +131,85 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${className}.get${pkColumn.capJavaField}());
         insert${subClassName}(${className});
 #end
-        return ${className}Mapper.update${ClassName}(${className});
+        return ${className}Mapper.updateById(${className});
     }
 
     /**
      * 删除${functionName}对象
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
 #if($table.sub)
-    @Transactional
+     @Transactional
 #end
-    @Override
-    public int delete${ClassName}ByIds(String ids)
-    {
+     @Override
+     public int delete${ClassName}ByIds(String ids) {
 #if($table.sub)
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}s(Convert.toStrArray(ids));
 #end
-        return ${className}Mapper.delete${ClassName}ByIds(Convert.toStrArray(ids));
-    }
+        return ${className}Mapper.deleteBatchIds(Convert.toStrList(ids));
+     }
 
     /**
      * 删除${functionName}信息
-     * 
+     *
      * @param ${pkColumn.javaField} ${functionName}ID
      * @return 结果
      */
     @Override
-    public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField})
-    {
+    public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
 #if($table.sub)
         ${className}Mapper.delete${subClassName}By${subTableFkClassName}(${pkColumn.javaField});
 #end
-        return ${className}Mapper.delete${ClassName}ById(${pkColumn.javaField});
+        return ${className}Mapper.deleteById(${pkColumn.javaField});
     }
 #if($table.tree)
 
-    /**
-     * 查询${functionName}树列表
-     * 
-     * @return 所有${functionName}信息
-     */
-    @Override
-    public List<Ztree> select${ClassName}Tree()
-    {
-        List<${ClassName}> ${className}List = ${className}Mapper.select${ClassName}List(new ${ClassName}());
-        List<Ztree> ztrees = new ArrayList<Ztree>();
-        for (${ClassName} ${className} : ${className}List)
-        {
-            Ztree ztree = new Ztree();
-#set($TreeCode=$treeCode.substring(0,1).toUpperCase() + ${treeCode.substring(1)})
-#set($TreeParentCode=$treeParentCode.substring(0,1).toUpperCase() + ${treeParentCode.substring(1)})
-#set($TreeName=$treeName.substring(0,1).toUpperCase() + ${treeName.substring(1)})
-            ztree.setId(${className}.get${TreeCode}());
-            ztree.setpId(${className}.get${TreeParentCode}());
-            ztree.setName(${className}.get${TreeName}());
-            ztree.setTitle(${className}.get${TreeName}());
-            ztrees.add(ztree);
+        /**
+         * 查询${functionName}树列表
+         *
+         * @return 所有${functionName}信息
+         */
+        @Override
+        public List<Ztree> select${ClassName}Tree() {
+            List<${ClassName}> ${className}List = ${className}Mapper.select${ClassName}List(new ${ClassName}());
+            List<Ztree> ztrees = new ArrayList<Ztree>();
+            for (${ClassName} ${className} :${className}List)
+            {
+                Ztree ztree = new Ztree();
+                #set($TreeCode=$treeCode.substring(0,1).toUpperCase() + ${treeCode.substring(1)})
+                #set($TreeParentCode=$treeParentCode.substring(0,1).toUpperCase() + ${treeParentCode.substring(1)})
+                #set($TreeName=$treeName.substring(0,1).toUpperCase() + ${treeName.substring(1)})
+                ztree.setId(${className}.get${TreeCode}());
+                ztree.setpId(${className}.get${TreeParentCode}());
+                ztree.setName(${className}.get${TreeName}());
+                ztree.setTitle(${className}.get${TreeName}());
+                ztrees.add(ztree);
+            }
+            return ztrees;
         }
-        return ztrees;
-    }
 #end
 #if($table.sub)
 
-    /**
-     * 新增${subTable.functionName}信息
-     * 
-     * @param ${className} ${functionName}对象
-     */
-    public void insert${subClassName}(${ClassName} ${className})
-    {
-        List<${subClassName}> ${subclassName}List = ${className}.get${subClassName}List();
-        Long ${pkColumn.javaField} = ${className}.get${pkColumn.capJavaField}();
-        if (StringUtils.isNotNull(${subclassName}List))
-        {
-            List<${subClassName}> list = new ArrayList<${subClassName}>();
-            for (${subClassName} ${subclassName} : ${subclassName}List)
-            {
-                ${subclassName}.set${pkColumn.capJavaField}(${pkColumn.javaField});
-                list.add(${subclassName});
-            }
-            if (list.size() > 0)
-            {
-                ${className}Mapper.batch${subClassName}(list);
+        /**
+         * 新增${subTable.functionName}信息
+         *
+         * @param ${className} ${functionName}对象
+         */
+        public void insert${subClassName}(${ClassName} ${className}) {
+            List<${subClassName}> ${subclassName}List = ${className}.get${subClassName}List();
+            Long ${pkColumn.javaField} = ${className}.get${pkColumn.capJavaField}();
+            if (ObjectUtil.isNotNull(${subclassName}List)) {
+                List<${subClassName}> list = new ArrayList<${subClassName}>();
+                for (${subClassName} ${subclassName} :${subclassName}List){
+                    ${subclassName}.set${pkColumn.capJavaField}(${pkColumn.javaField});
+                    list.add(${subclassName});
+                }
+                if (list.size() > 0) {
+                        ${className}Mapper.batch${subClassName}(list);
+                }
             }
         }
-    }
 #end
 }

@@ -23,7 +23,6 @@ import org.springframework.context.annotation.FilterType;
         exclude= {
                 DataSourceAutoConfiguration.class,
                 SecurityAutoConfiguration.class,
-                SecurityAutoConfiguration.class,
                 UserDetailsServiceAutoConfiguration.class,
                 LiquibaseAutoConfiguration.class
         }
