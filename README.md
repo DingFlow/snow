@@ -30,10 +30,12 @@
 20. **账单管理：一键导入支付宝和微信账单，可系统化管理账单**
 21. **系统序列设置：每日凌晨更新序列号，系统按照日期生成自增序列单号**
 22. **可视化大屏：智能化科技大屏，实时了解钉钉数据，流程数据状态**
-23. **消息管理：在线设计消息模板，对流程节点消息推送开关化配置**
+23. **消息中心：消息模板配置;支持站内信、邮箱、钉钉三种消息通知方式**
 24. **邮件管理：DingFlow邮件发送功能（支持草稿箱，垃圾箱，重要邮件标识）**
 25. **钉钉流程管理：钉钉端发起流程系统可在线审批查看流程详情**
-26. **表单设计器：DingFlow可在线设计表单**
+26. **表单设计器：DingFlow可在线设计表单,表单和流程相结合**
+27. **DingFlow官网：系统包含前台DingFlow官方网站和官网后端管理系统**
+28. **客户管理：简易版客户管理**
 ## 在线体验
   暂未开放数据库，有需要的可以加群，项目可用于搭建流程平台商业化
   **地址：http://dingflow.xyz:9527/login**
@@ -69,13 +71,17 @@
          <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/75db4a86e2224be7bdfd3de6e6cce43b.png"/></td>
     </tr>
     <tr>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1%E5%99%A8.png"/></td>
-        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/0ffee016a6be4d5eb5b5f18a0291353e.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E8%A1%A8%E5%8D%95.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E8%A1%A8%E5%8D%95%E8%AE%BE%E8%AE%A1.png"/></td>
     </tr>
     <tr>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/593ec8182b814b77adedb1d5a7265268.png"/></td>
         <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/b0f956c913ee42af9767b91694b04497.png"/></td>
     </tr>
+     <tr>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E5%AE%98%E7%BD%91%E5%90%8E%E5%8F%B0.png"/></td>
+        <td><img src="https://qimetons.oss-cn-beijing.aliyuncs.com/%E5%AE%98%E7%BD%91%E9%A6%96%E9%A1%B5.png"/></td>
+     </tr>
 
 </table>
 
