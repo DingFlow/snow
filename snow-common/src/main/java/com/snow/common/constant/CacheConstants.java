@@ -21,4 +21,10 @@ public class CacheConstants {
      * 钉钉企业内部ENTERPRICE_APP_SECRET
      */
     public static final String ENTERPRICE_APP_SECRET="sys_config:enterprice.app.secret";
+
+    /**
+     * 钉钉应用标识
+     */
+    public static final String AGENT_ID="sys_config:agent.id";
+
 }

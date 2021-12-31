@@ -7,51 +7,56 @@ package com.snow.common.enums;
  * @date 2021/11/19 15:34
  */
 public enum FormFieldTypeEnums {
-    INPUT("input","文本输入框"),
+    INPUT("input","TextField","文本输入框"),
 
-    PASSWORD("password","密码输入框"),
+    PASSWORD("password","","密码输入框"),
 
-    TEXTAREA("textarea","文本域"),
+    TEXTAREA("textarea","TextareaField","文本域"),
 
-    NUMBER_INPUT("numberInput","排序文本框"),
+    NUMBER_INPUT("numberInput","NumberField","排序(数字)文本框"),
 
-    SELECT("select","下拉框"),
+    SELECT("select","","下拉框"),
 
-    RADIO("radio","单选框"),
+    RADIO("radio","DDSelectField","单选框"),
 
-    CHECKBOX("checkbox","复选框"),
+    CHECKBOX("checkbox","DDMultiSelectField","复选框"),
 
-    SWITCH("switch","开关"),
+    SWITCH("switch","","开关"),
 
-    SLIDER("slider","滑块"),
+    SLIDER("slider","","滑块"),
 
-    DATE("date","日期"),
+    DATE("date","DDDateField","日期"),
 
-    DATE_RANGE("dateRange","日期范围"),
+    DATE_RANGE("dateRange","DDDateRangeField","日期范围"),
 
-    RATE("rate","评分"),
+    RATE("rate","","评分"),
 
-    CAROUSEL("carousel","轮播图"),
+    CAROUSEL("carousel","","轮播图"),
 
-    COLOR_PICKER("colorpicker","颜色选择器"),
+    COLOR_PICKER("colorpicker","","颜色选择器"),
 
-    ICON_PICKER("iconPicker","颜色选择器"),
+    ICON_PICKER("iconPicker","","颜色选择器"),
 
-    CRON("cron","Cron表达式"),
+    CRON("cron","","Cron表达式"),
 
-    SIGN("sign","签名组件"),
+    SIGN("sign","","签名组件"),
 
-    GRID("grid","grid"),
+    GRID("grid","","grid"),
 
-    IMAGE("image","图片"),
+    IMAGE("image","","图片"),
 
-    FILE("file","文件");
+    FILE("file","","文件");
+    //系统组件code
     private final String code;
+    //钉钉组件code
+    private final String dingTalkCode;
+    //组件信息
     private final String info;
 
-    FormFieldTypeEnums(String code, String info)
+    FormFieldTypeEnums(String code,String dingTalkCode,String info)
     {
         this.code = code;
+        this.dingTalkCode = dingTalkCode;
         this.info = info;
     }
 
@@ -63,6 +68,10 @@ public enum FormFieldTypeEnums {
     public String getInfo()
     {
         return info;
+    }
+
+    public String getDingTalkCode() {
+        return dingTalkCode;
     }
 
     public static FormFieldTypeEnums getInfo(String info) {
@@ -77,6 +86,15 @@ public enum FormFieldTypeEnums {
     public static FormFieldTypeEnums getCode(String code) {
         for (FormFieldTypeEnums formFieldTypeEnum:FormFieldTypeEnums.values()){
             if(formFieldTypeEnum.getCode().equals(code)){
+                return formFieldTypeEnum;
+            }
+        }
+        return null;
+    }
+
+    public static FormFieldTypeEnums getDingTalkCode(String dingTalkCode) {
+        for (FormFieldTypeEnums formFieldTypeEnum:FormFieldTypeEnums.values()){
+            if(formFieldTypeEnum.getDingTalkCode().equals(dingTalkCode)){
                 return formFieldTypeEnum;
             }
         }
