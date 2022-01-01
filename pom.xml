@@ -45,6 +45,7 @@
         <googlecode.aviator.version>2.3.3</googlecode.aviator.version>
         <kotlin.stdlib.verson>1.3.70</kotlin.stdlib.verson>
         <zxing.version>3.4.0</zxing.version>
+        <jimureport.version>1.4.2</jimureport.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -350,6 +351,18 @@
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
+            </dependency>
+            <!--积木报表-->
+            <dependency>
+                <groupId>org.jeecgframework.jimureport</groupId>
+                <artifactId>jimureport-spring-boot-starter</artifactId>
+                <version>${jimureport.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.googlecode.aviator</groupId>
+                        <artifactId>aviator</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

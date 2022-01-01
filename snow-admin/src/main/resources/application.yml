@@ -170,17 +170,7 @@ sys:
    file:
      active: local
 
-minidao:
+minidao :
   base-package: org.jeecg.modules.jmreport.desreport.dao*
-  db-type: mysql
-  show-sql: true
-#JimuReport[上传配置]
-jeecg :
-  # local|minio|alioss
-  uploadType: local
-  # local
-  path :
-    #文件路径
-    upload: /opt/upload
 
 

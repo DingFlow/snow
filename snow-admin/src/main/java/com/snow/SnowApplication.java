@@ -36,8 +36,6 @@ public class SnowApplication
 {
     public static void main(String[] args)
     {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
-        //SpringApplication.run(SnowApplication.class, args);
         ApplicationContext context=SpringApplication.run(SnowApplication.class, args);
         SpringContextUtil.setApplicationContext(context);
 

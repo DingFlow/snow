@@ -286,7 +286,10 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/third/oauth/**", "anon");
         //填写表单
         filterChainDefinitionMap.put("/fromPreview", "anon");
-
+        //积木报表排除
+        filterChainDefinitionMap.put("/jmreport/**", "anon");
+        filterChainDefinitionMap.put("/**/*.js.map", "anon");
+        filterChainDefinitionMap.put("/**/*.css.map", "anon");
         //注册校验
         filterChainDefinitionMap.put("/system/user/checkLoginNameUnique", "anon");
         filterChainDefinitionMap.put("/system/user/checkPhoneUnique", "anon");
@@ -306,9 +309,6 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/front/register", "anon,captchaValidate");
         //新闻跳转页
         filterChainDefinitionMap.put("/front/news/**", "anon");
-
-        // 系统权限列表
-        // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         filters.put("onlineSession", onlineSessionFilter());
