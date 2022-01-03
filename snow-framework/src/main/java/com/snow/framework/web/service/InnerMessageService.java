@@ -4,7 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.constant.UserConstants;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.FreemarkUtils;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.service.ISysConfigService;
@@ -39,7 +39,7 @@ public class InnerMessageService {
      * 发送站内信息
      * @param sysSendMessageDTO
      */
-    public void sendInnerMessage(SysSendMessageDTO sysSendMessageDTO) {
+    public void sendInnerMessage(SysSendMessageRequest sysSendMessageDTO) {
         SysMessageTransition message = new SysMessageTransition();
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         if(ObjectUtil.isNull(sysMessageTemplate)){

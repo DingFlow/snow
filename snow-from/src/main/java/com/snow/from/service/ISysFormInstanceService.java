@@ -1,5 +1,6 @@
 package com.snow.from.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.from.domain.SysFormInstance;
 
 import java.util.List;
@@ -10,8 +11,7 @@ import java.util.List;
  * @author 没用的阿吉
  * @date 2021-03-21
  */
-public interface ISysFormInstanceService 
-{
+public interface ISysFormInstanceService extends IService<SysFormInstance> {
     /**
      * 查询单实例
      * 

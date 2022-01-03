@@ -15,7 +15,7 @@ import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.service.MessageService;
 import com.snow.framework.util.FreemarkUtils;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
@@ -40,7 +40,7 @@ public class MessageServiceImpl extends BaseService implements MessageService {
 
     @Override
     @SyncLog(dingTalkLogType = DingTalkLogType.ASYNCSEND_V2,dingTalkUrl=BaseConstantUrl.ASYNCSEND_V2)
-    public Long sendWorkNotice(SysSendMessageDTO sysSendMessageDTO) {
+    public Long sendWorkNotice(SysSendMessageRequest sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ASYNCSEND_V2);
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();

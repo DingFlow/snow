@@ -19,7 +19,7 @@ import com.snow.flowable.domain.customer.SysOaCustomerForm;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.FlowableTaskService;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.system.domain.SysOaCustomer;
 import com.snow.system.domain.SysOaCustomerVisitLog;
 import com.snow.system.domain.SysOaRegion;
@@ -308,7 +308,7 @@ public class SysOaCustomerController extends BaseController
         //加入消息通知
         if(StringUtils.isNotNull(sysOaCustomerVisitLog.getAcceptUser())){
             SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerByCustomerNo(sysOaCustomerVisitLog.getCustomerNo());
-            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.SEND_VISIT_LOG.getCode());
+            MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.SEND_VISIT_LOG.getCode());
             messageEventDTO.setProducerId(String.valueOf(sysUser.getUserId()));
             messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaCustomerVisitLog.getAcceptUser()));
             messageEventDTO.setMessageEventType(MessageEventType.SEND_VISIT_LOG);
@@ -375,7 +375,7 @@ public class SysOaCustomerController extends BaseController
         SysOaCustomerVisitLog sysOaCustomerVisitLog=sysOaCustomerVisitLogService.selectSysOaCustomerVisitLogById(id);
         SysOaCustomer sysOaCustomer = sysOaCustomerService.selectSysOaCustomerByCustomerNo(sysOaCustomerVisitLog.getCustomerNo());
         //已读监听
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.MARK_READED.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.MARK_READED.getCode());
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(sysUser.getUserId())));
         messageEventDTO.setMessageOutsideId(String.valueOf(id));
         messageEventDTO.setMessageEventType(MessageEventType.SEND_VISIT_LOG);

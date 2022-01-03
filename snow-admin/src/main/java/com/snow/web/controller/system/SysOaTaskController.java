@@ -11,7 +11,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.snow.common.constant.MessageConstants;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.MessageEventType;
@@ -242,7 +242,7 @@ public class SysOaTaskController extends BaseController
      * @param sysOaTaskDistribute 参数
      */
     private void sendInnerMessage(SysOaTaskDistribute sysOaTaskDistribute){
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_SYS_TASK_COMPLETE.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.INNER_SYS_TASK_COMPLETE.getCode());
         messageEventDTO.setProducerId(sysOaTaskDistribute.getCreateBy());
         messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaTaskDistribute.getTaskDistributeId()));
         messageEventDTO.setMessageEventType(MessageEventType.INNER_SYS_TASK_COMPLETE);

@@ -23,10 +23,12 @@ public interface DingOfficialFlowService {
     String saveProcess(SaveProcessRequest saveFlowRequest);
 
     /**
-     * 发起审批实例
+     * 发起审批实例（官方）
      * @return
      */
     String startProcessInstance(StartFlowRequest startFlowRequest);
+
+
 
     /**
      * 获取当前企业所有可管理的模版
@@ -66,7 +68,11 @@ public interface DingOfficialFlowService {
     Boolean terminateProcessInstance(FlowTerminateProcessInstanceRequest flowTerminateProcessInstanceRequest);
 
 
-    void bpmsInstanceChange();
+    /**
+     * 发起流程实例（自有OA)
+     * @return
+     */
+    String saveFakeProcessInstance(StartFakeProcessInstanceRequest startFakeProcessInstanceRequest);
 
     void bpmsTaskChange();
 

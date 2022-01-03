@@ -147,9 +147,14 @@ public class BaseConstantUrl {
     public static final String GET_PROCESS_TEMPLATE_MANAGE="https://oapi.dingtalk.com/topapi/process/template/manage/get";
 
     /**
-     * 发起流程实例
+     * 发起流程实例（钉钉官方）
      */
     public static final String START_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/processinstance/create";
+
+    /**
+     * 发起流程审批实例（自有流程）
+     */
+    public static final String START_FAKE_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/process/workrecord/create";
 
     /**
      * 执行流程

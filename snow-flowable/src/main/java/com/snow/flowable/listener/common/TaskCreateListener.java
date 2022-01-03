@@ -9,7 +9,7 @@ import com.snow.common.enums.MessageEventType;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.impl.SysUserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +84,7 @@ public class TaskCreateListener implements FlowableEventListener {
 
     private void sendInnerMessage(SysUser toUsers,TaskEntity entity, HistoricProcessInstance processInstance){
         SysUser startSysUser = sysUserServiceImpl.selectUserById(Long.parseLong(processInstance.getStartUserId()));
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_TASK_TODO.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.INNER_TASK_TODO.getCode());
         messageEventDTO.setProducerId(String.valueOf(0));
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(toUsers.getUserId())));
         messageEventDTO.setMessageEventType(MessageEventType.INNER_TASK_TODO);

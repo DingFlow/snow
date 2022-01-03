@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 @Builder
-public class SysSendEmailDTO implements Serializable {
+public class SysSendEmailRequest implements Serializable {
     private static final long serialVersionUID = -3505555356014745742L;
 
     private String templateByCode;

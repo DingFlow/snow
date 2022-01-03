@@ -1,5 +1,7 @@
 package com.snow.from.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
 
@@ -15,6 +17,7 @@ public class SysFormField extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 主键ID */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /** 字段标识 */

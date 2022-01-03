@@ -1,6 +1,6 @@
 package com.snow.framework.web.message;
 
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 
 /**
  * @program: snow
@@ -16,7 +16,7 @@ public class MessageEventContext {
         this.strategy = strategy;
     }
 
-    public void messageHandle(MessageEventDTO messageEventDTO) {
+    public void messageHandle(MessageEventRequest messageEventDTO) {
         this.strategy.messageHandle(messageEventDTO);
     }
 }
