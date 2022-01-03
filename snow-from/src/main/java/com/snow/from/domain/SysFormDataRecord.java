@@ -1,9 +1,12 @@
 package com.snow.from.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 单数据记录对象 sys_form_data_record
@@ -31,7 +34,8 @@ public class SysFormDataRecord extends BaseEntity
     /**
      * 表单id数组
      */
-    private String[] formIdList;
+    @TableField(exist = false)
+    private List formIdList;
 
     /**
      * 表单内容

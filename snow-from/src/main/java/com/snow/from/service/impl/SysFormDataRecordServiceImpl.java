@@ -1,5 +1,6 @@
 package com.snow.from.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -68,6 +69,7 @@ public class SysFormDataRecordServiceImpl extends ServiceImpl<SysFormDataRecordM
         lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getFormId()),SysFormDataRecord::getFormId,sysFormDataRecord.getFormId());
         lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getFormStatus()),SysFormDataRecord::getFormStatus,sysFormDataRecord.getFormStatus());
         lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getDingProcessInstanceId()),SysFormDataRecord::getDingProcessInstanceId,sysFormDataRecord.getDingProcessInstanceId());
+        lambda.in(CollUtil.isNotEmpty(sysFormDataRecord.getFormIdList()),SysFormDataRecord::getFormId,sysFormDataRecord.getFormId());
         lambda.orderByDesc(SysFormDataRecord::getCreateTime);
         return sysFormDataRecordMapper.selectList(lambda);
     }
