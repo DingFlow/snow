@@ -4,6 +4,7 @@ import com.dingtalk.api.response.OapiProcessListbyuseridResponse;
 import com.dingtalk.api.response.OapiProcessTemplateManageGetResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.snow.dingtalk.model.request.*;
+import com.snow.dingtalk.model.response.DingCreateTaskResponse;
 
 import java.util.List;
 
@@ -74,8 +75,9 @@ public interface DingOfficialFlowService {
      */
     String saveFakeProcessInstance(StartFakeProcessInstanceRequest startFakeProcessInstanceRequest);
 
-    void bpmsTaskChange();
+
+    List<DingCreateTaskResponse> createProcessTask(SaveTaskRequest saveTaskRequest);
 
 
-
+    void updateProcessTask();
 }

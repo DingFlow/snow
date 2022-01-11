@@ -176,6 +176,17 @@ public class BaseConstantUrl {
      */
     public static final String GET_PROCESSLIST_USERID="https://oapi.dingtalk.com/topapi/process/listbyuserid";
 
+    /**
+     * 创建待办事项()
+     */
+    public static final String CREATE_PROCESS_TASK="https://oapi.dingtalk.com/topapi/process/workrecord/task/create";
+
+    /**
+     *
+     */
+    public static final String UPDATE_PROCESS_TASK="https://oapi.dingtalk.com/topapi/process/workrecord/task/update";
+
+    public static final String UPDATE_PROCESS_WORKRECORD="https://oapi.dingtalk.com/topapi/process/workrecord/update";
 
     //************************************************外部联系人
 
