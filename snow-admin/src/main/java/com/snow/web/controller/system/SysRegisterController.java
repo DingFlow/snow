@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.UserConstants;
 import com.snow.common.enums.MessageEventType;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -76,8 +76,8 @@ public class SysRegisterController extends BaseController
         SysUser sysUser = userService.selectUserByLoginName(user.getLoginName());
         //分配角色
         userService.insertUserAuth(sysUser.getUserId(), new Long[]{UserConstants.FRONT_ROLE_TYPE_ID});
-        //注册成功后发送站内信 TODO 改成异步的形式
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.REGISTER_ACCOUNT_SUCCESS.getCode());
+        //注册成功后发送站内信
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.REGISTER_ACCOUNT_SUCCESS.getCode());
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(sysUser.getUserId())));
         messageEventDTO.setMessageOutsideId(String.valueOf(sysUser.getUserId()));
         messageEventDTO.setMessageEventType(MessageEventType.REGISTER_ACCOUNT_SUCCESS);

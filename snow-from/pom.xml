@@ -25,11 +25,14 @@
             <artifactId>snow-flowable</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.snow</groupId>
+            <artifactId>snow-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
-            <version>3.4.0</version>
         </dependency>
     </dependencies>
 

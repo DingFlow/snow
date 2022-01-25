@@ -147,9 +147,14 @@ public class BaseConstantUrl {
     public static final String GET_PROCESS_TEMPLATE_MANAGE="https://oapi.dingtalk.com/topapi/process/template/manage/get";
 
     /**
-     * 发起流程实例
+     * 发起流程实例（钉钉官方）
      */
     public static final String START_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/processinstance/create";
+
+    /**
+     * 发起流程审批实例（自有流程）
+     */
+    public static final String START_FAKE_PROCESS_INSTANCE="https://oapi.dingtalk.com/topapi/process/workrecord/create";
 
     /**
      * 执行流程
@@ -171,6 +176,17 @@ public class BaseConstantUrl {
      */
     public static final String GET_PROCESSLIST_USERID="https://oapi.dingtalk.com/topapi/process/listbyuserid";
 
+    /**
+     * 创建待办事项()
+     */
+    public static final String CREATE_PROCESS_TASK="https://oapi.dingtalk.com/topapi/process/workrecord/task/create";
+
+    /**
+     *
+     */
+    public static final String UPDATE_PROCESS_TASK="https://oapi.dingtalk.com/topapi/process/workrecord/task/update";
+
+    public static final String UPDATE_PROCESS_WORKRECORD="https://oapi.dingtalk.com/topapi/process/workrecord/update";
 
     //************************************************外部联系人
 

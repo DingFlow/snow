@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.snow.common.enums.FormFieldTypeEnums;
+import com.snow.common.enums.FormFieldTypeEnum;
 import com.snow.common.exception.BusinessException;
 import com.snow.from.domain.field.InputField;
 
@@ -35,7 +35,7 @@ public class FormUtils {
         for(int i=0;i<formDataArray.size();i++){
             JSONObject fieldObject=formDataArray.getJSONObject(i);
             //一行多列布局
-            if(fieldObject.getString("tag").equals(FormFieldTypeEnums.GRID.getCode())){
+            if(fieldObject.getString("tag").equals(FormFieldTypeEnum.GRID.getCode())){
                 JSONObject gridObject = formDataArray.getJSONObject(i);
                 JSONArray columnArray= gridObject.getJSONArray("columns");
                 for(int j=0;j<columnArray.size();j++){
@@ -61,20 +61,20 @@ public class FormUtils {
     private static void fillValueField(String tag,JSONObject listObject,JSONObject formFieldObject){
         if(isDefaultValue(tag)){
             warpDefaultValueField(listObject,formFieldObject);
-        } else if(tag.equals(FormFieldTypeEnums.SWITCH.getCode())){
+        } else if(tag.equals(FormFieldTypeEnum.SWITCH.getCode())){
             warpSwitchValueField(listObject,formFieldObject);
-        } else if(tag.equals(FormFieldTypeEnums.SIGN.getCode())){
+        } else if(tag.equals(FormFieldTypeEnum.SIGN.getCode())){
             warpDateField(listObject,formFieldObject);
-        } else if(tag.equals(FormFieldTypeEnums.DATE.getCode())){
+        } else if(tag.equals(FormFieldTypeEnum.DATE.getCode())){
             warpDateDefaultValueField(listObject,formFieldObject);
-        }else if(tag.equals(FormFieldTypeEnums.DATE_RANGE.getCode())){
+        }else if(tag.equals(FormFieldTypeEnum.DATE_RANGE.getCode())){
             warpDateRangeDefaultValueField(listObject,formFieldObject);
-        }else if(tag.equals(FormFieldTypeEnums.CHECKBOX.getCode())){
+        }else if(tag.equals(FormFieldTypeEnum.CHECKBOX.getCode())){
             warpCheckBoxValueField(listObject,formFieldObject);
-        }else if(tag.equals(FormFieldTypeEnums.RADIO.getCode())){
-            warpCheckedValueField(listObject,formFieldObject,FormFieldTypeEnums.RADIO);
-        }else if(tag.equals(FormFieldTypeEnums.SELECT.getCode())){
-            warpCheckedValueField(listObject,formFieldObject,FormFieldTypeEnums.SELECT);
+        }else if(tag.equals(FormFieldTypeEnum.RADIO.getCode())){
+            warpCheckedValueField(listObject,formFieldObject, FormFieldTypeEnum.RADIO);
+        }else if(tag.equals(FormFieldTypeEnum.SELECT.getCode())){
+            warpCheckedValueField(listObject,formFieldObject, FormFieldTypeEnum.SELECT);
         }else {
             throw new BusinessException(StrUtil.format("暂不支持的组件:{}",tag));
         }
@@ -86,10 +86,10 @@ public class FormUtils {
      * @return 是否
      */
     private static boolean isDefaultValue(String tag){
-        return tag.equals(FormFieldTypeEnums.INPUT.getCode()) || tag.equals(FormFieldTypeEnums.TEXTAREA.getCode()) || tag.equals(FormFieldTypeEnums.PASSWORD.getCode())
-                || tag.equals(FormFieldTypeEnums.NUMBER_INPUT.getCode()) || tag.equals(FormFieldTypeEnums.RATE.getCode()) || tag.equals(FormFieldTypeEnums.CRON.getCode())
-                || tag.equals(FormFieldTypeEnums.FILE.getCode()) ||tag.equals(FormFieldTypeEnums.IMAGE.getCode()) ||tag.equals(FormFieldTypeEnums.COLOR_PICKER.getCode())
-                ||tag.equals(FormFieldTypeEnums.ICON_PICKER.getCode()) ||tag.equals(FormFieldTypeEnums.SLIDER.getCode());
+        return tag.equals(FormFieldTypeEnum.INPUT.getCode()) || tag.equals(FormFieldTypeEnum.TEXTAREA.getCode()) || tag.equals(FormFieldTypeEnum.PASSWORD.getCode())
+                || tag.equals(FormFieldTypeEnum.NUMBER_INPUT.getCode()) || tag.equals(FormFieldTypeEnum.RATE.getCode()) || tag.equals(FormFieldTypeEnum.CRON.getCode())
+                || tag.equals(FormFieldTypeEnum.FILE.getCode()) ||tag.equals(FormFieldTypeEnum.IMAGE.getCode()) ||tag.equals(FormFieldTypeEnum.COLOR_PICKER.getCode())
+                ||tag.equals(FormFieldTypeEnum.ICON_PICKER.getCode()) ||tag.equals(FormFieldTypeEnum.SLIDER.getCode());
     }
 
     //输入框
@@ -132,9 +132,9 @@ public class FormUtils {
     }
 
     //下拉和单选
-    public static void warpCheckedValueField(JSONObject fieldObject,JSONObject formFieldObject,FormFieldTypeEnums formFieldTypeEnums){
+    public static void warpCheckedValueField(JSONObject fieldObject, JSONObject formFieldObject, FormFieldTypeEnum formFieldTypeEnums){
         String value = formFieldObject.getString(fieldObject.getString("id"));
-        if(formFieldTypeEnums.getCode().equals(FormFieldTypeEnums.SELECT.getCode())){
+        if(formFieldTypeEnums.getCode().equals(FormFieldTypeEnum.SELECT.getCode())){
             fieldObject.put("remoteDefaultValue",value);
         }
         JSONArray optionsArray= fieldObject.getJSONArray("options");

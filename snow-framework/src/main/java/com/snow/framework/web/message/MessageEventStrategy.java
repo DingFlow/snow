@@ -1,6 +1,6 @@
 package com.snow.framework.web.message;
 
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 
 /**
  * @program: snow
@@ -13,5 +13,5 @@ public interface MessageEventStrategy {
     /**
      * 消息处理
      */
-    void messageHandle(MessageEventDTO messageEventDTO);
+    void messageHandle(MessageEventRequest messageEventDTO);
 }

@@ -15,7 +15,7 @@ import com.snow.common.enums.MessageEventType;
 import com.snow.common.enums.SysEmailSearchType;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.system.domain.*;
 import com.snow.system.service.ISysOaEmailService;
 import com.snow.system.service.ISysSequenceService;
@@ -281,7 +281,7 @@ public class SysOaEmailController extends BaseController
         String newSequenceNo=sysOaEmail.getEmailNo();
         //只有发送状态下才能发送
         if(sysOaEmail.getEmailStatus().intValue()==SysEmailSearchType.COMMON.getCode()){
-            MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.SEND_EMAIL.getCode());
+            MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.SEND_EMAIL.getCode());
             messageEventDTO.setProducerId(String.valueOf(sysUser.getUserId()));
             messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaEmail.getEmailTo()));
             messageEventDTO.setMessageEventType(MessageEventType.SEND_EMAIL);
@@ -325,7 +325,7 @@ public class SysOaEmailController extends BaseController
             sysOaEmail.setEmailFromUser(sysUserService.selectUserById(Long.parseLong(sysMessageTransitions.get(0).getProducerId())));
             //sysOaEmail.setEmailToUser(sysMessageTransitions.stream().map(get));
         }
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.MARK_READED.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.MARK_READED.getCode());
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(sysUser.getUserId())));
         messageEventDTO.setMessageOutsideId(sysOaEmail.getEmailNo());
         messageEventDTO.setMessageEventType(MessageEventType.SEND_EMAIL);

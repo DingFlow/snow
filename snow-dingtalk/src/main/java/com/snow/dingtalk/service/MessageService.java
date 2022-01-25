@@ -1,6 +1,6 @@
 package com.snow.dingtalk.service;
 
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 
 /**
  * @author qimingjin
@@ -15,6 +15,6 @@ public interface MessageService {
      * @param sysSendMessageDTO 请求参数
      * @return 任务id
      */
-    Long sendWorkNotice(SysSendMessageDTO sysSendMessageDTO);
+    Long sendWorkNotice(SysSendMessageRequest sysSendMessageDTO);
 
 }

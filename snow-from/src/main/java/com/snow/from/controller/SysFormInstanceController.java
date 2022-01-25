@@ -184,7 +184,7 @@ public class SysFormInstanceController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids) {
         SysFormDataRecord sysFormDataRecord = new SysFormDataRecord();
-        sysFormDataRecord.setFormIdList(Convert.toStrArray(ids));
+        sysFormDataRecord.setFormIdList(Convert.toStrList(ids));
         List<SysFormDataRecord> sysFormDataRecords = sysFormDataRecordService.selectSysFormDataRecordList(sysFormDataRecord);
         if(CollUtil.isNotEmpty(sysFormDataRecords)){
             return AjaxResult.error("该表单已被填写,暂不能删除");

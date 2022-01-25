@@ -8,7 +8,7 @@ import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.model.request.WorkrecordAddRequest;
 import com.snow.dingtalk.service.impl.MessageServiceImpl;
 import com.snow.dingtalk.service.impl.WorkRecodeServiceImpl;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.system.domain.SysOaTask;
 import com.snow.system.domain.SysOaTaskDistribute;
 import com.snow.system.event.SyncEvent;
@@ -64,7 +64,7 @@ public class WorkRecodeEventService implements ISyncDingTalkInfo {
         }
         //钉钉发送普通消息
         if(code.equals(DingTalkListenerType.ASYNCSEND_V2.getCode())){
-            SysSendMessageDTO sysSendMessageDTO=(SysSendMessageDTO)syncEvent.getSource();
+            SysSendMessageRequest sysSendMessageDTO=(SysSendMessageRequest)syncEvent.getSource();
             log.info("@@发送钉钉工作通知消息传入的参数：{}",JSON.toJSONString(sysSendMessageDTO));
             messageService.sendWorkNotice(sysSendMessageDTO);
         }

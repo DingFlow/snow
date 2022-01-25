@@ -5,116 +5,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.snow.from.mapper.SysFormInstanceMapper">
     
     <resultMap type="SysFormInstance" id="SysFormInstanceResult">
-        <result property="id"    column="id_"    />
-        <result property="formCode"    column="form_code_"    />
-        <result property="formName"    column="form_name_"    />
-        <result property="fromUrl"    column="from_url_"    />
+        <result property="id"    column="id"    />
+        <result property="formCode"    column="form_code"    />
+        <result property="formName"    column="form_name"    />
+        <result property="fromUrl"    column="from_url"    />
         <result property="processKey"    column="process_key"    />
+        <result property="dingProcessCode"    column="ding_process_code"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="updateBy"    column="update_by"    />
-        <result property="rev"    column="rev_"    />
+        <result property="rev"    column="rev"    />
         <result property="isDelete"    column="is_delete"    />
-        <result property="tenantId"    column="tenant_id_"    />
-        <result property="fromContentHtml"    column="from_content_html_"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="fromContentHtml"    column="from_content_html"    />
 
     </resultMap>
 
     <sql id="selectSysFormInstanceVo">
-        select id_, form_code_, form_name_, from_url_,process_key, create_by, from_content_html_,create_time, update_time, update_by, rev_, is_delete, tenant_id_ from sys_form_instance
+        select id, form_code, form_name, from_url,process_key, create_by, from_content_html_,create_time, update_time, update_by, rev, is_delete, tenant_id from sys_form_instance
     </sql>
 
-    <select id="selectSysFormInstanceList" parameterType="SysFormInstance" resultMap="SysFormInstanceResult">
-        <include refid="selectSysFormInstanceVo"/>
-        <where>  
-            <if test="formCode != null  and formCode != ''"> and form_code_ like concat('%', #{formCode}, '%')</if>
-            <if test="formName != null  and formName != ''"> and form_name_ like concat('%', #{formName}, '%')</if>
-            <if test="processKey != null  and processKey != ''"> and process_key like concat('%', #{processKey}, '%')</if>
-            <if test="rev != null "> and rev_ = #{rev}</if>
-            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
-            <if test="tenantId != null  and tenantId != ''"> and tenant_id_ = #{tenantId}</if>
-        </where>
-    </select>
-    
-    <select id="selectSysFormInstanceById" parameterType="Long" resultMap="SysFormInstanceResult">
-        <include refid="selectSysFormInstanceVo"/>
-        where id_ = #{id}
-    </select>
-
-
-    <select id="selectSysFormInstanceByFormCode" parameterType="String" resultMap="SysFormInstanceResult">
-        <include refid="selectSysFormInstanceVo"/>
-        where form_code_ = #{formCode}
-    </select>
-
-
-    <select id="selectSysFormInstanceByFormName" parameterType="String" resultMap="SysFormInstanceResult">
-        <include refid="selectSysFormInstanceVo"/>
-        where form_name_ = #{formName}
-    </select>
-
-
-    <insert id="insertSysFormInstance" parameterType="SysFormInstance" useGeneratedKeys="true" keyProperty="id">
-        insert into sys_form_instance
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="formCode != null and formCode != ''">form_code_,</if>
-            <if test="formName != null and formName != ''">form_name_,</if>
-            <if test="fromUrl != null and fromUrl != ''">from_url_,</if>
-            <if test="processKey != null and processKey != ''">process_key,</if>
-            <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="rev != null">rev_,</if>
-            <if test="isDelete != null">is_delete,</if>
-            <if test="tenantId != null">tenant_id_,</if>
-            <if test="fromContentHtml != null">from_content_html_,</if>
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="formCode != null and formCode != ''">#{formCode},</if>
-            <if test="formName != null and formName != ''">#{formName},</if>
-            <if test="fromUrl != null and fromUrl != ''">#{fromUrl},</if>
-            <if test="processKey != null and processKey != ''">#{processKey},</if>
-            <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="rev != null">#{rev},</if>
-            <if test="isDelete != null">#{isDelete},</if>
-            <if test="tenantId != null">#{tenantId},</if>
-            <if test="fromContentHtml != null">#{fromContentHtml},</if>
-         </trim>
-    </insert>
-
-    <update id="updateSysFormInstance" parameterType="SysFormInstance">
-        update sys_form_instance
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="formCode != null and formCode != ''">form_code_ = #{formCode},</if>
-            <if test="formName != null and formName != ''">form_name_ = #{formName},</if>
-            <if test="fromUrl != null and fromUrl != ''">from_url_ = #{fromUrl},</if>
-            <if test="processKey != null and processKey != ''">process_key=#{processKey},</if>
-            <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
-            <if test="rev != null">rev_ = #{rev},</if>
-            <if test="isDelete != null">is_delete = #{isDelete},</if>
-            <if test="tenantId != null">tenant_id_ = #{tenantId},</if>
-            <if test="fromContentHtml != null">from_content_html_=#{fromContentHtml},</if>
-        </trim>
-        where id_ = #{id}
-    </update>
-
-    <delete id="deleteSysFormInstanceById" parameterType="Long">
-        delete from sys_form_instance where id_ = #{id}
-    </delete>
-
-    <delete id="deleteSysFormInstanceByIds" parameterType="String">
-        delete from sys_form_instance where id_ in 
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </delete>
 
 </mapper>

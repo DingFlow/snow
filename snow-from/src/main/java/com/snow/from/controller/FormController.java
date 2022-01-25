@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import cn.hutool.extra.qrcode.QrConfig;
@@ -15,7 +14,7 @@ import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.enums.FormFieldTypeEnums;
+import com.snow.common.enums.FormFieldTypeEnum;
 import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.common.constants.FlowConstants;
@@ -386,7 +385,7 @@ public class FormController{
         for(int i=0;i<formDataArray.size();i++){
             JSONObject fieldObject=formDataArray.getJSONObject(i);
             //一行多列布局
-            if(fieldObject.getString("tag").equals(FormFieldTypeEnums.GRID.getCode())){
+            if(fieldObject.getString("tag").equals(FormFieldTypeEnum.GRID.getCode())){
                 JSONObject gridObject = formDataArray.getJSONObject(i);
                 JSONArray columnArray= gridObject.getJSONArray("columns");
                 for(int j=0;j<columnArray.size();j++){

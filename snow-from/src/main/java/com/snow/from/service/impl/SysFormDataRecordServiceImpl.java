@@ -1,5 +1,11 @@
 package com.snow.from.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.core.text.Convert;
 import com.snow.common.utils.DateUtils;
 import com.snow.from.domain.SysFormDataRecord;
@@ -17,13 +23,10 @@ import java.util.List;
  * @date 2021-11-21
  */
 @Service
-public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
-{
-    @Autowired
-    private SysFormDataRecordMapper sysFormDataRecordMapper;
+public class SysFormDataRecordServiceImpl extends ServiceImpl<SysFormDataRecordMapper,SysFormDataRecord> implements ISysFormDataRecordService {
 
     @Autowired
-    private SysFormInstanceServiceImpl sysFormInstanceService;
+    private SysFormDataRecordMapper sysFormDataRecordMapper;
 
     /**
      * 查询单数据记录
@@ -32,9 +35,8 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
      * @return 单数据记录
      */
     @Override
-    public SysFormDataRecord selectSysFormDataRecordById(Integer id)
-    {
-        return sysFormDataRecordMapper.selectSysFormDataRecordById(id);
+    public SysFormDataRecord selectSysFormDataRecordById(Integer id) {
+        return sysFormDataRecordMapper.selectById(id);
     }
 
     /**
@@ -59,10 +61,17 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
      * @return 单数据记录
      */
     @Override
-    public List<SysFormDataRecord> selectSysFormDataRecordList(SysFormDataRecord sysFormDataRecord)
-    {
-        List<SysFormDataRecord>  sysFormDataRecordList=sysFormDataRecordMapper.selectSysFormDataRecordList(sysFormDataRecord);
-        return sysFormDataRecordList;
+    public List<SysFormDataRecord> selectSysFormDataRecordList(SysFormDataRecord sysFormDataRecord) {
+        LambdaQueryWrapper<SysFormDataRecord> lambda = new QueryWrapper<SysFormDataRecord>().lambda();
+        lambda.like(StrUtil.isNotBlank(sysFormDataRecord.getFormNo()),SysFormDataRecord::getFormNo,sysFormDataRecord.getFormNo());
+        lambda.like(StrUtil.isNotBlank(sysFormDataRecord.getBelongUserId()),SysFormDataRecord::getBelongUserId,sysFormDataRecord.getBelongUserId());
+        lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getId()),SysFormDataRecord::getId,sysFormDataRecord.getId());
+        lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getFormId()),SysFormDataRecord::getFormId,sysFormDataRecord.getFormId());
+        lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getFormStatus()),SysFormDataRecord::getFormStatus,sysFormDataRecord.getFormStatus());
+        lambda.eq(ObjectUtil.isNotEmpty(sysFormDataRecord.getDingProcessInstanceId()),SysFormDataRecord::getDingProcessInstanceId,sysFormDataRecord.getDingProcessInstanceId());
+        lambda.in(CollUtil.isNotEmpty(sysFormDataRecord.getFormIdList()),SysFormDataRecord::getFormId,sysFormDataRecord.getFormId());
+        lambda.orderByDesc(SysFormDataRecord::getCreateTime);
+        return sysFormDataRecordMapper.selectList(lambda);
     }
 
     /**
@@ -75,7 +84,7 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
     public int insertSysFormDataRecord(SysFormDataRecord sysFormDataRecord)
     {
         sysFormDataRecord.setCreateTime(DateUtils.getNowDate());
-        return sysFormDataRecordMapper.insertSysFormDataRecord(sysFormDataRecord);
+        return sysFormDataRecordMapper.insert(sysFormDataRecord);
     }
 
     /**
@@ -85,10 +94,9 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
      * @return 结果
      */
     @Override
-    public int updateSysFormDataRecord(SysFormDataRecord sysFormDataRecord)
-    {
+    public int updateSysFormDataRecord(SysFormDataRecord sysFormDataRecord) {
         sysFormDataRecord.setUpdateTime(DateUtils.getNowDate());
-        return sysFormDataRecordMapper.updateSysFormDataRecord(sysFormDataRecord);
+        return sysFormDataRecordMapper.updateById(sysFormDataRecord);
     }
 
     @Override
@@ -104,9 +112,8 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
      * @return 结果
      */
     @Override
-    public int deleteSysFormDataRecordByIds(String ids)
-    {
-        return sysFormDataRecordMapper.deleteSysFormDataRecordByIds(Convert.toStrArray(ids));
+    public int deleteSysFormDataRecordByIds(String ids) {
+        return sysFormDataRecordMapper.deleteBatchIds(Convert.toStrList(ids));
     }
 
     /**
@@ -116,8 +123,7 @@ public class SysFormDataRecordServiceImpl implements ISysFormDataRecordService
      * @return 结果
      */
     @Override
-    public int deleteSysFormDataRecordById(Integer id)
-    {
-        return sysFormDataRecordMapper.deleteSysFormDataRecordById(id);
+    public int deleteSysFormDataRecordById(Integer id) {
+        return sysFormDataRecordMapper.deleteById(id);
     }
 }

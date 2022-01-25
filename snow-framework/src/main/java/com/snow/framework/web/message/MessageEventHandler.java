@@ -1,12 +1,13 @@
 package com.snow.framework.web.message;
 
 import com.snow.common.utils.StringUtils;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.framework.web.message.consumer.SysMarkReadedStrategy;
 import com.snow.framework.web.message.producer.InnerMessageStrategy;
 import com.snow.framework.web.message.producer.SendMessageCenterStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,10 +18,11 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @Slf4j
-public class MessageEventHandler implements ApplicationListener<MessageEventDTO> {
+public class MessageEventHandler implements ApplicationListener<MessageEventRequest> {
 
     @Override
-    public void onApplicationEvent(MessageEventDTO messageEvent) {
+    @Async
+    public void onApplicationEvent(MessageEventRequest messageEvent) {
         String messageEventType=String.valueOf(messageEvent.getSource());
        // MessageEventType messageEventType = messageEvent.getMessageEventType();
         if(StringUtils.isNull(messageEventType)){

@@ -13,10 +13,8 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
-import com.snow.dingtalk.model.request.FlowExecuteTaskRequest;
-import com.snow.dingtalk.model.request.FlowTerminateProcessInstanceRequest;
-import com.snow.dingtalk.model.request.SaveProcessRequest;
-import com.snow.dingtalk.model.request.StartFlowRequest;
+import com.snow.dingtalk.model.request.*;
+import com.snow.dingtalk.model.response.DingCreateTaskResponse;
 import com.snow.dingtalk.service.DingOfficialFlowService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.taobao.api.ApiException;
@@ -24,7 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.dingtalk.api.request.OapiProcessWorkrecordCreateRequest.*;
 
 /**
  * @program: snow
@@ -206,13 +207,63 @@ public class DingOfficialFlowServiceImpl extends BaseService implements DingOffi
     }
 
     @Override
-    public void bpmsInstanceChange() {
+    public String saveFakeProcessInstance(StartFakeProcessInstanceRequest startFakeProcessInstanceRequest) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.START_FAKE_PROCESS_INSTANCE);
+        OapiProcessWorkrecordCreateRequest req = new OapiProcessWorkrecordCreateRequest();
+        SaveFakeProcessInstanceRequest saveFakeProcessInstanceRequest = new SaveFakeProcessInstanceRequest();
+        //获取钉钉配置agentId
+        Object agentId = CacheUtils.getSysConfig(CacheConstants.AGENT_ID, sysConfigService.selectConfigByKey(Constants.AGENT_ID));
+        saveFakeProcessInstanceRequest.setAgentid(Long.parseLong(String.valueOf(agentId)));
+        saveFakeProcessInstanceRequest.setProcessCode(startFakeProcessInstanceRequest.getProcessCode());
+        saveFakeProcessInstanceRequest.setOriginatorUserId(startFakeProcessInstanceRequest.getOriginatorUserId());
+        saveFakeProcessInstanceRequest.setTitle(startFakeProcessInstanceRequest.getTitle());
+        saveFakeProcessInstanceRequest.setUrl(startFakeProcessInstanceRequest.getUrl());
+        saveFakeProcessInstanceRequest.setRemark(startFakeProcessInstanceRequest.getRemark());
+        List<FormComponentValueVo> formComponentValueVoList = BeanUtils.transformList(startFakeProcessInstanceRequest.getFormComponentValueVoList(),FormComponentValueVo.class);
+
+        saveFakeProcessInstanceRequest.setFormComponentValues(formComponentValueVoList);
+        req.setRequest(saveFakeProcessInstanceRequest);
+
+        try {
+            OapiProcessWorkrecordCreateResponse response = client.execute(req, getDingTalkToken());
+            if (response.getErrcode() != 0) {
+                throw new SyncDataException(JSON.toJSONString(req), response.getErrmsg());
+            }
+            return response.getResult().getProcessInstanceId();
+        } catch (ApiException e) {
+            log.error("创建实例saveFakeProcessInstance异常：{}", e.getMessage());
+            throw new SyncDataException(JSON.toJSONString(req), e.getErrMsg());
+        }
+    }
+
+    @Override
+    public List<DingCreateTaskResponse> createProcessTask(SaveTaskRequest saveTaskRequest) {
+        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CREATE_PROCESS_TASK);
+        OapiProcessWorkrecordTaskCreateRequest req = new OapiProcessWorkrecordTaskCreateRequest();
+        OapiProcessWorkrecordTaskCreateRequest.SaveTaskRequest taskRequest = new OapiProcessWorkrecordTaskCreateRequest.SaveTaskRequest();
+        taskRequest.setAgentid(11L);
+        taskRequest.setProcessInstanceId(saveTaskRequest.getProcessInstanceId());
+        List<OapiProcessWorkrecordTaskCreateRequest.TaskTopVo> taskTopVos = BeanUtils.transformList(saveTaskRequest.getTasks(), OapiProcessWorkrecordTaskCreateRequest.TaskTopVo.class);
+        taskRequest.setTasks(taskTopVos);
+        req.setRequest(taskRequest);
+        try {
+            OapiProcessWorkrecordTaskCreateResponse response = client.execute(req, getDingTalkToken());
+            if (response.getErrcode() != 0) {
+                throw new SyncDataException(JSON.toJSONString(req), response.getErrmsg());
+            }
+            return BeanUtils.transformList(response.getTasks(), DingCreateTaskResponse.class);
+        } catch (ApiException e) {
+            log.error("创建createProcessTask异常：{}", e.getMessage());
+            throw new SyncDataException(JSON.toJSONString(req), e.getErrMsg());
+        }
 
     }
 
     @Override
-    public void bpmsTaskChange() {
+    public void updateProcessTask() {
 
     }
+
+
 
 }

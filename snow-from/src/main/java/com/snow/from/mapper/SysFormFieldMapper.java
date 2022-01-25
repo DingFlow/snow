@@ -1,5 +1,6 @@
 package com.snow.from.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.from.domain.SysFormField;
 
 import java.util.List;
@@ -10,8 +11,7 @@ import java.util.List;
  * @author 没用的阿吉
  * @date 2021-03-21
  */
-public interface SysFormFieldMapper 
-{
+public interface SysFormFieldMapper extends BaseMapper<SysFormField> {
     /**
      * 查询单字段
      * 

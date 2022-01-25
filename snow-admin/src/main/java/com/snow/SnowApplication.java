@@ -13,6 +13,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
 
 /**
  * 启动程序
@@ -31,20 +36,28 @@ import org.springframework.context.annotation.FilterType;
         "org.flowable.ui",
         "org.jeecg.modules.jmreport"
 }, excludeFilters= @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RemoteAccountResource.class}))
-public class SnowApplication
-{
-    public static void main(String[] args)
-    {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
-        //SpringApplication.run(SnowApplication.class, args);
+@EnableAsync
+public class SnowApplication extends AsyncConfigurerSupport {
+
+    public static void main(String[] args) {
         ApplicationContext context=SpringApplication.run(SnowApplication.class, args);
         SpringContextUtil.setApplicationContext(context);
-
-
     }
+
     @Bean
     public FlowableModelerAppProperties flowableModelerAppProperties() {
         FlowableModelerAppProperties flowableModelerAppProperties=new FlowableModelerAppProperties();
         return flowableModelerAppProperties;
+    }
+
+    @Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("DingFlowThread-");
+        executor.initialize();
+        return executor;
     }
 }

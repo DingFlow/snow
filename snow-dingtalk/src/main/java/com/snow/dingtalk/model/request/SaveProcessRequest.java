@@ -1,6 +1,5 @@
 package com.snow.dingtalk.model.request;
 
-import com.snow.common.enums.FormFieldTypeEnums;
 import lombok.Data;
 
 import java.io.Serializable;

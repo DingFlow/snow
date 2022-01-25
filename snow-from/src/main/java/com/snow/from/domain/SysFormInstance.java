@@ -1,5 +1,7 @@
 package com.snow.from.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
@@ -14,11 +16,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @date 2021-03-21
  */
 @Data
-public class SysFormInstance extends BaseEntity
-{
-    private static final long serialVersionUID = 1L;
+public class SysFormInstance extends BaseEntity {
 
+
+    private static final long serialVersionUID = 8560918871627767075L;
     /** 主键ID */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /** 表单定义code */
@@ -33,6 +36,11 @@ public class SysFormInstance extends BaseEntity
      * 流程定义key
      */
     private String processKey;
+
+    /**
+     * 钉钉流程模板code
+     */
+    private String dingProcessCode;
 
     /**
      * 表单内容

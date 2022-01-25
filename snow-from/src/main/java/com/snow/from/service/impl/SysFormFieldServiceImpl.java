@@ -1,13 +1,14 @@
 package com.snow.from.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.core.text.Convert;
 import com.snow.common.utils.DateUtils;
 import com.snow.from.domain.SysFormField;
 import com.snow.from.mapper.SysFormFieldMapper;
 import com.snow.from.service.ISysFormFieldService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ import java.util.List;
  * @date 2021-03-21
  */
 @Service
-public class SysFormFieldServiceImpl implements ISysFormFieldService
-{
-    @Autowired
+public class SysFormFieldServiceImpl extends ServiceImpl<SysFormFieldMapper,SysFormField> implements ISysFormFieldService {
+
+    @Resource
     private SysFormFieldMapper sysFormFieldMapper;
 
     /**
@@ -31,7 +32,7 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
     @Override
     public SysFormField selectSysFormFieldById(Long id)
     {
-        return sysFormFieldMapper.selectSysFormFieldById(id);
+        return sysFormFieldMapper.selectById(id);
     }
 
     /**
@@ -41,8 +42,7 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
      * @return 单字段
      */
     @Override
-    public List<SysFormField> selectSysFormFieldList(SysFormField sysFormField)
-    {
+    public List<SysFormField> selectSysFormFieldList(SysFormField sysFormField) {
         return sysFormFieldMapper.selectSysFormFieldList(sysFormField);
     }
 
@@ -53,10 +53,9 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
      * @return 结果
      */
     @Override
-    public int insertSysFormField(SysFormField sysFormField)
-    {
+    public int insertSysFormField(SysFormField sysFormField) {
         sysFormField.setCreateTime(DateUtils.getNowDate());
-        return sysFormFieldMapper.insertSysFormField(sysFormField);
+        return sysFormFieldMapper.insert(sysFormField);
     }
 
     /**
@@ -66,10 +65,9 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
      * @return 结果
      */
     @Override
-    public int updateSysFormField(SysFormField sysFormField)
-    {
+    public int updateSysFormField(SysFormField sysFormField) {
         sysFormField.setUpdateTime(DateUtils.getNowDate());
-        return sysFormFieldMapper.updateSysFormField(sysFormField);
+        return sysFormFieldMapper.updateById(sysFormField);
     }
 
     /**
@@ -79,9 +77,8 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
      * @return 结果
      */
     @Override
-    public int deleteSysFormFieldByIds(String ids)
-    {
-        return sysFormFieldMapper.deleteSysFormFieldByIds(Convert.toStrArray(ids));
+    public int deleteSysFormFieldByIds(String ids) {
+        return sysFormFieldMapper.deleteBatchIds(Convert.toStrList(ids));
     }
 
     /**
@@ -91,8 +88,7 @@ public class SysFormFieldServiceImpl implements ISysFormFieldService
      * @return 结果
      */
     @Override
-    public int deleteSysFormFieldById(Long id)
-    {
-        return sysFormFieldMapper.deleteSysFormFieldById(id);
+    public int deleteSysFormFieldById(Long id) {
+        return sysFormFieldMapper.deleteById(id);
     }
 }

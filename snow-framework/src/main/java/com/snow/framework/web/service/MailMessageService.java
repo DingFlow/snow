@@ -1,10 +1,11 @@
 package com.snow.framework.web.service;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.util.FreemarkUtils;
-import com.snow.framework.web.domain.common.SysSendEmailDTO;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendEmailRequest;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.system.domain.SysMessageTemplate;
 import com.snow.system.service.ISysMessageTemplateService;
 import com.snow.system.service.impl.SysOaEmailServiceImpl;
@@ -49,10 +50,10 @@ public class MailMessageService {
      * 简单文本邮件
      * @param sysSendMessageDTO 对象
      */
-    public void sendTemplateSimpleMail(SysSendMessageDTO sysSendMessageDTO) {
+    public void sendTemplateSimpleMail(SysSendMessageRequest sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         if(ObjectUtil.isNull(sysMessageTemplate)){
-            log.error("@发送站内信是模板code不正确...");
+            log.error("@发送邮件的模板code不正确...");
             throw new RuntimeException("模板code不正确");
         }
         Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
@@ -87,9 +88,11 @@ public class MailMessageService {
      * HTML 文本邮件
      * @param  sysSendMessageDTO
      */
-    public void sendTemplateHtmlMail(SysSendMessageDTO sysSendMessageDTO)  {
+    public void sendTemplateHtmlMail(SysSendMessageRequest sysSendMessageDTO)  {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
+        //接收人set
         Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
+        //抄送人
         Set<String> ccSet = sysSendMessageDTO.getCCSet();
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -99,7 +102,8 @@ public class MailMessageService {
             }
             helper.setSubject(sysMessageTemplate.getTemplateName());
             if (CollectionUtils.isNotEmpty(sysSendMessageDTO.getReceiverSet())) {
-                helper.setTo(receiverSet.toArray(new String[0]));
+                Convert.toStrArray(sysSendMessageDTO.getReceiverSet());
+                helper.setTo(Convert.toStrArray(receiverSet));
             }
             if(CollectionUtils.isNotEmpty(ccSet)){
                 helper.setCc(ccSet.toArray(new String[0]));
@@ -116,13 +120,12 @@ public class MailMessageService {
             //todo 消息发送失败记录日志
         }
     }
-
     /**
      * 附件邮件
      * @param sysSendMessageDTO 接收者邮件
      * @throws MessagingException
      */
-    public void sendTemplateAttachmentsMail(SysSendMessageDTO sysSendMessageDTO) {
+    public void sendTemplateAttachmentsMail(SysSendMessageRequest sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         Set<String> receiverSet = sysSendMessageDTO.getReceiverSet();
         Set<String> ccSet = sysSendMessageDTO.getCCSet();
@@ -161,7 +164,7 @@ public class MailMessageService {
      * @param SysSendEmailDTO
      */
     @Deprecated
-    public void sendHtmlMail(SysSendEmailDTO SysSendEmailDTO) {
+    public void sendHtmlMail(SysSendEmailRequest SysSendEmailDTO) {
         Set<String> receiverSet = SysSendEmailDTO.getReceiverSet();
         Set<String> ccSet = SysSendEmailDTO.getCCSet();
         try {

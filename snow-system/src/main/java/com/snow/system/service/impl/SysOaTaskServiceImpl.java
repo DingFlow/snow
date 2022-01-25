@@ -1,11 +1,10 @@
 package com.snow.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.SequenceConstants;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
 import com.snow.common.enums.DingTalkListenerType;
@@ -176,7 +175,7 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
      * @param sysOaTaskDistribute 参数
      */
     private void sendInnerMessage(SysOaTaskDistribute sysOaTaskDistribute){
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_SYS_TODO_TASK.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.INNER_SYS_TODO_TASK.getCode());
         messageEventDTO.setProducerId(sysOaTaskDistribute.getCreateBy());
         messageEventDTO.setConsumerIds(Sets.newHashSet(sysOaTaskDistribute.getTaskDistributeId()));
         messageEventDTO.setMessageEventType(MessageEventType.INNER_SYS_TODO_TASK);

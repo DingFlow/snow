@@ -6,7 +6,7 @@ package com.snow.common.enums;
  * @Description:
  * @date 2021/11/19 15:34
  */
-public enum FormFieldTypeEnums {
+public enum FormFieldTypeEnum {
     INPUT("input","TextField","文本输入框"),
 
     PASSWORD("password","","密码输入框"),
@@ -53,7 +53,7 @@ public enum FormFieldTypeEnums {
     //组件信息
     private final String info;
 
-    FormFieldTypeEnums(String code,String dingTalkCode,String info)
+    FormFieldTypeEnum(String code, String dingTalkCode, String info)
     {
         this.code = code;
         this.dingTalkCode = dingTalkCode;
@@ -74,8 +74,8 @@ public enum FormFieldTypeEnums {
         return dingTalkCode;
     }
 
-    public static FormFieldTypeEnums getInfo(String info) {
-        for (FormFieldTypeEnums formFieldTypeEnums:FormFieldTypeEnums.values()){
+    public static FormFieldTypeEnum getInfo(String info) {
+        for (FormFieldTypeEnum formFieldTypeEnums: FormFieldTypeEnum.values()){
             if(formFieldTypeEnums.getInfo().equals(info)){
                 return formFieldTypeEnums;
             }
@@ -83,8 +83,8 @@ public enum FormFieldTypeEnums {
         return null;
     }
 
-    public static FormFieldTypeEnums getCode(String code) {
-        for (FormFieldTypeEnums formFieldTypeEnum:FormFieldTypeEnums.values()){
+    public static FormFieldTypeEnum getCode(String code) {
+        for (FormFieldTypeEnum formFieldTypeEnum: FormFieldTypeEnum.values()){
             if(formFieldTypeEnum.getCode().equals(code)){
                 return formFieldTypeEnum;
             }
@@ -92,8 +92,8 @@ public enum FormFieldTypeEnums {
         return null;
     }
 
-    public static FormFieldTypeEnums getDingTalkCode(String dingTalkCode) {
-        for (FormFieldTypeEnums formFieldTypeEnum:FormFieldTypeEnums.values()){
+    public static FormFieldTypeEnum getDingTalkCode(String dingTalkCode) {
+        for (FormFieldTypeEnum formFieldTypeEnum: FormFieldTypeEnum.values()){
             if(formFieldTypeEnum.getDingTalkCode().equals(dingTalkCode)){
                 return formFieldTypeEnum;
             }

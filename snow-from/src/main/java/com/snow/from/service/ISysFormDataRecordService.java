@@ -1,5 +1,6 @@
 package com.snow.from.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.from.domain.SysFormDataRecord;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author 阿吉
  * @date 2021-11-21
  */
-public interface ISysFormDataRecordService 
+public interface ISysFormDataRecordService extends IService<SysFormDataRecord>
 {
     /**
      * 查询单数据记录

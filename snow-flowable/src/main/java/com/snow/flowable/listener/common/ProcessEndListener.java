@@ -1,6 +1,5 @@
 package com.snow.flowable.listener.common;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -14,7 +13,7 @@ import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.service.FlowableService;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
@@ -86,7 +85,7 @@ public class ProcessEndListener implements FlowableEventListener {
     }
 
     private void sendInnerMessage(HistoricProcessInstance processInstance){
-        MessageEventDTO messageEventDTO=new MessageEventDTO(MessageEventType.INNER_PROCESS_END.getCode());
+        MessageEventRequest messageEventDTO=new MessageEventRequest(MessageEventType.INNER_PROCESS_END.getCode());
         messageEventDTO.setProducerId(String.valueOf(0));
         messageEventDTO.setConsumerIds(Sets.newHashSet(String.valueOf(processInstance.getStartUserId())));
         messageEventDTO.setMessageEventType(MessageEventType.INNER_PROCESS_END);

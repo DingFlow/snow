@@ -3,7 +3,7 @@ package com.snow.framework.web.message;
 import cn.hutool.core.bean.BeanUtil;
 import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.service.ISysMessageTransitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class TaskTodoStrategy implements MessageEventStrategy {
     private ISysMessageTransitionService messageTransitionService=SpringUtils.getBean(ISysMessageTransitionService.class);
 
     @Override
-    public void messageHandle(MessageEventDTO messageEvent) {
+    public void messageHandle(MessageEventRequest messageEvent) {
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         BeanUtil.copyProperties(messageEvent,sysMessageTransition);
         sysMessageTransition.setMessageType(MessageEventType.TASK_TODO.getCode());

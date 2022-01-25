@@ -2,6 +2,7 @@ package com.snow.from.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.from.domain.SysFormDataRecord;
 
 /**
@@ -10,8 +11,7 @@ import com.snow.from.domain.SysFormDataRecord;
  * @author 阿吉
  * @date 2021-11-21
  */
-public interface SysFormDataRecordMapper 
-{
+public interface SysFormDataRecordMapper extends BaseMapper<SysFormDataRecord> {
     /**
      * 查询单数据记录
      * 

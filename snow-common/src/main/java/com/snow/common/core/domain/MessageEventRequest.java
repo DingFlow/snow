@@ -15,8 +15,7 @@ import java.util.Set;
  * @create: 2021-03-30 13:46
  **/
 @Data
-public class MessageEventDTO extends ApplicationEvent implements Serializable {
-
+public class MessageEventRequest extends ApplicationEvent implements Serializable {
 
     private static final long serialVersionUID = -8404237283199119018L;
 
@@ -69,7 +68,7 @@ public class MessageEventDTO extends ApplicationEvent implements Serializable {
      */
     private Integer messageShow;
 
-    public MessageEventDTO(Object source) {
+    public MessageEventRequest(Object source) {
         super(source);
     }
 }

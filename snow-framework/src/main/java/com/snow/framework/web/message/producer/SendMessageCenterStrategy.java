@@ -2,7 +2,7 @@ package com.snow.framework.web.message.producer;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.common.core.domain.MessageEventDTO;
+import com.snow.common.core.domain.MessageEventRequest;
 import com.snow.framework.web.message.MessageEventStrategy;
 import com.snow.system.domain.SysMessageTransition;
 import com.snow.system.service.ISysMessageTransitionService;
@@ -21,7 +21,7 @@ public class SendMessageCenterStrategy  implements MessageEventStrategy {
     private ISysMessageTransitionService messageTransitionService= SpringUtils.getBean(ISysMessageTransitionService.class);
 
     @Override
-    public void messageHandle(MessageEventDTO messageEventDTO) {
+    public void messageHandle(MessageEventRequest messageEventDTO) {
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         BeanUtil.copyProperties(messageEventDTO,sysMessageTransition);
         sysMessageTransition.setMessageType(messageEventDTO.getMessageEventType().getCode());

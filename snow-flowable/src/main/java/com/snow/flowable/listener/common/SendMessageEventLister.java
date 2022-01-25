@@ -17,7 +17,7 @@ import com.snow.flowable.common.enums.FlowDefEnum;
 import com.snow.flowable.listener.AbstractEventListener;
 import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.framework.web.service.MailMessageService;
 import com.snow.framework.web.service.NewsTriggerService;
 import com.snow.system.domain.SysUser;
@@ -197,7 +197,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             map.put("processInstance", processInstance.getProcessDefinitionName());
             map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
             map.put("datetime", DateUtil.formatDateTime(new Date()));
-            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
+            SysSendMessageRequest sysSendMessageDTO = SysSendMessageRequest.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
                     .receiver(getUserInfo(processInstance.getStartUserId()).getEmail())
                     .paramMap(map)
                     .build();
@@ -237,7 +237,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                         map.put("processInstance", processDefinition.getName());
                         map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/findTasksByUserId");
                         map.put("datetime", DateUtil.formatDateTime(new Date()));
-                        SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.TASK_CREATED_CODE)
+                        SysSendMessageRequest sysSendMessageDTO = SysSendMessageRequest.builder().templateByCode(MessageConstants.TASK_CREATED_CODE)
                                 .receiver(t.getEmail())
                                 .paramMap(map)
                                 .build();
@@ -274,7 +274,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             map.put("url", CacheUtils.getSysConfig(CacheConstants.SYS_DOMAIN,"http://localhost")+"/flow/getMyHistoricProcessInstance");
             map.put("datetime", DateUtil.formatDateTime(new Date()));
 
-            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
+            SysSendMessageRequest sysSendMessageDTO = SysSendMessageRequest.builder().templateByCode(MessageConstants.PROCESS_STARTED_CODE)
                     .receiverSet(Sets.newHashSet(getUserInfo(processInstance.getStartUserId()).getDingUserId()))
                     .paramMap(map)
                     .dingTalkMessageType(DingTalkMessageType.TEXT)
@@ -301,7 +301,7 @@ public class SendMessageEventLister extends AbstractEventListener {
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
             Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
-            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+            SysSendMessageRequest sysSendMessageDTO = SysSendMessageRequest.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiver(getUserInfo(hisProcessInstance.getStartUserId()).getEmail())
                     .paramMap(map)
                     .build();
@@ -327,7 +327,7 @@ public class SendMessageEventLister extends AbstractEventListener {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
             Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
 
-            SysSendMessageDTO sysSendMessageDTO = SysSendMessageDTO.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
+            SysSendMessageRequest sysSendMessageDTO = SysSendMessageRequest.builder().templateByCode(MessageConstants.PROCESS_COMPLETED_CODE)
                     .receiverSet(Sets.newHashSet(getUserInfo(hisProcessInstance.getStartUserId()).getDingUserId()))
                     .paramMap(map)
                     .dingTalkMessageType(DingTalkMessageType.TEXT)

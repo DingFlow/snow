@@ -1,8 +1,8 @@
 package com.snow.framework.web.message.producer;
 
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.common.core.domain.MessageEventDTO;
-import com.snow.framework.web.domain.common.SysSendMessageDTO;
+import com.snow.common.core.domain.MessageEventRequest;
+import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.framework.web.message.MessageEventStrategy;
 import com.snow.framework.web.service.InnerMessageService;
 import org.springframework.stereotype.Component;
@@ -16,8 +16,8 @@ public class InnerMessageStrategy  implements MessageEventStrategy {
     private InnerMessageService innerMessageService= SpringUtils.getBean(InnerMessageService.class);
 
     @Override
-    public void messageHandle(MessageEventDTO messageEventDTO) {
-        SysSendMessageDTO sysSendMessageDTO= SysSendMessageDTO.builder().from(messageEventDTO.getProducerId())
+    public void messageHandle(MessageEventRequest messageEventDTO) {
+        SysSendMessageRequest sysSendMessageDTO= SysSendMessageRequest.builder().from(messageEventDTO.getProducerId())
                 .receiverSet(messageEventDTO.getConsumerIds())
                 .paramMap(messageEventDTO.getParamMap())
                 .appUrl(messageEventDTO.getAppUrl())

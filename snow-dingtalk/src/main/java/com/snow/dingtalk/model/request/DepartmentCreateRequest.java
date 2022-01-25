@@ -1,6 +1,6 @@
 package com.snow.dingtalk.model.request;
 
-import com.snow.common.enums.FormFieldTypeEnums;
+import com.snow.common.enums.FormFieldTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -131,7 +131,7 @@ public class DepartmentCreateRequest {
 
         private String templateEditUrl;
 
-        private FormFieldTypeEnums formComponentType;
+        private FormFieldTypeEnum formComponentType;
 
         @Data
         public static class FormComponentVo implements Serializable {

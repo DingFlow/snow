@@ -20,12 +20,12 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 @Builder
-public class SysSendMessageDTO implements Serializable {
+public class SysSendMessageRequest implements Serializable {
 
 
     private static final long serialVersionUID = 9148998626002082665L;
     /**
-     * 模板code
+     * 模板code(默
      */
     private String templateByCode;
 

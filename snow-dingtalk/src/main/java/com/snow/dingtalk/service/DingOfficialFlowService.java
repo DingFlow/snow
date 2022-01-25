@@ -4,6 +4,7 @@ import com.dingtalk.api.response.OapiProcessListbyuseridResponse;
 import com.dingtalk.api.response.OapiProcessTemplateManageGetResponse;
 import com.dingtalk.api.response.OapiProcessinstanceGetResponse;
 import com.snow.dingtalk.model.request.*;
+import com.snow.dingtalk.model.response.DingCreateTaskResponse;
 
 import java.util.List;
 
@@ -23,10 +24,12 @@ public interface DingOfficialFlowService {
     String saveProcess(SaveProcessRequest saveFlowRequest);
 
     /**
-     * 发起审批实例
+     * 发起审批实例（官方）
      * @return
      */
     String startProcessInstance(StartFlowRequest startFlowRequest);
+
+
 
     /**
      * 获取当前企业所有可管理的模版
@@ -66,10 +69,15 @@ public interface DingOfficialFlowService {
     Boolean terminateProcessInstance(FlowTerminateProcessInstanceRequest flowTerminateProcessInstanceRequest);
 
 
-    void bpmsInstanceChange();
+    /**
+     * 发起流程实例（自有OA)
+     * @return
+     */
+    String saveFakeProcessInstance(StartFakeProcessInstanceRequest startFakeProcessInstanceRequest);
 
-    void bpmsTaskChange();
+
+    List<DingCreateTaskResponse> createProcessTask(SaveTaskRequest saveTaskRequest);
 
 
-
+    void updateProcessTask();
 }
