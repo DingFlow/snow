@@ -9,7 +9,7 @@ import com.aliyun.teaopenapi.models.Config;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkLogType;
@@ -39,7 +39,7 @@ public class BaseService {
      * 获取token
      * @return
      */
-    @SyncLog(dingTalkLogType = DingTalkLogType.GET_TOKEN,dingTalkUrl=BaseConstantUrl.GET_TOKEN_URL)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.GET_TOKEN,dingTalkUrl=BaseConstantUrl.GET_TOKEN_URL)
     public String getDingTalkToken(){
         //创建缓存，缓存默认是7100S
         TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);
@@ -70,7 +70,7 @@ public class BaseService {
      * 钉钉新版服务费token获取
      * @return token值
      */
-    @SyncLog(dingTalkLogType = DingTalkLogType.GET_TOKEN_V2)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.GET_TOKEN_V2)
     public String getDingTalkTokenV2(){
         //创建缓存，缓存默认是7100S
         TimedCache<String, String> timedCache = CacheUtil.newTimedCache(7100);

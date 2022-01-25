@@ -16,7 +16,7 @@ import com.dingtalk.api.response.OapiV2UserGetResponse;
 import com.dingtalk.api.response.OapiWorkrecordAddResponse;
 import com.dingtalk.api.response.OapiWorkrecordGetbyuseridResponse;
 import com.dingtalk.api.response.OapiWorkrecordUpdateResponse;
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.spring.SpringUtils;
@@ -65,7 +65,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
      * @param workrecordAddRequest
      * @return
      */
-    @SyncLog(dingTalkLogType = DingTalkLogType.WORK_RECODE_CREATE,dingTalkUrl=BaseConstantUrl.WORK_RECORD_CREATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.WORK_RECODE_CREATE,dingTalkUrl=BaseConstantUrl.WORK_RECORD_CREATE)
     @Override
     public String create(WorkrecordAddRequest workrecordAddRequest){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.WORK_RECORD_CREATE);
@@ -211,7 +211,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
      * @return
      */
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.GET_WORK_RECORD_USER,dingTalkUrl=BaseConstantUrl.GET_WORK_RECORD_USER_ID_)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.GET_WORK_RECORD_USER,dingTalkUrl=BaseConstantUrl.GET_WORK_RECORD_USER_ID_)
     public OapiWorkrecordGetbyuseridResponse.PageResult getWorkRecordByUserId(WorkrecordGetbyuseridRequest workrecordGetbyuseridRequest){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_WORK_RECORD_USER_ID_);
         OapiWorkrecordGetbyuseridRequest req = new OapiWorkrecordGetbyuseridRequest();
@@ -239,7 +239,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
      * @return
      */
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.WORK_RECORD_UPDATE,dingTalkUrl=BaseConstantUrl.WORK_RECORD_UPDATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.WORK_RECORD_UPDATE,dingTalkUrl=BaseConstantUrl.WORK_RECORD_UPDATE)
     public Boolean update(String userId,String recordId){
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.WORK_RECORD_UPDATE);
         OapiWorkrecordUpdateRequest req = new OapiWorkrecordUpdateRequest();

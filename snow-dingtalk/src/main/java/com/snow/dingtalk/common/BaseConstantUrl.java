@@ -198,4 +198,22 @@ public class BaseConstantUrl {
      * 外部联系人列表
      */
     public static final String EXT_CONTACT_USER_LABEL="https://oapi.dingtalk.com/topapi/extcontact/listlabelgroups";
+
+    //*********************************************************考勤相关
+    /**
+     * 上传考勤记录
+     */
+    public static final String ATTENDANCE_RECORD_UPLOAD="https://oapi.dingtalk.com/topapi/attendance/record/upload";
+
+    /**
+     * 获取考勤记录
+     */
+    public static final String ATTENDANCE_RECORD_LIST="https://oapi.dingtalk.com/attendance/list";
+
+    /**
+     * 获取考勤记录详情
+     */
+    public static final String ATTENDANCE_RECORD_RECORD="https://oapi.dingtalk.com/attendance/listRecord";
+
+
 }

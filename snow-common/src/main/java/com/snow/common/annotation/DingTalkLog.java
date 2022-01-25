@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface SyncLog
+public @interface DingTalkLog
 {
 
     /**
@@ -27,6 +27,7 @@ public @interface SyncLog
     /**
      *钉钉同步方式
      */
+    @Deprecated
     public DingTalkSyncType dingTalkSyncType() default DingTalkSyncType.AUTOMATIC;
 
     /**
@@ -39,6 +40,7 @@ public @interface SyncLog
      * 同步日志类型
      * @return
      */
+    @Deprecated
     public SyncLogType syncLogTpye() default SyncLogType.SYNC_DINGTALK;
 
     /**

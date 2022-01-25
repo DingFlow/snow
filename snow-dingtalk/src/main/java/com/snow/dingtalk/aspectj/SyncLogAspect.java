@@ -1,7 +1,8 @@
 package com.snow.dingtalk.aspectj;
 
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.BusinessStatus;
+import com.snow.common.exception.DingTalkApiException;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.json.JSON;
 import com.snow.common.utils.ServletUtils;
@@ -23,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class SyncLogAspect
     private static final Logger log = LoggerFactory.getLogger(SyncLogAspect.class);
 
     // 配置织入点
-    @Pointcut("@annotation(com.snow.common.annotation.SyncLog)")
+    @Pointcut("@annotation(com.snow.common.annotation.DingTalkLog)")
     public void logPointCut()
     {
     }
@@ -72,7 +72,7 @@ public class SyncLogAspect
         try
         {
             // 获得注解
-            SyncLog controllerLog = getAnnotationLog(joinPoint);
+            DingTalkLog controllerLog = getAnnotationLog(joinPoint);
             if (controllerLog == null) {
                 return;
             }
@@ -98,11 +98,15 @@ public class SyncLogAspect
             sysDingtalkSyncLog.setJsonResult(StringUtils.substring(JSON.marshal(jsonResult), 0, 2000));
             Optional.ofNullable(ServletUtils.getRequest()).ifPresent(t->sysDingtalkSyncLog.setOperUrl(ServletUtils.getRequest().getRequestURI()));
             if (e != null) {
-                if(e instanceof SyncDataException){
+                if(e instanceof SyncDataException ){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
                     sysDingtalkSyncLog.setOperDingtalkParam(((SyncDataException) e).getRequestParam());
                     sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
-                }else if(e instanceof ApiException){
+                }else if(e instanceof DingTalkApiException){
+                    sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
+                    sysDingtalkSyncLog.setOperDingtalkParam(((DingTalkApiException) e).getRequestParam());
+                    sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                } else if(e instanceof ApiException){
                     sysDingtalkSyncLog.setStatus(BusinessStatus.FAIL.ordinal());
                     sysDingtalkSyncLog.setErrorMsg(StringUtils.substring(((ApiException) e).getErrMsg(), 0, 2000));
                 }
@@ -140,7 +144,7 @@ public class SyncLogAspect
      * @param sysDingtalkSyncLog 操作日志
      * @throws Exception
      */
-    public void getControllerMethodDescription(SyncLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
+    public void getControllerMethodDescription(DingTalkLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
     {
         sysDingtalkSyncLog.setTitle(log.dingTalkLogType().getTitle());
         sysDingtalkSyncLog.setModuleType(log.dingTalkLogType().getModuleType());
@@ -172,7 +176,7 @@ public class SyncLogAspect
     /**
      * 是否存在注解，如果存在就获取
      */
-    private SyncLog getAnnotationLog(JoinPoint joinPoint) throws Exception
+    private DingTalkLog getAnnotationLog(JoinPoint joinPoint) throws Exception
     {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
@@ -180,7 +184,7 @@ public class SyncLogAspect
 
         if (method != null)
         {
-            return method.getAnnotation(SyncLog.class);
+            return method.getAnnotation(DingTalkLog.class);
         }
         return null;
     }

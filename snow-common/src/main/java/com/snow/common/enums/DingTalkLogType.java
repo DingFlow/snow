@@ -82,7 +82,16 @@ public enum DingTalkLogType {
      */
     GET_TOKEN(8,4,"获取DingTalkToken"),
 
-    GET_TOKEN_V2(8,4,"获取DingTalkTokenV2")
+    GET_TOKEN_V2(8,4,"获取DingTalkTokenV2"),
+
+    /**
+     * 考勤
+     */
+    UPLOAD_ATTENDANCE_RECORD(9,1,"上传考勤"),
+
+    ATTENDANCE_RECORD_LIST(9,2,"考勤记录"),
+
+    ATTENDANCE_RECORD_RECORD(9,3,"考勤详情")
     ;
 
 

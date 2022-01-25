@@ -5,8 +5,7 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
-import com.snow.common.annotation.SyncLog;
-import com.snow.common.enums.DingTalkListenerType;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.DingTalkSyncType;
 import com.snow.common.exception.SyncDataException;
@@ -33,7 +32,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
 
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_REGISTER,dingTalkUrl=BaseConstantUrl.REGISTER_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.CALL_BACK_REGISTER,dingTalkUrl=BaseConstantUrl.REGISTER_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void registerCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.REGISTER_CALL_BACK);
         OapiCallBackRegisterCallBackRequest request = new OapiCallBackRegisterCallBackRequest();
@@ -53,7 +52,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_UPDATE,dingTalkUrl=BaseConstantUrl.UPDATE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.CALL_BACK_UPDATE,dingTalkUrl=BaseConstantUrl.UPDATE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public Boolean updateCallBack(DingtalkCallBack dingtalkCallBack) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.UPDATE_CALL_BACK);
         OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
@@ -75,7 +74,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.CALL_BACK_DELETE,dingTalkUrl=BaseConstantUrl.DELETE_CALL_BACK,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public void deleteCallBack() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.DELETE_CALL_BACK);
         OapiCallBackDeleteCallBackRequest request = new OapiCallBackDeleteCallBackRequest();
@@ -92,7 +91,7 @@ public class CallBackServiceImpl extends BaseService implements CallBackService 
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.CALL_BACK_FAILED_RESULT,dingTalkUrl=BaseConstantUrl.CALL_BACK_FAILED_RESULT,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.CALL_BACK_FAILED_RESULT,dingTalkUrl=BaseConstantUrl.CALL_BACK_FAILED_RESULT,dingTalkSyncType=DingTalkSyncType.AUTOMATIC)
     public List<OapiCallBackGetCallBackFailedResultResponse.Failed> getCallBackFailedResult() {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.CALL_BACK_FAILED_RESULT);
         OapiCallBackGetCallBackFailedResultRequest request = new OapiCallBackGetCallBackFailedResultRequest();

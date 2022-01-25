@@ -5,7 +5,7 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiMessageCorpconversationAsyncsendV2Request;
 import com.dingtalk.api.response.OapiMessageCorpconversationAsyncsendV2Response;
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.enums.DingTalkMessageType;
@@ -39,7 +39,7 @@ public class MessageServiceImpl extends BaseService implements MessageService {
     private ISysMessageTemplateService sysMessageTemplateService=SpringUtils.getBean(ISysMessageTemplateService.class);
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.ASYNCSEND_V2,dingTalkUrl=BaseConstantUrl.ASYNCSEND_V2)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.ASYNCSEND_V2,dingTalkUrl=BaseConstantUrl.ASYNCSEND_V2)
     public Long sendWorkNotice(SysSendMessageDTO sysSendMessageDTO) {
         SysMessageTemplate sysMessageTemplate= sysMessageTemplateService.getSysMessageTemplateByCode(sysSendMessageDTO.getTemplateByCode());
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ASYNCSEND_V2);

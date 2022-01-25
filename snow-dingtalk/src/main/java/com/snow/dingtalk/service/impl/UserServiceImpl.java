@@ -6,7 +6,7 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.*;
 import com.dingtalk.api.response.*;
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
@@ -75,7 +75,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
      * @return
      */
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.USER_CREATE,dingTalkUrl=BaseConstantUrl.USER_CREATE)
     public OapiV2UserCreateResponse.UserCreateResponse createUser(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_CREATE);
         OapiV2UserCreateRequest req = new OapiV2UserCreateRequest();
@@ -125,7 +125,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.USER_UPDATE,dingTalkUrl=BaseConstantUrl.USER_UPDATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.USER_UPDATE,dingTalkUrl=BaseConstantUrl.USER_UPDATE)
     public String updateUserV2(SysUser sysUser) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_UPDATE);
         OapiV2UserUpdateRequest req = new OapiV2UserUpdateRequest();
@@ -164,7 +164,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
      * @param ids
      */
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.USER_DELETE,dingTalkUrl=BaseConstantUrl.USER_DELETE)
     public void deleteUser(String ids) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.USER_DELETE);
         OapiV2UserDeleteRequest req = new OapiV2UserDeleteRequest();

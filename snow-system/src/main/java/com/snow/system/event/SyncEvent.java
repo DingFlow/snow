@@ -19,6 +19,7 @@ public class SyncEvent<T> extends ApplicationEvent {
         super(source);
     }
 
+
     public SyncEvent(Object source,T t) {
         super(source);
         this.t=t;

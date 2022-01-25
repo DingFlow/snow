@@ -9,7 +9,7 @@ import com.dingtalk.api.request.OapiBlackboardUpdateRequest;
 import com.dingtalk.api.response.OapiBlackboardCreateResponse;
 import com.dingtalk.api.response.OapiBlackboardDeleteResponse;
 import com.dingtalk.api.response.OapiBlackboardUpdateResponse;
-import com.snow.common.annotation.SyncLog;
+import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.spring.SpringUtils;
@@ -41,7 +41,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
 
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_CREATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_CREATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_CREATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_CREATE)
     public String createBlackboard(SysNotice sysNotice) {
 
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_CREATE);
@@ -75,7 +75,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_DELETE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_DELETE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_DELETE,dingTalkUrl=BaseConstantUrl.DEPARTMENT_DELETE)
     public void deleteBlackboard(String blackboardId) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_DELETE);
         OapiBlackboardDeleteRequest req = new OapiBlackboardDeleteRequest();
@@ -93,7 +93,7 @@ public class BlackboardServiceImpl extends BaseService implements BlackboardServ
     }
 
     @Override
-    @SyncLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_UPDATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_UPDATE)
+    @DingTalkLog(dingTalkLogType = DingTalkLogType.BLACKBOARD_UPDATE,dingTalkUrl=BaseConstantUrl.BLACKBOARD_UPDATE)
     public void updateBlackboard(SysNotice sysNotice) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.BLACKBOARD_UPDATE);
         OapiBlackboardUpdateRequest req = new OapiBlackboardUpdateRequest();
