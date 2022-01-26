@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import lombok.Data;
 #if($table.crud || $table.sub)
 #elseif($table.tree)

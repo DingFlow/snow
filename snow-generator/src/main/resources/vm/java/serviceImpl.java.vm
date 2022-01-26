@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.ArrayList;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.snow.common.utils.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.springframework.transaction.annotation.Transactional;
 #if($table.tree)
 import com.snow.common.core.domain.Ztree;
+import org.springframework.transaction.annotation.Transactional;
 #end
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
@@ -65,21 +66,21 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
 #if($column.query)
 #if($column.queryType == "EQ")
-        lambda.eq(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.eq(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "NE")
-        lambda.ne(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.ne(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "GT")
-        lambda.gt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.gt(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "GTE")
-        lambda.ge(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.ge(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "LT")
-        lambda.lt(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.lt(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "LTE")
-        lambda.le(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.le(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "LIKE")
-        lambda.like(ObjectUtil.isNotNull(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
+        lambda.like(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${ClassName}::get${AttrName},${className}.get${AttrName}());
 #elseif($queryType == "BETWEEN")
-        lambda.between(ObjectUtil.isNotNull(${className}.get${AttrName}()),${className}::get${AttrName}, ${className}.getParams().get("begin${AttrName}"), ${className}.getParams().get("end${AttrName}"));
+        lambda.between(ObjectUtil.isNotEmpty(${className}.get${AttrName}()),${className}::get${AttrName}, ${className}.getParams().get("begin${AttrName}"), ${className}.getParams().get("end${AttrName}"));
 #end
 #end
 #end

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改考勤')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-attendance-edit" th:object="${sysOaAttendance}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">考勤编码：</label>
+                <div class="col-sm-8">
+                    <input name="attendanceCode" th:field="*{attendanceCode}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">考勤来源：详见字典表sys_oa_attendance_source_type(ATM：考勤机打卡：</label>
+                <div class="col-sm-8">
+                    <select name="sourceType" class="form-control m-b" th:with="type=${@dict.getType('sys_oa_attendance_source_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{sourceType}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">关联的审批实例ID，当该字段非空时，表示打卡记录与请假、加班等审批有关：</label>
+                <div class="col-sm-8">
+                    <input name="procInstId" th:field="*{procInstId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">关联的审批实例ID，当该字段非空时，表示打卡记录与请假、加班等审批有关：</label>
+                <div class="col-sm-8">
+                    <input name="approveId" th:field="*{approveId}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">打卡结果：详见字典表sys_oa_attendance_time_result(Normal：正常Early：早退Late：迟到SeriousLate：严重迟到Absenteeism：旷工迟到NotSigned：未打卡)：</label>
+                <div class="col-sm-8">
+                    <select name="timeResult" class="form-control m-b" th:with="type=${@dict.getType('sys_oa_attendance_time_result')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{timeResult}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">位置结果：详见字典表sys_oa_attendance_location_result ：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_oa_attendance_location_result')}">
+                        <input type="radio" th:id="${'locationResult_' + dict.dictCode}" name="locationResult" th:value="${dict.dictValue}" th:field="*{locationResult}">
+                        <label th:for="${'locationResult_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">打卡人的UserID：</label>
+                <div class="col-sm-8">
+                    <input name="userId" th:field="*{userId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">考勤类型：详见字典表sys_oa_attendance_check_type(OnDuty：上班OffDuty：下班：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_oa_attendance_check_type')}">
+                        <input type="radio" th:id="${'checkType_' + dict.dictCode}" name="checkType" th:value="${dict.dictValue}" th:field="*{checkType}">
+                        <label th:for="${'checkType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">实际打卡时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="userCheckTime" th:value="${#dates.format(sysOaAttendance.userCheckTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工作日：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="workDate" th:value="${#dates.format(sysOaAttendance.workDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">打卡记录ID：</label>
+                <div class="col-sm-8">
+                    <input name="recordId" th:field="*{recordId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">排班ID：</label>
+                <div class="col-sm-8">
+                    <input name="planId" th:field="*{planId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">考勤组id：</label>
+                <div class="col-sm-8">
+                    <input name="groupId" th:field="*{groupId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">考勤组id：</label>
+                <div class="col-sm-8">
+                    <input name="attendanceId" th:field="*{attendanceId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">计算迟到和早退，基准时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="baseCheckTime" th:value="${#dates.format(sysOaAttendance.baseCheckTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">删除标识：</label>
+                <div class="col-sm-8">
+                    <input name="isDelete" th:field="*{isDelete}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/attendance";
+        $("#form-attendance-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-attendance-edit').serialize());
+            }
+        }
+
+        $("input[name='userCheckTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='workDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='baseCheckTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

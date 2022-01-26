@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysOaAttendanceMapper">
+
+    <resultMap type="SysOaAttendance" id="SysOaAttendanceResult">
+            <result property="id"    column="id"    />
+            <result property="attendanceCode"    column="attendance_code"    />
+            <result property="sourceType"    column="source_type"    />
+            <result property="procInstId"    column="proc_inst_id"    />
+            <result property="approveId"    column="approve_id"    />
+            <result property="timeResult"    column="time_result"    />
+            <result property="locationResult"    column="location_result"    />
+            <result property="userId"    column="user_id"    />
+            <result property="checkType"    column="check_type"    />
+            <result property="userCheckTime"    column="user_check_time"    />
+            <result property="workDate"    column="work_date"    />
+            <result property="recordId"    column="record_id"    />
+            <result property="planId"    column="plan_id"    />
+            <result property="groupId"    column="group_id"    />
+            <result property="attendanceId"    column="attendance_id"    />
+            <result property="baseCheckTime"    column="base_check_time"    />
+            <result property="createBy"    column="create_by"    />
+            <result property="updateBy"    column="update_by"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysOaAttendanceVo">
+        select id, attendance_code, source_type, proc_inst_id, approve_id, time_result, location_result, user_id, check_type, user_check_time, work_date, record_id, plan_id, group_id, attendance_id, base_check_time, create_by, update_by, create_time, update_time, is_delete from sys_oa_attendance
+    </sql>
+
+    <select id="selectSysOaAttendanceList" parameterType="SysOaAttendance" resultMap="SysOaAttendanceResult">
+        <include refid="selectSysOaAttendanceVo"/>
+        <where>
+                <if test="attendanceCode != null  and attendanceCode != ''"> and attendance_code = #{attendanceCode}</if>
+                <if test="sourceType != null  and sourceType != ''"> and source_type = #{sourceType}</if>
+                <if test="procInstId != null  and procInstId != ''"> and proc_inst_id = #{procInstId}</if>
+                <if test="approveId != null  and approveId != ''"> and approve_id = #{approveId}</if>
+                <if test="timeResult != null  and timeResult != ''"> and time_result = #{timeResult}</if>
+                <if test="locationResult != null  and locationResult != ''"> and location_result = #{locationResult}</if>
+                <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+                <if test="checkType != null  and checkType != ''"> and check_type = #{checkType}</if>
+                <if test="userCheckTime != null "> and user_check_time = #{userCheckTime}</if>
+                <if test="workDate != null "> and work_date = #{workDate}</if>
+                <if test="recordId != null "> and record_id = #{recordId}</if>
+                <if test="planId != null "> and plan_id = #{planId}</if>
+                <if test="groupId != null "> and group_id = #{groupId}</if>
+                <if test="attendanceId != null "> and attendance_id = #{attendanceId}</if>
+                <if test="baseCheckTime != null "> and base_check_time = #{baseCheckTime}</if>
+                <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+     </select>
+
+    <select id="selectSysOaAttendanceById" parameterType="Long" resultMap="SysOaAttendanceResult">
+            <include refid="selectSysOaAttendanceVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertSysOaAttendance" parameterType="SysOaAttendance" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_oa_attendance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+              <if test="attendanceCode != null and attendanceCode != ''">attendance_code,</if>
+              <if test="sourceType != null">source_type,</if>
+              <if test="procInstId != null">proc_inst_id,</if>
+              <if test="approveId != null and approveId != ''">approve_id,</if>
+              <if test="timeResult != null">time_result,</if>
+              <if test="locationResult != null">location_result,</if>
+              <if test="userId != null">user_id,</if>
+              <if test="checkType != null">check_type,</if>
+              <if test="userCheckTime != null">user_check_time,</if>
+              <if test="workDate != null">work_date,</if>
+              <if test="recordId != null">record_id,</if>
+              <if test="planId != null">plan_id,</if>
+              <if test="groupId != null">group_id,</if>
+              <if test="attendanceId != null">attendance_id,</if>
+              <if test="baseCheckTime != null">base_check_time,</if>
+              <if test="createBy != null">create_by,</if>
+              <if test="updateBy != null">update_by,</if>
+              <if test="createTime != null">create_time,</if>
+              <if test="updateTime != null">update_time,</if>
+              <if test="isDelete != null">is_delete,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+               <if test="attendanceCode != null and attendanceCode != ''">#{attendanceCode},</if>
+               <if test="sourceType != null">#{sourceType},</if>
+               <if test="procInstId != null">#{procInstId},</if>
+               <if test="approveId != null and approveId != ''">#{approveId},</if>
+               <if test="timeResult != null">#{timeResult},</if>
+               <if test="locationResult != null">#{locationResult},</if>
+               <if test="userId != null">#{userId},</if>
+               <if test="checkType != null">#{checkType},</if>
+               <if test="userCheckTime != null">#{userCheckTime},</if>
+               <if test="workDate != null">#{workDate},</if>
+               <if test="recordId != null">#{recordId},</if>
+               <if test="planId != null">#{planId},</if>
+               <if test="groupId != null">#{groupId},</if>
+               <if test="attendanceId != null">#{attendanceId},</if>
+               <if test="baseCheckTime != null">#{baseCheckTime},</if>
+               <if test="createBy != null">#{createBy},</if>
+               <if test="updateBy != null">#{updateBy},</if>
+               <if test="createTime != null">#{createTime},</if>
+               <if test="updateTime != null">#{updateTime},</if>
+               <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysOaAttendance" parameterType="SysOaAttendance">
+        update sys_oa_attendance
+        <trim prefix="SET" suffixOverrides=",">
+              <if test="attendanceCode != null and attendanceCode != ''">attendance_code = #{attendanceCode},</if>
+              <if test="sourceType != null">source_type = #{sourceType},</if>
+              <if test="procInstId != null">proc_inst_id = #{procInstId},</if>
+              <if test="approveId != null and approveId != ''">approve_id = #{approveId},</if>
+              <if test="timeResult != null">time_result = #{timeResult},</if>
+              <if test="locationResult != null">location_result = #{locationResult},</if>
+              <if test="userId != null">user_id = #{userId},</if>
+              <if test="checkType != null">check_type = #{checkType},</if>
+              <if test="userCheckTime != null">user_check_time = #{userCheckTime},</if>
+              <if test="workDate != null">work_date = #{workDate},</if>
+              <if test="recordId != null">record_id = #{recordId},</if>
+              <if test="planId != null">plan_id = #{planId},</if>
+              <if test="groupId != null">group_id = #{groupId},</if>
+              <if test="attendanceId != null">attendance_id = #{attendanceId},</if>
+              <if test="baseCheckTime != null">base_check_time = #{baseCheckTime},</if>
+              <if test="createBy != null">create_by = #{createBy},</if>
+              <if test="updateBy != null">update_by = #{updateBy},</if>
+              <if test="createTime != null">create_time = #{createTime},</if>
+              <if test="updateTime != null">update_time = #{updateTime},</if>
+              <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysOaAttendanceById" parameterType="Long">
+        delete from sys_oa_attendance where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOaAttendanceByIds" parameterType="String">
+        delete from sys_oa_attendance where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

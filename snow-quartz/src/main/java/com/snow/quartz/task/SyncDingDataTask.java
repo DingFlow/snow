@@ -15,8 +15,8 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysConfigService;
 import com.snow.system.service.impl.SysDeptServiceImpl;
 import com.snow.system.service.impl.SysUserServiceImpl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -30,30 +30,27 @@ import java.util.List;
  **/
 @Component("syncDingDataTask")
 @Slf4j
+@RequiredArgsConstructor
 public class SyncDingDataTask {
-    @Autowired
-    private DepartmentServiceImpl departmentService;
 
-    @Autowired
-    private SysUserServiceImpl sysUserService;
+    private final DepartmentServiceImpl departmentService;
 
-    @Autowired
-    private UserServiceImpl userService;
+    private final SysUserServiceImpl sysUserService;
 
-    @Autowired
-    private SysPasswordService passwordService;
+    private final UserServiceImpl userService;
 
-    @Autowired
-    private SysDeptServiceImpl sysDeptService;
+    private final SysPasswordService passwordService;
 
-    @Autowired
-    private ISysConfigService configService;
+    private final SysDeptServiceImpl sysDeptService;
+
+    private final ISysConfigService configService;
 
 
     /**
      * 同步部门数据
      */
     public void syncDingDept(){
+        log.info("@@开始同步钉钉部门到系统本地......");
         //获取钉钉部门列表
         List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();
         if(CollUtil.isEmpty(dingTalkDepartmentList)){
@@ -74,45 +71,62 @@ public class SyncDingDataTask {
                 sysDeptService.insertDept(sysDept);
             }
         });
+        log.info("@@完成同步钉钉部门到系统本地......");
     }
 
     /**
      * 同步系统用户
      */
     public void syncDingUserInfo(){
+        log.info("@@开始同步钉钉用户到系统本地......");
         List<OapiDepartmentListResponse.Department> dingTalkDepartmentList = departmentService.getDingTalkDepartmentList();
-        Long cursor=0L;
         for (OapiDepartmentListResponse.Department department : dingTalkDepartmentList) {
+            long cursor=0L;
+            long size=10L;
             UserListRequest userListRequest=new UserListRequest();
             userListRequest.setDeptId(department.getId());
-            //目前用户少，直接获取20条
-            userListRequest.setSize(20L);
+            userListRequest.setSize(size);
             userListRequest.setCursor(cursor);
             //获取部门下的用户
-            OapiV2UserListResponse.PageResult userInfoByDept = userService.getUserInfoByDept(userListRequest);
-            List<OapiV2UserListResponse.ListUserResponse> list = userInfoByDept.getList();
-            if(CollUtil.isEmpty(list)){
-                return;
+            OapiV2UserListResponse.PageResult pageResult = userService.getUserInfoByDept(userListRequest);
+            updateOrInsertUser(pageResult.getList(),department.getId());
+            //获取是否还有数据
+            boolean hasMore = pageResult.getHasMore();
+            //获取下个游标的位置
+            cursor=pageResult.getNextCursor();
+            while (hasMore) {
+                userListRequest.setCursor(cursor);
+                pageResult = userService.getUserInfoByDept(userListRequest);
+                updateOrInsertUser(pageResult.getList(),department.getId());
+                hasMore=pageResult.getHasMore();
+                cursor=pageResult.getNextCursor();
             }
-            list.forEach(t->{
-                SysUser sysUser = warpUser(t);
-                sysUser.setDeptId(department.getId());
-                SysUser oldSysUser = sysUserService.selectUserByDingUserId(t.getUserid());
-                if(StringUtils.isNotNull(oldSysUser)){
-                    sysUser.setUserId(sysUser.getUserId());
-                    sysUserService.updateUser(sysUser);
-                }else {
-                    sysUser.setLoginName(t.getMobile());
-                    String password = configService.selectConfigByKey("sys.user.initPassword");
-                    //设置密码
-                    sysUser.setSalt(ShiroUtils.randomSalt());
-                    sysUser.setPassword(passwordService.encryptPassword(t.getMobile(), password, sysUser.getSalt()));
-                    //角色统一为2
-                    sysUser.setRoleIds(new Long[]{2L});
-                    sysUserService.insertUser(sysUser);
-                }
-            });
         }
+        log.info("@@完成同步钉钉用户到系统本地......");
+    }
+
+    private void updateOrInsertUser(List<OapiV2UserListResponse.ListUserResponse> userResponseList,Long departmentId){
+        if(CollUtil.isEmpty(userResponseList)){
+            return;
+        }
+        userResponseList.forEach(t->{
+            SysUser sysUser = warpUser(t);
+            sysUser.setDeptId(departmentId);
+            SysUser oldSysUser = sysUserService.selectUserByDingUserId(t.getUserid());
+            if(StringUtils.isNotNull(oldSysUser)){
+                sysUser.setUserId(sysUser.getUserId());
+                sysUserService.updateUser(sysUser);
+            }else {
+                sysUser.setLoginName(t.getMobile());
+                String password = configService.selectConfigByKey("sys.user.initPassword");
+                //设置密码
+                sysUser.setSalt(ShiroUtils.randomSalt());
+                sysUser.setPassword(passwordService.encryptPassword(t.getMobile(), password, sysUser.getSalt()));
+                //角色统一为2
+                sysUser.setRoleIds(new Long[]{2L});
+                sysUserService.insertUser(sysUser);
+            }
+        });
     }
 
     /**

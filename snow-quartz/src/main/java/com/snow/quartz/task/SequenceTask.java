@@ -28,7 +28,7 @@ public class SequenceTask {
         log.info("开始更新序列值时间:{}",DateUtil.now());
         SysSequence sysSequence=new SysSequence();
         List<SysSequence> sysSequences = sysSequenceService.selectSysSequenceList(sysSequence);
-        sysSequences.stream().forEach(t->{
+        sysSequences.forEach(t->{
             t.setCurrentValue(1L);
             sysSequenceService.updateSysSequence(t);
         });

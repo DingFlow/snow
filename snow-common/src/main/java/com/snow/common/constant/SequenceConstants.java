@@ -51,4 +51,9 @@ public class SequenceConstants {
      * 工号前缀
      */
     public static final String OA_SNOW="SNOW";
+
+    /**
+     * 考勤单号
+     */
+    public static final String OA_ATTENDANCE_SEQUENCE="OA_KQ";
 }

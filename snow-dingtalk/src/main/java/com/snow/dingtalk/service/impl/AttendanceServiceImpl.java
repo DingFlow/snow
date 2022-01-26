@@ -45,7 +45,7 @@ public class AttendanceServiceImpl extends BaseService implements AttendanceServ
      */
     @Override
     @DingTalkLog(dingTalkLogType=DingTalkLogType.ATTENDANCE_RECORD_LIST,dingTalkUrl =BaseConstantUrl.ATTENDANCE_RECORD_LIST)
-    public List<AttendanceListResponse> getAttendanceList(AttendanceListRequest attendanceListRequest) {
+    public AttendanceListResponse getAttendanceList(AttendanceListRequest attendanceListRequest) {
         DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ATTENDANCE_RECORD_LIST);
         OapiAttendanceListRequest req = BeanUtil.copyProperties(attendanceListRequest, OapiAttendanceListRequest.class);
         req.setIsI18n(false);
@@ -56,7 +56,10 @@ public class AttendanceServiceImpl extends BaseService implements AttendanceServ
                 log.error("@@获取考勤记录信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
             }
-            return Convert.toList(AttendanceListResponse.class,rsp.getRecordresult());
+            AttendanceListResponse attendanceListResponse=new AttendanceListResponse();
+            attendanceListResponse.setAttendanceList(Convert.toList(AttendanceListResponse.Attendance.class,rsp.getRecordresult()));
+            attendanceListResponse.setHasMore(rsp.getHasMore());
+            return attendanceListResponse;
         } catch (ApiException e) {
             log.error("@@获取考勤记录信息异常：{}",e.getMessage());
             throw new SyncDataException(JSON.toJSONString(req),e.getErrMsg());

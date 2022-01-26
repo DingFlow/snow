@@ -21,7 +21,7 @@ public interface AttendanceService {
     * @param attendanceListRequest 考勤记录请求参数
     * @return 考勤记录
     */
-   List<AttendanceListResponse> getAttendanceList(AttendanceListRequest attendanceListRequest);
+   AttendanceListResponse getAttendanceList(AttendanceListRequest attendanceListRequest);
 
    /**
     * 获取打卡记录详情

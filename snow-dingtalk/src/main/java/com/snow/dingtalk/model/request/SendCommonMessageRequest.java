@@ -16,6 +16,7 @@ import java.io.Serializable;
 public class SendCommonMessageRequest implements Serializable {
 
 
+    private static final long serialVersionUID = 44215676581024630L;
     /**
      * 模板Code
      */
