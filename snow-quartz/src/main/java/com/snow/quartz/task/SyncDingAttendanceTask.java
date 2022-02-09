@@ -12,8 +12,11 @@ import com.snow.dingtalk.model.request.AttendanceListRequest;
 import com.snow.dingtalk.model.response.AttendanceListResponse;
 import com.snow.dingtalk.service.AttendanceService;
 import com.snow.system.domain.SysOaAttendance;
+import com.snow.system.domain.SysUser;
+import com.snow.system.mapper.SysUserMapper;
 import com.snow.system.service.ISysOaAttendanceService;
 import com.snow.system.service.ISysSequenceService;
+import com.snow.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -39,6 +42,8 @@ public class SyncDingAttendanceTask {
     
     private final ISysSequenceService sequenceService;
 
+    private final SysUserMapper sysUserMapper;
+
     /**
      * 定时任务同步数据，每十分钟同步一次
      * @param dataFrom 开始时间
@@ -54,13 +59,16 @@ public class SyncDingAttendanceTask {
         if(StrUtil.isNotBlank(dataTo)){
             attendanceListRequest.setWorkDateTo(dataTo);
         }else {
-            attendanceListRequest.setWorkDateTo(DateUtils.getDate()+" 59:59:59");
+            attendanceListRequest.setWorkDateTo(DateUtils.getDate()+" 23:59:59");
         }
         long offset=0L;
         long limit=10L;
         attendanceListRequest.setOffset(offset);
         attendanceListRequest.setLimit(limit);
-        attendanceListRequest.setUserIdList(CollUtil.newArrayList("manager4480"));
+        //获取所有用户
+        SysUser sysUser=new SysUser();
+        List<SysUser> sysUsers = sysUserMapper.selectUserList(sysUser);
+        attendanceListRequest.setUserIdList(sysUsers.stream().map(SysUser::getDingUserId).collect(Collectors.toList()));
         AttendanceListResponse attendanceListResponse = attendanceService.getAttendanceList(attendanceListRequest);
         saveSysOaAttendance(attendanceListResponse);
         boolean isHasMore=attendanceListResponse.isHasMore();
@@ -86,6 +94,12 @@ public class SyncDingAttendanceTask {
                 SysOaAttendance sysOaAttendance = BeanUtil.copyProperties(attendance, SysOaAttendance.class);
                 sysOaAttendance.setAttendanceCode(newSequenceNo);
                 sysOaAttendance.setAttendanceId(attendance.getId());
+                //把钉钉的userId转化成系统userId保存
+                SysUser sysUser = sysUserMapper.selectUserByDingUserId(attendance.getUserId());
+                if(ObjectUtil.isNull(sysUser)){
+                    return null;
+                }
+                sysOaAttendance.setUserId(String.valueOf(sysUser.getUserId()));
                 //判断是否已同步过
                 LambdaQueryWrapper<SysOaAttendance> sysOaAttendanceLambdaQueryWrapper = new QueryWrapper<SysOaAttendance>().lambda().eq(SysOaAttendance::getAttendanceId,attendance.getId());
                 SysOaAttendance oaAttendance= sysOaAttendanceService.getOne(sysOaAttendanceLambdaQueryWrapper);

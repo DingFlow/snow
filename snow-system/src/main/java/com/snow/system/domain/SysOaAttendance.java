@@ -62,7 +62,7 @@ public class SysOaAttendance extends BaseEntity
     private Date userCheckTime;
 
     /** 工作日 */
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @Excel(name = "工作日", width = 30, dateFormat = "yyyy-MM-dd")
     private Date workDate;
 

@@ -1,6 +1,15 @@
 package com.snow.system.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.snow.common.constant.SequenceConstants;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysSequenceService;
+import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -34,6 +43,12 @@ public class SysOaAttendanceController extends BaseController
     @Autowired
     private ISysOaAttendanceService sysOaAttendanceService;
 
+    @Autowired
+    private ISysSequenceService sequenceService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
     @RequiresPermissions("system:attendance:view")
     @GetMapping()
     public String attendance()
@@ -51,6 +66,12 @@ public class SysOaAttendanceController extends BaseController
     {
         startPage();
         List<SysOaAttendance> list = sysOaAttendanceService.selectSysOaAttendanceList(sysOaAttendance);
+        if(CollUtil.isNotEmpty(list)){
+            list.forEach(t->{
+                SysUser sysUser = sysUserService.selectUserById(Long.parseLong(t.getUserId()));
+                t.setUserId(sysUser.getUserName());
+            });
+        }
         return getDataTable(list);
     }
 
@@ -86,6 +107,15 @@ public class SysOaAttendanceController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SysOaAttendance sysOaAttendance)
     {
+        Long userId = ShiroUtils.getUserId();
+        sysOaAttendance.setUserId(String.valueOf(userId));
+        if(ObjectUtil.isEmpty(sysOaAttendance.getUserCheckTime())){
+            sysOaAttendance.setUserCheckTime(new Date());
+        }
+        String attendanceCode = sequenceService.getNewSequenceNo(SequenceConstants.OA_ATTENDANCE_SEQUENCE);
+        sysOaAttendance.setAttendanceCode(attendanceCode);
+        sysOaAttendance.setSourceType("USER");
+        sysOaAttendance.setWorkDate(new Date());
         return toAjax(sysOaAttendanceService.insertSysOaAttendance(sysOaAttendance));
     }
 
