@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysFnAccountBillMapper">
+
+    <resultMap type="SysFnAccountBill" id="SysFnAccountBillResult">
+            <result property="id"    column="id"    />
+            <result property="billNo"    column="bill_no"    />
+            <result property="accountNo"    column="account_no"    />
+            <result property="billType"    column="bill_type"    />
+            <result property="billAmount"    column="bill_amount"    />
+            <result property="remark"    column="remark"    />
+            <result property="createBy"    column="create_by"    />
+            <result property="updateBy"    column="update_by"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysFnAccountBillVo">
+        select id, bill_no, account_no, bill_type, bill_amount, remark, create_by, update_by, create_time, update_time, is_delete from sys_fn_account_bill
+    </sql>
+
+    <select id="selectSysFnAccountBillList" parameterType="SysFnAccountBill" resultMap="SysFnAccountBillResult">
+        <include refid="selectSysFnAccountBillVo"/>
+        <where>
+                <if test="billNo != null  and billNo != ''"> and bill_no like concat('%', #{billNo}, '%')</if>
+                <if test="accountNo != null  and accountNo != ''"> and account_no like concat('%', #{accountNo}, '%')</if>
+                <if test="billType != null "> and bill_type = #{billType}</if>
+        </where>
+     </select>
+
+    <select id="selectSysFnAccountBillById" parameterType="Long" resultMap="SysFnAccountBillResult">
+            <include refid="selectSysFnAccountBillVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertSysFnAccountBill" parameterType="SysFnAccountBill" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_fn_account_bill
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+              <if test="billNo != null and billNo != ''">bill_no,</if>
+              <if test="accountNo != null and accountNo != ''">account_no,</if>
+              <if test="billType != null">bill_type,</if>
+              <if test="billAmount != null">bill_amount,</if>
+              <if test="remark != null">remark,</if>
+              <if test="createBy != null">create_by,</if>
+              <if test="updateBy != null">update_by,</if>
+              <if test="createTime != null">create_time,</if>
+              <if test="updateTime != null">update_time,</if>
+              <if test="isDelete != null">is_delete,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+               <if test="billNo != null and billNo != ''">#{billNo},</if>
+               <if test="accountNo != null and accountNo != ''">#{accountNo},</if>
+               <if test="billType != null">#{billType},</if>
+               <if test="billAmount != null">#{billAmount},</if>
+               <if test="remark != null">#{remark},</if>
+               <if test="createBy != null">#{createBy},</if>
+               <if test="updateBy != null">#{updateBy},</if>
+               <if test="createTime != null">#{createTime},</if>
+               <if test="updateTime != null">#{updateTime},</if>
+               <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFnAccountBill" parameterType="SysFnAccountBill">
+        update sys_fn_account_bill
+        <trim prefix="SET" suffixOverrides=",">
+              <if test="billNo != null and billNo != ''">bill_no = #{billNo},</if>
+              <if test="accountNo != null and accountNo != ''">account_no = #{accountNo},</if>
+              <if test="billType != null">bill_type = #{billType},</if>
+              <if test="billAmount != null">bill_amount = #{billAmount},</if>
+              <if test="remark != null">remark = #{remark},</if>
+              <if test="createBy != null">create_by = #{createBy},</if>
+              <if test="updateBy != null">update_by = #{updateBy},</if>
+              <if test="createTime != null">create_time = #{createTime},</if>
+              <if test="updateTime != null">update_time = #{updateTime},</if>
+              <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysFnAccountBillById" parameterType="Long">
+        delete from sys_fn_account_bill where id = #{id}
+    </delete>
+
+    <delete id="deleteSysFnAccountBillByIds" parameterType="String">
+        delete from sys_fn_account_bill where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

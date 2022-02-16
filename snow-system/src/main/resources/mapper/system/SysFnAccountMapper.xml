@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysFnAccountMapper">
+
+    <resultMap type="SysFnAccount" id="SysFnAccountResult">
+            <result property="id"    column="id"    />
+            <result property="accountNo"    column="account_no"    />
+            <result property="accountName"    column="account_name"    />
+            <result property="totalAmount"    column="total_amount"    />
+            <result property="freezeAmount"    column="freeze_amount"    />
+            <result property="createBy"    column="create_by"    />
+            <result property="updateBy"    column="update_by"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectSysFnAccountVo">
+        select id, account_no, account_name, total_amount, freeze_amount, create_by, update_by, create_time, update_time, is_delete from sys_fn_account
+    </sql>
+
+    <select id="selectSysFnAccountList" parameterType="SysFnAccount" resultMap="SysFnAccountResult">
+        <include refid="selectSysFnAccountVo"/>
+        <where>
+                <if test="accountNo != null  and accountNo != ''"> and account_no like concat('%', #{accountNo}, '%')</if>
+                <if test="accountName != null  and accountName != ''"> and account_name like concat('%', #{accountName}, '%')</if>
+        </where>
+     </select>
+
+    <select id="selectSysFnAccountById" parameterType="Long" resultMap="SysFnAccountResult">
+            <include refid="selectSysFnAccountVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertSysFnAccount" parameterType="SysFnAccount" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_fn_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+              <if test="accountNo != null and accountNo != ''">account_no,</if>
+              <if test="accountName != null and accountName != ''">account_name,</if>
+              <if test="totalAmount != null">total_amount,</if>
+              <if test="freezeAmount != null">freeze_amount,</if>
+              <if test="createBy != null">create_by,</if>
+              <if test="updateBy != null">update_by,</if>
+              <if test="createTime != null">create_time,</if>
+              <if test="updateTime != null">update_time,</if>
+              <if test="isDelete != null">is_delete,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+               <if test="accountNo != null and accountNo != ''">#{accountNo},</if>
+               <if test="accountName != null and accountName != ''">#{accountName},</if>
+               <if test="totalAmount != null">#{totalAmount},</if>
+               <if test="freezeAmount != null">#{freezeAmount},</if>
+               <if test="createBy != null">#{createBy},</if>
+               <if test="updateBy != null">#{updateBy},</if>
+               <if test="createTime != null">#{createTime},</if>
+               <if test="updateTime != null">#{updateTime},</if>
+               <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFnAccount" parameterType="SysFnAccount">
+        update sys_fn_account
+        <trim prefix="SET" suffixOverrides=",">
+              <if test="accountNo != null and accountNo != ''">account_no = #{accountNo},</if>
+              <if test="accountName != null and accountName != ''">account_name = #{accountName},</if>
+              <if test="totalAmount != null">total_amount = #{totalAmount},</if>
+              <if test="freezeAmount != null">freeze_amount = #{freezeAmount},</if>
+              <if test="createBy != null">create_by = #{createBy},</if>
+              <if test="updateBy != null">update_by = #{updateBy},</if>
+              <if test="createTime != null">create_time = #{createTime},</if>
+              <if test="updateTime != null">update_time = #{updateTime},</if>
+              <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysFnAccountById" parameterType="Long">
+        delete from sys_fn_account where id = #{id}
+    </delete>
+
+    <delete id="deleteSysFnAccountByIds" parameterType="String">
+        delete from sys_fn_account where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

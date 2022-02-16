@@ -56,4 +56,14 @@ public class SequenceConstants {
      * 考勤单号
      */
     public static final String OA_ATTENDANCE_SEQUENCE="OA_KQ";
+
+    /**
+     * 账户
+     */
+    public static final String FN_ACCOUNT_NO="ZH";
+
+    /**
+     * 账户流水单
+     */
+    public static final String FN_ACCOUNT_BILL_NO="FN_LS";
 }
