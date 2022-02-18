@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('账户列表')" />
+    <link th:href="@{/css/toastr/toastr.min.css}" rel="stylesheet"/>
+</head>
+<body >
+ <div class="container-div" id="wrapper">
+
+        <div class="row">
+            <div class="col-sm-12 search-collapse wrapper wrapper-content animated fadeInRight">
+                <div class="col-md-4">
+                    <div class="payment-card">
+                        <i class="fa fa-cc-visa payment-icon-big text-success"></i>
+                        <h2>
+                            **** **** **** 1060
+                        </h2>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <small>
+                                    <strong>到期日:</strong> 10/16
+                                </small>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <small>
+                                    <strong>姓名:</strong> 小明
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="payment-card">
+                        <i class="fa fa-cc-mastercard payment-icon-big text-warning"></i>
+                        <h2>
+                            **** **** **** 7002
+                        </h2>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <small>
+                                    <strong>到期日:</strong> 10/16
+                                </small>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <small>
+                                    <strong>姓名:</strong> 小明
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="payment-card">
+                        <i class="fa fa-cc-discover payment-icon-big text-danger"></i>
+                        <h2>
+                            **** **** **** 3466
+                        </h2>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <small>
+                                    <strong>到期日:</strong> 10/16
+                                </small>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <small>
+                                    <strong>姓名:</strong> 小明
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>账户号：</label>
+                                <input type="text" name="accountNo"/>
+                            </li>
+                            <li>
+                                <label>账户名称：</label>
+                                <input type="text" name="accountName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:account:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:account:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:account:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:account:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:account:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:account:remove')}]];
+        var prefix = ctx + "system/account";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "账户",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    field: 'accountNo',
+                    title: '账户号'
+                },
+                {
+                    field: 'accountName',
+                    title: '账户名称'
+                },
+                {
+                    field: 'totalAmount',
+                    title: '账户总金额'
+                },
+                {
+                    field: 'freezeAmount',
+                    title: '账户冻结金额'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

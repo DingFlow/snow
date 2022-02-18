@@ -3,6 +3,8 @@ package com.snow.system.service;
 import java.util.List;
 import com.snow.system.domain.SysFnAccount;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.snow.system.domain.request.RechargeAccountRequest;
+import com.snow.system.domain.response.SysFnAccountResponse;
 
 /**
  * 账户Service接口
@@ -59,4 +61,18 @@ public interface ISysFnAccountService extends IService<SysFnAccount>
      * @return 结果
      */
     public int deleteSysFnAccountById(Long id);
+
+    /**
+     * 获取账户信息通过账户
+     * @param accountNo 账户号
+     * @return 账户信息
+     */
+    public SysFnAccountResponse getSysFnAccountByNo(String accountNo);
+
+    /**
+     *  充值账户
+     * @param rechargeAccountRequest
+     * @return
+     */
+    public boolean rechargeAccount(RechargeAccountRequest rechargeAccountRequest);
 }

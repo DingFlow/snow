@@ -1,33 +1,22 @@
 package com.snow.system.controller;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.snow.common.annotation.RepeatSubmit;
-import com.snow.common.constant.SequenceConstants;
-import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysFnAccountBill;
-import com.snow.system.service.ISysFnAccountBillService;
-import com.snow.system.service.ISysSequenceService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import org.springframework.stereotype.Controller;
-import com.snow.system.domain.SysFnAccount;
-import com.snow.system.service.ISysFnAccountService;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysFnAccount;
+import com.snow.system.domain.request.RechargeAccountRequest;
+import com.snow.system.service.ISysFnAccountService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 账户Controller
@@ -44,11 +33,6 @@ public class SysFnAccountController extends BaseController
     @Autowired
     private ISysFnAccountService sysFnAccountService;
 
-    @Autowired
-    private ISysSequenceService sysSequenceService;
-
-    @Autowired
-    private ISysFnAccountBillService sysFnAccountBillService;
 
     @RequiresPermissions("system:account:view")
     @GetMapping()
@@ -70,19 +54,7 @@ public class SysFnAccountController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 导出账户列表
-     */
-    @RequiresPermissions("system:account:export")
-    @Log(title = "账户", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    @ResponseBody
-    public AjaxResult export(SysFnAccount sysFnAccount)
-    {
-        List<SysFnAccount> list = sysFnAccountService.selectSysFnAccountList(sysFnAccount);
-        ExcelUtil<SysFnAccount> util = new ExcelUtil<SysFnAccount>(SysFnAccount.class);
-        return util.exportExcel(list, "account");
-    }
+
 
     /**
      * 新增账户
@@ -103,8 +75,6 @@ public class SysFnAccountController extends BaseController
     public AjaxResult addSave(SysFnAccount sysFnAccount)
     {
         Long userId = ShiroUtils.getUserId();
-        String accountNo = sysSequenceService.getNewSequenceNo(SequenceConstants.FN_ACCOUNT_NO);
-        sysFnAccount.setAccountNo(accountNo);
         sysFnAccount.setCreateBy(String.valueOf(userId));
         sysFnAccount.setUpdateBy(String.valueOf(userId));
         return toAjax(sysFnAccountService.insertSysFnAccount(sysFnAccount));
@@ -145,9 +115,23 @@ public class SysFnAccountController extends BaseController
         return toAjax(sysFnAccountService.deleteSysFnAccountByIds(ids));
     }
 
+
+    /**
+     * 获取账户详情
+     * @param accountNo 账户号
+     * @return 账户详情
+     */
+    @RequiresPermissions("system:account:detail")
+    @PostMapping("/getSysFnAccountByNo")
+    @ResponseBody
+    public AjaxResult getSysFnAccountByNo(String accountNo)
+    {
+        return AjaxResult.success(sysFnAccountService.getSysFnAccountByNo(accountNo));
+    }
+
     /**
      * 账户充值
-     * @param sysFnAccount
+     * @param rechargeAccountRequest
      * @return
      */
     @RequiresPermissions("system:account:rechargeAccount")
@@ -155,20 +139,7 @@ public class SysFnAccountController extends BaseController
     @PostMapping( "/rechargeAccount")
     @RepeatSubmit
     @ResponseBody
-    public AjaxResult rechargeAccount(SysFnAccount sysFnAccount){
-        LambdaQueryWrapper<SysFnAccount> lambda = new QueryWrapper<SysFnAccount>().lambda();
-        SysFnAccount fnAccount = sysFnAccountService.getOne(lambda.eq(SysFnAccount::getAccountNo, sysFnAccount.getAccountNo()));
-        BigDecimal amount = sysFnAccount.getTotalAmount().add(fnAccount.getTotalAmount());
-        sysFnAccount.setTotalAmount(amount);
-        sysFnAccountService.updateSysFnAccount(sysFnAccount);
-        String billNo = sysSequenceService.getNewSequenceNo(SequenceConstants.FN_ACCOUNT_BILL_NO);
-        SysFnAccountBill sysFnAccountBill=new SysFnAccountBill();
-        sysFnAccountBill.setAccountNo(sysFnAccount.getAccountNo());
-        sysFnAccountBill.setBillAmount(sysFnAccount.getTotalAmount());
-        sysFnAccountBill.setBillType(1);
-        sysFnAccountBill.setRemark("充值");
-        sysFnAccountBill.setBillNo(billNo);
-        sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
-        return AjaxResult.success();
+    public AjaxResult rechargeAccount(RechargeAccountRequest rechargeAccountRequest){
+        return AjaxResult.success(sysFnAccountService.rechargeAccount(rechargeAccountRequest));
     }
 }

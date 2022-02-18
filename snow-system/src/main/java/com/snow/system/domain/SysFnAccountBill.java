@@ -1,12 +1,12 @@
 package com.snow.system.domain;
 
-import java.math.BigDecimal;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.annotation.Excel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * 账户流水详情对象 sys_fn_account_bill

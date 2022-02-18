@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -25,6 +26,10 @@ import javax.annotation.Resource;
 public class SysFnAccountBillServiceImpl extends ServiceImpl<SysFnAccountBillMapper, SysFnAccountBill> implements ISysFnAccountBillService {
     @Resource
     private SysFnAccountBillMapper sysFnAccountBillMapper;
+
+    @Resource
+    private SysSequenceServiceImpl sysSequenceService;
+
 
     /**
      * 查询账户流水详情
@@ -60,6 +65,8 @@ public class SysFnAccountBillServiceImpl extends ServiceImpl<SysFnAccountBillMap
      */
     @Override
     public int insertSysFnAccountBill(SysFnAccountBill sysFnAccountBill) {
+        String billNo = sysSequenceService.getNewSequenceNo(SequenceConstants.FN_ACCOUNT_BILL_NO);
+        sysFnAccountBill.setBillNo(billNo);
         sysFnAccountBill.setCreateTime(DateUtils.getNowDate());
         return sysFnAccountBillMapper.insert(sysFnAccountBill);
     }

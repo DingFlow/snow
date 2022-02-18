@@ -1,12 +1,20 @@
 package com.snow.system.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
+
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.snow.system.domain.SysFnAccountBill;
+import com.snow.system.domain.request.RechargeAccountRequest;
+import com.snow.system.domain.response.SysFnAccountResponse;
 import org.springframework.stereotype.Service;
 import com.snow.system.mapper.SysFnAccountMapper;
 import com.snow.system.domain.SysFnAccount;
@@ -25,6 +33,12 @@ import javax.annotation.Resource;
 public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, SysFnAccount> implements ISysFnAccountService {
     @Resource
     private SysFnAccountMapper sysFnAccountMapper;
+
+    @Resource
+    private SysSequenceServiceImpl sysSequenceService;
+
+    @Resource
+    private SysFnAccountBillServiceImpl sysFnAccountBillService;
 
     /**
      * 查询账户
@@ -59,6 +73,8 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
      */
     @Override
     public int insertSysFnAccount(SysFnAccount sysFnAccount) {
+        String accountNo = sysSequenceService.getNewSequenceNo(SequenceConstants.FN_ACCOUNT_NO);
+        sysFnAccount.setAccountNo(accountNo);
         sysFnAccount.setCreateTime(DateUtils.getNowDate());
         return sysFnAccountMapper.insert(sysFnAccount);
     }
@@ -95,5 +111,32 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
     @Override
     public int deleteSysFnAccountById(Long id) {
         return sysFnAccountMapper.deleteById(id);
+    }
+
+    @Override
+    public SysFnAccountResponse getSysFnAccountByNo(String accountNo) {
+        SysFnAccount sysFnAccount = getOne(new QueryWrapper<SysFnAccount>().lambda().eq(SysFnAccount::getAccountNo, accountNo));
+        SysFnAccountResponse sysFnAccountResponse = BeanUtil.copyProperties(sysFnAccount, SysFnAccountResponse.class);
+        //计算可用金额
+        BigDecimal usableAmount = sysFnAccountResponse.getTotalAmount().subtract(sysFnAccountResponse.getFreezeAmount());
+        sysFnAccountResponse.setUsableAmount(usableAmount);
+        return sysFnAccountResponse;
+    }
+
+    @Override
+    public boolean rechargeAccount(RechargeAccountRequest rechargeAccountRequest) {
+        LambdaQueryWrapper<SysFnAccount> lambda = new QueryWrapper<SysFnAccount>().lambda();
+        SysFnAccount fnAccount = getOne(lambda.eq(SysFnAccount::getAccountNo, rechargeAccountRequest.getAccountNo()));
+        BigDecimal rechargeAmount = Optional.ofNullable(rechargeAccountRequest.getRechargeAmount()).orElse(BigDecimal.ZERO);
+        BigDecimal amount = rechargeAmount.add(fnAccount.getTotalAmount());
+        fnAccount.setTotalAmount(amount);
+        updateSysFnAccount(fnAccount);
+        SysFnAccountBill sysFnAccountBill=new SysFnAccountBill();
+        sysFnAccountBill.setAccountNo(rechargeAccountRequest.getAccountNo());
+        sysFnAccountBill.setBillAmount(rechargeAccountRequest.getRechargeAmount());
+        sysFnAccountBill.setBillType(1);
+        sysFnAccountBill.setRemark("充值");
+        sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
+        return false;
     }
 }
