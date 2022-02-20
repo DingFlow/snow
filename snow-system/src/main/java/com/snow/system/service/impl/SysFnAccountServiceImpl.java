@@ -134,8 +134,8 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
         SysFnAccountBill sysFnAccountBill=new SysFnAccountBill();
         sysFnAccountBill.setAccountNo(rechargeAccountRequest.getAccountNo());
         sysFnAccountBill.setBillAmount(rechargeAccountRequest.getRechargeAmount());
-        sysFnAccountBill.setBillType(1);
-        sysFnAccountBill.setRemark("充值");
+        sysFnAccountBill.setBillType(2);
+        sysFnAccountBill.setBillRemark("充值");
         sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
         return false;
     }

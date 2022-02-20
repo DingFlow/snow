@@ -66,4 +66,9 @@ public class SequenceConstants {
      * 账户流水单
      */
     public static final String FN_ACCOUNT_BILL_NO="FN_LS";
+
+    /**
+     * 支付单号
+     */
+    public static final String FN_PAYMENT_NO="FN_ZF";
 }

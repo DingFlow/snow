@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.constant.SequenceConstants;
 import com.snow.common.utils.poi.EasyExcelUtil;
+import com.snow.flowable.domain.purchaseOrder.PurchaseCashierTask;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderForm;
 import com.snow.flowable.domain.purchaseOrder.PurchaseOrderMainTask;
 import com.snow.flowable.service.FlowableService;
@@ -270,4 +271,23 @@ public class PurchaseOrderController extends BaseController
         return toAjax(i);
     }
 
+
+
+    /**
+     * 出纳审核
+     */
+    @PostMapping("/cashierTask")
+    @ResponseBody
+    @Transactional
+    @RepeatSubmit
+    public AjaxResult cashierTask(PurchaseCashierTask purchaseCashierTask)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        //完成任务
+        purchaseCashierTask.setUserId(String.valueOf(sysUser.getUserId()));
+        purchaseCashierTask.setIsUpdateBus(true);
+        purchaseCashierTask.setIsStart(purchaseCashierTask.getIsPass());
+        flowableTaskService.submitTask(purchaseCashierTask);
+        return AjaxResult.success();
+    }
 }

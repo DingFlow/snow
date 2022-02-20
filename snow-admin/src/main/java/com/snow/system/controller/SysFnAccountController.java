@@ -36,8 +36,12 @@ public class SysFnAccountController extends BaseController
 
     @RequiresPermissions("system:account:view")
     @GetMapping()
-    public String account()
+    public String account(ModelMap mmap)
     {
+        SysFnAccount sysFnAccount=new SysFnAccount();
+        sysFnAccount.setIsDelete(0);
+        List<SysFnAccount> sysFnAccounts = sysFnAccountService.selectSysFnAccountList(sysFnAccount);
+        mmap.put("sysFnAccounts", sysFnAccounts);
         return prefix + "/account";
     }
 
@@ -129,6 +133,19 @@ public class SysFnAccountController extends BaseController
         return AjaxResult.success(sysFnAccountService.getSysFnAccountByNo(accountNo));
     }
 
+    /**
+     * 跳转充值页面
+     * @param id
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/rechargeAccount/{id}")
+    public String toRechargeAccount(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysFnAccount sysFnAccount = sysFnAccountService.selectSysFnAccountById(id);
+        mmap.put("sysFnAccount", sysFnAccount);
+        return prefix + "/rechargeAccount";
+    }
     /**
      * 账户充值
      * @param rechargeAccountRequest

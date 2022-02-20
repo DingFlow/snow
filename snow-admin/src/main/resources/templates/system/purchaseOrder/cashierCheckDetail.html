@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+	<th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg" >
+	<form class="form-horizontal m-t"  id="signupForm">
+		<input class="form-control" type="hidden"  name="taskId" th:value="*{taskId}"/>
+		<input class="form-control" type="hidden"  id="processInstanceId" name="processInstanceId" th:value="*{processInstanceId}"/>
+		<input class="form-control" type="hidden"  name="businessKey" th:value="${appFrom.orderNo}"/>
+		<input name="id" th:value="${appFrom.id}" type="hidden">
+	    <br/>
+		<h2 class="form-header h2" >采购单信息</h2>
+		<div class="row">
+			<div class="col-xs-4 col-sm-5 col-md-offset-1">
+				<label>单号：</label>
+				<span th:text="${appFrom.orderNo}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label>采购标题：</label>
+				<span th:text="${appFrom.title}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3 col-sm-4 col-md-offset-1">
+				<label>供应商：</label>
+				<span th:text="${appFrom.supplierName}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >订货日期：</label>
+				<span th:text="${#dates.format(appFrom.orderTime, 'yyyy-MM-dd')}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label>交货日期：</label>
+				<span th:text="${#dates.format(appFrom.deliveryDate, 'yyyy-MM-dd')}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3 col-sm-4 col-md-offset-1">
+				<label >采购人：</label>
+				<span th:text="${appFrom.belongUser}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >总数量：</label>
+				<span th:text="${appFrom.totalQuantity}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >总金额：</label>
+				<span th:text="${appFrom.totalPrice}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10 col-sm-10 col-md-offset-1">
+				<label>备注：</label>
+				<span th:text="${appFrom.remark}"/>
+			</div>
+		</div>
+	<h4 class="form-header h4">采购单明细</h4>
+		<div class="row">
+			<div class="col-sm-12">
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table"></table>
+					</div>
+			</div>
+		</div>
+       <br/>
+		<h4 class="form-header h4">付款单信息</h4>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">付款标题：</label>
+			<div class="col-sm-8">
+				<input name="paymentTitle" class="form-control" type="text" th:value="${appFrom.title}+'【付款单】'" required/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">付款金额：</label>
+			<div class="col-sm-8">
+				<input name="paymentPrice" class="form-control" type="number" th:value="${appFrom.totalPrice}" required/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">付款说明：</label>
+			<div class="col-sm-8">
+				<textarea name="paymentRemark" class="form-control" required></textarea>
+			</div>
+		</div>
+		<br/>
+		<th:block th:include="include :: approvalpage" />
+	</form>
+    <th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-fileinput-js"/>
+    <script th:inline="javascript">
+        $(function () {
+            var processInstanceId= $("#processInstanceId").val();
+            var url ="/modeler/getProcessDiagram?processInstanceId="+processInstanceId;
+            $(".imgcode").attr("src", url);
+        });
+        var files=new Array();
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").val();
+            $(this).fileinput({
+                'uploadUrl': '/common/upload',
+                initialPreviewAsData: true,
+                allowedFileExtensions: ['jpg', 'gif', 'png',".docx","doc","ppt","pptx","xls","xlsx","vsd","rtf","wps","pdf","txt","zip"],//接收的文件后缀
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                files.push({"key": data.response.fileKey,"name": data.response.fileName, "url":data.response.url});
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+
+        <!--提交审核结果-->
+        function submitCheckHandler() {
+            if ($.validate.form()) {
+                var data = $("#signupForm").serializeArray();
+                for(var i=0;i<data.length;i++){
+                    if(data[i].name=='comment'&&(data[i].value==''||data[i].value==null)){
+                        $.modal.alertError("请填写审批意见");
+                        return false;
+					}
+				}
+				if(files!=null||files!=''){
+                    for(var i=0;i<files.length;i++){
+                        data.push({"name": "files["+i+"].key", "value":files[i].key});
+                        data.push({"name": "files["+i+"].name", "value":files[i].name});
+                        data.push({"name": "files["+i+"].url", "value":files[i].url});
+                    }
+				}
+                console.log(data);
+                $.operate.saveTab("/system/purchaseOrder/cashierTask", data);
+            }
+        }
+
+        $(function() {
+            var options = {
+                data: [[${appFrom.purchaseOrderItemList}]],
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                columns: [
+                    {
+                        field: 'index',
+                        align: 'center',
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                            return columnIndex + $.table.serialNumber(index);
+                        }
+                    },
+                    {
+                        field: 'goodsNo',
+                        align: 'center',
+                        title: '货物编号'
+                    },
+                    {
+                        field: 'goodsName',
+                        align: 'center',
+                        title: '名称'
+                    },
+                    {
+                        field: 'goodsSize',
+                        align: 'center',
+                        title: '规格'
+                    },
+                    {
+                        field: 'goodsQuantity',
+                        align: 'center',
+                        title: '数量'
+                    },
+                    {
+                        field: 'goodsPrice',
+                        align: 'center',
+                        title: '单价'
+                    },
+                    {
+                        field: 'totalPrice',
+                        align: 'center',
+                        title: '总价'
+                    },
+                    {
+                        field: 'remark',
+                        align: 'center',
+                        title: '备注'
+                    }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

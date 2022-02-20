@@ -10,7 +10,7 @@
             <result property="accountNo"    column="account_no"    />
             <result property="billType"    column="bill_type"    />
             <result property="billAmount"    column="bill_amount"    />
-            <result property="remark"    column="remark"    />
+            <result property="billRemark"    column="bill_remark"    />
             <result property="createBy"    column="create_by"    />
             <result property="updateBy"    column="update_by"    />
             <result property="createTime"    column="create_time"    />
@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="selectSysFnAccountBillVo">
-        select id, bill_no, account_no, bill_type, bill_amount, remark, create_by, update_by, create_time, update_time, is_delete from sys_fn_account_bill
+        select id, bill_no, account_no, bill_type, bill_amount, bill_remark, create_by, update_by, create_time, update_time, is_delete from sys_fn_account_bill
     </sql>
 
     <select id="selectSysFnAccountBillList" parameterType="SysFnAccountBill" resultMap="SysFnAccountBillResult">
@@ -43,7 +43,7 @@
               <if test="accountNo != null and accountNo != ''">account_no,</if>
               <if test="billType != null">bill_type,</if>
               <if test="billAmount != null">bill_amount,</if>
-              <if test="remark != null">remark,</if>
+              <if test="billRemark != null">bill_remark,</if>
               <if test="createBy != null">create_by,</if>
               <if test="updateBy != null">update_by,</if>
               <if test="createTime != null">create_time,</if>
@@ -55,7 +55,7 @@
                <if test="accountNo != null and accountNo != ''">#{accountNo},</if>
                <if test="billType != null">#{billType},</if>
                <if test="billAmount != null">#{billAmount},</if>
-               <if test="remark != null">#{remark},</if>
+               <if test="billRemark != null">#{billRemark},</if>
                <if test="createBy != null">#{createBy},</if>
                <if test="updateBy != null">#{updateBy},</if>
                <if test="createTime != null">#{createTime},</if>
@@ -71,7 +71,7 @@
               <if test="accountNo != null and accountNo != ''">account_no = #{accountNo},</if>
               <if test="billType != null">bill_type = #{billType},</if>
               <if test="billAmount != null">bill_amount = #{billAmount},</if>
-              <if test="remark != null">remark = #{remark},</if>
+              <if test="billRemark != null">bill_remark = #{billRemark},</if>
               <if test="createBy != null">create_by = #{createBy},</if>
               <if test="updateBy != null">update_by = #{updateBy},</if>
               <if test="createTime != null">create_time = #{createTime},</if>

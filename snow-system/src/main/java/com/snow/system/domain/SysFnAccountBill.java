@@ -39,6 +39,9 @@ public class SysFnAccountBill extends BaseEntity
     @Excel(name = "流水金额")
     private BigDecimal billAmount;
 
+    @Excel(name = "备注")
+    private String billRemark;
+
     /** 删除标识 */
     private Integer isDelete;
 

@@ -1,13 +1,18 @@
 package com.snow.flowable.listener;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import com.snow.flowable.common.constants.FlowConstants;
-import com.snow.flowable.domain.CompleteTaskDTO;
+import com.snow.flowable.domain.FinishTaskDTO;
 import com.snow.flowable.service.FlowableService;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  * @author qimingjin
@@ -16,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2020/12/7 16:39
  */
 @Slf4j
-public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements TaskListener {
+public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements TaskListener {
 
     @Autowired
     private FlowableService flowableService;
@@ -127,5 +132,9 @@ public abstract class AbstractTaskListener<T extends CompleteTaskDTO> implements
      */
     protected String getTaskName() {
         return getDelegateTask().getName();
+    }
+
+    protected  Map<String, Object>  getTaskLocalParms(){
+        return getDelegateTask().getVariablesLocal();
     }
 }
