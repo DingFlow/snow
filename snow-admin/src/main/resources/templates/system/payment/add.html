@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增支付申请')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-payment-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">支付单号：</label>
+                <div class="col-sm-8">
+                    <input name="paymentNo" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单金额：</label>
+                <div class="col-sm-8">
+                    <input name="orderPrice" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">支付金额：</label>
+                <div class="col-sm-8">
+                    <input name="paymentPrice" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">支付标题：</label>
+                <div class="col-sm-8">
+                    <input name="paymentTitle" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">关联单号：</label>
+                <div class="col-sm-8">
+                    <input name="relateNo" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">关联单号类型：</label>
+                <div class="col-sm-8">
+                    <select name="relateNoType" class="form-control m-b">
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">支付时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="paymentTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">支付状态：</label>
+                <div class="col-sm-8">
+                    <select name="paymentStatus" class="form-control m-b" th:with="type=${@dict.getType('sys_payment_status')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">流程状态：</label>
+                <div class="col-sm-8">
+                    <select name="processStatus" class="form-control m-b" th:with="type=${@dict.getType('process_status')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">申请人：</label>
+                <div class="col-sm-8">
+                    <input name="paymentUser" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">null：</label>
+                <div class="col-sm-8">
+                    <input name="isDelete" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <textarea name="paymentRemark" class="form-control"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/payment"
+        $("#form-payment-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-payment-add').serialize());
+            }
+        }
+
+        $("input[name='paymentTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snow.system.mapper.SysFnPaymentMapper">
+
+    <resultMap type="SysFnPayment" id="SysFnPaymentResult">
+            <result property="id"    column="id"    />
+            <result property="paymentNo"    column="payment_no"    />
+            <result property="orderPrice"    column="order_price"    />
+            <result property="paymentPrice"    column="payment_price"    />
+            <result property="paymentTitle"    column="payment_title"    />
+            <result property="relateNo"    column="relate_no"    />
+            <result property="relateNoType"    column="relate_no_type"    />
+            <result property="paymentTime"    column="payment_time"    />
+            <result property="paymentStatus"    column="payment_status"    />
+            <result property="processStatus"    column="process_status"    />
+            <result property="paymentUser"    column="payment_user"    />
+            <result property="isDelete"    column="is_delete"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="createBy"    column="create_by"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="updateBy"    column="update_by"    />
+            <result property="paymentRemark"    column="payment_remark"    />
+    </resultMap>
+
+    <sql id="selectSysFnPaymentVo">
+        select id, payment_no, order_price, payment_price, payment_title, relate_no, relate_no_type, payment_time, payment_status, process_status, payment_user, is_delete, create_time, create_by, update_time, update_by, payment_remark from sys_fn_payment
+    </sql>
+
+    <select id="selectSysFnPaymentList" parameterType="SysFnPayment" resultMap="SysFnPaymentResult">
+        <include refid="selectSysFnPaymentVo"/>
+        <where>
+                <if test="paymentNo != null  and paymentNo != ''"> and payment_no like concat('%', #{paymentNo}, '%')</if>
+                <if test="paymentTitle != null  and paymentTitle != ''"> and payment_title = #{paymentTitle}</if>
+                <if test="relateNo != null  and relateNo != ''"> and relate_no = #{relateNo}</if>
+                <if test="relateNoType != null "> and relate_no_type = #{relateNoType}</if>
+                <if test="paymentTime != null "> and payment_time = #{paymentTime}</if>
+                <if test="paymentStatus != null "> and payment_status = #{paymentStatus}</if>
+                <if test="processStatus != null "> and process_status = #{processStatus}</if>
+                <if test="paymentRemark != null  and paymentRemark != ''"> and payment_remark = #{paymentRemark}</if>
+        </where>
+     </select>
+
+    <select id="selectSysFnPaymentById" parameterType="Long" resultMap="SysFnPaymentResult">
+            <include refid="selectSysFnPaymentVo"/>
+            where id = #{id}
+    </select>
+
+    <insert id="insertSysFnPayment" parameterType="SysFnPayment" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_fn_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+              <if test="paymentNo != null">payment_no,</if>
+              <if test="orderPrice != null">order_price,</if>
+              <if test="paymentPrice != null">payment_price,</if>
+              <if test="paymentTitle != null and paymentTitle != ''">payment_title,</if>
+              <if test="relateNo != null">relate_no,</if>
+              <if test="relateNoType != null">relate_no_type,</if>
+              <if test="paymentTime != null">payment_time,</if>
+              <if test="paymentStatus != null">payment_status,</if>
+              <if test="processStatus != null">process_status,</if>
+              <if test="paymentUser != null">payment_user,</if>
+              <if test="isDelete != null">is_delete,</if>
+              <if test="createTime != null">create_time,</if>
+              <if test="createBy != null">create_by,</if>
+              <if test="updateTime != null">update_time,</if>
+              <if test="updateBy != null">update_by,</if>
+              <if test="paymentRemark != null">payment_remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+               <if test="paymentNo != null">#{paymentNo},</if>
+               <if test="orderPrice != null">#{orderPrice},</if>
+               <if test="paymentPrice != null">#{paymentPrice},</if>
+               <if test="paymentTitle != null and paymentTitle != ''">#{paymentTitle},</if>
+               <if test="relateNo != null">#{relateNo},</if>
+               <if test="relateNoType != null">#{relateNoType},</if>
+               <if test="paymentTime != null">#{paymentTime},</if>
+               <if test="paymentStatus != null">#{paymentStatus},</if>
+               <if test="processStatus != null">#{processStatus},</if>
+               <if test="paymentUser != null">#{paymentUser},</if>
+               <if test="isDelete != null">#{isDelete},</if>
+               <if test="createTime != null">#{createTime},</if>
+               <if test="createBy != null">#{createBy},</if>
+               <if test="updateTime != null">#{updateTime},</if>
+               <if test="updateBy != null">#{updateBy},</if>
+               <if test="paymentRemark != null">#{paymentRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFnPayment" parameterType="SysFnPayment">
+        update sys_fn_payment
+        <trim prefix="SET" suffixOverrides=",">
+              <if test="paymentNo != null">payment_no = #{paymentNo},</if>
+              <if test="orderPrice != null">order_price = #{orderPrice},</if>
+              <if test="paymentPrice != null">payment_price = #{paymentPrice},</if>
+              <if test="paymentTitle != null and paymentTitle != ''">payment_title = #{paymentTitle},</if>
+              <if test="relateNo != null">relate_no = #{relateNo},</if>
+              <if test="relateNoType != null">relate_no_type = #{relateNoType},</if>
+              <if test="paymentTime != null">payment_time = #{paymentTime},</if>
+              <if test="paymentStatus != null">payment_status = #{paymentStatus},</if>
+              <if test="processStatus != null">process_status = #{processStatus},</if>
+              <if test="paymentUser != null">payment_user = #{paymentUser},</if>
+              <if test="isDelete != null">is_delete = #{isDelete},</if>
+              <if test="createTime != null">create_time = #{createTime},</if>
+              <if test="createBy != null">create_by = #{createBy},</if>
+              <if test="updateTime != null">update_time = #{updateTime},</if>
+              <if test="updateBy != null">update_by = #{updateBy},</if>
+              <if test="paymentRemark != null">payment_remark = #{paymentRemark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysFnPaymentById" parameterType="Long">
+        delete from sys_fn_payment where id = #{id}
+    </delete>
+
+    <delete id="deleteSysFnPaymentByIds" parameterType="String">
+        delete from sys_fn_payment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
