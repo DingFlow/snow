@@ -14,7 +14,9 @@ public enum  FlowDefEnum {
 
     SNOW_OA_RESIGN_PROCESS("snow_oa_resign", "snow系统离职审批流程"),
 
-    SNOW_OA_CUSTOMER_ADMITTANCE("snow_oa_customer_admittance","客户准入流程");
+    SNOW_OA_CUSTOMER_ADMITTANCE("snow_oa_customer_admittance","客户准入流程"),
+
+    SNOW_FN_PAYMENT("snow_fn_payment","付款审批流程");
 
     private final String code;
     private final String info;

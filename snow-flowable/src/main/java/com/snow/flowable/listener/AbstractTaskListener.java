@@ -1,8 +1,7 @@
 package com.snow.flowable.listener;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
+import com.alibaba.fastjson.JSON;
+import com.snow.common.utils.GenericUtil;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.FinishTaskDTO;
 import com.snow.flowable.service.FlowableService;
@@ -26,14 +25,17 @@ public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements T
     @Autowired
     private FlowableService flowableService;
 
-    private ThreadLocal<T> threadLocal = new ThreadLocal();
+    private final ThreadLocal<DelegateTask> delegateTaskThreadLocal = new ThreadLocal<>();
 
-    private ThreadLocal<DelegateTask> delegateTaskThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<T> localTaskParam = new ThreadLocal<>();
 
     @Override
     public void notify(DelegateTask delegateTask) {
         try {
+            String form = JSON.toJSONString(getTaskLocalParams());
             delegateTaskThreadLocal.set(delegateTask);
+            T param = JSON.parseObject(form, GenericUtil.getGenericTypeOf(AbstractTaskListener.class, 1, getClass()));
+            localTaskParam.set(param);
             processTask();
         } finally {
             delegateTaskThreadLocal.remove();
@@ -134,7 +136,12 @@ public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements T
         return getDelegateTask().getName();
     }
 
-    protected  Map<String, Object>  getTaskLocalParms(){
+
+    protected  T  getTaskParam(){
+        return localTaskParam.get();
+    }
+
+    protected  Map<String, Object>  getTaskLocalParams(){
         return getDelegateTask().getVariablesLocal();
     }
 }

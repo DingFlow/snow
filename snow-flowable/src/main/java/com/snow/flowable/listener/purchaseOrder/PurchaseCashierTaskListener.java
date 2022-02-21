@@ -30,7 +30,7 @@ public class PurchaseCashierTaskListener extends AbstractTaskListener<PurchaseCa
         DelegateTask delegateTask = getDelegateTask();
         PurchaseOrderForm appForms=appFormService.getAppFromByExecutionId(delegateTask.getExecutionId());
         PurchaseCashierTask purchaseCashierTask = new PurchaseCashierTask();
-        purchaseCashierTask= BeanUtil.fillBeanWithMap(getTaskLocalParms(),purchaseCashierTask, true);
+        purchaseCashierTask= BeanUtil.fillBeanWithMap(getTaskLocalParams(),purchaseCashierTask, true);
         //如果成功则生成支付单
         if(getApprovalResult()){
             String assignee = delegateTask.getAssignee();
