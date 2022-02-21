@@ -1,23 +1,31 @@
 package com.snow.system.controller;
 
-import java.util.List;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import cn.hutool.core.bean.BeanUtil;
 import com.snow.common.annotation.Log;
-import com.snow.common.enums.BusinessType;
-import org.springframework.stereotype.Controller;
-import com.snow.system.domain.SysFnPayment;
-import com.snow.system.service.ISysFnPaymentService;
+import com.snow.common.annotation.RepeatSubmit;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
-import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.enums.BusinessType;
+import com.snow.common.utils.poi.ExcelUtil;
+import com.snow.flowable.domain.payment.PaymentCashierTask;
+import com.snow.flowable.domain.payment.PaymentForm;
+import com.snow.flowable.service.FlowableService;
+import com.snow.flowable.service.FlowableTaskService;
+import com.snow.framework.util.ShiroUtils;
+import com.snow.system.domain.SysFnPayment;
+import com.snow.system.domain.SysUser;
+import com.snow.system.service.ISysFnPaymentService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 支付申请Controller
@@ -27,12 +35,19 @@ import com.snow.common.core.page.TableDataInfo;
  */
 @Controller
 @RequestMapping("/system/payment")
+@Slf4j
 public class SysFnPaymentController extends BaseController
 {
     private String prefix = "system/payment";
 
     @Autowired
     private ISysFnPaymentService sysFnPaymentService;
+
+    @Autowired
+    private FlowableService flowableService;
+
+    @Autowired
+    private FlowableTaskService flowableTaskService;
 
     @RequiresPermissions("system:payment:view")
     @GetMapping()
@@ -107,8 +122,14 @@ public class SysFnPaymentController extends BaseController
     @Log(title = "支付申请", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(SysFnPayment sysFnPayment)
-    {
+    public AjaxResult editSave(SysFnPayment sysFnPayment) {
+        //发起审批
+        PaymentForm paymentForm = BeanUtil.copyProperties(sysFnPayment, PaymentForm.class);
+        paymentForm.setBusinessKey(paymentForm.getPaymentNo());
+        paymentForm.setStartUserId(String.valueOf(ShiroUtils.getUserId()));
+        paymentForm.setBusVarUrl("/system/payment/detail");
+        ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(paymentForm);
+        log.info("@@发起业务单号为:{}付款申请流程:{}",sysFnPayment.getPaymentNo(),processInstance.getProcessInstanceId());
         return toAjax(sysFnPaymentService.updateSysFnPayment(sysFnPayment));
     }
 
@@ -122,5 +143,23 @@ public class SysFnPaymentController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(sysFnPaymentService.deleteSysFnPaymentByIds(ids));
+    }
+
+
+    /**
+     * 出纳审核
+     */
+    @PostMapping("/cashierTask")
+    @ResponseBody
+    @Transactional
+    @RepeatSubmit
+    public AjaxResult cashierTask(PaymentCashierTask paymentCashierTask) {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        //完成任务
+        paymentCashierTask.setUserId(String.valueOf(sysUser.getUserId()));
+        paymentCashierTask.setIsUpdateBus(true);
+        paymentCashierTask.setIsStart(paymentCashierTask.getIsPass());
+        flowableTaskService.submitTask(paymentCashierTask);
+        return AjaxResult.success();
     }
 }

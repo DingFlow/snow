@@ -39,6 +39,7 @@ public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements T
             processTask();
         } finally {
             delegateTaskThreadLocal.remove();
+            localTaskParam.remove();
         }
 
     }

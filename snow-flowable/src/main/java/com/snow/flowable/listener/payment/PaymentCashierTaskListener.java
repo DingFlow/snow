@@ -21,6 +21,6 @@ public class PaymentCashierTaskListener extends AbstractTaskListener<PaymentCash
 
     @Override
     protected void processTask() {
-        PaymentCashierTask taskParam = getTaskParam();
+
     }
 }
