@@ -10,6 +10,10 @@ import java.math.BigDecimal;
 public class PaymentCashierTask extends FinishTaskDTO implements Serializable {
     private static final long serialVersionUID = 8984271252520753970L;
 
+    /**
+     * 支付账户
+     */
+    private String accountNo;
 
     /**
      * 支付金额
@@ -24,6 +28,7 @@ public class PaymentCashierTask extends FinishTaskDTO implements Serializable {
      * 备注
      */
     private String paymentRemark;
+
 
 
 }

@@ -24,7 +24,6 @@ public class PurchaseOrderStartListener extends AbstractExecutionListener<Purcha
 
     @Override
     protected void process() {
-        String processInstanceId = getProcessInstanceId();
         String businessKey= getBusinessKey();
         PurchaseOrderMain purchaseOrderMain=new PurchaseOrderMain();
         purchaseOrderMain.setProcessStatus((long)ProcessStatus.CHECKING.ordinal());

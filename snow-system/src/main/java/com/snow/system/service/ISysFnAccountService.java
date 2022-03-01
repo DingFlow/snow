@@ -3,6 +3,7 @@ package com.snow.system.service;
 import java.util.List;
 import com.snow.system.domain.SysFnAccount;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.snow.system.domain.request.DeductionAccountRequest;
 import com.snow.system.domain.request.RechargeAccountRequest;
 import com.snow.system.domain.response.SysFnAccountResponse;
 
@@ -75,4 +76,11 @@ public interface ISysFnAccountService extends IService<SysFnAccount>
      * @return
      */
     public boolean rechargeAccount(RechargeAccountRequest rechargeAccountRequest);
+
+    /**
+     * 扣款账户
+     * @param deductionAccountRequest
+     * @return
+     */
+    public boolean deductionAccount(DeductionAccountRequest deductionAccountRequest);
 }

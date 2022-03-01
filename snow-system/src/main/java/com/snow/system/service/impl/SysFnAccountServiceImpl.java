@@ -9,10 +9,12 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.snow.common.constant.SequenceConstants;
+import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.snow.system.domain.SysFnAccountBill;
+import com.snow.system.domain.request.DeductionAccountRequest;
 import com.snow.system.domain.request.RechargeAccountRequest;
 import com.snow.system.domain.response.SysFnAccountResponse;
 import org.springframework.stereotype.Service;
@@ -137,6 +139,26 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
         sysFnAccountBill.setBillType(2);
         sysFnAccountBill.setBillRemark("充值");
         sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean deductionAccount(DeductionAccountRequest deductionAccountRequest){
+        LambdaQueryWrapper<SysFnAccount> lambda = new QueryWrapper<SysFnAccount>().lambda();
+        SysFnAccount fnAccount = getOne(lambda.eq(SysFnAccount::getAccountNo, deductionAccountRequest.getAccountNo()));
+        BigDecimal deductionAccount = Optional.ofNullable(deductionAccountRequest.getDeductionAccount()).orElse(BigDecimal.ZERO);
+        BigDecimal amount =(fnAccount.getTotalAmount()).subtract(deductionAccount);
+        if(amount.compareTo(BigDecimal.ZERO)==-1){
+            throw new BusinessException("账户金额不足,请先充值!");
+        }
+        fnAccount.setTotalAmount(amount);
+        updateSysFnAccount(fnAccount);
+        SysFnAccountBill sysFnAccountBill=new SysFnAccountBill();
+        sysFnAccountBill.setAccountNo(deductionAccountRequest.getAccountNo());
+        sysFnAccountBill.setBillAmount(deductionAccountRequest.getDeductionAccount());
+        sysFnAccountBill.setBillType(1);
+        sysFnAccountBill.setBillRemark(deductionAccountRequest.getDeductionRemark());
+        sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
+        return true;
     }
 }

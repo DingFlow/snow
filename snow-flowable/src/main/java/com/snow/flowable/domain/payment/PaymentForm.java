@@ -53,6 +53,11 @@ public class PaymentForm extends AppForm implements Serializable {
     /** 备注 */
     private String paymentRemark;
 
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
     @Override
     public FlowDefEnum getFlowDef() {
         return FlowDefEnum.SNOW_FN_PAYMENT;
