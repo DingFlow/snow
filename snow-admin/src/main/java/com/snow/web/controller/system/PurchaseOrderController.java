@@ -247,6 +247,14 @@ public class PurchaseOrderController extends BaseController
         return prefix + "/detail";
     }
 
+    @GetMapping("/detailByOrderNo/{orderNo}")
+    public String detailByOrderNo(@PathVariable("orderNo") String orderNo, ModelMap mmap)
+    {
+        PurchaseOrderMain purchaseOrderMain = purchaseOrderMainService.selectPurchaseOrderMainByOrderNo(orderNo);
+        mmap.put("purchaseOrder", purchaseOrderMain);
+        return prefix + "/detail";
+    }
+
 
     /**
      * 重新申请

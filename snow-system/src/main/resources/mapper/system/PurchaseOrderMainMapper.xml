@@ -69,6 +69,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join purchase_order_item b on b.purchase_order_no = a.order_no
         where a.id = #{id}
     </select>
+
+    <select id="selectPurchaseOrderMainByOrderNo" parameterType="String" resultMap="PurchaseOrderMainPurchaseOrderItemResult">
+        select a.id, a.order_no, a.total_quantity, a.total_price, a.title, a.supplier_name, a.order_time, a.delivery_date, a.process_status, a.belong_user, a.is_delete, a.create_time, a.create_by, a.update_time, a.update_by, a.remark,
+               b.id, b.purchase_order_no, b.goods_name, b.goods_size, b.goods_quantity, b.goods_price, b.total_price, b.remark, b.goods_no, b.is_delete, b.create_time, b.create_by
+        from purchase_order_main a
+                 left join purchase_order_item b on b.purchase_order_no = a.order_no
+        where a.order_no = #{orderNo}
+    </select>
         
     <insert id="insertPurchaseOrderMain" parameterType="PurchaseOrderMain" useGeneratedKeys="true" keyProperty="id">
         insert into purchase_order_main

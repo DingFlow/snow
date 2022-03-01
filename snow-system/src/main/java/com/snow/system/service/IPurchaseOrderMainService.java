@@ -20,6 +20,13 @@ public interface IPurchaseOrderMainService
     public PurchaseOrderMain selectPurchaseOrderMainById(Integer id);
 
     /**
+     * 查询采购单根据订单编号
+     * @param orderNo 采购单号
+     * @return
+     */
+    public PurchaseOrderMain selectPurchaseOrderMainByOrderNo(String orderNo);
+
+    /**
      * 查询采购单主表列表
      * 
      * @param purchaseOrderMain 采购单主表

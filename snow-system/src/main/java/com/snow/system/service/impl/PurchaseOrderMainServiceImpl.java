@@ -39,6 +39,11 @@ public class PurchaseOrderMainServiceImpl implements IPurchaseOrderMainService
         return purchaseOrderMainMapper.selectPurchaseOrderMainById(id);
     }
 
+    @Override
+    public PurchaseOrderMain selectPurchaseOrderMainByOrderNo(String orderNo) {
+        return purchaseOrderMainMapper.selectPurchaseOrderMainByOrderNo(orderNo);
+    }
+
     /**
      * 查询采购单主表列表
      * 
