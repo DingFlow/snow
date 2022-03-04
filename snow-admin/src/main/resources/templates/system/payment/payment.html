@@ -108,21 +108,24 @@
                     field: 'paymentNo',
                     title: '支付单号'
                 },
-                {
-                    field: 'orderPrice',
-                    title: '订单金额'
-                },
-                {
-                    field: 'paymentPrice',
-                    title: '支付金额'
-                },
+
                 {
                     field: 'paymentTitle',
-                    title: '支付标题'
+                    title: '支付标题',
+                    formatter: function(value, row, index) {
+                        if($.common.isNotEmpty(value)){
+                            return row.paymentTitle.substring(0,5)+"...";
+                        }else {
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'relateNo',
-                    title: '订单单号'
+                    title: '订单单号',
+                    formatter: function(value, row, index) {
+                        return '<a class="success" href="javascript:void(0)" onclick="fromDetailUrl(\'' + value+ '\')">'+value+'</a>'
+                    }
                 },
                 {
                     field: 'relateNoType',
@@ -131,6 +134,14 @@
                         return $.table.selectDictLabel(orderType, value);
                     }
                 },
+                    {
+                        field: 'orderPrice',
+                        title: '订单金额'
+                    },
+                    {
+                        field: 'paymentPrice',
+                        title: '支付金额'
+                    },
                 {
                     field: 'paymentTime',
                     title: '支付时间'
@@ -150,10 +161,6 @@
                     }
                 },
                 {
-                    field: 'paymentRemark',
-                    title: '备注'
-                },
-                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
@@ -169,6 +176,10 @@
             };
             $.table.init(options);
         });
+
+        function fromDetailUrl(relateNo) {
+            $.modal.openTab('订单详情', "/system/purchaseOrder/detailByOrderNo/"+relateNo);
+        }
     </script>
 </body>
 </html>

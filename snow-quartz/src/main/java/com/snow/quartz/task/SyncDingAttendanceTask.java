@@ -89,7 +89,8 @@ public class SyncDingAttendanceTask {
     private void saveSysOaAttendance(AttendanceListResponse attendanceListResponse){
         List<AttendanceListResponse.Attendance> attendanceList = attendanceListResponse.getAttendanceList();
         if(CollUtil.isNotEmpty(attendanceList)){
-            List<SysOaAttendance> sysOaAttendanceList = attendanceList.stream().map(attendance -> {
+            List<SysOaAttendance> sysOaAttendanceList =Lists.newArrayList();
+            attendanceList.forEach(attendance -> {
                 String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_ATTENDANCE_SEQUENCE);
                 SysOaAttendance sysOaAttendance = BeanUtil.copyProperties(attendance, SysOaAttendance.class);
                 sysOaAttendance.setAttendanceCode(newSequenceNo);
@@ -97,17 +98,17 @@ public class SyncDingAttendanceTask {
                 //把钉钉的userId转化成系统userId保存
                 SysUser sysUser = sysUserMapper.selectUserByDingUserId(attendance.getUserId());
                 if(ObjectUtil.isNull(sysUser)){
-                    return null;
+                    return;
                 }
                 sysOaAttendance.setUserId(String.valueOf(sysUser.getUserId()));
                 //判断是否已同步过
                 LambdaQueryWrapper<SysOaAttendance> sysOaAttendanceLambdaQueryWrapper = new QueryWrapper<SysOaAttendance>().lambda().eq(SysOaAttendance::getAttendanceId,attendance.getId());
                 SysOaAttendance oaAttendance= sysOaAttendanceService.getOne(sysOaAttendanceLambdaQueryWrapper);
                 if(ObjectUtil.isNotNull(oaAttendance)){
-                    return null;
+                    return;
                 }
-                return sysOaAttendance;
-            }).collect(Collectors.toList());
+                sysOaAttendanceList.add(sysOaAttendance);
+            });
             sysOaAttendanceService.saveBatch(sysOaAttendanceList);
         }
     }

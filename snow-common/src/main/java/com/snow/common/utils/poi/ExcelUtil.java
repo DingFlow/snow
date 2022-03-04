@@ -22,9 +22,11 @@ import java.util.stream.Collectors;
 import com.snow.common.annotation.Excel;
 import com.snow.common.annotation.Excels;
 import com.snow.common.config.Global;
+import com.snow.common.constant.Constants;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.text.Convert;
 import com.snow.common.exception.BusinessException;
+import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.reflect.ReflectUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -757,6 +759,7 @@ public class ExcelUtil<T>
      */
     public String getAbsoluteFile(String filename)
     {
+        Object path = CacheUtils.getSysConfig("sys_config:" + Constants.LOCAL_ADDRESS);
         String downloadPath = Global.getDownloadPath() + filename;
         File desc = new File(downloadPath);
         if (!desc.getParentFile().exists())

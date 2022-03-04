@@ -1,5 +1,7 @@
 package com.snow.common.config;
 
+import com.snow.common.constant.Constants;
+import com.snow.common.utils.CacheUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +74,8 @@ public class Global
 
     public static String getProfile()
     {
-        return profile;
+        Object path = CacheUtils.getSysConfig("sys_config:" + Constants.LOCAL_ADDRESS);
+        return String.valueOf(path);
     }
 
     public void setProfile(String profile)
