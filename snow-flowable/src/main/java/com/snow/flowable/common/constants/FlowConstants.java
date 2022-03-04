@@ -61,4 +61,9 @@ public class FlowConstants {
 
     /** 定义生成流程图时的边距(像素) **/
     public static final int PROCESS_PADDING = 5;
+
+    /**
+     * 最后一个操作人
+     */
+    public static final String LAST_OPERATOR="lastOperator";
 }

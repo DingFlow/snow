@@ -24,4 +24,9 @@ public class RechargeAccountRequest implements Serializable {
      * 充值金额
      */
     private BigDecimal rechargeAmount;
+
+    /**
+     * 充值备注
+     */
+    private String rechargeRemark;
 }

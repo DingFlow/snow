@@ -40,12 +40,16 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-3 col-sm-4 col-md-offset-1">
-				<label >订单单号：</label>
-				<span th:text="${appFrom.relateNo}"/>
-			</div>
-			<div class="col-xs-3 col-sm-3">
 				<label >订单类型：</label>
 				<span class="form-control-static" th:text="${@dict.getLabel('sys_order_type',appFrom.relateNoType)}"/>
+			</div>
+			<div class="col-xs-3 col-sm-3">
+				<label >订单单号：</label>
+				<span class="form-control-static" >
+					<a  href="javascript:void(0)" onclick="getOrderDetail()">
+						[[${appFrom.relateNo}]]
+					</a>
+				</span>
 		    </div>
 		</div>
 		<div class="row">
@@ -108,6 +112,10 @@
                 $.operate.saveTab("/flow/finishTask", data);
             }
         }
+		var relateNo=[[${appFrom.relateNo}]];
+		function getOrderDetail() {
+			$.modal.openTab('订单详情', "/system/purchaseOrder/detailByOrderNo/"+relateNo);
+		}
     </script>
 </body>
 </html>

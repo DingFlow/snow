@@ -126,7 +126,7 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
     }
 
     @Override
-    public boolean rechargeAccount(RechargeAccountRequest rechargeAccountRequest) {
+    public String rechargeAccount(RechargeAccountRequest rechargeAccountRequest) {
         LambdaQueryWrapper<SysFnAccount> lambda = new QueryWrapper<SysFnAccount>().lambda();
         SysFnAccount fnAccount = getOne(lambda.eq(SysFnAccount::getAccountNo, rechargeAccountRequest.getAccountNo()));
         BigDecimal rechargeAmount = Optional.ofNullable(rechargeAccountRequest.getRechargeAmount()).orElse(BigDecimal.ZERO);
@@ -137,13 +137,13 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
         sysFnAccountBill.setAccountNo(rechargeAccountRequest.getAccountNo());
         sysFnAccountBill.setBillAmount(rechargeAccountRequest.getRechargeAmount());
         sysFnAccountBill.setBillType(2);
-        sysFnAccountBill.setBillRemark("充值");
+        sysFnAccountBill.setBillRemark(rechargeAccountRequest.getRechargeRemark());
         sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
-        return true;
+        return sysFnAccountBill.getBillNo();
     }
 
     @Override
-    public boolean deductionAccount(DeductionAccountRequest deductionAccountRequest){
+    public String deductionAccount(DeductionAccountRequest deductionAccountRequest){
         LambdaQueryWrapper<SysFnAccount> lambda = new QueryWrapper<SysFnAccount>().lambda();
         SysFnAccount fnAccount = getOne(lambda.eq(SysFnAccount::getAccountNo, deductionAccountRequest.getAccountNo()));
         BigDecimal deductionAccount = Optional.ofNullable(deductionAccountRequest.getDeductionAccount()).orElse(BigDecimal.ZERO);
@@ -159,6 +159,6 @@ public class SysFnAccountServiceImpl extends ServiceImpl<SysFnAccountMapper, Sys
         sysFnAccountBill.setBillType(1);
         sysFnAccountBill.setBillRemark(deductionAccountRequest.getDeductionRemark());
         sysFnAccountBillService.insertSysFnAccountBill(sysFnAccountBill);
-        return true;
+        return sysFnAccountBill.getBillNo();
     }
 }

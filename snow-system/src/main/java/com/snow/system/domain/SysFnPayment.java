@@ -32,6 +32,12 @@ public class SysFnPayment extends BaseEntity
     @Excel(name = "订单金额")
     private BigDecimal orderPrice;
 
+    /**
+     * 账单流水号
+     */
+    @Excel(name = "账单流水号")
+    private String billNo;
+
     /** 支付金额 */
     @Excel(name = "支付金额")
     private BigDecimal paymentPrice;

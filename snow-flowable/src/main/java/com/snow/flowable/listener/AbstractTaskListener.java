@@ -1,6 +1,8 @@
 package com.snow.flowable.listener;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.snow.common.constant.Constants;
 import com.snow.common.utils.GenericUtil;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.domain.FinishTaskDTO;
@@ -9,9 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.service.delegate.DelegateTask;
+import org.flowable.variable.api.persistence.entity.VariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author qimingjin
@@ -32,12 +38,17 @@ public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements T
     @Override
     public void notify(DelegateTask delegateTask) {
         try {
-            String form = JSON.toJSONString(getTaskLocalParams());
             delegateTaskThreadLocal.set(delegateTask);
-            T param = JSON.parseObject(form, GenericUtil.getGenericTypeOf(AbstractTaskListener.class, 1, getClass()));
+            String form = JSON.toJSONString(getTaskLocalParams());
+            T param = JSON.parseObject(form, GenericUtil.getGenericTypeOf(AbstractTaskListener.class, 0, getClass()));
             localTaskParam.set(param);
             processTask();
-        } finally {
+            //保存修改后的变量
+            updateTaskVars(param);
+        } catch (Exception e){
+            log.error("执行AbstractTaskListener监听异常:{}",e.getMessage());
+            throw new RuntimeException("执行AbstractTaskListener监听异常！");
+        }finally {
             delegateTaskThreadLocal.remove();
             localTaskParam.remove();
         }
@@ -145,4 +156,19 @@ public abstract class AbstractTaskListener<T extends FinishTaskDTO> implements T
     protected  Map<String, Object>  getTaskLocalParams(){
         return getDelegateTask().getVariablesLocal();
     }
+
+    /**
+     * 保存修改后的变量
+     * @param param
+     */
+    protected void updateTaskVars(T param) {
+        // 设置Execution级别的isPass变量，控制后续流转
+        setVariable(FlowConstants.IS_PASS, param.getIsPass());
+        // 记录当前节点提交的是否通过的变量
+        setVariableLocal(FlowConstants.IS_PASS, param.getIsPass());
+        // 最后操作者
+        setVariable(FlowConstants.LAST_OPERATOR, param.getUserId());
+        getDelegateTask().setVariablesLocal(BeanUtil.beanToMap(param));
+    }
+
 }

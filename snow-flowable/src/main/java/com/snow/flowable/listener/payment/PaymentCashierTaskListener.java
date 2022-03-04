@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * @author qimingjin
  * @Title: 出纳任务监听
@@ -39,10 +41,13 @@ public class PaymentCashierTaskListener extends AbstractTaskListener<PaymentCash
         deductionAccountRequest.setAccountNo(taskParam.getAccountNo());
         deductionAccountRequest.setDeductionAccount(taskParam.getPaymentPrice());
         deductionAccountRequest.setDeductionRemark(taskParam.getPaymentRemark());
-        sysFnAccountService.deductionAccount(deductionAccountRequest);
-        //修改支付状态
+        String billNo = sysFnAccountService.deductionAccount(deductionAccountRequest);
+        //修改支付单
         SysFnPayment sysFnPayment=new SysFnPayment();
         sysFnPayment.setPaymentStatus(1L);
+        sysFnPayment.setBillNo(billNo);
+        sysFnPayment.setPaymentPrice(taskParam.getPaymentPrice());
+        sysFnPayment.setPaymentTime(new Date());
         LambdaQueryWrapper<SysFnPayment> lambda = new QueryWrapper<SysFnPayment>().lambda();
         lambda.eq(SysFnPayment::getPaymentNo, getBusinessKey());
         sysFnPaymentService.update(sysFnPayment,lambda);

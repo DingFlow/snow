@@ -73,14 +73,14 @@ public interface ISysFnAccountService extends IService<SysFnAccount>
     /**
      *  充值账户
      * @param rechargeAccountRequest
-     * @return
+     * @return 流水号
      */
-    public boolean rechargeAccount(RechargeAccountRequest rechargeAccountRequest);
+    public String rechargeAccount(RechargeAccountRequest rechargeAccountRequest);
 
     /**
      * 扣款账户
      * @param deductionAccountRequest
-     * @return
+     * @return 流水号
      */
-    public boolean deductionAccount(DeductionAccountRequest deductionAccountRequest);
+    public String deductionAccount(DeductionAccountRequest deductionAccountRequest);
 }

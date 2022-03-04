@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+</head>
+<body class="white-bg" >
+<form class="form-horizontal m-t"  id="signupForm">
+	<input class="form-control" type="hidden"  name="paymentNo" th:value="${sysFnPayment.paymentNo}"/>
+	<input name="id" th:value="${sysFnPayment.id}" type="hidden">
+	<br/>
+	<h2 class="form-header h2 center"  >付款单详情信息</h2>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">付款单号：</label>
+		<div class="form-control-static" th:text="${sysFnPayment.paymentNo}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">付款标题：</label>
+		<div class="form-control-static" th:text="${sysFnPayment.paymentTitle}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">订单金额：</label>
+		<div class="form-control-static" th:text="${sysFnPayment.orderPrice}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">付款金额：</label>
+		<div class="form-control-static" th:text="${sysFnPayment.orderPrice}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">订单类型：</label>
+		<div class="form-control-static" th:text="${@dict.getLabel('sys_order_type',sysFnPayment.relateNoType)}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">订单单号：</label>
+		<div class="form-control-static" >
+			<a  href="javascript:void(0)" onclick="getOrderDetail()">
+				[[${sysFnPayment.relateNo}]]
+			</a>
+		</div>
+	</div>
+
+
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">支付状态：</label>
+		<div class="form-control-static" th:text="${@dict.getLabel('sys_payment_status',sysFnPayment.paymentStatus)}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">流程状态：</label>
+		<div class="form-control-static" th:text="${@dict.getLabel('process_status',sysFnPayment.processStatus)}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">备注：</label>
+		<div class="form-control-static" th:text="${sysFnPayment.paymentRemark}">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">创建日期：</label>
+		<div class="form-control-static" th:text="${#dates.format(sysFnPayment.createTime, 'yyyy-MM-dd')}">
+		</div>
+	</div>
+
+</form>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var relateNo=[[${sysFnPayment.relateNo}]];
+	function getOrderDetail() {
+		var url= "/system/purchaseOrder/detailByOrderNo/"+relateNo;
+		var index = parent.layer.open({
+			type: 2,
+			area: ['100%', '100%'],
+			fix: false,
+			//不固定
+			maxmin: true,
+			shade: 0.3,
+			title: '订单详情',
+			content: url
+		});
+		layer.full(index);
+	}
+
+</script>
+</body>
+</html>

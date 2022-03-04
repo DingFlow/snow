@@ -29,7 +29,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">订单类型：</label>
                 <div class="col-sm-5">
-                    <input class="form-control" th:value="${@dict.getLabel('sys_order_type',sysFnPayment.relateNoType)}" readonly />
+                    <input class="form-control" name="relateNoType" th:value="${@dict.getLabel('sys_order_type',sysFnPayment.relateNoType)}" readonly />
                 </div>
                 <div class="col-sm-4">
                     <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 支付单关联的单号</span>

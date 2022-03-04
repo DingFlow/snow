@@ -116,6 +116,20 @@ public class SysFnPaymentController extends BaseController
     }
 
     /**
+     * 详情
+     * @param id
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/detail/{id}")
+    @RequiresPermissions("system:payment:detail")
+    public String detail(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        SysFnPayment sysFnPayment = sysFnPaymentService.selectSysFnPaymentById(id);
+        mmap.put("sysFnPayment", sysFnPayment);
+        return prefix + "/detail";
+    }
+    /**
      * 修改保存支付申请
      */
     @RequiresPermissions("system:payment:edit")
@@ -128,6 +142,8 @@ public class SysFnPaymentController extends BaseController
         paymentForm.setBusinessKey(paymentForm.getPaymentNo());
         paymentForm.setStartUserId(String.valueOf(ShiroUtils.getUserId()));
         paymentForm.setBusVarUrl("/system/payment/detail");
+        SysFnPayment newSysFnPayment = sysFnPaymentService.selectSysFnPaymentById(sysFnPayment.getId());
+        paymentForm.setCreateTime(newSysFnPayment.getCreateTime());
         ProcessInstance processInstance = flowableService.startProcessInstanceByAppForm(paymentForm);
         log.info("@@发起业务单号为:{}付款申请流程:{}",sysFnPayment.getPaymentNo(),processInstance.getProcessInstanceId());
         return toAjax(sysFnPaymentService.updateSysFnPayment(sysFnPayment));

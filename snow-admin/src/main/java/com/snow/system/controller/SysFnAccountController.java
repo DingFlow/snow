@@ -157,6 +157,7 @@ public class SysFnAccountController extends BaseController
     @RepeatSubmit
     @ResponseBody
     public AjaxResult rechargeAccount(RechargeAccountRequest rechargeAccountRequest){
+        rechargeAccountRequest.setRechargeRemark("账户充值");
         return AjaxResult.success(sysFnAccountService.rechargeAccount(rechargeAccountRequest));
     }
 }
