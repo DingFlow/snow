@@ -3,6 +3,7 @@ package com.snow.web.controller.dingtalk;
 import com.snow.common.constant.Constants;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
+import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.ServletUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.framework.shiro.auth.LoginType;
@@ -11,7 +12,6 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysAuthUser;
 import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.SysUserMapper;
-import com.snow.system.service.ISysConfigService;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
@@ -19,11 +19,10 @@ import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.request.AuthAlipayRequest;
 import me.zhyd.oauth.request.AuthDingTalkRequest;
 import me.zhyd.oauth.request.AuthRequest;
-import me.zhyd.oauth.request.AuthWeChatEnterpriseRequest;
+import me.zhyd.oauth.request.AuthWeChatEnterpriseQrcodeRequest;
 import me.zhyd.oauth.utils.AuthStateUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,9 +40,6 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/third/oauth")
 public class ThirdOauthController extends BaseController {
-
-    @Autowired
-    private ISysConfigService iSysConfigService;
 
     @Resource
     private SysUserMapper userMapper;
@@ -148,13 +144,13 @@ public class ThirdOauthController extends BaseController {
      * @return
      */
     private AuthRequest getDingTalkAuthRequest() {
-        String appId= iSysConfigService.selectConfigByKey("ding.login.appid");
-        String appSecret= iSysConfigService.selectConfigByKey("ding.login.appSecret");
-        String redirectUri= iSysConfigService.selectConfigByKey("ding.login.redirectUri");
+        Object appId = CacheUtils.getSysConfig("sys_config:ding.login.appid");
+        Object appSecret = CacheUtils.getSysConfig("sys_config:ding.login.appSecret");
+        Object redirectUri = CacheUtils.getSysConfig("sys_config:ding.login.redirectUri");
         return new AuthDingTalkRequest(AuthConfig.builder()
-                .clientId(appId)
-                .clientSecret(appSecret)
-                .redirectUri(redirectUri)
+                .clientId(String.valueOf(appId))
+                .clientSecret(String.valueOf(appSecret))
+                .redirectUri(String.valueOf(redirectUri))
                 .build());
     }
 
@@ -163,26 +159,26 @@ public class ThirdOauthController extends BaseController {
      * @return
      */
     private AuthRequest getWeChatAuthRequest() {
-        String clientId= iSysConfigService.selectConfigByKey("wechart.login.clientId");
-        String appSecret= iSysConfigService.selectConfigByKey("wechart.login.appSecret");
-        String redirectUri= iSysConfigService.selectConfigByKey("wechart.login.redirectUri");
-        String agentId= iSysConfigService.selectConfigByKey("wechart.login.agentId");
-        return new AuthWeChatEnterpriseRequest(AuthConfig.builder()
-                .clientId(clientId)
-                .clientSecret(appSecret)
-                .redirectUri(redirectUri)
-                .agentId(agentId)
+        Object agentId = CacheUtils.getSysConfig("sys_config:wechart.login.agentId");
+        Object clientId = CacheUtils.getSysConfig("sys_config:wechart.login.clientId");
+        Object appSecret = CacheUtils.getSysConfig("sys_config:wechart.login.appSecret");
+        Object redirectUri = CacheUtils.getSysConfig("sys_config:wechart.login.redirectUri");
+        return new AuthWeChatEnterpriseQrcodeRequest(AuthConfig.builder()
+                .clientId(String.valueOf(clientId))
+                .clientSecret(String.valueOf(appSecret))
+                .redirectUri(String.valueOf(redirectUri))
+                .agentId(String.valueOf(agentId))
                 .build());
     }
 
     private AuthRequest getAlipayAuthRequest() {
-        String appId= iSysConfigService.selectConfigByKey("alipay.login.appId");
-        String redirectUri= iSysConfigService.selectConfigByKey("alipay.login.redirectUri");
+        Object appId = CacheUtils.getSysConfig("sys_config:alipay.login.appId");
+        Object redirectUri = CacheUtils.getSysConfig("sys_config:alipay.login.redirectUri");
         return new AuthAlipayRequest(AuthConfig.builder()
-                .clientId(appId)
+                .clientId(String.valueOf(appId))
                 .clientSecret(Constants.ALIPAY_RSA_PRIVATE_KEY)
                 .alipayPublicKey(Constants.ALIPAY_PUBLIC_KEY)
-                .redirectUri(redirectUri)
+                .redirectUri(String.valueOf(redirectUri))
                 .build());
     }
 
