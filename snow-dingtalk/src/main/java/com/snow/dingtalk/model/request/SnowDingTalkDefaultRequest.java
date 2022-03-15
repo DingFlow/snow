@@ -6,16 +6,12 @@ import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
 import com.snow.common.constant.CacheConstants;
 import com.snow.common.constant.Constants;
-import com.snow.common.exception.DingTalkApiException;
 import com.snow.common.exception.SyncDataException;
 import com.snow.common.utils.CacheUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
-import com.snow.dingtalk.common.BasePath;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
-import me.zhyd.oauth.model.AuthCallback;
-import me.zhyd.oauth.model.AuthToken;
 
 /**
  * @author qimingjin
@@ -26,11 +22,24 @@ import me.zhyd.oauth.model.AuthToken;
 public abstract class SnowDingTalkDefaultRequest implements SnowDingTalkRequest{
 
 
+    /**
+     * 请求钉钉接口
+     * @param request 请求对象
+     * @param url 请求钉钉接口url路径
+     * @param <T> 具体请求参数泛型
+     * @return 请求返回的参数对象
+     * @throws ApiException
+     */
+    @Override
     public  <T extends TaobaoResponse> T execute(TaobaoRequest<T> request,String url) throws ApiException{
         DefaultDingTalkClient client = new DefaultDingTalkClient(url);
         return client.execute(request,this.getAccessToken());
     }
 
+    /**
+     * 获取token
+     * @return 返回token
+     */
     @Override
     public String getAccessToken() {
         DefaultDingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_TOKEN_URL);

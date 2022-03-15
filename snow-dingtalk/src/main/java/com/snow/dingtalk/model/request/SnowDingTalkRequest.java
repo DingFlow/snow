@@ -1,14 +1,13 @@
 package com.snow.dingtalk.model.request;
 
 import com.snow.common.exception.DingTalkApiException;
-import com.snow.dingtalk.common.BasePath;
 import com.taobao.api.ApiException;
 import com.taobao.api.TaobaoRequest;
 import com.taobao.api.TaobaoResponse;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title: 系统钉钉请求对象接口
  * @Description:
  * @date 2022/3/15 13:21
  */
