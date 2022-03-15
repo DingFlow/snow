@@ -3,8 +3,6 @@ package com.snow.dingtalk.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import com.alibaba.fastjson.JSON;
-import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiAttendanceListRecordRequest;
 import com.dingtalk.api.request.OapiAttendanceListRequest;
 import com.dingtalk.api.request.OapiAttendanceRecordUploadRequest;
@@ -15,7 +13,6 @@ import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseConstantUrl;
-import com.snow.dingtalk.common.BaseService;
 import com.snow.dingtalk.model.request.AttendanceListRecordRequest;
 import com.snow.dingtalk.model.request.AttendanceListRequest;
 import com.snow.dingtalk.model.request.AttendanceRecordUploadRequest;
@@ -36,7 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class AttendanceServiceImpl extends BaseService implements AttendanceService {
+public class AttendanceServiceImpl implements AttendanceService {
 
     /**
      * 获取考勤记录
@@ -46,12 +43,11 @@ public class AttendanceServiceImpl extends BaseService implements AttendanceServ
     @Override
     @DingTalkLog(dingTalkLogType=DingTalkLogType.ATTENDANCE_RECORD_LIST,dingTalkUrl =BaseConstantUrl.ATTENDANCE_RECORD_LIST)
     public AttendanceListResponse getAttendanceList(AttendanceListRequest attendanceListRequest) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ATTENDANCE_RECORD_LIST);
         OapiAttendanceListRequest req = BeanUtil.copyProperties(attendanceListRequest, OapiAttendanceListRequest.class);
         req.setIsI18n(false);
         OapiAttendanceListResponse rsp = null;
         try {
-            rsp = client.execute(req, getDingTalkToken());
+            rsp = attendanceListRequest.execute(req, BaseConstantUrl.ATTENDANCE_RECORD_LIST);
             if(rsp.getErrcode()!=0){
                 log.error("@@获取考勤记录信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
@@ -69,12 +65,11 @@ public class AttendanceServiceImpl extends BaseService implements AttendanceServ
     @Override
     @DingTalkLog(dingTalkLogType=DingTalkLogType.ATTENDANCE_RECORD_RECORD,dingTalkUrl =BaseConstantUrl.ATTENDANCE_RECORD_RECORD)
     public List<AttendanceListRecordResponse> getAttendanceRecord(AttendanceListRecordRequest attendanceListRecordRequest) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ATTENDANCE_RECORD_RECORD);
         OapiAttendanceListRecordRequest req = BeanUtil.copyProperties(attendanceListRecordRequest, OapiAttendanceListRecordRequest.class);
         req.setIsI18n(false);
         OapiAttendanceListRecordResponse  rsp =null;
         try {
-            rsp = client.execute(req, getDingTalkToken());
+            rsp = attendanceListRecordRequest.execute(req,BaseConstantUrl.ATTENDANCE_RECORD_RECORD);
             if(rsp.getErrcode()!=0){
                 log.error("@@获取考勤记录信息详情返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
@@ -89,12 +84,12 @@ public class AttendanceServiceImpl extends BaseService implements AttendanceServ
     @Override
     @DingTalkLog(dingTalkLogType=DingTalkLogType.UPLOAD_ATTENDANCE_RECORD,dingTalkUrl =BaseConstantUrl.ATTENDANCE_RECORD_UPLOAD)
     public String uploadAttendanceRecord(AttendanceRecordUploadRequest attendanceRecordUploadRequest) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.ATTENDANCE_RECORD_UPLOAD);
         OapiAttendanceRecordUploadRequest req = BeanUtil.copyProperties(attendanceRecordUploadRequest, OapiAttendanceRecordUploadRequest.class);
         req.setUserid(attendanceRecordUploadRequest.getDingUserId());
         OapiAttendanceRecordUploadResponse rsp = null;
         try {
-            rsp = client.execute(req, getDingTalkToken());
+
+            rsp = attendanceRecordUploadRequest.execute(req, BaseConstantUrl.ATTENDANCE_RECORD_UPLOAD);
             if(rsp.getErrcode()!=0){
                 log.error("@@上传考勤记录信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());

@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceRecordUploadRequest implements Serializable {
+public class AttendanceRecordUploadRequest extends SnowDingTalkDefaultRequest implements Serializable {
 
     private static final long serialVersionUID = -583239968246465341L;
 
