@@ -1,24 +1,13 @@
 package com.snow.flowable.listener.leave;
 
-import com.google.common.collect.Lists;
 import com.snow.common.enums.ProcessStatus;
+import com.snow.flowable.domain.leave.LeaveRestartTask;
 import com.snow.flowable.listener.AbstractTaskListener;
 import com.snow.system.domain.SysOaLeave;
-import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysOaLeaveService;
-import com.snow.system.service.impl.SysDeptServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.flowable.task.service.TaskService;
-import org.flowable.task.service.impl.TaskServiceImpl;
-import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @program: snow
@@ -28,7 +17,7 @@ import java.util.stream.Collectors;
  **/
 @Service("leaveStartTaskListener")
 @Slf4j
-public class LeaveStartTaskListener extends AbstractTaskListener {
+public class LeaveStartTaskListener extends AbstractTaskListener<LeaveRestartTask> {
 
     @Autowired
     private ISysOaLeaveService sysOaLeaveService;

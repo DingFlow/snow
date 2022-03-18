@@ -84,6 +84,7 @@ public class SnowGlobalExceptionHandler {
     {
 
         String errMessage=Optional.ofNullable(e.getMessage()).orElse("");
+        log.error("流程服务异常："+e.getMessage(), e);
         if(e.getMessage().contains("")){
             return AjaxResult.error("流程服务异常，请联系管理员");
         }
