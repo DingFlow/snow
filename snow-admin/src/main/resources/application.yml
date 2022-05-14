@@ -14,7 +14,7 @@ snow:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 9527
+  port: 80
   servlet:
     # 应用的访问路径
     context-path: /
@@ -143,10 +143,10 @@ xss:
 
 #登录后是否显示最新的公告
 is:
-  notice: true
+  notice: false
   #是否开启同步钉钉
   sync:
-     dingtalk: false
+     dingtalk: true
 
 flowable:
   #关闭定时任务JOB

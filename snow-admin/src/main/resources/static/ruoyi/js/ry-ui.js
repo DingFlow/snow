@@ -1202,6 +1202,34 @@ var table = {
         			$.operate.submit(url, "post", "json", data);
         		});
             },
+
+            mark: function(id) {
+                table.set();
+                $.modal.confirm("确定标记该条" + table.options.modalName + "信息吗？", function() {
+                    var url = $.common.isEmpty(id) ? table.options.markUrl : table.options.markUrl.replace("{id}", id);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        $.operate.get(url);
+                    } else {
+                        var data = { "ids": id };
+                        $.operate.submit(url, "post", "json", data);
+                    }
+                });
+
+            },
+            // 批量标记信息
+            markAll: function() {
+                table.set();
+                var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                if (rows.length == 0) {
+                    $.modal.alertWarning("请至少选择一条记录");
+                    return;
+                }
+                $.modal.confirm("确认要标记选中的" + rows.length + "条数据吗?", function() {
+                    var url = table.options.markUrl;
+                    var data = { "ids": rows.join() };
+                    $.operate.submit(url, "post", "json", data);
+                });
+            },
             // 发布信息
             deployment: function(id,type) {
                 table.set();

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('消息中心')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li class="select-time">
+                                <label>消息时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateTime]"/>
+                            </li>
+                            <li>
+                                <label>消息状态：</label>
+                                <select name="messageReadStatus" >
+                                    <option value="">请选择</option>
+                                    <option value="0">未读</option>
+                                    <option value="1">已读</option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>消息类型：</label>
+                                <select name="messageType" th:with="type=${@dict.getType('sys_oa_message_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success multiple disabled" onclick="$.operate.markAll()" shiro:hasPermission="system:messageCenter:mark">
+                    <i class="fa fa-mars-stroke"></i> 标记已读
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:messageCenter:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+              <!--  <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:payment:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var removeFlag = [[${@permission.hasPermi('system:messageCenter:remove')}]];
+        var markFlag = [[${@permission.hasPermi('system:messageCenter:mark')}]];
+        var detailFlag = [[${@permission.hasPermi('system:messageCenter:detail')}]];
+        var messageType = [[${@dict.getType('sys_oa_message_type')}]];
+        var messageReadType = [[${@dict.getType('sys_message_read_flag')}]];
+
+        var prefix = ctx + "system/messageCenter";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                markUrl:prefix+"/mark",
+                modalName: "消息中心",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'messageType',
+                    title: '消息类型',
+                    formatter: function(value, row, index) {
+                        return "<i  class='text-danger "+row.iconClass+"'></i> "+ $.table.selectDictLabel(messageType, value);
+                    }
+                },
+
+
+                {
+                    field: 'consumerUser.userName',
+                    title: '生产者'
+                },
+
+                {
+                    field: 'messageContent',
+                    title: '消息内容',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'messageReadStatus',
+                    title: '消息状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(messageReadType, value);
+                    }
+                },
+                {
+                     field: 'spendTime',
+                     title: '消息时间'
+                 },
+                    {
+                        field: 'createTime',
+                        title: '创建时间'
+                    },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if(row.messageReadStatus==0){
+                            actions.push('<a class="btn btn-success btn-xs ' + markFlag + '" href="javascript:void(0)" onclick="$.operate.mark(\'' + row.id + '\')"><i class="fa fa-mars-stroke"></i>标记已读</a> ');
+                        }
+                        actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="messageDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>详情</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function messageDetail(id) {
+            $.modal.openTab('消息详情', "/system/messageCenter/detail/"+id);
+        }
+    </script>
+</body>
+</html>
