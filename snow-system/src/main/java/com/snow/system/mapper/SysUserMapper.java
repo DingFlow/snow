@@ -44,6 +44,14 @@ public interface SysUserMapper
     public List<SysUser>  selectUserListByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     /**
+     *
+     * @param ids
+     * @return
+     */
+    List<SysUser>  selectUserByIds(Long[] ids);
+
+
+    /**
      * 根据条件分页查询未分配用户角色列表
      * 
      * @param user 用户信息

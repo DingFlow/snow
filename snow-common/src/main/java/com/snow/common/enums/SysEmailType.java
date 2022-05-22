@@ -3,7 +3,7 @@ package com.snow.common.enums;
 /**
  * email搜索类型
  */
-public enum SysEmailSearchType {
+public enum SysEmailType {
 
     COMMON(0, "common"),
     INBOX(6, "inbox"),
@@ -15,7 +15,7 @@ public enum SysEmailSearchType {
     private final Integer code;
     private final String info;
 
-    SysEmailSearchType(Integer code, String info)
+    SysEmailType(Integer code, String info)
     {
         this.code = code;
         this.info = info;

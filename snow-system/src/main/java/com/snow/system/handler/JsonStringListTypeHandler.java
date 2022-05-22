@@ -1,4 +1,4 @@
-package com.snow.framework.config;
+package com.snow.system.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

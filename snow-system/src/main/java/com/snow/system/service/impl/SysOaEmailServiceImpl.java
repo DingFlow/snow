@@ -1,22 +1,24 @@
 package com.snow.system.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.BetweenFormater;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.MessageEventType;
 import com.snow.common.utils.DateUtils;
-import com.snow.system.domain.SysMessageTransition;
-import com.snow.system.domain.SysOaEmail;
-import com.snow.system.domain.SysOaEmailDO;
-import com.snow.system.domain.SysOaEmailVO;
+import com.snow.common.utils.bean.BeanUtils;
+import com.snow.system.domain.*;
 import com.snow.system.mapper.SysOaEmailMapper;
 import com.snow.system.service.ISysOaEmailService;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +29,7 @@ import java.util.stream.Collectors;
  * @date 2021-03-12
  */
 @Service
-public class SysOaEmailServiceImpl implements ISysOaEmailService 
-{
+public class SysOaEmailServiceImpl extends ServiceImpl<SysOaEmailMapper, SysOaEmail> implements ISysOaEmailService {
     @Autowired
     private SysOaEmailMapper sysOaEmailMapper;
 
@@ -47,24 +48,27 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
      * @return 邮件
      */
     @Override
-    public SysOaEmail selectSysOaEmailById(Long id)
-    {
-        SysOaEmail sysOaEmail=sysOaEmailMapper.selectSysOaEmailById(id);
-        sysOaEmail.setBelongUser(sysUserService.selectUserById(Long.parseLong(sysOaEmail.getBelongUserId())));
-        return sysOaEmail;
+    public SysOaEmailDTO selectSysOaEmailById(Long id) {
+        SysOaEmail sysOaEmail=this.getById(id);
+        SysOaEmailDTO sysOaEmailDTO= BeanUtil.copyProperties(sysOaEmail,SysOaEmailDTO.class);
+        sysOaEmailDTO.setBelongUser(sysUserService.selectUserById(Long.parseLong(sysOaEmail.getBelongUserId())));
+        return sysOaEmailDTO;
     }
 
     @Override
-    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo) {
-        SysOaEmail sysOaEmail=sysOaEmailMapper.selectSysOaEmailByEmailNo(emailNo);
-        sysOaEmail.setBelongUser(sysUserService.selectUserById(Long.parseLong(sysOaEmail.getBelongUserId())));
-        return sysOaEmail;
+    public SysOaEmailDTO selectSysOaEmailByEmailNo(String emailNo) {
+        LambdaQueryWrapper<SysOaEmail> eq = new LambdaQueryWrapper<SysOaEmail>()
+                .eq(SysOaEmail::getEmailSubject, emailNo);
+        SysOaEmail sysOaEmail = this.getOne(eq);
+        SysOaEmailDTO sysOaEmailDTO= BeanUtil.copyProperties(sysOaEmail,SysOaEmailDTO.class);
+        sysOaEmailDTO.setBelongUser(sysUserService.selectUserById(Long.parseLong(sysOaEmail.getBelongUserId())));
+        return sysOaEmailDTO;
     }
 
 
     @Override
-    public List<SysOaEmail> getMyNoReadOaEmailList(String userId){
-        List<SysOaEmail> sysOaEmailList=new ArrayList<>();
+    public List<SysOaEmailDTO> getMyNoReadOaEmailList(String userId){
+        List<SysOaEmailDTO> sysOaEmailList=new ArrayList<>();
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setConsumerId(userId);
         sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
@@ -73,7 +77,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
         if(CollUtil.isNotEmpty(sysMessageTransitions)){
             List<String> emailNoList = sysMessageTransitions.stream().map(SysMessageTransition::getMessageOutsideId).collect(Collectors.toList());
-            SysOaEmail sysOaEmail=new SysOaEmail();
+            SysOaEmailDTO sysOaEmail=new SysOaEmailDTO();
             sysOaEmail.setEmailNoList(emailNoList);
             sysOaEmailList = selectSysOaEmailList(sysOaEmail);
         }
@@ -86,54 +90,47 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
      * @return 邮件
      */
     @Override
-    public List<SysOaEmail> selectSysOaEmailList(SysOaEmail sysOaEmail)
-    {
+    public List<SysOaEmailDTO> selectSysOaEmailList(SysOaEmailDTO sysOaEmail) {
 
-        List<SysOaEmail> sysOaEmailList = sysOaEmailMapper.selectSysOaEmailList(sysOaEmail);
-        if(CollUtil.isNotEmpty(sysOaEmailList)){
-            sysOaEmailList.forEach(t->{
-                t.setSpendTime(DateUtil.formatBetween(t.getSendTime(), new Date(), BetweenFormater.Level.SECOND)+"前");
-                SysMessageTransition sysMessageTransition=new SysMessageTransition();
-                sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
-                sysMessageTransition.setMessageStatus(0L);
-                sysMessageTransition.setMessageOutsideId(t.getEmailNo());
-                List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
-                if(CollUtil.isNotEmpty(sysMessageTransitions)){
-                    //生产者只有一个，直接get(0)就行了
-                    t.setEmailFromUser(sysMessageTransitions.get(0).getProducerUser());
-                    //消费者存在多个
-                    t.setEmailToUser(sysMessageTransitions.stream().map(SysMessageTransition::getConsumerUser).collect(Collectors.toList()));
-                }
-            });
+        LambdaQueryWrapper<SysOaEmail> eq = new LambdaQueryWrapper<SysOaEmail>()
+                .like(StrUtil.isNotBlank(sysOaEmail.getEmailSubject()), SysOaEmail::getEmailSubject, sysOaEmail.getEmailSubject())
+                .eq(ObjectUtil.isNotEmpty(sysOaEmail.getEmailStatus()),SysOaEmail::getEmailStatus,sysOaEmail.getEmailStatus());
+
+        List<SysOaEmail> list = this.list(eq);
+        if(CollUtil.isEmpty(list)){
+            return BeanUtils.transformList(list,SysOaEmailDTO.class);
         }
-        return sysOaEmailList;
+        List<SysOaEmailDTO> sysOaEmailDTOList= Lists.newArrayList();
+        list.forEach(t->{
+            List<String> emailToUser = t.getEmailToUser();
+            if(CollUtil.isEmpty(emailToUser)){
+                return;
+            }
+            List<SysUser> sysUserList = sysUserService.selectUserByIds(cn.hutool.core.convert.Convert.toLongArray(emailToUser));
+            List<String> emailList = sysUserList.stream().map(SysUser::getEmail).collect(Collectors.toList());
+            t.setEmailToUser(emailList);
+            SysOaEmailDTO sysOaEmailDTO = BeanUtil.copyProperties(t, SysOaEmailDTO.class);
+            sysOaEmailDTO.setEmailToUser(sysUserList);
+            sysOaEmailDTO.setEmailTo(CollUtil.join(emailList,","));
+            sysOaEmailDTOList.add(sysOaEmailDTO);
+        });
+        return sysOaEmailDTOList;
     }
 
     @Override
     public List<SysOaEmailVO> selectEmailList(SysOaEmailDO sysOaEmailDO) {
         List<SysOaEmailVO> sysOaEmailVOS = sysOaEmailMapper.selectEmailList(sysOaEmailDO);
-        if(CollUtil.isNotEmpty(sysOaEmailVOS)){
-            sysOaEmailVOS.forEach(t->{
-                t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
-                t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));
-
-            });
+        if(CollUtil.isEmpty(sysOaEmailVOS)){
+            return sysOaEmailVOS;
         }
+        sysOaEmailVOS.forEach(t->{
+            t.setProducerUser(sysUserService.selectUserById(Long.parseLong(t.getProducerId())));
+            t.setConsumerUser(sysUserService.selectUserById(Long.parseLong(t.getConsumerId())));
+        });
         return sysOaEmailVOS;
     }
 
-    /**
-     * 新增邮件
-     * 
-     * @param sysOaEmail 邮件
-     * @return 结果
-     */
-    @Override
-    public int insertSysOaEmail(SysOaEmail sysOaEmail)
-    {
-        sysOaEmail.setCreateTime(DateUtils.getNowDate());
-        return sysOaEmailMapper.insertSysOaEmail(sysOaEmail);
-    }
+
 
     /**
      * 修改邮件
@@ -142,7 +139,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
      * @return 结果
      */
     @Override
-    public int updateSysOaEmail(SysOaEmail sysOaEmail)
+    public int updateSysOaEmail(SysOaEmailDTO sysOaEmail)
     {
         sysOaEmail.setUpdateTime(DateUtils.getNowDate());
         return sysOaEmailMapper.updateSysOaEmail(sysOaEmail);
@@ -174,7 +171,7 @@ public class SysOaEmailServiceImpl implements ISysOaEmailService
 
 
     @Override
-    public int updateSysOaEmailByEmailNo(SysOaEmail sysOaEmail) {
+    public int updateSysOaEmailByEmailNo(SysOaEmailDTO sysOaEmail) {
         sysOaEmail.setUpdateTime(DateUtils.getNowDate());
         return sysOaEmailMapper.updateSysOaEmailByEmailNo(sysOaEmail);
     }

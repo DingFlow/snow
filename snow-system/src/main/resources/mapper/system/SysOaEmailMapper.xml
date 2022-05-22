@@ -54,12 +54,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectEmailList" resultType="com.snow.system.domain.SysOaEmailVO" parameterType="com.snow.system.domain.SysOaEmailDO">
-
-        select o.id as id,o.email_no as emailNo, email_subject as emailSubject,o.email_content as emialContent,o.send_time as sendTime,o.email_type as emailType,
-        o.email_status as emailStatus,o.email_label as emailLabel,
-        m.producer_id as producerId,m.consumer_id as consumerId,m.message_read_status as messageReadStatus
-        from  sys_message_transition m left join sys_oa_email o
-        on o.email_no =m.message_outside_id
+        select
+        o.id as id,
+        o.email_no as emailNo,
+        email_subject as emailSubject,
+        o.email_content as emialContent,
+        o.send_time as sendTime,
+        o.email_type as emailType,
+        o.email_status as emailStatus,
+        o.email_label as emailLabel,
+        m.producer_id as producerId,
+        m.consumer_id as consumerId,
+        m.message_read_status as messageReadStatus
+        from  sys_message_transition m
+        left join sys_oa_email o on o.email_no =m.message_outside_id
         <where>
             <if test="emailNoList !=null and emailNoList.size() > 0">
                 and	o.email_no in

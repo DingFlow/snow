@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="ancestors"  column="ancestors"   />
 		<result property="deptName"   column="dept_name"   />
 		<result property="orderNum"   column="order_num"   />
-		<result property="leader"     column="leader"    typeHandler="com.snow.framework.config.JsonStringListTypeHandler"   />
+		<result property="leader"     column="leader"    typeHandler="com.snow.system.handler.JsonStringListTypeHandler"   />
 		<result property="phone"      column="phone"       />
 		<result property="email"      column="email"       />
 		<result property="status"     column="status"      />
@@ -106,7 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="deptName != null and deptName != ''">#{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">#{orderNum},</if>
- 			<if test="leader != null and leader != ''">#{leader,typeHandler=com.snow.framework.config.JsonStringListTypeHandler},</if>
+ 			<if test="leader != null and leader != ''">#{leader,typeHandler=com.snow.system.handler.JsonStringListTypeHandler},</if>
  			<if test="phone != null and phone != ''">#{phone},</if>
  			<if test="email != null and email != ''">#{email},</if>
  			<if test="status != null">#{status},</if>
@@ -123,7 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>
- 			<if test="leader != null">leader = #{leader,typeHandler=com.snow.framework.config.JsonStringListTypeHandler},</if>
+ 			<if test="leader != null">leader = #{leader,typeHandler=com.snow.system.handler.JsonStringListTypeHandler},</if>
  			<if test="phone != null">phone = #{phone},</if>
  			<if test="email != null">email = #{email},</if>
  			<if test="status != null and status != ''">status = #{status},</if>

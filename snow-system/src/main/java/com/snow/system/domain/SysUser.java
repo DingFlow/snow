@@ -44,7 +44,6 @@ public class SysUser extends BaseEntity
 
     /** 用户名称 */
     @Excel(name = "用户名称")
-    @Sensitive(type = SensitiveTypeEnum.CHINESE_NAME)
     private String userName;
 
     /** 用户类型 */
@@ -52,7 +51,6 @@ public class SysUser extends BaseEntity
 
     /** 用户邮箱 */
     @Excel(name = "用户邮箱")
-    @Sensitive(type=SensitiveTypeEnum.EMAIL)
     private String email;
 
     /** 手机号码 */

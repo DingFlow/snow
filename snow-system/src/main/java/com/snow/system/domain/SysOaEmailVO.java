@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -14,23 +15,36 @@ import java.util.List;
  * @date 2021-03-12
  */
 @Data
-public class SysOaEmailVO
-{
+public class SysOaEmailVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** id */
+    /**
+     *  id
+     *
+     */
     private Long id;
 
-    private List idList;
-    /** 邮件编号 */
+    /**
+     * id集合
+     */
+    private List<Integer> idList;
 
+    /**
+     * 邮件编号
+     */
     private String emailNo;
 
-    /** 邮件主题 */
+    /**
+     * 邮件主题
+     *
+     */
     private String emailSubject;
 
-    /** 邮件内容 */
+    /**
+     * 邮件内容
+     */
     private String emailContent;
+
 
     private String emailTo;
     /**
@@ -67,7 +81,6 @@ public class SysOaEmailVO
 
     /** 附件 */
     private String fileUrl;
-
 
     /**
      * 查询类型

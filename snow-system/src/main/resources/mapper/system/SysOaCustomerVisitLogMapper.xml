@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="visitType"    column="visit_type"    />
         <result property="visitResult"    column="visit_result"    />
         <result property="visitUrl"    column="visit_url"    />
-        <result property="acceptUser"    column="accept_user"   typeHandler="com.snow.framework.config.JsonStringArrayTypeHandler"  />
+        <result property="acceptUser"    column="accept_user"   typeHandler="com.snow.system.handler.JsonStringArrayTypeHandler"  />
         <result property="visitTime"    column="visit_time"    />
         <result property="visitLinkPhone"    column="visit_link_phone"    />
         <result property="visitLinkUser"    column="visit_link_user"    />
@@ -71,7 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="visitType != null">#{visitType},</if>
             <if test="visitResult != null">#{visitResult},</if>
             <if test="visitUrl != null">#{visitUrl},</if>
-            <if test="acceptUser != null">#{acceptUser,typeHandler=com.snow.framework.config.JsonStringArrayTypeHandler},</if>
+            <if test="acceptUser != null">#{acceptUser,typeHandler=com.snow.system.handler.JsonStringArrayTypeHandler},</if>
             <if test="visitTime != null">#{visitTime},</if>
             <if test="visitLinkPhone != null">#{visitLinkPhone},</if>
             <if test="visitLinkUser != null">#{visitLinkUser},</if>
@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="visitType != null">visit_type = #{visitType},</if>
             <if test="visitResult != null">visit_result = #{visitResult},</if>
             <if test="visitUrl != null">visit_url = #{visitUrl},</if>
-            <if test="acceptUser != null">accept_user = #{acceptUser,typeHandler=com.snow.framework.config.JsonStringArrayTypeHandler},</if>
+            <if test="acceptUser != null">accept_user = #{acceptUser,typeHandler=com.snow.system.handler.JsonStringArrayTypeHandler},</if>
             <if test="visitTime != null">visit_time = #{visitTime},</if>
             <if test="visitLinkPhone != null">visit_link_phone = #{visitLinkPhone},</if>
             <if test="visitLinkUser != null">visit_link_user = #{visitLinkUser},</if>

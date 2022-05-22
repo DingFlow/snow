@@ -85,14 +85,13 @@
                     field: 'messageType',
                     title: '消息类型',
                     formatter: function(value, row, index) {
-                        return "<i  class='text-danger "+row.iconClass+"'></i> "+ $.table.selectDictLabel(messageType, value);
+                        return  $.table.selectDictLabel(messageType, value);
                     }
                 },
 
-
                 {
                     field: 'consumerUser.userName',
-                    title: '生产者'
+                    title: '发送者'
                 },
 
                 {
@@ -109,14 +108,15 @@
                         return $.table.selectDictLabel(messageReadType, value);
                     }
                 },
-                {
-                     field: 'spendTime',
-                     title: '消息时间'
-                 },
                     {
                         field: 'createTime',
-                        title: '创建时间'
+                        title: '发送时间'
                     },
+                {
+                     field: 'spendTime',
+                     title: '距今时间'
+                 },
+
                 {
                     title: '操作',
                     align: 'center',
