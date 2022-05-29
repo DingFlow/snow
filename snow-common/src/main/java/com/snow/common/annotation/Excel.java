@@ -1,9 +1,14 @@
 package com.snow.common.annotation;
 
+import com.snow.common.utils.poi.ExcelHandlerAdapter;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.math.BigDecimal;
 
 /**
  * 自定义导出Excel数据注解
@@ -45,9 +50,14 @@ public @interface Excel
     public String separator() default ",";
 
     /**
-     * 导出类型（0数字 1字符串）
+     * BigDecimal 精度 默认:-1(默认不开启BigDecimal格式化)
      */
-    public ColumnType cellType() default ColumnType.STRING;
+    public int scale() default -1;
+
+    /**
+     * BigDecimal 舍入规则 默认:BigDecimal.ROUND_HALF_EVEN
+     */
+    public int roundingMode() default BigDecimal.ROUND_HALF_EVEN;
 
     /**
      * 导出时在excel中每个列的高度 单位为字符
@@ -90,6 +100,36 @@ public @interface Excel
     public String targetAttr() default "";
 
     /**
+     * 是否自动统计数据,在最后追加一行统计数据总和
+     */
+    public boolean isStatistics() default false;
+
+    /**
+     * 导出类型（0数字 1字符串）
+     */
+    public ColumnType cellType() default ColumnType.STRING;
+
+    /**
+     * 导出字体颜色
+     */
+    public IndexedColors color() default IndexedColors.BLACK;
+
+    /**
+     * 导出字段对齐方式
+     */
+    public HorizontalAlignment align() default HorizontalAlignment.CENTER;
+
+    /**
+     * 自定义数据处理器
+     */
+    public Class<?> handler() default ExcelHandlerAdapter.class;
+
+    /**
+     * 自定义数据处理器参数
+     */
+    public String[] args() default {};
+
+    /**
      * 字段类型（0：导出导入；1：仅导出；2：仅导入）
      */
     Type type() default Type.ALL;
@@ -112,7 +152,7 @@ public @interface Excel
 
     public enum ColumnType
     {
-        NUMERIC(0), STRING(1);
+        NUMERIC(0), STRING(1), IMAGE(2);
         private final int value;
 
         ColumnType(int value)

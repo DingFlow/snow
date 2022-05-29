@@ -1,4 +1,4 @@
-package com.snow.system.domain;
+package com.snow.common.core.domain;
 
 import javax.validation.constraints.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;

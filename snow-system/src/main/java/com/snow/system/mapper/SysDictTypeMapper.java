@@ -1,7 +1,7 @@
 package com.snow.system.mapper;
 
 import java.util.List;
-import com.snow.system.domain.SysDictType;
+import com.snow.common.core.domain.SysDictType;
 
 /**
  * 字典表 数据层

@@ -1,7 +1,9 @@
 package com.snow.dingtalk.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.aliyun.dingtalktodo_1_0.Client;
 import com.aliyun.dingtalktodo_1_0.models.*;
@@ -28,9 +30,7 @@ import com.snow.dingtalk.service.UserService;
 import com.snow.dingtalk.service.WorkRecodeService;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysOaTask;
-import com.snow.system.service.ISysMessageTemplateService;
-import com.snow.system.service.ISysUserService;
-import com.snow.system.service.impl.SysConfigServiceImpl;
+import com.snow.system.domain.SysOaTaskDistribute;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -51,14 +51,9 @@ import java.util.stream.Collectors;
 @Service
 public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeService {
 
-    private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
-
-
-    private ISysMessageTemplateService sysMessageTemplateService=SpringUtils.getBean(ISysMessageTemplateService.class);
 
     private UserService userService=SpringUtils.getBean(UserService.class);
 
-    private ISysUserService sysUserService=SpringUtils.getBean(ISysUserService.class);
 
     /**
      * 创建工作待办
@@ -120,6 +115,7 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
         }
         try {
             CreateTodoTaskResponse response = createTodoClient().createTodoTaskWithOptions(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getCreateBy())), createTodoTaskRequest, createTodoTaskHeaders, new RuntimeOptions());
+            log.info("@@创建钉钉待办返回参数:{}", JSONUtil.toJsonStr(response));
             return response.getBody().id;
         } catch (Exception err) {
             log.error("@@调用钉钉创建待办的时候出现异常，异常信息为:{}",err.getMessage());
@@ -150,21 +146,23 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
         updateTodoTaskHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
         UpdateTodoTaskRequest updateTodoTaskRequest = new UpdateTodoTaskRequest()
                 .setSubject(sysOaTask.getTaskName())
-                .setDescription(sysOaTask.getTaskContent())
-                .setExecutorIds(Arrays.asList(
-                        ""
-                ));
-        //设置是否完成
-        if(ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime())){
-            updateTodoTaskRequest.setDone(true);
-        }else {
-            updateTodoTaskRequest.setDone(false);
+                .setDescription(sysOaTask.getTaskContent());
+        List<String> taskDistributeId = sysOaTask.getTaskDistributeId();
+        //执行者id
+        if(CollUtil.isNotEmpty(taskDistributeId)){
+            List<String> executorIds = taskDistributeId.stream().map(t -> {
+                return userService.getUnionIdBySysUserId(Long.parseLong(t));
+            }).collect(Collectors.toList());
+            updateTodoTaskRequest.setExecutorIds(executorIds);
         }
+        //设置是否完成
+        updateTodoTaskRequest.setDone(ObjectUtil.isNotNull(sysOaTask.getTaskCompleteTime()));
         if(ObjectUtil.isNotNull(sysOaTask.getExpectedTime())){
             updateTodoTaskRequest.setDueTime(sysOaTask.getExpectedTime().getTime());
         }
         try {
-            UpdateTodoTaskResponse updateTodoTaskResponse = createTodoClient().updateTodoTaskWithOptions(userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getUpdateBy())), sysOaTask.getDingTaskId(), updateTodoTaskRequest, updateTodoTaskHeaders, new RuntimeOptions());
+            String  unionId=userService.getUnionIdBySysUserId(Long.parseLong(sysOaTask.getUpdateBy()));
+            UpdateTodoTaskResponse updateTodoTaskResponse = createTodoClient().updateTodoTaskWithOptions(unionId, sysOaTask.getTaskOutsideId(), updateTodoTaskRequest, updateTodoTaskHeaders, new RuntimeOptions());
             return updateTodoTaskResponse.getBody().result;
         }catch (Exception err) {
             log.error("@@调用钉钉更新待办的时候出现异常，异常信息为:{}",err.getMessage());
@@ -173,18 +171,17 @@ public class WorkRecodeServiceImpl extends BaseService implements WorkRecodeServ
     }
 
     @Override
-    public Boolean updateTodoTaskExecutorStatus(String taskId,Boolean status) {
+    public Boolean updateTodoTaskExecutorStatus(Long userId,String taskId,Boolean status) {
+        String unionId= userService.getUnionIdBySysUserId(userId);
         UpdateTodoTaskExecutorStatusHeaders updateTodoTaskExecutorStatusHeaders = new UpdateTodoTaskExecutorStatusHeaders();
         updateTodoTaskExecutorStatusHeaders.xAcsDingtalkAccessToken = getDingTalkTokenV2();
         UpdateTodoTaskExecutorStatusRequest.UpdateTodoTaskExecutorStatusRequestExecutorStatusList executorStatusList0 = new UpdateTodoTaskExecutorStatusRequest.UpdateTodoTaskExecutorStatusRequestExecutorStatusList()
-                .setId(taskId)
+                .setId(unionId)
                 .setIsDone(status);
         UpdateTodoTaskExecutorStatusRequest updateTodoTaskExecutorStatusRequest = new UpdateTodoTaskExecutorStatusRequest()
-                .setExecutorStatusList(Arrays.asList(
-                        executorStatusList0
-                ));
+                .setExecutorStatusList(CollUtil.newArrayList(executorStatusList0));
         try {
-            UpdateTodoTaskExecutorStatusResponse response = createTodoClient().updateTodoTaskExecutorStatusWithOptions("PUoiinWIpa2yH2ymhiiGiP6g", taskId, updateTodoTaskExecutorStatusRequest, updateTodoTaskExecutorStatusHeaders, new RuntimeOptions());
+            UpdateTodoTaskExecutorStatusResponse response = createTodoClient().updateTodoTaskExecutorStatusWithOptions(unionId, taskId, updateTodoTaskExecutorStatusRequest, updateTodoTaskExecutorStatusHeaders, new RuntimeOptions());
             return response.getBody().result;
         } catch (Exception err) {
             log.error("@@调用钉钉更新办状态的时候出现异常，异常信息为:{}",err.getMessage());

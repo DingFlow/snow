@@ -52,7 +52,7 @@ public interface WorkRecodeService  {
      * @param status 是否
      * @return
      */
-    Boolean updateTodoTaskExecutorStatus(String taskId,Boolean status);
+    Boolean updateTodoTaskExecutorStatus(Long userId,String taskId,Boolean status);
 
     /**
      * 根据业务id获取待办详情(新)

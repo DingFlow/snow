@@ -3,7 +3,7 @@ package com.snow.framework.web.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 import com.snow.system.service.ISysDictDataService;
 import com.snow.system.service.ISysDictTypeService;
 

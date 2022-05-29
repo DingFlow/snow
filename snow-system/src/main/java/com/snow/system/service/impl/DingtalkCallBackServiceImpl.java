@@ -9,7 +9,6 @@ import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.StringUtils;
 import com.snow.system.domain.DingtalkCallBackEvent;
-import com.snow.system.domain.SysDictData;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.mapper.DingtalkCallBackEventMapper;
 import org.springframework.beans.BeanUtils;

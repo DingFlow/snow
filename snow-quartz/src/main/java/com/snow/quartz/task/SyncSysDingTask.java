@@ -49,7 +49,7 @@ public class SyncSysDingTask {
                 SysOaTask upSysOaTask=new SysOaTask();
                 upSysOaTask.setTaskNo(t.getTaskNo());
                 upSysOaTask.setTaskStatus(TaskStatus.FINISH.getCode());
-                sysOaTaskService.updateSysOaTask(upSysOaTask);
+                sysOaTaskService.updateById(upSysOaTask);
             }
         });
     }

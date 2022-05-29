@@ -9,15 +9,11 @@ package com.snow.common.enums;
 public enum DingFlowTaskType {
 
     NEW("NEW", "未启动"),
-    RUNNING("RUNNING", "待处理"),
+    RUNNING("RUNNING", "处理中"),
     PAUSED("PAUSED", "暂停"),
     CANCELED("CANCELED", "取消"),
     COMPLETED("COMPLETED", "完成"),
     TERMINATED("TERMINATED", "终止"),
-
-    //20211015
-    PROCESSING("PROCESSING","处理中")
-
     ;
 
     private final String code;
