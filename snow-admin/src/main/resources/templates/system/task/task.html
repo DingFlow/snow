@@ -12,17 +12,16 @@
                 <div class="tabs-left">
 
                     <ul class="nav nav-tabs">
-
                         <li class="active">
-                            <a data-toggle="tab" href="#tab-1"> <span class="font-bold text-info"><i class="fa fa-tasks"></i>  待处理 </span>   <span class="label label-info pull-right"></span></a>
+                            <a data-toggle="tab" href="#tab-1"> <span class="font-bold text-info"><i class="fa fa-tasks"></i>&nbsp;  待处理 </span>   <span class="label label-info pull-right"></span></a>
 
                         </li>
                         <li class="">
-                            <a data-toggle="tab" href="#tab-2"> <span class="font-bold text-info"><i class="fa fa-paint-brush"></i>  我创建 </span> <span class="label label-info pull-right" ></span></a>
+                            <a data-toggle="tab" href="#tab-2"> <span class="font-bold text-info"><i class="fa fa-paint-brush"></i>&nbsp;   我创建 </span> <span class="label label-info pull-right" ></span></a>
 
                         </li>
                         <li class="">
-                            <a data-toggle="tab" href="#tab-3"><span class="font-bold text-info"><i class="fa fa-map"></i>  已处理 </span>  <span class="label label-info pull-right" ></span></a>
+                            <a data-toggle="tab" href="#tab-3"><span class="font-bold text-info"><i class="fa fa-map"></i>&nbsp;   已处理 </span>  <span class="label label-info pull-right" ></span></a>
                         </li>
                     </ul>
 
@@ -43,7 +42,7 @@
                                                 </li>
                                                 <li>
                                                     <label>任务状态：</label>
-                                                    <select name="taskStatus"  id="myTaskStatus" th:with="type=${@dict.getType('ding_task_status')}">
+                                                    <select name="taskStatus"  id="taskExecuteStatus" th:with="type=${@dict.getType('ding_task_status')}">
                                                         <option value="">所有</option>
                                                         <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                                     </select>
@@ -57,11 +56,6 @@
                                     </form>
                                 </div>
 
-                                <div class="btn-group-sm" id="toolbar1" role="group">
-                                    <a class="btn btn-warning" onclick="$.table.exportExcel('formId3')" shiro:hasPermission="system:task:export">
-                                        <i class="fa fa-download"></i> 导出
-                                    </a>
-                                </div>
                                 <div class="col-sm-12 select-table table-striped">
                                     <table id="bootstrap-table3"></table>
                                 </div>
@@ -202,7 +196,7 @@
                     field: 'taskExecuteStatus',
                     title: '执行状态',
                     formatter: function(value, row, index) {
-                        return $.table.selectDictLabel(taskStatusDatas, row.sysOaTask.taskType);
+                        return $.table.selectDictLabel(taskStatusDatas, value);
                     }
                 },
                 {
@@ -242,7 +236,7 @@
         function queryParams(params) {
             var search = $.table.queryParams(params);
             search.taskNo = $("#myTaskNo").val();
-            search.taskStatus = $("#myTaskStatus").val();
+            search.taskExecuteStatus = $("#taskExecuteStatus").val();
             return search;
         }
 
@@ -342,7 +336,7 @@
                     field: 'taskName',
                     title: '任务名称',
                     formatter: function(value, row, index) {
-                        return row.sysOaTask.taskName;
+                        return $.table.tooltip(row.sysOaTask.taskName) ;
                     }
                 },
                 {
@@ -421,7 +415,7 @@
                     field: 'taskNo',
                     title: '任务编号',
                     formatter: function(value, row, index) {
-                        return row.taskNo.substring(0,5)+"...";
+                        return $.table.tooltip(row.taskNo);
                     }
                 },
                 {
