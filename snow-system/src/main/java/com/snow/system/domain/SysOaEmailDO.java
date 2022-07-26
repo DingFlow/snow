@@ -53,7 +53,7 @@ public class SysOaEmailDO extends BaseEntity
     private Long emailType;
 
     /** 邮件状态（0--普通邮件，1-草稿，2--已发送，3--重要邮件，4--已删除） */
-    private Long emailStatus;
+    private Integer emailStatus;
 
     /** 邮件标签 */
     private Long emailLabel;

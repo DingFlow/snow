@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationEvent;
  */
 public class SyncEvent<T> extends ApplicationEvent {
 
+    private static final long serialVersionUID = 2315510470385496950L;
+
     private Integer eventType;
 
     private T t;

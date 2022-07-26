@@ -1,7 +1,10 @@
 package com.snow.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.system.domain.SysOaEmail;
+import com.snow.system.domain.SysOaEmailDTO;
 import com.snow.system.domain.SysOaEmailDO;
 import com.snow.system.domain.SysOaEmailVO;
 
@@ -11,18 +14,17 @@ import com.snow.system.domain.SysOaEmailVO;
  * @author 没用的阿吉
  * @date 2021-03-12
  */
-public interface SysOaEmailMapper 
-{
+public interface SysOaEmailMapper extends BaseMapper<SysOaEmail> {
     /**
      * 查询邮件
      * 
      * @param id 邮件ID
      * @return 邮件
      */
-    public SysOaEmail selectSysOaEmailById(Long id);
+    public SysOaEmailDTO selectSysOaEmailById(Long id);
 
 
-    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+    public SysOaEmailDTO selectSysOaEmailByEmailNo(String emailNo);
 
     /**
      * 查询邮件列表
@@ -30,7 +32,7 @@ public interface SysOaEmailMapper
      * @param sysOaEmail 邮件
      * @return 邮件集合
      */
-    public List<SysOaEmail> selectSysOaEmailList(SysOaEmail sysOaEmail);
+    public List<SysOaEmailDTO> selectSysOaEmailList(SysOaEmailDTO sysOaEmail);
 
 
     /**
@@ -47,7 +49,7 @@ public interface SysOaEmailMapper
      * @param sysOaEmail 邮件
      * @return 结果
      */
-    public int insertSysOaEmail(SysOaEmail sysOaEmail);
+    public int insertSysOaEmail(SysOaEmailDTO sysOaEmail);
 
     /**
      * 修改邮件
@@ -55,14 +57,14 @@ public interface SysOaEmailMapper
      * @param sysOaEmail 邮件
      * @return 结果
      */
-    public int updateSysOaEmail(SysOaEmail sysOaEmail);
+    public int updateSysOaEmail(SysOaEmailDTO sysOaEmail);
 
     /**
      *
      * @param sysOaEmail
      * @return
      */
-    public int updateSysOaEmailByEmailNo(SysOaEmail sysOaEmail);
+    public int updateSysOaEmailByEmailNo(SysOaEmailDTO sysOaEmail);
 
     /**
      * 删除邮件

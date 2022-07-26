@@ -20,6 +20,11 @@ public interface ISysMessageTransitionService
     public SysMessageTransition selectSysMessageTransitionById(Long id);
 
 
+    /**
+     * 获取消息是否已读
+     * @param sysMessageTransition
+     * @return
+     */
     public Boolean getIsRead(SysMessageTransition sysMessageTransition);
 
     /**
@@ -72,6 +77,11 @@ public interface ISysMessageTransitionService
     public int deleteSysMessageTransitionById(Long id);
 
 
+    /**
+     * 删除消息
+     * @param outsideIdList
+     * @return
+     */
     public int deleteSysMessageTransitionByOutsideId(List outsideIdList);
 
 

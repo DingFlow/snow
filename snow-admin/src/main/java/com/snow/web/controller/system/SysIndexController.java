@@ -109,7 +109,7 @@ public class SysIndexController extends BaseController
         mmap.put("isPasswordExpired", passwordIsExpiration(user.getPwdUpdateDate()));
 
         mmap.put("isNewNotice",isNotice);
-        List<SysOaEmail> myNoReadOaEmailList = sysOaEmailService.getMyNoReadOaEmailList(String.valueOf(user.getUserId()));
+        List<SysOaEmailDTO> myNoReadOaEmailList = sysOaEmailService.getMyNoReadOaEmailList(String.valueOf(user.getUserId()));
         mmap.put("emailListSize",myNoReadOaEmailList.size());
         //如果大于三条只取前三条记录
         if(CollectionUtils.isNotEmpty(myNoReadOaEmailList)&&myNoReadOaEmailList.size()>3){

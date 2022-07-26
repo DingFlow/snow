@@ -25,7 +25,7 @@ public enum  MessageEventType {
 
     INNER_SYS_TODO_TASK("INNER_SYS_TODO_TASK", "站内信系统任务待办"),
 
-    INNER_SYS_TASK_COMPLETE("INNER_SYS_TASK_COMPLETE", "站内信系统任务待办"),
+    INNER_SYS_TASK_COMPLETE("INNER_SYS_TASK_COMPLETE", "站内信系统任务完成"),
     ;
 
 

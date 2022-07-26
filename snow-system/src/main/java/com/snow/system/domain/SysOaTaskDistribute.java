@@ -1,5 +1,9 @@
 package com.snow.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.snow.common.annotation.Excel;
 import com.snow.common.core.domain.BaseEntity;
@@ -20,6 +24,7 @@ public class SysOaTaskDistribute extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 主键ID */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /** 任务编号 */
@@ -38,6 +43,7 @@ public class SysOaTaskDistribute extends BaseEntity
     @Excel(name = "任务执行状态")
     private String taskExecuteStatus;
 
+    @TableField(exist = false)
     private List<String> taskExecuteStatusList;
 
     /** 任务完成时间 */
@@ -65,16 +71,19 @@ public class SysOaTaskDistribute extends BaseEntity
 
     /** 删除标识 */
     @Excel(name = "删除标识")
+    @TableLogic
     private Long isDelete;
 
     /**
      * 任务花费时间
      */
+    @TableField(exist = false)
     private String spendTime;
 
     /**
      * 任务主表
      */
+    @TableField(exist = false)
     private SysOaTask sysOaTask;
 
 }

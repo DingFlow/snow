@@ -1,7 +1,10 @@
 package com.snow.system.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.snow.system.domain.SysOaEmail;
+import com.snow.system.domain.SysOaEmailDTO;
 import com.snow.system.domain.SysOaEmailDO;
 import com.snow.system.domain.SysOaEmailVO;
 
@@ -11,17 +14,16 @@ import com.snow.system.domain.SysOaEmailVO;
  * @author 没用的阿吉
  * @date 2021-03-12
  */
-public interface ISysOaEmailService 
-{
+public interface ISysOaEmailService extends IService<SysOaEmail> {
     /**
      * 查询邮件
      * 
      * @param id 邮件ID
      * @return 邮件
      */
-    public SysOaEmail selectSysOaEmailById(Long id);
+    public SysOaEmailDTO selectSysOaEmailById(Long id);
 
-    public SysOaEmail selectSysOaEmailByEmailNo(String emailNo);
+    public SysOaEmailDTO selectSysOaEmailByEmailNo(String emailNo);
 
 
     /**
@@ -29,7 +31,7 @@ public interface ISysOaEmailService
      * @param userId
      * @return
      */
-    public List<SysOaEmail> getMyNoReadOaEmailList(String userId);
+    public List<SysOaEmailDTO> getMyNoReadOaEmailList(String userId);
 
     /**
      * 查询邮件列表
@@ -37,8 +39,7 @@ public interface ISysOaEmailService
      * @param sysOaEmail 邮件
      * @return 邮件集合
      */
-    @Deprecated
-    public List<SysOaEmail> selectSysOaEmailList(SysOaEmail sysOaEmail);
+    public List<SysOaEmailDTO> selectSysOaEmailList(SysOaEmailDTO sysOaEmail);
 
 
     /**
@@ -48,13 +49,7 @@ public interface ISysOaEmailService
      */
     public List<SysOaEmailVO> selectEmailList(SysOaEmailDO sysOaEmailDO);
 
-    /**
-     * 新增邮件
-     * 
-     * @param sysOaEmail 邮件
-     * @return 结果
-     */
-    public int insertSysOaEmail(SysOaEmail sysOaEmail);
+
 
     /**
      * 修改邮件
@@ -62,7 +57,7 @@ public interface ISysOaEmailService
      * @param sysOaEmail 邮件
      * @return 结果
      */
-    public int updateSysOaEmail(SysOaEmail sysOaEmail);
+    public int updateSysOaEmail(SysOaEmailDTO sysOaEmail);
 
     /**
      * 批量删除邮件
@@ -87,5 +82,5 @@ public interface ISysOaEmailService
      * @param sysOaEmail
      * @return
      */
-    public int updateSysOaEmailByEmailNo(SysOaEmail sysOaEmail);
+    public int updateSysOaEmailByEmailNo(SysOaEmailDTO sysOaEmail);
 }

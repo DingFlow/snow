@@ -42,7 +42,12 @@ public class SysMessageTransitionServiceImpl implements ISysMessageTransitionSer
     @Override
     public SysMessageTransition selectSysMessageTransitionById(Long id)
     {
-        return sysMessageTransitionMapper.selectSysMessageTransitionById(id);
+        SysMessageTransition sysMessageTransition = sysMessageTransitionMapper.selectSysMessageTransitionById(id);
+        sysMessageTransition.setProducerUser(sysUserService.selectUserById(Long.parseLong(sysMessageTransition.getProducerId())));
+        sysMessageTransition.setConsumerUser(sysUserService.selectUserById(Long.parseLong(sysMessageTransition.getConsumerId())));
+        sysMessageTransition.setSpendTime(DateUtil.formatBetween(sysMessageTransition.getCreateTime(), new Date(), BetweenFormater.Level.SECOND)+"前");
+        Optional.ofNullable(sysMessageTransition.getTemplateCode()).ifPresent( m-> sysMessageTransition.setSysMessageTemplate(sysMessageTemplateService.getSysMessageTemplateByCode(sysMessageTransition.getTemplateCode())));
+        return sysMessageTransition;
     }
 
 

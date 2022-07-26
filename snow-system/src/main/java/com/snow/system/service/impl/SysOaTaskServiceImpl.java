@@ -2,20 +2,17 @@ package com.snow.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.SequenceConstants;
 import com.snow.common.core.domain.MessageEventRequest;
-import com.snow.common.core.text.Convert;
 import com.snow.common.enums.DingFlowTaskType;
-import com.snow.common.enums.DingTalkListenerType;
 import com.snow.common.enums.MessageEventType;
-import com.snow.common.enums.TaskStatus;
-import com.snow.common.exception.BusinessException;
-import com.snow.common.utils.DateUtils;
 import com.snow.system.domain.SysOaTask;
 import com.snow.system.domain.SysOaTaskDistribute;
-import com.snow.system.event.SyncEvent;
-import com.snow.system.mapper.SysOaTaskDistributeMapper;
 import com.snow.system.mapper.SysOaTaskMapper;
 import com.snow.system.service.ISysOaTaskDistributeService;
 import com.snow.system.service.ISysOaTaskService;
@@ -25,10 +22,10 @@ import org.apache.commons.compress.utils.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 系统任务Service业务层处理
@@ -37,16 +34,10 @@ import java.util.*;
  * @date 2021-07-29
  */
 @Service
-public class SysOaTaskServiceImpl implements ISysOaTaskService 
-{
-    @Autowired
-    private SysOaTaskMapper sysOaTaskMapper;
+public class SysOaTaskServiceImpl extends ServiceImpl<SysOaTaskMapper,SysOaTask> implements ISysOaTaskService {
 
     @Autowired
     private ISysOaTaskDistributeService sysOaTaskDistributeService;
-
-    @Resource
-    private SysOaTaskDistributeMapper sysOaTaskDistributeMapper;
 
     @Autowired
     private ISysUserService sysUserService;
@@ -57,6 +48,7 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
     @Autowired
     private ApplicationContext applicationContext;
 
+
     /**
      * 查询系统任务
      * 
@@ -64,9 +56,8 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
      * @return 系统任务
      */
     @Override
-    public SysOaTask selectSysOaTaskById(String taskNo)
-    {
-        return sysOaTaskMapper.selectSysOaTaskById(taskNo);
+    public SysOaTask selectSysOaTaskById(String taskNo) {
+        return this.getById(taskNo);
     }
 
     /**
@@ -76,9 +67,13 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
      * @return 系统任务
      */
     @Override
-    public List<SysOaTask> selectSysOaTaskList(SysOaTask sysOaTask)
-    {
-        return sysOaTaskMapper.selectSysOaTaskList(sysOaTask);
+    public List<SysOaTask> selectSysOaTaskList(SysOaTask sysOaTask) {
+        LambdaQueryWrapper<SysOaTask> lambda = new QueryWrapper<SysOaTask>().lambda();
+        lambda.like(ObjectUtil.isNotEmpty(sysOaTask.getTaskNo()),SysOaTask::getTaskNo,sysOaTask.getTaskNo());
+        lambda.eq(ObjectUtil.isNotEmpty(sysOaTask.getTaskStatus()),SysOaTask::getTaskStatus,sysOaTask.getTaskStatus());
+        lambda.eq(ObjectUtil.isNotEmpty(sysOaTask.getPriority()),SysOaTask::getPriority,sysOaTask.getPriority());
+        lambda.like(ObjectUtil.isNotEmpty(sysOaTask.getTaskName()),SysOaTask::getTaskName,sysOaTask.getTaskName());
+        return this.list(lambda);
     }
 
     /**
@@ -88,86 +83,38 @@ public class SysOaTaskServiceImpl implements ISysOaTaskService
      * @return 结果
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insertSysOaTask(SysOaTask sysOaTask)
-    {
-        sysOaTask.setCreateTime(DateUtils.getNowDate());
+    public SysOaTask insertSysOaTask(SysOaTask sysOaTask) {
         String newSequenceNo = sequenceService.getNewSequenceNo(SequenceConstants.OA_TASK_SEQUENCE);
         sysOaTask.setTaskNo(newSequenceNo);
-        sysOaTask.setTaskStatus(TaskStatus.UN_FINISH.getCode());
+        sysOaTask.setTaskStatus(DingFlowTaskType.NEW.getCode());
+        //任务执行人
         List<String> taskDistributeIdList= sysOaTask.getTaskDistributeId();
+        this.save(sysOaTask);
+        if(CollUtil.isEmpty(taskDistributeIdList)){
+            return sysOaTask;
+        }
         List<SysOaTaskDistribute> sysOaTaskDistributeList= Lists.newArrayList();
-        if(CollUtil.isNotEmpty(taskDistributeIdList)){
-            taskDistributeIdList.forEach(t->{
-                SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
-                sysOaTaskDistribute.setTaskDistributeId(t);
-                sysOaTaskDistribute.setTaskNo(newSequenceNo);
-                sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.RUNNING.getCode());
-                sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
-                sysOaTaskDistributeService.insertSysOaTaskDistribute(sysOaTaskDistribute);
-                sysOaTaskDistribute.setSysOaTask(sysOaTask);
-                //发送消息
-                sendInnerMessage(sysOaTaskDistribute);
-                sysOaTaskDistributeList.add(sysOaTaskDistribute);
-            });
-        }
-        sysOaTask.setSysOaTaskDistributeList(sysOaTaskDistributeList);
-        //事件发送
-        SyncEvent<SysOaTask> syncEvent = new SyncEvent(sysOaTask, DingTalkListenerType.WORK_RECODE_CREATE);
-        applicationContext.publishEvent(syncEvent);
-        return sysOaTaskMapper.insertSysOaTask(sysOaTask);
-    }
-
-
-    /**
-     * 修改系统任务
-     * 
-     * @param sysOaTask 系统任务
-     * @return 结果
-     */
-    @Override
-    public int updateSysOaTask(SysOaTask sysOaTask)
-    {
-        sysOaTask.setUpdateTime(DateUtils.getNowDate());
-        return sysOaTaskMapper.updateSysOaTask(sysOaTask);
-    }
-
-    /**
-     * 删除系统任务对象
-     * 
-     * @param ids 需要删除的数据ID
-     * @return 结果
-     */
-    @Override
-    public int deleteSysOaTaskByIds(String ids)
-    {
-        List<String> list = Arrays.asList(Convert.toStrArray(ids));
-        list.forEach(t->{
-            List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeMapper.selectSysOaTaskDistributeByTaskNo(t);
-            if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
-                throw new BusinessException("任务编号："+t+"已分配，不允许删除操作");
-            }
+        taskDistributeIdList.forEach(t->{
+            SysOaTaskDistribute sysOaTaskDistribute=new SysOaTaskDistribute();
+            sysOaTaskDistribute.setTaskDistributeId(t);
+            sysOaTaskDistribute.setTaskNo(newSequenceNo);
+            sysOaTaskDistribute.setTaskExecuteStatus(DingFlowTaskType.NEW.getCode());
+            sysOaTaskDistribute.setCreateBy(sysOaTask.getCreateBy());
+            sysOaTaskDistributeService.save(sysOaTaskDistribute);
+            //发送站内信
+            sendInnerMessage(sysOaTaskDistribute);
+            sysOaTaskDistributeList.add(sysOaTaskDistribute);
         });
-        return sysOaTaskMapper.deleteSysOaTaskByIds(Convert.toStrArray(ids));
+        sysOaTask.setSysOaTaskDistributeList(sysOaTaskDistributeList);
+        return sysOaTask;
     }
 
-    /**
-     * 删除系统任务信息
-     * 
-     * @param taskNo 系统任务ID
-     * @return 结果
-     */
+
+
+
     @Override
-    public int deleteSysOaTaskById(String taskNo)
-    {
-        List<SysOaTaskDistribute> sysOaTaskDistributes = sysOaTaskDistributeMapper.selectSysOaTaskDistributeByTaskNo(taskNo);
-        if(CollUtil.isNotEmpty(sysOaTaskDistributes)){
-            throw new BusinessException("任务编号："+taskNo+"已分配，不允许删除操作");
-        }
-        //发送事件
-        SyncEvent<String> syncEvent = new SyncEvent(taskNo, DingTalkListenerType.WORK_RECODE_CREATE);
-        applicationContext.publishEvent(syncEvent);
-        return sysOaTaskMapper.deleteSysOaTaskById(taskNo);
+    public String getOutTaskOutsideId(String taskNo) {
+        return this.getOne(new QueryWrapper<SysOaTask>().lambda().eq(SysOaTask::getTaskNo,taskNo)).getTaskOutsideId();
     }
 
     /**

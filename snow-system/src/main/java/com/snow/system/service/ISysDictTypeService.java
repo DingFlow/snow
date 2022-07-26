@@ -2,8 +2,8 @@ package com.snow.system.service;
 
 import java.util.List;
 import com.snow.common.core.domain.Ztree;
-import com.snow.system.domain.SysDictData;
-import com.snow.system.domain.SysDictType;
+import com.snow.common.core.domain.SysDictData;
+import com.snow.common.core.domain.SysDictType;
 
 /**
  * 字典 业务层

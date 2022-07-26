@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('邮件列表')" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>邮件列表</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/iCheck/custom.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="#{/css/iCheck/custom.css}" rel="stylesheet">
+    <style type="text/css">
+        #bootstrap-table {border-left: 0px; border-right:0px}
+        #bootstrap-table th{border-left: 0px; border-right: 0px}
+        #bootstrap-table td{border-left: 0px; border-right: 0px}
+    </style>
+</head>
+
+<body>
+
+<div id="wrapper">
+    <div class="wrapper wrapper-content gray-bg">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content mailbox-content">
+                        <div class="file-manager">
+                            <a class="btn btn-block btn-primary compose-mail"href="javascript:void(0)" onclick="toSendEmail()">写邮件</a>
+                            <div class="space-25"></div>
+                            <h3>邮件标签</h3>
+                            <ul class="category-list" style="padding: 0">
+                                <li><a href="#"> <i class="fa fa-circle text-navy"></i> 工作 </a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-danger"></i> 文档</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-primary"></i> 社交</a></li>
+                                <li><a href="#"> <i class="fa fa-circle text-info"></i> 活动</a></li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 animated fadeInRight">
+                <div class="mail-box-header">
+                    <form  class="pull-right mail-search select-list" id="formId">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" name="emailSubject"  placeholder="Search email">
+                            <div class="input-group-btn">
+                                <a onclick="$.table.search()" class="btn btn-sm btn-primary">
+                                    请输入邮件主题
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                    <h2>
+                        DingFlow草稿箱
+                    </h2>
+
+                <div class="mail-box">
+                    <table  id="bootstrap-table" class="table table-hover table-mail table-no-borde">
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/iCheck/icheck.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ajax/libs/layui/layui.js}"></script>
+    <script th:src="@{/ruoyi/js/common.js}"></script>
+    <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+    <script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/bootstrap-table.min.js?v=20200727}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js?v=20200727}"></script>
+    <script th:src="@{/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js?v=20200727}"></script>
+    <script th:inline="javascript">
+        var prefix =  "/system/email";
+        var emailLabelDatas = [[${@dict.getType('sys_email_lable')}]];
+        $(document).ready(function(){
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+
+        });
+
+        var options = {
+            url: prefix + "/getDraftsMail",
+            rememberSelected: true,
+            modalName: "邮件",
+            showToggle:false,
+            showHeader:true,
+            showSearch:false,
+            showRefresh:false,
+            showColumns:false,
+            queryParams: queryParams,
+            striped:true,
+            height:'30px',
+            columns: [
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+
+                {
+                    field: 'emailSubject',
+                    title: '邮件主题',
+                    align:'left',
+                    formatter: function(value, row, index) {
+                        var emailStatus= row.emailStatus;
+                        if(emailStatus==3){
+                            return '<i class="fa fa-flag danger" style="color: red"></i> '+'<a href="javascript:void(0)" onclick="mailDetail(\''+row.id+'\')">'+value+'</a> ';
+                        }else {
+                            return '<a href="javascript:void(0)" onclick="mailDetail(\''+row.id+'\')">'+value+'</a> ';
+                        }
+                    }
+                },
+                {
+                    field: 'emailTo',
+                    title: '发件邮箱',
+                    align:'left'
+                },
+                {
+                    field: 'emailLabel',
+                    title: '邮件标签',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(emailLabelDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<button class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="编辑" onclick="emailEdit(\''+row.id+'\')"><i class="fa fa-edit"></i> </button> ');
+                        actions.push('<button class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="删除" onclick="markDelete(\''+row.id+'\')"><i class="fa fa-remove"></i> </button> ');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            return search;
+        }
+
+        function markDelete(id){
+            var config = {
+                url: prefix + "/markDelete",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "ids":id
+                },
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍后...");
+                    $.modal.disable();
+                },
+                success: function(result) {
+                    if (typeof callback == "function") {
+                        callback(result);
+                    }
+                    if (result.code == web_status.SUCCESS) {
+                        $.modal.msg("删除成功，即将跳转到收件箱", modal_status.SUCCESS);
+                        setTimeout(function(){
+                            window.location.href="/system/email/trashMail";
+                        },2000);
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    }  else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                    $.modal.enable();
+                }
+            };
+            $.ajax(config)
+        }
+
+        function mailDetail(id) {
+            var detailUrl="/system/email/mailDetail/"+id;
+            $.modal.openTab("查阅邮件", detailUrl);
+        }
+
+        function emailEdit(id) {
+            $.modal.openTab('邮件管理',  "/system/email/edit/"+id);
+        }
+        function toSendEmail() {
+            $.modal.openTab('邮件管理',  prefix);
+        }
+    </script>
+</body>
+
+</html>

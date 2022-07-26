@@ -42,9 +42,5 @@
             <artifactId>dingtalk</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,6 @@
 package com.snow.web.controller.system;
 
+import cn.hutool.core.codec.Base64;
 import com.snow.common.core.page.TableDataInfo;
 import com.snow.framework.storage.StorageService;
 import com.snow.system.domain.SysAuthUser;
@@ -134,6 +135,7 @@ public class SysProfileController extends BaseController
     public String avatar(ModelMap mmap)
     {
         SysUser user = ShiroUtils.getSysUser();
+        user.setAvatar(Base64.encode(user.getAvatar()));
         mmap.put("user", userService.selectUserById(user.getUserId()));
         return prefix + "/avatar";
     }
@@ -165,26 +167,20 @@ public class SysProfileController extends BaseController
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PostMapping("/updateAvatar")
     @ResponseBody
-    public AjaxResult updateAvatar(@RequestParam("avatarfile") MultipartFile file)
-    {
+    public AjaxResult updateAvatar(@RequestParam("avatarfile") MultipartFile file) {
         SysUser currentUser = ShiroUtils.getSysUser();
-        try
-        {
-            if (!file.isEmpty())
-            {
+        try {
+            if (!file.isEmpty()) {
                 SysFile store = storageService.store(file);
                 currentUser.setAvatar(store.getUrl());
-                if (userService.updateUserInfo(currentUser) > 0)
-                {
+                if (userService.updateUserInfo(currentUser) > 0) {
                     ShiroUtils.setSysUser(userService.selectUserById(currentUser.getUserId()));
                     return success();
                 }
             }
             return error();
-        }
-        catch (Exception e)
-        {
-            log.error("修改头像失败！", e);
+        } catch (Exception e) {
+            log.error("@@修改头像失败！", e);
             return error(e.getMessage());
         }
     }

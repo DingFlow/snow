@@ -1,5 +1,6 @@
 package com.snow.framework.web.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.snow.common.constant.Constants;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysNewsNode;
@@ -55,7 +56,9 @@ public class NewsTriggerService {
         SysNewsNode sysNewsNodes=new SysNewsNode();
         sysNewsNodes.setNewsNodeKey(parentNodeKey);
         List<SysNewsNode> sysNewsNodeList = sysNewsNodeService.selectSysNewsNodeList(sysNewsNodes);
-
+        if(CollUtil.isEmpty(sysNewsNodeList)){
+            return false;
+        }
         SysNewsNode sysNewsNode = sysNewsNodeService.selectSysNewsNodeByKey(nodeKey,sysNewsNodeList.get(0).getId().longValue());
         if(null == sysNewsNode){
             return false;

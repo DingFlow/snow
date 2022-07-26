@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceListRequest implements Serializable {
+public class AttendanceListRequest extends SnowDingTalkDefaultRequest implements Serializable {
     private static final long serialVersionUID = 1746815839189321601L;
     /**
      * 员工在企业内的userid列表，最多不能超过50个。

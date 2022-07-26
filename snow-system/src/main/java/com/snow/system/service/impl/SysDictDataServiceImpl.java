@@ -2,11 +2,11 @@ package com.snow.system.service.impl;
 
 import java.util.List;
 
-import com.snow.system.utils.DictUtils;
+import com.snow.common.utils.DictUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.snow.common.core.text.Convert;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 import com.snow.system.mapper.SysDictDataMapper;
 import com.snow.system.service.ISysDictDataService;
 

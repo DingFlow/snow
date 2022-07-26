@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="parentId" column="parent_id"   />
 		<result property="deptName" column="dept_name"   />
 		<result property="orderNum" column="order_num"   />
-		<result property="leader"   column="leader"  typeHandler="com.snow.framework.config.JsonStringListTypeHandler"     />
+		<result property="leader"   column="leader"  typeHandler="com.snow.system.handler.JsonStringListTypeHandler"     />
 		<result property="status"   column="dept_status" />
 	</resultMap>
 	
@@ -202,6 +202,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
 		<include refid="selectUserVo"/>
 		where u.user_id = #{userId}
+	</select>
+
+	<select id="selectUserByIds" parameterType="Long" resultMap="SysUserResult">
+		<include refid="selectUserVo"/>
+		where u.user_id in
+		<foreach collection="array" item="userId" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
 	</select>
 
 	<select id="selectUserByDingUserId" parameterType="String" resultMap="SysUserResult">

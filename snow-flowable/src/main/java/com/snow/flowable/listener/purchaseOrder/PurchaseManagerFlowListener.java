@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
  * @author: 没用的阿吉
  * @create: 2021-01-10 20:05
  **/
-@Service("purManagerFlowListener")
+//@Service("purManagerFlowListener")
+@Service("saleManagerFlowListener")
+
 @Slf4j
 public class PurchaseManagerFlowListener extends AbstractExecutionListener<PurchaseOrderForm> {
 
@@ -24,6 +26,7 @@ public class PurchaseManagerFlowListener extends AbstractExecutionListener<Purch
         //设置参数(应该在任务节点设置参数)
         setVariable("totalPrice",appForms.getTotalPrice());
         setVariable("price",1000);
+        setVariable("tRate",1000);
 
     }
 }

@@ -82,7 +82,7 @@ public class SnowGlobalExceptionHandler {
     @ExceptionHandler(FlowableException.class)
     public AjaxResult flowableException(Exception e)
     {
-
+        log.error(e.getMessage(), e);
         String errMessage=Optional.ofNullable(e.getMessage()).orElse("");
         log.error("流程服务异常："+e.getMessage(), e);
         if(e.getMessage().contains("")){

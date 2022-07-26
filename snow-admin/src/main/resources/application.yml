@@ -5,7 +5,7 @@ snow:
   # 版本
   version: 2.0.0
   # 版权年份
-  copyrightYear: 2021
+  copyrightYear: 2022
   # 实例演示开关
   demoEnabled: true
   # 获取ip地址开关
@@ -14,7 +14,7 @@ snow:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 9527
+  port: 80
   servlet:
     # 应用的访问路径
     context-path: /
@@ -83,10 +83,17 @@ spring:
 mybatis-plus:
   # 搜索指定包别名
   typeAliasesPackage: com.snow.**.domain
+  typeHandlersPackage: com.snow.system.handler
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapperLocations: classpath*:META-INF/modeler-mybatis-mappings/*.xml,classpath*:mapper/**/*Mapper.xml
   # 加载全局的配置文件
   configLocation: classpath:mybatis/mybatis-config.xml
+  #全局配置
+  global-config:
+    db-config:
+      #逻辑删除
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 
 
 # PageHelper分页插件
@@ -143,10 +150,10 @@ xss:
 
 #登录后是否显示最新的公告
 is:
-  notice: true
+  notice: false
   #是否开启同步钉钉
   sync:
-     dingtalk: false
+     dingtalk: true
 
 flowable:
   #关闭定时任务JOB

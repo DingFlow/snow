@@ -1,7 +1,7 @@
 package com.snow.system.service;
 
 import java.util.List;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 
 /**
  * 字典 业务层

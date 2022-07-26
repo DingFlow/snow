@@ -1,11 +1,11 @@
-package com.snow.system.utils;
+package com.snow.common.utils;
 
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.snow.common.constant.Constants;
 import com.snow.common.utils.CacheUtils;
 import com.snow.common.utils.StringUtils;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 
 /**
  * 字典工具类
@@ -22,7 +22,7 @@ public class DictUtils
 
     /**
      * 设置字典缓存
-     * 
+     *
      * @param key 参数键
      * @param dictDatas 字典数据列表
      */
@@ -33,7 +33,7 @@ public class DictUtils
 
     /**
      * 获取字典缓存
-     * 
+     *
      * @param key 参数键
      * @return dictDatas 字典数据列表
      */
@@ -42,15 +42,14 @@ public class DictUtils
         Object cacheObj = CacheUtils.get(getCacheName(), getCacheKey(key));
         if (StringUtils.isNotNull(cacheObj))
         {
-            List<SysDictData> DictDatas = StringUtils.cast(cacheObj);
-            return DictDatas;
+            return StringUtils.cast(cacheObj);
         }
         return null;
     }
 
     /**
      * 根据字典类型和字典值获取字典标签
-     * 
+     *
      * @param dictType 字典类型
      * @param dictValue 字典值
      * @return 字典标签
@@ -62,7 +61,7 @@ public class DictUtils
 
     /**
      * 根据字典类型和字典标签获取字典值
-     * 
+     *
      * @param dictType 字典类型
      * @param dictLabel 字典标签
      * @return 字典值
@@ -74,7 +73,7 @@ public class DictUtils
 
     /**
      * 根据字典类型和字典值获取字典标签
-     * 
+     *
      * @param dictType 字典类型
      * @param dictValue 字典值
      * @param separator 分隔符
@@ -93,7 +92,7 @@ public class DictUtils
                 {
                     if (value.equals(dict.getDictValue()))
                     {
-                        propertyString.append(dict.getDictLabel() + separator);
+                        propertyString.append(dict.getDictLabel()).append(separator);
                         break;
                     }
                 }
@@ -114,7 +113,7 @@ public class DictUtils
 
     /**
      * 根据字典类型和字典标签获取字典值
-     * 
+     *
      * @param dictType 字典类型
      * @param dictLabel 字典标签
      * @param separator 分隔符
@@ -133,7 +132,7 @@ public class DictUtils
                 {
                     if (label.equals(dict.getDictLabel()))
                     {
-                        propertyString.append(dict.getDictValue() + separator);
+                        propertyString.append(dict.getDictValue()).append(separator);
                         break;
                     }
                 }
@@ -153,6 +152,16 @@ public class DictUtils
     }
 
     /**
+     * 删除指定字典缓存
+     *
+     * @param key 字典键
+     */
+    public static void removeDictCache(String key)
+    {
+        CacheUtils.remove(getCacheName(), getCacheKey(key));
+    }
+
+    /**
      * 清空字典缓存
      */
     public static void clearDictCache()
@@ -162,7 +171,7 @@ public class DictUtils
 
     /**
      * 获取cache name
-     * 
+     *
      * @return 缓存名
      */
     public static String getCacheName()
@@ -172,7 +181,7 @@ public class DictUtils
 
     /**
      * 设置cache key
-     * 
+     *
      * @param configKey 参数键
      * @return 缓存键key
      */

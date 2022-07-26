@@ -1,6 +1,8 @@
 package com.snow.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.system.domain.SysOaTask;
 
 /**
@@ -9,8 +11,7 @@ import com.snow.system.domain.SysOaTask;
  * @author 没用的阿吉
  * @date 2021-07-29
  */
-public interface SysOaTaskMapper 
-{
+public interface SysOaTaskMapper extends BaseMapper<SysOaTask> {
     /**
      * 查询系统任务
      * 

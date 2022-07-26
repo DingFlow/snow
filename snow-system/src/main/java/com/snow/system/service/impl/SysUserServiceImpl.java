@@ -146,6 +146,11 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUserById(userId);
     }
 
+    public List<SysUser> selectUserByIds(Long[] userIds)
+    {
+        return userMapper.selectUserByIds(userIds);
+    }
+
     @Override
     public SysUser selectUserByDingUserId(String dingUserId) {
         return userMapper.selectUserByDingUserId(dingUserId);

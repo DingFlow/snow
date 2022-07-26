@@ -2,7 +2,7 @@ package com.snow.system.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 
 /**
  * 字典表 数据层

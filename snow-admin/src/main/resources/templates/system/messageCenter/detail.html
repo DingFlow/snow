@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"  />
+	<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"  />
+	<!-- bootstrap-table 表格插件样式 -->
+	<link th:href="@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/animate.css}" rel="stylesheet"  />
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
+	<link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"  />
+</head>
+<body class="white-bg" >
+<form class="form-horizontal m-t"  id="signupForm">
+	<div id="vertical-timeline5" class="vertical-container light-timeline">
+
+		<div class="pull-left">
+			<label th:switch="${sysMessageTransition.messageReadStatus}">
+				<span  class="label label-danger" th:case="'0'">未读</span>
+				<span  class="label label-success"  th:case="'1'">已读</span>
+			</label>
+		</div>
+		<div class="text-center article-title">
+			<h1>
+					[[${sysMessageTransition.sysMessageTemplate.templateName}]]
+			</h1>
+		</div>
+
+		<div class="vertical-timeline-block">
+			<hr>
+			<div class="vertical-timeline-content">
+				<p >&nbsp;&nbsp; <span class="text-danger"><i th:class="${sysMessageTransition.iconClass}"></i> </span> &nbsp;&nbsp;  [[${sysMessageTransition.messageContent}]]</p>
+				<a href="javascript:void(0)"  class="btn btn-sm btn-success"  th:onclick="messageDetail([[${sysMessageTransition.id}]],[[${sysMessageTransition.pcUrl}]]);"> 查看详情 </a>
+			</div>
+			<div class="pull-right">
+				<span class="text-muted"><i class="fa fa-clock-o"></i> [[${#dates.format(sysMessageTransition.createTime, 'yyyy-MM-dd hh:mm:ss')}]]</span>
+			</div>
+			<br/>
+			<hr>
+
+		</div>
+	</div>
+</form>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	function messageDetail(id,url){
+		//先标记为已读
+		markRead(id);
+		//在跳转到页面
+		createNoPanelMenuItem(url,"详情")
+
+	}
+	function markRead(id){
+		var config = {
+			url: "/system/messageCenter/remarkRead",
+			type: "post",
+			dataType: "json",
+			data: {
+				"id":id
+			},
+			success: function(result) {
+				if (typeof callback == "function") {
+					callback(result);
+				}
+				if (result.code == web_status.SUCCESS) {
+					$(".messageReadStatus badge badge-primary").show();
+					$(".messageReadStatus badge badge-danger").hide();
+				} else if (result.code == web_status.WARNING) {
+					$.modal.alertWarning(result.msg)
+				} else {
+					$.modal.alertError(result.msg);
+				}
+				$.modal.closeLoading();
+			}
+		};
+		$.ajax(config)
+	}
+
+</script>
+</body>
+</html>

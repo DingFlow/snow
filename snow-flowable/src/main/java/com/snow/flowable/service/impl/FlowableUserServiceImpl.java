@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.snow.common.constant.UserConstants;
+import com.snow.common.core.text.Convert;
 import com.snow.common.utils.StringUtils;
 import com.snow.flowable.service.FlowableUserService;
 import com.snow.system.domain.FlowGroupDO;

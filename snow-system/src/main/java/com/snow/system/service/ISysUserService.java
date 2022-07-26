@@ -77,6 +77,14 @@ public interface ISysUserService
     public SysUser selectUserById(Long userId);
 
     /**
+     * 通过用户ID查询用户
+     *
+     * @param userIds 用户ID
+     * @return 用户对象信息
+     */
+    public List<SysUser> selectUserByIds(Long[] userIds);
+
+    /**
      * 通过用户dingUserId查询用户
      * @param dingUserId
      * @return

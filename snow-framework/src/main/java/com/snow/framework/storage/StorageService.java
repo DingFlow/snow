@@ -53,30 +53,19 @@ public class StorageService {
         String fileName = file.getOriginalFilename();
         String contentType = file.getContentType();
         long size = file.getSize();
-        String key = generateKey(fileName);
+        String key = IdUtil.fastSimpleUUID();
         storage.store(key,file);
         String url = generateUrl(key);
         SysFile storageInfo = new SysFile();
         storageInfo.setName(fileName);
         storageInfo.setSize(size);
         storageInfo.setType(contentType);
-        storageInfo.setKey(key.substring(0,key.indexOf(",")));
+        storageInfo.setKey(key);
         storageInfo.setUrl(url);
         storageInfo.setCreateBy(ShiroUtils.getLoginName());
         sysFileService.insertSysFile(storageInfo);
 
         return storageInfo;
-    }
-
-    private String generateKey(String originalFilename) {
-        int index = originalFilename.lastIndexOf('.');
-        String suffix;
-        if(index==-1){
-            suffix="profile";
-        }else {
-            suffix = originalFilename.substring(index);
-        }
-        return IdUtil.fastSimpleUUID() + suffix;
     }
 
     public Stream<Path> loadAll() {

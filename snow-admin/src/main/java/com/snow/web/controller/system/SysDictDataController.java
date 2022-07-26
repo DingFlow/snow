@@ -18,7 +18,7 @@ import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.common.utils.poi.ExcelUtil;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysDictData;
+import com.snow.common.core.domain.SysDictData;
 import com.snow.system.service.ISysDictDataService;
 
 /**

@@ -1,9 +1,12 @@
 package com.snow.web.controller.system;
 
 import cn.hutool.core.collection.CollUtil;
+import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
 import com.snow.common.core.page.TableDataInfo;
+import com.snow.common.core.text.Convert;
+import com.snow.common.enums.BusinessType;
 import com.snow.common.enums.MessageEventType;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysMessageTransition;
@@ -13,9 +16,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ public class SysMessageCenterController extends BaseController
      */
     @RequiresPermissions("system:messageCenter:view")
     @GetMapping()
+    @Deprecated
     public String messageCenter(ModelMap mmap)
     {
         SysUser sysUser = ShiroUtils.getSysUser();
@@ -91,18 +93,47 @@ public class SysMessageCenterController extends BaseController
             mmap.put("sysTaskList",sysTaskList);
         }
 
-        return prefix + "/messageCenter";
+        return prefix + "/message_center";
     }
 
     /**
-     * 前端消息中心
+     * 消息列表
+     * @param sysMessageTransition
+     * @return
+     */
+    @RequiresPermissions("system:messageCenter:view")
+    @PostMapping("/list")
+    @ResponseBody
+    public TableDataInfo list(SysMessageTransition sysMessageTransition) {
+        startPage();
+        sysMessageTransition.setConsumerId(String.valueOf(ShiroUtils.getUserId()));
+        sysMessageTransition.setOrderBy("create_time desc");
+        List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
+        return getDataTable(sysMessageTransitions);
+    }
+
+    /**
+     * 详情
+     * @param id
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/detail/{id}")
+    @RequiresPermissions("system:messageCenter:detail")
+    public String detail(@PathVariable("id") Long id, ModelMap mmap) {
+        SysMessageTransition sysMessageTransition = sysMessageTransitionService.selectSysMessageTransitionById(id);
+        mmap.put("sysMessageTransition", sysMessageTransition);
+        return prefix + "/detail";
+    }
+
+    /**
+     * 官网消息中心
      * @param sysMessageTransition
      * @param mmap
      * @return
      */
     @GetMapping("/website")
-    public String websiteMessageCenter(SysMessageTransition sysMessageTransition,ModelMap mmap)
-    {
+    public String websiteMessageCenter(SysMessageTransition sysMessageTransition,ModelMap mmap) {
         startPage();
         SysUser sysUser = ShiroUtils.getSysUser();
         sysMessageTransition.setConsumerId(String.valueOf(sysUser.getUserId()));
@@ -138,5 +169,42 @@ public class SysMessageCenterController extends BaseController
         sysMessageTransition.setUpdateBy(String.valueOf(sysUser.getUserId()));
         int i = sysMessageTransitionService.updateSysMessageTransition(sysMessageTransition);
         return AjaxResult.success(i);
+    }
+
+    /**
+     * 标记已读
+     * @param ids
+     * @return
+     */
+    @RequiresPermissions("system:messageCenter:mark")
+    @PostMapping( "/mark")
+    @ResponseBody
+    public AjaxResult mark(String ids)
+    {
+        List<String> idList = Convert.toStrList(ids);
+        idList.forEach(t->{
+            SysUser sysUser = ShiroUtils.getSysUser();
+            SysMessageTransition sysMessageTransition=new SysMessageTransition();
+            sysMessageTransition.setId(Long.parseLong(t));
+            sysMessageTransition.setMessageReadStatus(1L);
+            sysMessageTransition.setUpdateBy(String.valueOf(sysUser.getUserId()));
+            sysMessageTransitionService.updateSysMessageTransition(sysMessageTransition);
+        });
+        return  AjaxResult.success();
+    }
+
+    /**
+     * 删除消息
+     *
+     * @param ids
+     * @return
+     */
+    @RequiresPermissions("system:messageCenter:remove")
+    @Log(title = "消息中心", businessType = BusinessType.DELETE)
+    @PostMapping( "/remove")
+    @ResponseBody
+    public AjaxResult remove(String ids)
+    {
+        return toAjax(sysMessageTransitionService.deleteSysMessageTransitionByIds(ids));
     }
 }
