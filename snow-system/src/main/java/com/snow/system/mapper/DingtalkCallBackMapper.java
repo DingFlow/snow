@@ -1,7 +1,10 @@
 package com.snow.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.snow.system.domain.DingtalkCallBack;
+import com.snow.system.domain.SysNotice;
 
 /**
  * 回调事件Mapper接口
@@ -9,15 +12,14 @@ import com.snow.system.domain.DingtalkCallBack;
  * @author qimingjin
  * @date 2020-11-02
  */
-public interface DingtalkCallBackMapper 
-{
+public interface DingtalkCallBackMapper extends BaseMapper<DingtalkCallBack> {
     /**
      * 查询回调事件
      * 
      * @param id 回调事件ID
      * @return 回调事件
      */
-    public DingtalkCallBack selectDingtalkCallBackById(Long id);
+     DingtalkCallBack selectDingtalkCallBackById(Long id);
 
     /**
      * 查询回调事件列表
@@ -25,7 +27,7 @@ public interface DingtalkCallBackMapper
      * @param dingtalkCallBack 回调事件
      * @return 回调事件集合
      */
-    public List<DingtalkCallBack> selectDingtalkCallBackList(DingtalkCallBack dingtalkCallBack);
+     List<DingtalkCallBack> selectDingtalkCallBackList(DingtalkCallBack dingtalkCallBack);
 
     /**
      * 新增回调事件
@@ -33,7 +35,7 @@ public interface DingtalkCallBackMapper
      * @param dingtalkCallBack 回调事件
      * @return 结果
      */
-    public int insertDingtalkCallBack(DingtalkCallBack dingtalkCallBack);
+     int insertDingtalkCallBack(DingtalkCallBack dingtalkCallBack);
 
     /**
      * 修改回调事件
@@ -41,7 +43,7 @@ public interface DingtalkCallBackMapper
      * @param dingtalkCallBack 回调事件
      * @return 结果
      */
-    public int updateDingtalkCallBack(DingtalkCallBack dingtalkCallBack);
+     int updateDingtalkCallBack(DingtalkCallBack dingtalkCallBack);
 
     /**
      * 删除回调事件
@@ -49,7 +51,7 @@ public interface DingtalkCallBackMapper
      * @param id 回调事件ID
      * @return 结果
      */
-    public int deleteDingtalkCallBackById(Long id);
+     int deleteDingtalkCallBackById(Long id);
 
     /**
      * 批量删除回调事件
@@ -57,5 +59,5 @@ public interface DingtalkCallBackMapper
      * @param ids 需要删除的数据ID
      * @return 结果
      */
-    public int deleteDingtalkCallBackByIds(String[] ids);
+     int deleteDingtalkCallBackByIds(String[] ids);
 }

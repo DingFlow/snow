@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="DingtalkCallBackEvent" id="DingtalkCallBackEventResult">
         <result property="id"    column="id"    />
         <result property="eventName"    column="event_name"    />
-        <result property="callBanckId"    column="call_banck_id"    />
+        <result property="callBackId"    column="call_back_id"    />
         <result property="eventDesc"    column="event_desc"    />
         <result property="delFlag"    column="del_flag"    />
         <result property="createBy"    column="create_by"    />
@@ -17,14 +17,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDingtalkCallBackEventVo">
-        select id, event_name, call_banck_id, event_desc, del_flag, create_by, create_time, update_time, update_by from dingtalk_call_back_event
+        select id, event_name, call_back_id, event_desc, del_flag, create_by, create_time, update_time, update_by from dingtalk_call_back_event
     </sql>
 
     <select id="selectDingtalkCallBackEventList" parameterType="DingtalkCallBackEvent" resultMap="DingtalkCallBackEventResult">
         <include refid="selectDingtalkCallBackEventVo"/>
        where del_flag=0
             <if test="eventName != null  and eventName != ''"> and event_name like concat('%', #{eventName}, '%')</if>
-            <if test="callBanckId != null "> and call_banck_id = #{callBanckId}</if>
+            <if test="callBackId != null "> and call_back_id = #{callBackId}</if>
             <if test="eventDesc != null  and eventDesc != ''"> and event_desc = #{eventDesc}</if>
     </select>
     
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into dingtalk_call_back_event
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="eventName != null">event_name,</if>
-            <if test="callBanckId != null">call_banck_id,</if>
+            <if test="callBackId != null">call_back_id,</if>
             <if test="eventDesc != null">event_desc,</if>
             <if test="delFlag != null">del_flag,</if>
             <if test="createBy != null">create_by,</if>
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eventName != null">#{eventName},</if>
-            <if test="callBanckId != null">#{callBanckId},</if>
+            <if test="callBackId != null">#{callBackId},</if>
             <if test="eventDesc != null">#{eventDesc},</if>
             <if test="delFlag != null">#{delFlag},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update dingtalk_call_back_event
         <trim prefix="SET" suffixOverrides=",">
             <if test="eventName != null">event_name = #{eventName},</if>
-            <if test="callBanckId != null">call_banck_id = #{callBanckId},</if>
+            <if test="callBankId != null">call_back_id = #{callBackId},</if>
             <if test="eventDesc != null">event_desc = #{eventDesc},</if>
             <if test="delFlag != null">del_flag = #{delFlag},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteDingtalkCallBackEventByCallBanckId" parameterType="Integer">
-        delete from dingtalk_call_back_event where call_banck_id = #{id}
+        delete from dingtalk_call_back_event where call_back_id = #{id}
     </delete>
 
     <delete id="deleteDingtalkCallBackEventByIds" parameterType="String">

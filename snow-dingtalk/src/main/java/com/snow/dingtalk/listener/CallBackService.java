@@ -2,19 +2,16 @@ package com.snow.dingtalk.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.snow.common.enums.DingTalkListenerType;
-import com.snow.common.enums.DingTalkSyncType;
 import com.snow.common.utils.spring.SpringUtils;
-import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.service.impl.CallBackServiceImpl;
 import com.snow.system.domain.DingtalkCallBack;
-import com.snow.system.domain.SysDingtalkSyncLog;
 import com.snow.system.event.SyncEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title:  钉钉回调监听
  * @Description:
  * @date 2020/11/3 17:05
  */
@@ -22,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CallBackService implements ISyncDingTalkInfo {
 
-    private CallBackServiceImpl callBackServiceImpl=SpringUtils.getBean("callBackServiceImpl");
+    private CallBackServiceImpl callBackServiceImpl=SpringUtils.getBean(CallBackServiceImpl.class);
 
     @Override
     public void syncDingTalkInfoEvent(SyncEvent syncEvent) {
