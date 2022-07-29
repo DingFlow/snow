@@ -37,12 +37,11 @@
         <div class="col-md-6 text-center  wow zoomIn">
             <img th:src="@{/img/landing/xinwen.png}" alt="dashboard" class="img-responsive">
         </div>
-        <div th:each="news,iterStat : ${newsList}">
-
-            <div class="col-md-6 text-center wow fadeInLeft">
+        <div th:each="news,iterStat : ${newsList}" style="margin-top: 20px">
+            <div class="col-md-6">
                 <div class="pull-left">
                     <h2>
-                        <i class="fa fa-fire text-danger"></i>&nbsp;   <a class="text-info" th:href="@{'/front/news/'+${news.noticeId}}" target="_blank" > [[${news.noticeTitle}]]</a>
+                        <i class="fa fa-fire text-danger"></i>&nbsp;   <a class="text-primary " th:href="@{'/front/news/'+${news.noticeId}}" target="_blank" > [[${news.noticeTitle}]]</a>
                     </h2>
                 </div>
             </div>
