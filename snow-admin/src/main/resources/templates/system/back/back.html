@@ -24,9 +24,9 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:back:add">
+               <!-- <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:back:add">
                     <i class="fa fa-plus"></i> 添加
-                </a>
+                </a>-->
                 <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:back:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a>
@@ -48,6 +48,7 @@
         var removeFlag = [[${@permission.hasPermi('system:back:remove')}]];
         var registerFlag = [[${@permission.hasPermi(' system:back:register')}]];
         var detailFlag = [[${@permission.hasPermi('system:back:detail')}]];
+        var sysNormalDisableDatas = [[${@dict.getType('sys_normal_disable')}]];
         var prefix = ctx + "system/back";
 
         $(function() {
@@ -75,7 +76,13 @@
                     field: 'url',
                     title: '回调url'
                 },
-
+                {
+                    field: 'enableFlag',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(sysNormalDisableDatas, value);
+                    }
+                },
                 {
                     title: '操作',
                     align: 'center',

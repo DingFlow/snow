@@ -30,14 +30,13 @@ import javax.annotation.Resource;
 
 /**
  * 回调事件Controller
- * 
+ *   详情参考：https://open.dingtalk.com/document/orgapp-server/callback-overview
  * @author qimingjin
  * @date 2020-11-02
  */
 @Controller
 @RequestMapping("/system/back")
-public class DingtalkCallBackController extends BaseController
-{
+public class DingtalkCallBackController extends BaseController {
     private String prefix = "system/back";
 
     @Autowired
@@ -73,8 +72,7 @@ public class DingtalkCallBackController extends BaseController
     @Log(title = "回调事件", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(DingtalkCallBack dingtalkCallBack)
-    {
+    public AjaxResult export(DingtalkCallBack dingtalkCallBack) {
         List<DingtalkCallBack> list = dingtalkCallBackService.selectDingtalkCallBackList(dingtalkCallBack);
         ExcelUtil<DingtalkCallBack> util = new ExcelUtil<DingtalkCallBack>(DingtalkCallBack.class);
         return util.exportExcel(list, "back");
@@ -96,10 +94,8 @@ public class DingtalkCallBackController extends BaseController
     @Log(title = "回调事件", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(DingtalkCallBack dingtalkCallBack)
-    {
+    public AjaxResult addSave(DingtalkCallBack dingtalkCallBack) {
         dingtalkCallBack.setCreateBy(ShiroUtils.getLoginName());
-        dingtalkCallBack.setIsSyncDingTalk(false);
         return toAjax(dingtalkCallBackService.insertDingtalkCallBack(dingtalkCallBack));
     }
 
@@ -107,11 +103,10 @@ public class DingtalkCallBackController extends BaseController
     @Log(title = "注册", businessType = BusinessType.INSERT)
     @GetMapping("/register")
     @ResponseBody
-    public AjaxResult register(Long id)
-    {
+    public AjaxResult register(Long id) {
         DingtalkCallBack dingtalkCallBack = dingtalkCallBackService.selectDingtalkCallBackById(id);
-        // 同步到dingding
-        SyncEvent syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
+        // 发布事件
+        SyncEvent<DingtalkCallBack> syncEvent = new SyncEvent(dingtalkCallBack, DingTalkListenerType.CALL_BACK_REGISTER);
         applicationContext.publishEvent(syncEvent);
         return AjaxResult.success();
     }
@@ -120,8 +115,7 @@ public class DingtalkCallBackController extends BaseController
      * 修改回调事件
      */
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap)
-    {
+    public String edit(@PathVariable("id") Long id, ModelMap mmap) {
         DingtalkCallBack dingtalkCallBack = dingtalkCallBackService.selectDingtalkCallBackById(id);
         mmap.put("dingtalkCallBack", dingtalkCallBack);
         return prefix + "/edit";
@@ -134,8 +128,7 @@ public class DingtalkCallBackController extends BaseController
     @Log(title = "回调事件", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(DingtalkCallBack dingtalkCallBack)
-    {
+    public AjaxResult editSave(DingtalkCallBack dingtalkCallBack) {
         dingtalkCallBack.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(dingtalkCallBackService.updateDingtalkCallBack(dingtalkCallBack));
     }

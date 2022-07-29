@@ -1,27 +1,30 @@
 package com.snow.system.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.annotation.Excel;
 import com.snow.common.annotation.Sensitive;
 import com.snow.common.core.domain.BaseEntity;
 import com.snow.common.enums.SensitiveTypeEnum;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
 /**
  * 回调事件对象 dingtalk_call_back
- * 
+ *
+ *  开发者可以使用HTTP的方式注册钉钉的回调事件，用于接收钉钉推送的消息。例如企业授权开通应用事件、通讯录变更事件等，可以让开发者更好的与钉钉集成。
+ *
  * @author qimingjin
  * @date 2020-11-02
  */
 @Data
-public class DingtalkCallBack extends BaseEntity
-{
+public class DingtalkCallBack extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /** ID */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /** 加解密需要用到的token，ISV(服务提供商)推荐使用注册套件时填写的token，普通企业可以随机填写 */
@@ -44,18 +47,20 @@ public class DingtalkCallBack extends BaseEntity
     /** 第三方企业应用 */
     private String suiteKey;
 
-    /** 删除表示 */
-    private Integer delFlag;
+    /** 启用标识*/
+    private Integer enableFlag;
 
     /** 回调名称 */
     @Excel(name = "回调名称")
     private String callBackName;
 
     /**
-     * 部门事件集合
+     * 事件集合
      */
+    @TableField(exist = false)
     private List<String> eventNameList;
 
+    @TableField(exist = false)
     private Boolean flag=false;
 
 
