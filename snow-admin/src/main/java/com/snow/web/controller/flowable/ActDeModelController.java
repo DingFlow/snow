@@ -96,7 +96,7 @@ public class ActDeModelController extends BaseController
     @ResponseBody
     public AjaxResult addSave(ActDeModel actDeModel)
     {
-        Long userId = ShiroUtils.getUserId();
+        String userName = ShiroUtils.getUserName();
         ActDeModel actDeModelName=new ActDeModel();
         actDeModelName.setName(actDeModel.getName());
         List<ActDeModel> actDeModels = actDeModelService.selectActDeModelList(actDeModelName);
@@ -109,7 +109,8 @@ public class ActDeModelController extends BaseController
         if(!CollectionUtils.isEmpty(actDeModelKeyList)){
             return AjaxResult.error("该模型key已存在");
         }
-        actDeModel.setCreatedBy(String.valueOf(userId));
+        actDeModel.setCreatedBy(userName);
+        actDeModel.setVersion(1L);
         flowableService.saveModel(actDeModel);
         return toAjax(1);
     }
@@ -145,7 +146,6 @@ public class ActDeModelController extends BaseController
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids)
-
     {
         flowableService.deleteModel(ids);
         return toAjax(1);

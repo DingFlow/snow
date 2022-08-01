@@ -80,14 +80,13 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
     @Override
     public Deployment createStringDeployment(DeploymentDTO deploymentDTO, String filePath) {
         String text= IoUtil.readFileAsString(filePath);
-        Deployment deploy = repositoryService.createDeployment()
+        return  repositoryService.createDeployment()
                 .tenantId(deploymentDTO.getTenantId())
                 .category(deploymentDTO.getCategory())
                 .name(deploymentDTO.getName())
                 .key(deploymentDTO.getKey())
                 .addString(filePath,text)
                 .deploy();
-        return deploy;
     }
 
     @Override
@@ -102,10 +101,9 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
         if(StringUtils.isNotNull(deploymentDTO.getKey())){
             deploymentBuilder.key(deploymentDTO.getKey());
         }
-        Deployment deploy = deploymentBuilder.name(deploymentDTO.getName())
+        return deploymentBuilder.name(deploymentDTO.getName())
                 .addInputStream(deploymentDTO.getResourceName(), inputStream)
                 .deploy();
-        return deploy;
     }
 
     @Override
@@ -123,13 +121,12 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
 
     @Override
     public Deployment createBytesDeployment(DeploymentDTO deploymentDTO, byte[] bytes) {
-        Deployment deploy = repositoryService.createDeployment()
+        return repositoryService.createDeployment()
                 .category(deploymentDTO.getCategory())
                 .name(deploymentDTO.getName())
                 .key(deploymentDTO.getKey())
                 .addBytes(deploymentDTO.getResourceName(),bytes)
                 .deploy();
-        return deploy;
     }
 
     @Override
@@ -146,8 +143,7 @@ public class FlowablePublishServiceImpl implements FlowablePublishService {
         deployModel.setKey(model.getKey());
         //这个地方必须加.bpmn或者.bpmn20.xml后缀，不然数据不会生成act_re_procdef这个表的数据
         deployModel.setResourceName(model.getName()+".bpmn20.xml");
-        Deployment deploy = createInputStreamDeployment(deployModel,inputStream);
-        return deploy;
+        return createInputStreamDeployment(deployModel,inputStream);
     }
 
     @Override

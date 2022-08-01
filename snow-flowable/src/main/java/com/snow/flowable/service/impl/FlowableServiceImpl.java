@@ -65,7 +65,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
@@ -150,6 +149,7 @@ public class FlowableServiceImpl implements FlowableService {
         model.setComment(actDeModel.getModelComment());
         model.setDescription(actDeModel.getDescription());
         model.setCreated(new Date());
+        model.setLastUpdated(new Date());
         model.setCreatedBy(actDeModel.getCreatedBy());
         model.setKey(actDeModel.getModelKey());
         model.setModelType(actDeModel.getModelType().intValue());
@@ -210,19 +210,19 @@ public class FlowableServiceImpl implements FlowableService {
     public PageModel<DeploymentVO> getDeploymentList(DeploymentQueryDTO deploymentQueryDTO) {
 
         DeploymentQuery deploymentQuery = repositoryService.createDeploymentQuery();
-        if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentNameLike())){
+        if(StrUtil.isNotEmpty(deploymentQueryDTO.getDeploymentNameLike())){
             deploymentQuery.deploymentNameLike("%"+deploymentQueryDTO.getDeploymentNameLike()+"%");
         }
-        if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentCategory())){
+        if(StrUtil.isNotEmpty(deploymentQueryDTO.getDeploymentCategory())){
             deploymentQuery.deploymentCategory(deploymentQueryDTO.getDeploymentCategory());
         }
-        if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentId())){
+        if(StrUtil.isNotEmpty(deploymentQueryDTO.getDeploymentId())){
             deploymentQuery.deploymentId(deploymentQueryDTO.getDeploymentId());
         }
-        if(!StringUtils.isEmpty(deploymentQueryDTO.getDeploymentKeyLike())){
+        if(StrUtil.isNotEmpty(deploymentQueryDTO.getDeploymentKeyLike())){
             deploymentQuery.deploymentKeyLike("%"+deploymentQueryDTO.getDeploymentKeyLike()+"%");
         }
-        if(!StringUtils.isEmpty(deploymentQueryDTO.getProcessDefinitionKeyLike())){
+        if(StrUtil.isNotEmpty(deploymentQueryDTO.getProcessDefinitionKeyLike())){
             deploymentQuery.processDefinitionKeyLike("%"+deploymentQueryDTO.getProcessDefinitionKeyLike()+"%");
         }
 
@@ -234,7 +234,6 @@ public class FlowableServiceImpl implements FlowableService {
 
         //一次发布可以包含多个流程定义
         List<DeploymentVO> deploymentVoList = deployments.stream().map(t -> {
-          //  ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).singleResult();
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(t.getId()).list().get(0);
 
             DeploymentVO deploymentVO = new DeploymentVO();
@@ -284,20 +283,17 @@ public class FlowableServiceImpl implements FlowableService {
             byte[] b = null;
             if(StringUtils.isEmpty(resourceName)){
                 List<String> deploymentResourceNames = repositoryService.getDeploymentResourceNames(id);
-                if(type.equals("xml")){
-                    String xmlType=".xml";
-                    String bpmnType=".bpmn";
-                    resourceName = deploymentResourceNames.stream().filter(p -> (p.endsWith(xmlType) || p.endsWith(bpmnType))).findFirst().orElse(null);
+                if(type.equals(FlowConstants.XML)){
+                    resourceName = deploymentResourceNames.stream().filter(p -> (p.endsWith(".xml") || p.endsWith(".bpmn"))).findFirst().orElse(null);
                 }else {
-                    String pngType=".png";
-                    resourceName = deploymentResourceNames.stream().filter(p -> p.endsWith(pngType)).findFirst().orElse(null);
+                    resourceName = deploymentResourceNames.stream().filter(p -> p.endsWith(".png")).findFirst().orElse(null);
                 }
             }
-            if (type.equals("xml")) {
+            if (type.equals(FlowConstants.XML)) {
                 response.setHeader("Content-type", "text/xml;charset=UTF-8");
                 InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);
                 b = IoUtil.readInputStream(inputStream, resourceName);
-            } else if(type.equals("png")){
+            } else if(type.equals(FlowConstants.PNG)){
                 response.setHeader("Content-Type", "image/png;charset=UTF-8");
                 response.setCharacterEncoding("utf-8");
                 InputStream inputStream = repositoryService.getResourceAsStream(id, resourceName);

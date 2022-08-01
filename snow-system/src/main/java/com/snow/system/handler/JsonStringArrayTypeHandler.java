@@ -39,7 +39,6 @@ public class JsonStringArrayTypeHandler extends BaseTypeHandler<String[]> {
 
     @Override
     public String[] getNullableResult(ResultSet resultSet, String columnName) throws SQLException {
-        log.info("读取数据库的数据columnName:{}",resultSet.getString(columnName));
         return this.toObject(resultSet.getString(columnName));
     }
 
