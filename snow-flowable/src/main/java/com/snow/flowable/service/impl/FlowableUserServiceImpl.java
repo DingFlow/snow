@@ -1,5 +1,6 @@
 package com.snow.flowable.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.google.common.collect.Lists;
@@ -72,12 +73,14 @@ public class FlowableUserServiceImpl implements FlowableUserService {
 
     @Override
     public List<RemoteUser> getFlowUserList(String name) {
+        List<RemoteUser> result = Lists.newArrayList();
         SysUser sysUser=new SysUser();
         sysUser.setUserName(name);
         List<SysUser> sysUsers = iSysUserService.selectUserList(sysUser);
-        List<RemoteUser> result = new ArrayList();
-
-        sysUsers.parallelStream().forEach(t->{
+        if(CollUtil.isEmpty(sysUsers)){
+            return result;
+        }
+        sysUsers.stream().forEach(t->{
             RemoteUser remoteUser=new RemoteUser();
             remoteUser.setId(String.valueOf(t.getUserId()));
             remoteUser.setEmail(t.getEmail());
@@ -87,7 +90,7 @@ public class FlowableUserServiceImpl implements FlowableUserService {
             remoteUser.setLastName(t.getUserName());
 
             List<SysRole> roles = t.getRoles();
-            if(!StringUtils.isEmpty(roles)) {
+            if(CollUtil.isNotEmpty(roles)) {
                 List<RemoteGroup> remoteGroupList = roles.stream().map(role -> {
                     RemoteGroup remoteGroup = new RemoteGroup();
                     remoteGroup.setId(String.valueOf(role.getRoleId()));
@@ -110,7 +113,7 @@ public class FlowableUserServiceImpl implements FlowableUserService {
         sysRole.setRoleType(UserConstants.FLOW_ROLE_TYPE);
         List<SysRole> sysRoles = sysRoleService.selectRoleList(sysRole);
         List<RemoteGroup> remoteGroupList=Lists.newArrayList();
-        if(!StringUtils.isEmpty(sysRoles)) {
+        if(CollUtil.isNotEmpty(sysRoles)) {
             remoteGroupList = sysRoles.stream().map(role -> {
                 RemoteGroup remoteGroup = new RemoteGroup();
                 remoteGroup.setName(role.getRoleName());
@@ -139,49 +142,21 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     }
 
     /**
-     * 根据人查询角色及其子角色
-     * @param userId
-     * @return
+     * 根据用户id查询角色及其子角色
+     * @param userId 用户id
+     * @return  角色集合
      */
     @Override
     public Set<Long> getFlowGroupByUserId(Long userId) {
-        Set<Long> totalFlowGroupDO=Sets.newHashSet();
+        //先查询当前人拥有的角色
         List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOByUserId(userId);
-
-        if(!CollectionUtils.isEmpty(flowGroupDOS)){
-            totalFlowGroupDO.addAll(flowGroupDOS.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toList()));
-            flowGroupDOS.forEach(t->{
-                Set<Long> allSonSysRoleList = getAllSonSysRoleList(t.getRoleId());
-                totalFlowGroupDO.addAll(allSonSysRoleList);
-            });
+        if(CollUtil.isEmpty(flowGroupDOS)){
+            return Sets.newHashSet();
         }
-        return totalFlowGroupDO;
+        List<Long> flowGroupAllSonIds = flowGroupDOService.getFlowGroupAllSonIds(flowGroupDOS.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toList()));
+        return Sets.newHashSet(flowGroupAllSonIds);
     }
 
- 
-
-    /**
-     * 获取某个节点下面的所有子节点
-     * @param roleId
-     * @return
-     */
-    public  Set<Long> getAllSonSysRoleList(Long roleId){
-        //存放所有子节点
-        Set<Long> childFlowGroup= new HashSet<>();
-        FlowGroupDO sysRole=new FlowGroupDO();
-        sysRole.setParentId(roleId);
-        sysRole.setRoleType(UserConstants.FLOW_ROLE_TYPE);
-        List<FlowGroupDO> sysRoleList = flowGroupDOService.selectFlowGroupDOList(sysRole);
-        if(!CollectionUtils.isEmpty(sysRoleList)){
-            Set<Long> collect = sysRoleList.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toSet());
-            childFlowGroup.addAll(collect);
-            for(FlowGroupDO flowGroupDO: sysRoleList){
-                // 不为空则递归
-                childFlowGroup.addAll(getAllSonSysRoleList(flowGroupDO.getRoleId()));
-            }
-        }
-        return childFlowGroup;
-    }
 
     /**
      * 获取某个子节点上的所有父节点
@@ -218,22 +193,18 @@ public class FlowableUserServiceImpl implements FlowableUserService {
         Set<SysUser> result = Sets.newHashSet();
         if (ObjectUtil.isNotNull(assignee)) {
             // 已经被指派了，则可审批人就是指派的人
-            SysUser sysUser = iSysUserService.selectUserById(Long.parseLong(assignee));
-            if (sysUser != null) {
-                result.add(sysUser);
-            }
+            SysUser sysUser = Optional.ofNullable(iSysUserService.selectUserById(Long.parseLong(assignee))).orElse(new SysUser());
+            result.add(sysUser);
         } else {
             // 获取待办对应的groupId和userId
             List<IdentityLink> identityLinks = taskService.getIdentityLinksForTask(taskId);
             for (IdentityLink identityLink : identityLinks) {
                 if (ObjectUtil.isNotNull(identityLink.getGroupId())) {
-                    List<SysUser> sysUsers = getUserByFlowGroupId(Long.parseLong(identityLink.getGroupId()));
+                    List<SysUser> sysUsers = this.getUserByFlowGroupId(Long.parseLong(identityLink.getGroupId()));
                     result.addAll(sysUsers);
                 } else if (ObjectUtil.isNotNull(identityLink.getUserId())) {
-                    SysUser handleUser = iSysUserService.selectUserById(Long.parseLong(identityLink.getUserId()));
-                    if (handleUser != null) {
-                        result.add(handleUser);
-                    }
+                    SysUser sysUser = Optional.ofNullable( iSysUserService.selectUserById(Long.parseLong(identityLink.getUserId()))).orElse(new SysUser());
+                    result.add(sysUser);
                 }
             }
         }
@@ -264,4 +235,5 @@ public class FlowableUserServiceImpl implements FlowableUserService {
         }
         return returnFlowUserGroupList;
     }
+
 }

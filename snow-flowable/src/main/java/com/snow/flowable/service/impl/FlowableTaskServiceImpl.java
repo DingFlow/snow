@@ -1,15 +1,17 @@
 package com.snow.flowable.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import com.snow.common.core.page.PageModel;
 import com.snow.common.enums.WorkRecordStatus;
 import com.snow.common.exception.BusinessException;
 import com.snow.common.utils.bean.BeanUtils;
-import com.snow.common.utils.bean.MyBeanUtils;
 import com.snow.flowable.common.constants.FlowConstants;
 import com.snow.flowable.common.enums.FlowTypeEnum;
 import com.snow.flowable.common.skipTask.TaskSkipService;
@@ -30,14 +32,12 @@ import org.flowable.engine.task.Attachment;
 import org.flowable.engine.task.Comment;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.identitylink.api.history.HistoricIdentityLink;
-import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -87,30 +87,28 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
                 .or()
                 .taskCandidateOrAssigned(userId);
         //这个地方查询会去查询系统的用户组表，希望的是查询自己的用户表
-        if(!CollectionUtils.isEmpty(sysRoles)) {
-            List<String> roleIds = sysRoles.stream().map(t ->
-                    String.valueOf(t)
-            ).collect(Collectors.toList());
+        if(CollUtil.isNotEmpty(sysRoles)) {
+            List<String> roleIds = sysRoles.stream().map(String::valueOf).collect(Collectors.toList());
             taskQuery.taskCandidateGroupIn(roleIds).endOr();
         }
 
-        if(!StringUtils.isEmpty(taskBaseDTO.getProcessInstanceId())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getProcessInstanceId())){
             taskQuery.processInstanceId(taskBaseDTO.getProcessInstanceId());
         }
-        if(!StringUtils.isEmpty(taskBaseDTO.getTaskId())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getTaskId())){
             taskQuery.taskId(taskBaseDTO.getTaskId());
         }
 
-        if(!StringUtils.isEmpty(taskBaseDTO.getTaskName())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getTaskName())){
             taskQuery.taskNameLike("%"+taskBaseDTO.getTaskName()+"%");
         }
-        if(!StringUtils.isEmpty(taskBaseDTO.getBusinessKey())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getBusinessKey())){
             taskQuery.processInstanceBusinessKeyLike("%"+taskBaseDTO.getBusinessKey()+"%");
         }
-        if(!StringUtils.isEmpty(taskBaseDTO.getDefinitionKey())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getDefinitionKey())){
             taskQuery.processDefinitionKey(taskBaseDTO.getDefinitionKey());
         }
-        if(!StringUtils.isEmpty(taskBaseDTO.getProcessDefinitionName())){
+        if(StrUtil.isNotEmpty(taskBaseDTO.getProcessDefinitionName())){
             taskQuery.processDefinitionNameLike("%"+taskBaseDTO.getProcessDefinitionName()+"%");
         }
 
@@ -153,6 +151,104 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
         return pageModel;
     }
 
+
+    @Override
+    public  void submitTask(FinishTaskDTO finishTaskDTO) {
+        Task task = this.getTask(finishTaskDTO.getTaskId());
+        if(StringUtils.isEmpty(task)){
+            log.debug("@@完成任务时，该任务ID:{}不存在",finishTaskDTO.getTaskId());
+            throw new BusinessException(StrUtil.format("该任务ID:{}不存在",finishTaskDTO.getTaskId()));
+        }
+        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
+        //设置审批人，若不设置则数据表userid字段为null
+        Authentication.setAuthenticatedUserId(finishTaskDTO.getUserId());
+        //添加评论
+        taskService.addComment(task.getId(),task.getProcessInstanceId(),FlowConstants.OPINION,StrUtil.isNotEmpty(finishTaskDTO.getComment())?finishTaskDTO.getComment():"");
+        //上传文件
+        List<FileEntry> files = finishTaskDTO.getFiles();
+        if(CollUtil.isNotEmpty(files)){
+            files.forEach(t->{
+                if(ObjectUtil.isNull(t.getKey())) return;
+                taskService.createAttachment(FlowConstants.URL,task.getId(),task.getProcessInstanceId(),t.getName(),t.getKey(),t.getUrl());
+            });
+        }
+        //保存参数到流程
+        Map<String, Object> paramMap = BeanUtil.beanToMap(finishTaskDTO);
+        paramMap.remove(FinishTaskDTO.COMMENT);
+        paramMap.remove(FinishTaskDTO.FILES);
+        if(CollUtil.isNotEmpty(paramMap)){
+            Set<Map.Entry<String, Object>> entries = paramMap.entrySet();
+            entries.forEach(t-> runtimeService.setVariable(task.getExecutionId(),t.getKey(),t.getValue()));
+        }
+        //修改业务数据的时候流程业务数据重新赋值
+        if(finishTaskDTO.getIsUpdateBus()&&appFrom!=null){
+            BeanUtil.copyProperties(finishTaskDTO,appFrom);
+            runtimeService.setVariable(task.getExecutionId(),FlowConstants.APP_FORM,appFrom);
+        }
+        // owner不为空说明可能存在委托任务
+        if (ObjectUtil.isNotNull(task.getOwner())) {
+            switch (task.getDelegationState()) {
+                //委派中
+                case PENDING:
+                    // 被委派人处理完成任务
+                    taskService.resolveTask(task.getId(),paramMap);
+                    break;
+                default:
+                    taskService.claim(task.getId(),finishTaskDTO.getUserId());
+                    taskService.complete(task.getId(),paramMap,true);
+                    break;
+            }
+        } else {
+            //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
+            taskService.claim(task.getId(),finishTaskDTO.getUserId());
+            taskService.complete(task.getId(),paramMap,true);
+        }
+        //推进自动推动的节点
+        taskSkipService.autoSkip(task.getProcessInstanceId());
+    }
+
+    @Override
+    public void automaticTask(String processInstanceId){
+        FinishTaskDTO completeTaskDTO=new FinishTaskDTO();
+        Task task=flowableService.getTaskProcessInstanceById(processInstanceId);
+        completeTaskDTO.setTaskId(task.getId());
+        completeTaskDTO.setIsStart(true);
+        completeTaskDTO.setIsPass(true);
+        completeTaskDTO.setUserId(task.getAssignee());
+        this.submitTask(completeTaskDTO);
+    }
+
+    @Override
+    public void transferTask(String taskId, String curUserId, String targetUserId) {
+        try {
+            //todo 转办记录
+            taskService.setOwner(taskId, curUserId);
+            taskService.setAssignee(taskId,targetUserId);
+        }catch (Exception e) {
+            log.error(e.getMessage(),e.getCause());
+            throw new RuntimeException("转办任务失败，请联系管理员");
+        }
+
+    }
+
+    /**
+     * 委派：是将任务节点分给其他人处理，等其他人处理好之后，委派任务会自动回到委派人的任务中
+     * @param taskId 任务ID
+     * @param curUserId 当前人ID
+     * @param targetUserId 目标人ID
+     */
+    @Override
+    public void delegateTask(String taskId, String curUserId, String targetUserId) {
+        try {
+            taskService.setOwner(taskId, curUserId);
+            taskService.delegateTask(taskId,targetUserId);
+
+        }catch (Exception e) {
+            log.error(e.getMessage(),e.getCause());
+            throw new RuntimeException("转办任务失败，请联系管理员");
+        }
+    }
+
     @Override
     public PageModel<HistoricTaskInstanceVO> getHistoricTaskInstance(HistoricTaskInstanceDTO historicTaskInstanceDTO) {
 
@@ -176,7 +272,7 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
             }
 
             historicTaskInstanceVO.setCompleteTime(t.getEndTime());
-            //转办的时候会出现到历史记录里，但是任务还没完结？？？
+            //转办的时候会出现到历史记录里，但是任务还没完结???
             if(ObjectUtil.isNotNull(t.getEndTime())){
                 String spendTime= DateUtil.formatBetween(t.getCreateTime(), t.getEndTime(), BetweenFormater.Level.SECOND);
                 historicTaskInstanceVO.setHandleTaskTime(spendTime);
@@ -311,26 +407,21 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     public Set<SysUser> getIdentityLinksForTask(String taskId, String type) {
         Set<SysUser> userList=new HashSet<>();
         List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(taskId);
-        if(!CollectionUtils.isEmpty(identityLinksForTask)){
-            identityLinksForTask.stream().filter(identityLink ->
-                    !StringUtils.isEmpty(identityLink.getGroupId())
-                            &&identityLink.getType().equals(type)
-            )
-                    .forEach(identityLink -> {
-                        String groupId = identityLink.getGroupId();
-                        List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
-                        userList.addAll(sysUsers);
-                    });
-            identityLinksForTask.stream().filter(identityLink ->
-                    !StringUtils.isEmpty(identityLink.getUserId())
-                            &&identityLink.getType().equals(type)
-            )
-                    .forEach(identityLink -> {
-                        String userId = identityLink.getUserId();
-                        SysUser sysUsers = sysUserService.selectUserById(Long.parseLong(userId));
-                        userList.add(sysUsers);
-                    });
+        if(CollUtil.isEmpty(identityLinksForTask)){
+            return userList;
         }
+        identityLinksForTask.stream().filter(identityLink -> StrUtil.isNotEmpty(identityLink.getGroupId()) &&identityLink.getType().equals(type))
+                .forEach(identityLink -> {
+                    String groupId = identityLink.getGroupId();
+                    List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
+                    userList.addAll(sysUsers);
+                });
+        identityLinksForTask.stream().filter(identityLink -> StrUtil.isNotEmpty(identityLink.getUserId()) &&identityLink.getType().equals(type))
+                .forEach(identityLink -> {
+                    String userId = identityLink.getUserId();
+                    SysUser sysUsers = sysUserService.selectUserById(Long.parseLong(userId));
+                    userList.add(sysUsers);
+                });
         return userList;
     }
 
@@ -345,31 +436,29 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     public Set<SysUser> getHistoricIdentityLinksForTask(String taskId){
         Set<SysUser> userList=new HashSet<>();
         List<HistoricIdentityLink> historicIdentityLinksForTask = historyService.getHistoricIdentityLinksForTask(taskId);
-        if(!CollectionUtils.isEmpty(historicIdentityLinksForTask)){
-            historicIdentityLinksForTask.stream().filter(identityLink -> !StringUtils.isEmpty(identityLink.getGroupId())
-                    &&identityLink.getType().equals("candidate"))
-                    .forEach(identityLink -> {
-                        String groupId = identityLink.getGroupId();
-                        List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
-                        userList.addAll(sysUsers);
-                    });
-            historicIdentityLinksForTask.stream().filter(identityLink -> !StringUtils.isEmpty(identityLink.getUserId())
-                    &&identityLink.getType().equals("candidate"))
-                    .forEach(identityLink -> {
-                        String userId = identityLink.getUserId();
-                        SysUser sysUsers = sysUserService.selectUserById(Long.parseLong(userId));
-                        userList.add(sysUsers);
-                    });
+        if(CollUtil.isEmpty(historicIdentityLinksForTask)){
+            return userList;
         }
+        historicIdentityLinksForTask.stream().filter(identityLink -> StrUtil.isNotEmpty(identityLink.getGroupId()) &&identityLink.getType().equals("candidate"))
+                .forEach(identityLink -> {
+                    String groupId = identityLink.getGroupId();
+                    List<SysUser> sysUsers=flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
+                    userList.addAll(sysUsers);
+                });
+        historicIdentityLinksForTask.stream().filter(identityLink -> StrUtil.isNotEmpty(identityLink.getUserId()) &&identityLink.getType().equals("candidate"))
+                .forEach(identityLink -> {
+                    String userId = identityLink.getUserId();
+                    SysUser sysUsers = sysUserService.selectUserById(Long.parseLong(userId));
+                    userList.add(sysUsers);
+                });
         return userList;
     }
 
     @Override
     public Task getTask(String taskId) {
-        Task task = taskService.createTaskQuery()
+        return taskService.createTaskQuery()
                 .taskId(taskId)
                 .singleResult();
-        return task;
     }
 
     @Override
@@ -394,105 +483,6 @@ public class FlowableTaskServiceImpl implements FlowableTaskService {
     }
 
 
-    @Override
-    public  void submitTask(FinishTaskDTO finishTaskDTO) {
-        Task task = this.getTask(finishTaskDTO.getTaskId());
-        if(StringUtils.isEmpty(task)){
-            log.info("完成任务时，该任务ID:%不存在",finishTaskDTO.getTaskId());
-            throw new BusinessException(String.format("该任务ID:%不存在",finishTaskDTO.getTaskId()));
-        }
-        AppForm appFrom = appFormService.getAppFrom(task.getProcessInstanceId());
-        ////设置审批人，若不设置则数据表userid字段为null
-        Authentication.setAuthenticatedUserId(finishTaskDTO.getUserId());
-        if(!StringUtils.isEmpty(finishTaskDTO.getComment())){
-            taskService.addComment(task.getId(),task.getProcessInstanceId(),FlowConstants.OPINION,finishTaskDTO.getComment());
-        }else {
-            taskService.addComment(task.getId(),task.getProcessInstanceId(),FlowConstants.OPINION,"");
-        }
-
-        List<FileEntry> files = finishTaskDTO.getFiles();
-        if(!CollectionUtils.isEmpty(files)){
-            files.forEach(t->{
-                if(ObjectUtil.isNull(t.getKey())) return;
-                taskService.createAttachment("url",task.getId(),task.getProcessInstanceId(),t.getName(),t.getKey(),t.getUrl());
-            });
-        }
-        Map<String, Object> paramMap = BeanUtil.beanToMap(finishTaskDTO);
-        paramMap.remove(FinishTaskDTO.COMMENT);
-        paramMap.remove(FinishTaskDTO.FILES);
-        if(!CollectionUtils.isEmpty(paramMap)){
-            Set<Map.Entry<String, Object>> entries = paramMap.entrySet();
-            entries.forEach(t-> runtimeService.setVariable(task.getExecutionId(),t.getKey(),t.getValue()));
-        }
-        //修改业务数据的时候流程业务数据重新赋值
-        if(finishTaskDTO.getIsUpdateBus()&&appFrom!=null){
-            MyBeanUtils.copyProperties(finishTaskDTO,appFrom);
-            runtimeService.setVariable(task.getExecutionId(),FlowConstants.APP_FORM,appFrom);
-        }
-        // owner不为空说明可能存在委托任务
-        if (ObjectUtil.isNotNull(task.getOwner())) {
-            DelegationState delegationState = task.getDelegationState();
-            switch (delegationState) {
-                //委派中
-                case PENDING:
-                    // 被委派人处理完成任务
-                    taskService.resolveTask(task.getId(),paramMap);
-                    break;
-                default:
-                    taskService.claim(task.getId(),finishTaskDTO.getUserId());
-                    taskService.complete(task.getId(),paramMap,true);
-                    break;
-            }
-        } else {
-            //claim the task，当任务分配给了某一组人员时，需要该组人员进行抢占。抢到了就将该任务给谁处理，其他人不能处理。认领任务
-            taskService.claim(task.getId(),finishTaskDTO.getUserId());
-            taskService.complete(task.getId(),paramMap,true);
-        }
-        //推进自动推动的节点
-        taskSkipService.autoSkip(task.getProcessInstanceId());
-    }
-
-    @Override
-    public void automaticTask(String processInstanceId){
-        FinishTaskDTO completeTaskDTO=new FinishTaskDTO();
-        Task task=flowableService.getTaskProcessInstanceById(processInstanceId);
-        completeTaskDTO.setTaskId(task.getId());
-        completeTaskDTO.setIsStart(true);
-        completeTaskDTO.setIsPass(true);
-        completeTaskDTO.setUserId(task.getAssignee());
-        submitTask(completeTaskDTO);
-    }
-
-    @Override
-    public void transferTask(String taskId, String curUserId, String targetUserId) {
-        try {
-            //todo 转办记录
-            taskService.setOwner(taskId, curUserId);
-            taskService.setAssignee(taskId,targetUserId);
-        }catch (Exception e) {
-            log.error(e.getMessage(),e.getCause());
-            throw new RuntimeException("转办任务失败，请联系管理员");
-        }
-
-    }
-
-    /**
-     * 委派：是将任务节点分给其他人处理，等其他人处理好之后，委派任务会自动回到委派人的任务中
-     * @param taskId 任务ID
-     * @param curUserId 当前人ID
-     * @param targetUserId 目标人ID
-     */
-    @Override
-    public void delegateTask(String taskId, String curUserId, String targetUserId) {
-        try {
-            taskService.setOwner(taskId, curUserId);
-            taskService.delegateTask(taskId,targetUserId);
-
-        }catch (Exception e) {
-            log.error(e.getMessage(),e.getCause());
-            throw new RuntimeException("转办任务失败，请联系管理员");
-        }
-    }
 
 
 }

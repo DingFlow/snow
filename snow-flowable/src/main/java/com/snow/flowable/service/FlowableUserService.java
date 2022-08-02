@@ -1,7 +1,5 @@
 package com.snow.flowable.service;
 
-import com.snow.system.domain.FlowGroupDO;
-import com.snow.system.domain.SysRole;
 import com.snow.system.domain.SysUser;
 import org.flowable.ui.common.model.RemoteGroup;
 import org.flowable.ui.common.model.RemoteUser;
@@ -12,7 +10,7 @@ import java.util.Set;
 
 /**
  * @author qimingjin
- * @Title:
+ * @Title:  流程用户相关操作
  * @Description:
  * @date 2020/11/20 10:28
  */
@@ -24,16 +22,16 @@ public interface FlowableUserService {
     Map<String, Object> loginFlowable();
 
     /**
-     * 获取用户组
-     * @param name
-     * @return
+     * 根据用户名称查询用户
+     * @param name 用户名称
+     * @return 流程用户
      */
     List<RemoteUser> getFlowUserList(String name);
 
     /**
      * 获取流程角色组
-     * @param filter
-     * @return
+     * @param filter 用户组
+     * @return 流程用户组
      */
     List<RemoteGroup> getFlowUserGroupList(String filter);
 
@@ -47,9 +45,9 @@ public interface FlowableUserService {
 
 
     /**
-     * 根据流程组查询角色
-     * @param userId
-     * @return
+     * 查询用户拥有的流程角色
+     * @param userId 用户id
+     * @return 角色集合
      */
     Set<Long> getFlowGroupByUserId(Long userId);
 
@@ -68,4 +66,5 @@ public interface FlowableUserService {
      * @return
      */
     List<RemoteGroup> getLinkFlowUserGroupList(String filter);
+
 }

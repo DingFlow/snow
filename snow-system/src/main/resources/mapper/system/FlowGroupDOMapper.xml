@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFlowGroupDOByUserId" parameterType="Long" resultMap="FlowGroupDOResult">
         <include refid="selectRoleContactVo"/>
-        WHERE r.del_flag = '0' and role_type=2 and ur.user_id = #{userId}
+        WHERE r.del_flag = '0' and r.role_type=2 and ur.user_id = #{userId}
     </select>
 
     <insert id="insertFlowGroupDO" parameterType="FlowGroupDO" useGeneratedKeys="true" keyProperty="roleId">
@@ -124,4 +124,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectRoleByPIds"  resultMap="FlowGroupDOResult" parameterType="arraylist">
+        <include refid="selectFlowGroupDOVo"/>
+        WHERE del_flag = '0' and role_type=2
+        <if test="pIds!=null and pIds.size()>0">
+            and parent_id in
+            <foreach collection="pIds" close=")" open="(" separator="," item="roleId">
+                #{roleId}
+            </foreach>
+        </if>
+    </select>
 </mapper>

@@ -2,6 +2,9 @@ package com.snow.system.service.impl;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+import cn.hutool.core.collection.CollUtil;
 import com.snow.common.core.domain.Ztree;
 import com.snow.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,5 +125,21 @@ public class FlowGroupDOServiceImpl implements IFlowGroupDOService
             ztrees.add(ztree);
         }
         return ztrees;
+    }
+
+    @Override
+    public List<FlowGroupDO> selectRoleByPIds(List<Long> pIds) {
+        return flowGroupDOMapper.selectRoleByPIds(pIds);
+    }
+
+
+    @Override
+    public List<Long> getFlowGroupAllSonIds(List<Long> ids){
+        List<FlowGroupDO> list =this.selectRoleByPIds(ids);
+        if(CollUtil.isNotEmpty(list)){
+            List<Long> allIds = getFlowGroupAllSonIds(list.stream().map(FlowGroupDO::getRoleId).collect(Collectors.toList()));
+            ids.addAll(allIds);
+        }
+        return ids;
     }
 }

@@ -73,4 +73,7 @@ public class FlowConstants {
     public static final String XML="xml";
 
     public static final String PNG="png";
+
+    public static final String URL="url";
+
 }

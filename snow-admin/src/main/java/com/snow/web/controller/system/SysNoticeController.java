@@ -1,6 +1,10 @@
 package com.snow.web.controller.system;
 
+import java.util.Date;
 import java.util.List;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,6 +54,11 @@ public class SysNoticeController extends BaseController
     {
         startPage();
         List<SysNotice> list = noticeService.selectNoticeList(notice);
+        if(CollUtil.isNotEmpty(list)){
+            list.forEach(t->{
+               t.setNew(DateUtil.formatDate(t.getCreateTime()).equals(DateUtil.formatDate(new Date())));
+            });
+        }
         return getDataTable(list);
     }
 

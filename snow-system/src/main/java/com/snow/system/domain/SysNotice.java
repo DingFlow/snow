@@ -1,6 +1,7 @@
 package com.snow.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.snow.common.core.domain.BaseEntity;
 import lombok.Data;
@@ -36,4 +37,6 @@ public class SysNotice extends BaseEntity
      */
     private String noticeUrl;
 
+    @TableField(exist = false)
+    private boolean isNew=false;
 }

@@ -1,7 +1,9 @@
 package com.snow.system.mapper;
 
-import java.util.List;
 import com.snow.system.domain.FlowGroupDO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 流程组信息Mapper接口
@@ -9,8 +11,7 @@ import com.snow.system.domain.FlowGroupDO;
  * @author snow
  * @date 2020-12-19
  */
-public interface FlowGroupDOMapper 
-{
+public interface FlowGroupDOMapper {
     /**
      * 查询流程组信息
      * 
@@ -65,4 +66,12 @@ public interface FlowGroupDOMapper
      * @return 结果
      */
     public int deleteFlowGroupDOByIds(String[] roleIds);
+
+
+    /**
+     * 根据父id查询角色
+     * @param pIds 父id
+     * @return 结果
+     */
+    public List<FlowGroupDO> selectRoleByPIds(@Param("pIds") List<Long> pIds);
 }

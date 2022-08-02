@@ -49,7 +49,7 @@ public class FlowController extends BaseController {
 
     /**
      * 跳转完成任务界面
-     * @return
+     * @return 跳转的任务界面路径
      */
     @GetMapping("/toFinishTask")
     public String toFinishTask(String taskId,ModelMap mmap) {
@@ -64,7 +64,6 @@ public class FlowController extends BaseController {
 
     /**
      * 完成任务
-     * @return
      */
     @PostMapping("/finishTask")
     @RequiresPermissions("system:flow:finishTask")
@@ -79,12 +78,11 @@ public class FlowController extends BaseController {
 
     /**
      * 跳转待办页
-     * @return
+     * @return 路径
      */
     @RequiresPermissions("flow:get:todoList")
     @GetMapping("/toDoMyTask")
     public String todoTask() {
-
         return prefix+"/myTask";
     }
 
@@ -102,8 +100,6 @@ public class FlowController extends BaseController {
 
     /**
      * 获取所有节点
-     * @param processInstanceId
-     * @return
      */
     @GetMapping("/getDynamicFlowNodeInfo")
     @ResponseBody
@@ -114,19 +110,16 @@ public class FlowController extends BaseController {
 
     /**
      * 跳转我发起的流程
-     * @return
+     * @return 路径
      */
     @RequiresPermissions("flow:get:getMyStartProcess")
     @GetMapping("/toMyStartProcess")
     public String getMyHistoricProcessInstance() {
-
         return prefix+"/myStartProcess";
     }
 
     /**
      * 获取我的流程实例
-     * @param processInstanceDTO
-     * @return
      */
     @RequiresPermissions("flow:process:getMyStartProcess")
     @PostMapping("/getMyHistoricProcessInstance")
@@ -137,7 +130,6 @@ public class FlowController extends BaseController {
         PageModel<ProcessInstanceVO> historicProcessInstance = flowableService.getHistoricProcessInstance(processInstanceDTO);
         return getFlowDataTable(historicProcessInstance);
     }
-
 
 
     /**
@@ -168,7 +160,6 @@ public class FlowController extends BaseController {
     @RequiresPermissions("flow:process:getMyTakePartInTask")
     @GetMapping("/toMyTakePartInTask")
     public String getMyTakePartInProcess() {
-
         return prefix+"/my-taked";
     }
 

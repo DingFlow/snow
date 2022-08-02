@@ -73,4 +73,18 @@ public interface IFlowGroupDOService
      * @return 所有流程组信息信息
      */
     public List<Ztree> selectFlowGroupDOTree();
+
+    /**
+     * 根据父id查询角色
+     * @param pIds 父id
+     * @return 结果
+     */
+    public List<FlowGroupDO> selectRoleByPIds(List<Long> pIds);
+
+    /**
+     * 递归获取所有儿子(包含自己)
+     * @param ids 角色id集合
+     * @return 结果
+     */
+    public List<Long> getFlowGroupAllSonIds(List<Long> ids);
 }
