@@ -15,35 +15,35 @@
                                 <input type="text" name="attendanceCode"/>
                             </li>
                             <li>
-                                <label>考勤来源</label>
+                                <label>考勤来源：</label>
                                 <select name="sourceType" th:with="type=${@dict.getType('sys_oa_attendance_source_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <label>打卡结果</label>
+                                <label>打卡结果：</label>
                                 <select name="timeResult" th:with="type=${@dict.getType('sys_oa_attendance_time_result')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <label>位置结果</label>
+                                <label>位置结果：</label>
                                 <select name="locationResult" th:with="type=${@dict.getType('sys_oa_attendance_location_result')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <label>考勤类型</label>
+                                <label>考勤类型：</label>
                                 <select name="checkType" th:with="type=${@dict.getType('sys_oa_attendance_check_type')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li class="select-time">
-                                <label>实际打卡时间：</label>
+                                <label>打卡时间：</label>
                                 <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginUserCheckTime]"/>
                                 <span>-</span>
                                 <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endUserCheckTime]"/>

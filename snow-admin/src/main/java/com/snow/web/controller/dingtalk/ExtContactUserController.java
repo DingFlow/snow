@@ -2,6 +2,7 @@ package com.snow.web.controller.dingtalk;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.dingtalk.api.response.OapiExtcontactListlabelgroupsResponse;
+import com.dingtalk.api.response.OapiV2UserGetResponse;
 import com.snow.common.annotation.Log;
 import com.snow.common.core.controller.BaseController;
 import com.snow.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.BusinessType;
 import com.snow.dingtalk.model.request.ExtContactUserRequest;
 import com.snow.dingtalk.service.ExtContactUserService;
+import com.snow.dingtalk.service.UserService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -35,6 +37,9 @@ public class ExtContactUserController extends BaseController {
 
     @Autowired
     private ISysUserService userService;
+
+    @Autowired
+    private UserService dingUserService;
 
     @RequiresPermissions("system:extContactUser:view")
     @GetMapping()
@@ -107,9 +112,12 @@ public class ExtContactUserController extends BaseController {
     public String detail(@PathVariable("id") String userId, ModelMap mmap)
     {
         ExtContactUserRequest extContactUserRequest = extContactUserService.getExtContactUserDetail(userId);
-        SysUser sysUser = userService.selectUserByDingUserId(userId);
+        SysUser sysUser = userService.selectUserByDingUserId(extContactUserRequest.getFollowerUserId());
         if(ObjectUtil.isNotNull(sysUser)){
             extContactUserRequest.setFollowerUserId(sysUser.getUserName());
+        }else {
+            OapiV2UserGetResponse.UserGetResponse userByUser = dingUserService.getUserByUserId(extContactUserRequest.getFollowerUserId());
+            extContactUserRequest.setFollowerUserId(userByUser.getName());
         }
         mmap.put("extContactUser", extContactUserRequest);
         return prefix + "/detail";

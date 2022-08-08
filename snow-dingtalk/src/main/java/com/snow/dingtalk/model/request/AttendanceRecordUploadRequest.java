@@ -1,5 +1,6 @@
 package com.snow.dingtalk.model.request;
 
+import com.snow.dingtalk.model.client.SnowDingTalkDefaultClient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceRecordUploadRequest extends SnowDingTalkDefaultRequest implements Serializable {
+public class AttendanceRecordUploadRequest extends SnowDingTalkDefaultClient implements Serializable {
 
     private static final long serialVersionUID = -583239968246465341L;
 

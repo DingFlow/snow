@@ -18,28 +18,20 @@
             <groupId>com.snow</groupId>
             <artifactId>snow-framework</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.taobao.top</groupId>
-            <artifactId>lippi-oapi-encrpt</artifactId>
-            <version>${dingtalk.version}</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/lippi-oapi-encrpt.jar</systemPath>
-        </dependency>
 
-        <dependency>
-            <groupId>com.dingtalk.sdk</groupId>
-            <artifactId>dingtalk-sdk-java</artifactId>
-            <version>${dingtalk.version}</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/taobao-sdk-java.jar</systemPath>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dingtalk</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibaba-dingtalk-service-sdk</artifactId>
         </dependency>
 
     </dependencies>

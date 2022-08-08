@@ -16,7 +16,6 @@ import com.snow.system.domain.SysUser;
 import com.snow.system.mapper.SysUserMapper;
 import com.snow.system.service.ISysOaAttendanceService;
 import com.snow.system.service.ISysSequenceService;
-import com.snow.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;

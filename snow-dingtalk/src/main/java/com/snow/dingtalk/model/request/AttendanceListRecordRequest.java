@@ -1,11 +1,10 @@
 package com.snow.dingtalk.model.request;
 
+import com.snow.dingtalk.model.client.SnowDingTalkDefaultClient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.zhyd.oauth.model.AuthCallback;
-import me.zhyd.oauth.model.AuthToken;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceListRecordRequest extends SnowDingTalkDefaultRequest implements Serializable {
+public class AttendanceListRecordRequest extends SnowDingTalkDefaultClient implements Serializable {
     private static final long serialVersionUID = -6492475769072358528L;
 
     /**

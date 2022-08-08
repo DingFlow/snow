@@ -1,5 +1,7 @@
 package com.snow.dingtalk.aspectj;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.BusinessStatus;
 import com.snow.common.exception.DingTalkApiException;
@@ -13,6 +15,8 @@ import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysDingtalkSyncLog;
 import com.snow.system.domain.SysUser;
 import com.taobao.api.ApiException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -20,8 +24,6 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -34,14 +36,12 @@ import java.util.Optional;
  */
 @Aspect
 @Component
-public class SyncLogAspect
-{
-    private static final Logger log = LoggerFactory.getLogger(SyncLogAspect.class);
+@Slf4j
+public class SyncLogAspect {
 
     // 配置织入点
     @Pointcut("@annotation(com.snow.common.annotation.DingTalkLog)")
-    public void logPointCut()
-    {
+    public void logPointCut() {
     }
 
     /**
@@ -50,8 +50,7 @@ public class SyncLogAspect
      * @param joinPoint 切点
      */
     @AfterReturning(pointcut = "logPointCut()", returning = "jsonResult")
-    public void doAfterReturning(JoinPoint joinPoint, Object jsonResult)
-    {
+    public void doAfterReturning(JoinPoint joinPoint, Object jsonResult) {
         handleLog(joinPoint, null, jsonResult);
     }
 
@@ -62,34 +61,36 @@ public class SyncLogAspect
      * @param e 异常
      */
     @AfterThrowing(value = "logPointCut()", throwing = "e")
-    public void doAfterThrowing(JoinPoint joinPoint, Exception e)
-    {
+    public void doAfterThrowing(JoinPoint joinPoint, Exception e) {
         handleLog(joinPoint, e, null);
     }
 
-    protected void handleLog(final JoinPoint joinPoint, final Exception e, Object jsonResult)
-    {
-        try
-        {
+    protected void handleLog(final JoinPoint joinPoint, final Exception e, Object jsonResult) {
+        try {
             // 获得注解
             DingTalkLog controllerLog = getAnnotationLog(joinPoint);
             if (controllerLog == null) {
                 return;
             }
             // 获取当前的用户
-            SysUser currentUser = ShiroUtils.getSysUser();
+            SysUser currentUser=null;
+            try {
+                currentUser= ShiroUtils.getSysUser();
+            }catch (UnavailableSecurityManagerException exception){
+                log.debug("@@获取用户信息异常，为了不影响业务，用户信息置空");
+            }
             SysDingtalkSyncLog sysDingtalkSyncLog = new SysDingtalkSyncLog();
-            if(StringUtils.isNotNull(currentUser)){
+            if(ObjectUtil.isNotNull(currentUser)){
                 sysDingtalkSyncLog.setOperName(currentUser.getUserName());
-                if (StringUtils.isNotNull(currentUser.getDept()) && StringUtils.isNotEmpty(currentUser.getDept().getDeptName())) {
+                if (ObjectUtil.isNotNull(currentUser.getDept()) && StrUtil.isNotEmpty(currentUser.getDept().getDeptName())) {
                     sysDingtalkSyncLog.setDeptName(currentUser.getDept().getDeptName());
                 }
                 // 请求的地址
-                String ip = ShiroUtils.getIp();
-                sysDingtalkSyncLog.setOperIp(ip);
+                sysDingtalkSyncLog.setOperIp(ShiroUtils.getIp());
             }else {
                 sysDingtalkSyncLog.setOperName("无");
                 sysDingtalkSyncLog.setDeptName("无");
+                sysDingtalkSyncLog.setOperIp("");
             }
 
             sysDingtalkSyncLog.setStatus(BusinessStatus.SUCCESS.ordinal());
@@ -128,8 +129,7 @@ public class SyncLogAspect
             // 保存数据库
             AsyncManager.me().execute(AsyncFactory.recordDingTalkSyncOper(sysDingtalkSyncLog));
         }
-        catch (Exception exp)
-        {
+        catch (Exception exp) {
             // 记录本地异常日志
             log.error("==前置通知异常==");
             log.error("异常信息:{}", exp.getMessage());
@@ -144,8 +144,7 @@ public class SyncLogAspect
      * @param sysDingtalkSyncLog 操作日志
      * @throws Exception
      */
-    public void getControllerMethodDescription(DingTalkLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception
-    {
+    public void getControllerMethodDescription(DingTalkLog log, JoinPoint joinPoint, SysDingtalkSyncLog sysDingtalkSyncLog) throws Exception {
         sysDingtalkSyncLog.setTitle(log.dingTalkLogType().getTitle());
         sysDingtalkSyncLog.setModuleType(log.dingTalkLogType().getModuleType());
         sysDingtalkSyncLog.setBusinessType(log.dingTalkLogType().getBusinessType());
@@ -153,8 +152,7 @@ public class SyncLogAspect
         sysDingtalkSyncLog.setOperatorType(log.dingTalkSyncType().getCode());
         sysDingtalkSyncLog.setLogType(log.syncLogTpye().getCode());
         // 是否需要保存request，参数和值
-        if (log.isSaveRequestData())
-        {
+        if (log.isSaveRequestData()) {
             // 获取参数的信息，传入到数据库中。
             setRequestValue(sysDingtalkSyncLog,joinPoint);
         }
@@ -166,8 +164,7 @@ public class SyncLogAspect
      * @param operLog 操作日志
      * @throws Exception 异常
      */
-    private void setRequestValue(SysDingtalkSyncLog operLog ,JoinPoint joinPoint) throws Exception
-    {
+    private void setRequestValue(SysDingtalkSyncLog operLog ,JoinPoint joinPoint) throws Exception {
         //获取切面的参数
         Object[] args = joinPoint.getArgs();
         operLog.setOperSourceParam(StringUtils.substring(com.alibaba.fastjson.JSON.toJSONString(args), 0, 4000));
@@ -176,14 +173,12 @@ public class SyncLogAspect
     /**
      * 是否存在注解，如果存在就获取
      */
-    private DingTalkLog getAnnotationLog(JoinPoint joinPoint) throws Exception
-    {
+    private DingTalkLog getAnnotationLog(JoinPoint joinPoint) throws Exception {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
 
-        if (method != null)
-        {
+        if (method != null) {
             return method.getAnnotation(DingTalkLog.class);
         }
         return null;

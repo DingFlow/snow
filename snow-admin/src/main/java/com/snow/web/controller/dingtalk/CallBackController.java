@@ -2,9 +2,9 @@ package com.snow.web.controller.dingtalk;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.oapi.lib.aes.DingTalkEncryptor;
 import com.snow.common.constant.Constants;
 import com.snow.common.enums.DingTalkListenerType;
+import com.snow.dingtalk.aes.DingTalkEncryptor;
 import com.snow.dingtalk.sync.ISyncSysInfo;
 import com.snow.dingtalk.sync.SyncSysInfoFactory;
 import com.snow.system.domain.DingtalkCallBack;

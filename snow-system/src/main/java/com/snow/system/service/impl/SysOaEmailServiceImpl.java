@@ -4,11 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.snow.common.core.text.Convert;
 import com.snow.common.enums.MessageEventType;
+import com.snow.common.enums.MessageReadStatus;
 import com.snow.common.utils.DateUtils;
 import com.snow.common.utils.bean.BeanUtils;
 import com.snow.system.domain.*;
@@ -40,7 +40,6 @@ public class SysOaEmailServiceImpl extends ServiceImpl<SysOaEmailMapper, SysOaEm
     private SysMessageTransitionServiceImpl sysMessageTransitionService;
 
 
-
     /**
      * 查询邮件
      * 
@@ -68,20 +67,21 @@ public class SysOaEmailServiceImpl extends ServiceImpl<SysOaEmailMapper, SysOaEm
 
     @Override
     public List<SysOaEmailDTO> getMyNoReadOaEmailList(String userId){
-        List<SysOaEmailDTO> sysOaEmailList=new ArrayList<>();
+
         SysMessageTransition sysMessageTransition=new SysMessageTransition();
         sysMessageTransition.setConsumerId(userId);
         sysMessageTransition.setMessageType(MessageEventType.SEND_EMAIL.getCode());
         sysMessageTransition.setMessageStatus(0L);
-        sysMessageTransition.setMessageReadStatus(0L);
+        sysMessageTransition.setMessageReadStatus(MessageReadStatus.NO_READ.getCode());
         List<SysMessageTransition> sysMessageTransitions = sysMessageTransitionService.selectSysMessageTransitionList(sysMessageTransition);
-        if(CollUtil.isNotEmpty(sysMessageTransitions)){
-            List<String> emailNoList = sysMessageTransitions.stream().map(SysMessageTransition::getMessageOutsideId).collect(Collectors.toList());
-            SysOaEmailDTO sysOaEmail=new SysOaEmailDTO();
-            sysOaEmail.setEmailNoList(emailNoList);
-            sysOaEmailList = selectSysOaEmailList(sysOaEmail);
+        if(CollUtil.isEmpty(sysMessageTransitions)){
+            return Lists.newArrayList();
         }
-        return sysOaEmailList;
+        List<String> emailNoList = sysMessageTransitions.stream().map(SysMessageTransition::getMessageOutsideId).collect(Collectors.toList());
+        SysOaEmailDTO sysOaEmail=new SysOaEmailDTO();
+        sysOaEmail.setEmailNoList(emailNoList);
+        return this.selectSysOaEmailList(sysOaEmail);
+
     }
     /**
      * 查询邮件列表
@@ -93,6 +93,7 @@ public class SysOaEmailServiceImpl extends ServiceImpl<SysOaEmailMapper, SysOaEm
     public List<SysOaEmailDTO> selectSysOaEmailList(SysOaEmailDTO sysOaEmail) {
 
         LambdaQueryWrapper<SysOaEmail> eq = new LambdaQueryWrapper<SysOaEmail>()
+                .in(ObjectUtil.isNotEmpty(sysOaEmail.getEmailNoList()),SysOaEmail::getEmailNo,sysOaEmail.getEmailNoList())
                 .like(StrUtil.isNotBlank(sysOaEmail.getEmailSubject()), SysOaEmail::getEmailSubject, sysOaEmail.getEmailSubject())
                 .eq(ObjectUtil.isNotEmpty(sysOaEmail.getEmailStatus()),SysOaEmail::getEmailStatus,sysOaEmail.getEmailStatus());
 

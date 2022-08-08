@@ -1,6 +1,7 @@
 package com.snow.system.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考勤Service业务层处理
@@ -44,6 +46,7 @@ public class SysOaAttendanceServiceImpl extends ServiceImpl<SysOaAttendanceMappe
      */
     @Override
     public List<SysOaAttendance> selectSysOaAttendanceList(SysOaAttendance sysOaAttendance) {
+        Map<String, Object> params = sysOaAttendance.getParams();
         LambdaQueryWrapper<SysOaAttendance> lambda = new QueryWrapper<SysOaAttendance>().lambda();
         lambda.eq(ObjectUtil.isNotEmpty(sysOaAttendance.getAttendanceCode()),SysOaAttendance::getAttendanceCode,sysOaAttendance.getAttendanceCode());
         lambda.eq(ObjectUtil.isNotEmpty(sysOaAttendance.getSourceType()),SysOaAttendance::getSourceType,sysOaAttendance.getSourceType());
@@ -61,6 +64,12 @@ public class SysOaAttendanceServiceImpl extends ServiceImpl<SysOaAttendanceMappe
         lambda.eq(ObjectUtil.isNotEmpty(sysOaAttendance.getAttendanceId()),SysOaAttendance::getAttendanceId,sysOaAttendance.getAttendanceId());
         lambda.eq(ObjectUtil.isNotEmpty(sysOaAttendance.getBaseCheckTime()),SysOaAttendance::getBaseCheckTime,sysOaAttendance.getBaseCheckTime());
         lambda.eq(ObjectUtil.isNotEmpty(sysOaAttendance.getIsDelete()),SysOaAttendance::getIsDelete,sysOaAttendance.getIsDelete());
+        if(ObjectUtil.isNotEmpty(params)){
+            Object beginUserCheckTime = params.get("beginUserCheckTime");
+            Object endUserCheckTime = params.get("endUserCheckTime");
+            lambda.ge(ObjectUtil.isNotEmpty(beginUserCheckTime),SysOaAttendance::getUserCheckTime, StrUtil.format("{} 00:00:00",beginUserCheckTime));
+            lambda.le(ObjectUtil.isNotEmpty(endUserCheckTime),SysOaAttendance::getUserCheckTime,StrUtil.format("{} 23:59:59",endUserCheckTime));
+        }
         return sysOaAttendanceMapper.selectList(lambda);
     }
 

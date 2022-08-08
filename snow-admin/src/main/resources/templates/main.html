@@ -163,7 +163,7 @@
         <div class="col-sm-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h3 class="text-success">   <i class="fa  fa-list text-center " style="color:#31b0d5"></i>  公告列表</h3>
+                    <h3 class="text-success">   <i class="fa  fa-list text-center " style="color:#31b0d5"></i>  企业动态</h3>
                 </div>
                 <div class="ibox-content" style="margin-top: -10px">
                     <div class="table table-hover table-striped">
@@ -178,22 +178,8 @@
                     <h3 class="text-success">   <i class="fa fa-tasks text-center " style="color:#31b0d5"></i>  我的已办列表</h3>
                 </div>
                 <div class="ibox-content">
-                    <div class="row feed-activity-list" >
-                        <div class="feed-element" th:each="historicTaskInstance,iterStat : ${historicTaskInstanceList}">
-                            <div class="media-body ">
-                                <small  style="margin-right:8px" class="pull-right">[[${#dates.format(historicTaskInstance.completeTime, 'yyyy-MM-dd hh:mm:ss')}]]</small>
-                                &nbsp;<a style="color:#958989;margin-left:8px"   th:onclick="hisTaskDetail([[${historicTaskInstance.fromDetailUrl}]]);">
-                                       <strong>[[${iterStat.index+1}]].[[${historicTaskInstance.taskName}]]</strong>
-                                 </a>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-primary btn-block m-t" th:if="${historicTaskInstanceSize} gt 4">
-                            <a onclick="openMoreHistoricTask()">
-                                <i class="fa fa-arrow-down"></i> 加载更多
-                            </a>
-
-                        </button>
+                    <div class="table table-hover table-striped">
+                        <table id="tasked-table"></table>
                     </div>
                 </div>
             </div>
@@ -340,13 +326,19 @@
             modalName: "公告",
             columns: [
                 {
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
                     field : 'noticeTitle',
                     title : '公告标题',
                     formatter: function(value, row, index) {
                         if(row.new){
-                            return  '<span class="text-danger" ><i class="glyphicon glyphicon-flag"></i></span>  '+ value;
+                            return '<span class="text-danger" ><i class="glyphicon glyphicon-flag"></i></span><a class="text-success" href="javascript:void(0)"  onclick="noticeDetail(\''+row.noticeId +'\')">'+value+'</a> ';
                         }else {
-                            return  value;
+                            return '<a class="text-success" href="javascript:void(0)"  onclick="noticeDetail(\''+row.noticeId +'\')">'+value+'</a> ';
                         }
                     }
                 },
@@ -365,6 +357,66 @@
                 }]
         };
         $.table.init(noticesOptions);
+
+        var processType = [[${@dict.getType('sys_process_type')}]];
+        var taskedOptions = {
+            id: "tasked-table",
+            url: "/flow/getMyTakePartInTask",
+            striped: true,
+            loadingFontSize:20,
+            pageSize: 5,
+            pageNumber: 1,
+            striped: true,
+            showHeader: false,
+            showRefresh: false,
+            showColumns: false,
+            showToggle: false,
+            showSearch: false,
+            modalName: "已办",
+            columns: [
+                {
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    field: 'taskName',
+                    title: '任务名称',
+                    formatter: function(value, row, index) {
+                        var processType=row.processType;
+                        if(processType=='FORM_PROCESS'){
+                            return '<a class="text-success" href="javascript:void(0)"  onclick="taskFormDetail(\''+row.taskId +'\')">'+value+'</a> ';
+                        }else {
+                            return '<a class="text-success" href="javascript:void(0)"  onclick="taskDetail(\''+row.taskId +'\')">'+value+'</a> ';
+                        }
+                    }
+                },
+                {
+                    field: 'processName',
+                    title: '所属流程'
+                },
+                {
+                    field: 'processType',
+                    title: '流程类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(processType, value);
+                    }
+                },
+                {
+                    field: 'businessKey',
+                    title: '单号',
+                    formatter: function(value, row, index) {
+                        var fromDetailUrl= row.fromDetailUrl;
+                        return '<a class="success" href="javascript:void(0)"  onclick="fromDetailUrl(\''+fromDetailUrl+'\')">'+value+'</a> ';
+                    }
+
+                },
+                {
+                    field: 'startTime',
+                    title: '创建时间'
+                }]};
+        $.table.init(taskedOptions);
     });
 
     function cancelApiTask(taskId) {
@@ -409,11 +461,18 @@
         var detailUrl="/system/notice/detail/"+id;
         $.modal.openTab("公告详情", detailUrl);
     }
-    function openMoreNotice(){
-        $.modal.openTab("公告管理","/system/notice");
+
+    function fromDetailUrl(url) {
+        $.modal.openTab("订单详情", url);
     }
-    function openMoreHistoricTask(){
-        $.modal.openTab("我的已办","/flow/toMyTakePartInTask");
+
+    function taskDetail(taskId) {
+        var url='/flow/getMyTaskedDetail?taskId='+taskId;
+        $.modal.openTab("已办任务详情", url);
+    }
+    function taskFormDetail(taskId) {
+        var url='/getMyTaskedDetail?taskId='+taskId;
+        $.modal.openTab("已办任务详情", url);
     }
 </script>
 <script type="text/javascript">

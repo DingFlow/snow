@@ -126,6 +126,7 @@ public class SysOaAttendanceController extends BaseController
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
         SysOaAttendance sysOaAttendance = sysOaAttendanceService.selectSysOaAttendanceById(id);
+        sysOaAttendance.setUserId(sysUserService.selectUserById(Long.parseLong(sysOaAttendance.getUserId())).getUserName());
         mmap.put("sysOaAttendance", sysOaAttendance);
         return prefix + "/edit";
     }

@@ -1,5 +1,6 @@
 package com.snow.dingtalk.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.dingtalk.api.DefaultDingTalkClient;
@@ -14,6 +15,9 @@ import com.snow.common.utils.StringUtils;
 import com.snow.common.utils.spring.SpringUtils;
 import com.snow.dingtalk.common.BaseConstantUrl;
 import com.snow.dingtalk.common.BaseService;
+import com.snow.dingtalk.model.request.DingUserCreateRequest;
+import com.snow.dingtalk.model.client.SnowDingTalkDefaultClient;
+import com.snow.dingtalk.model.client.SnowDingTalkClient;
 import com.snow.dingtalk.model.request.UserListRequest;
 import com.snow.dingtalk.service.UserService;
 import com.snow.system.domain.SysPost;
@@ -39,12 +43,29 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl  extends BaseService implements UserService {
 
-    private SysPostServiceImpl sysPostService=SpringUtils.getBean("sysPostServiceImpl");
+    private SysPostServiceImpl sysPostService=SpringUtils.getBean(SysPostServiceImpl.class);
 
     private SysConfigServiceImpl isysConfigService=SpringUtils.getBean(SysConfigServiceImpl.class);
 
     private ISysUserService sysUserService=SpringUtils.getBean(ISysUserService.class);
 
+
+    @Override
+    @DingTalkLog(dingTalkLogType=DingTalkLogType.USER_CREATE,dingTalkUrl =BaseConstantUrl.USER_CREATE)
+    public String createDingUser(DingUserCreateRequest createRequest) {
+        OapiV2UserCreateRequest oapiV2UserCreateRequest = BeanUtil.toBean(createRequest, OapiV2UserCreateRequest.class);
+        try {
+            OapiV2UserCreateResponse rsp = new SnowDingTalkDefaultClient(BaseConstantUrl.USER_CREATE).execute(oapiV2UserCreateRequest);
+            if(rsp.getErrcode()!=0){
+                log.error("@@创建钉钉用户信息返回异常：{}",rsp.getErrmsg());
+                throw new SyncDataException(JSON.toJSONString(oapiV2UserCreateRequest),rsp.getErrmsg());
+            }
+            return rsp.getResult().getUserid();
+        } catch (ApiException e) {
+            log.error("@@创建钉钉用户信息返回异常：{}",e.getMessage());
+            throw new SyncDataException(JSON.toJSONString(oapiV2UserCreateRequest),e.getErrMsg());
+        }
+    }
 
     public OapiSnsGetuserinfoBycodeResponse.UserInfo getUserInfoByCode(String authCode) {
         String appId= isysConfigService.selectConfigByKey("ding.login.appid");
@@ -187,13 +208,12 @@ public class UserServiceImpl  extends BaseService implements UserService {
 
     @Override
     public OapiV2UserGetResponse.UserGetResponse  getUserByUserId(String userId) {
-        DingTalkClient client = new DefaultDingTalkClient(BaseConstantUrl.GET_USER_BY_ID);
         OapiV2UserGetRequest req = new OapiV2UserGetRequest();
         req.setUserid(userId);
         req.setLanguage(Constants.ZH_CN);
-
         try {
-            OapiV2UserGetResponse response = client.execute(req, getDingTalkToken());
+            SnowDingTalkClient snowDingTalkRequest=new SnowDingTalkDefaultClient();
+            OapiV2UserGetResponse response =snowDingTalkRequest.execute(req,BaseConstantUrl.GET_USER_BY_ID);
             if(response.getErrcode()==0){
                 OapiV2UserGetResponse.UserGetResponse result = response.getResult();
                 log.info("dingTalk根据用户id获取用户详细信息返回：{}",result);
