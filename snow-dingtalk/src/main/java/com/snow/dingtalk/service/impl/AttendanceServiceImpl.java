@@ -13,6 +13,7 @@ import com.snow.common.annotation.DingTalkLog;
 import com.snow.common.enums.DingTalkLogType;
 import com.snow.common.exception.SyncDataException;
 import com.snow.dingtalk.common.BaseConstantUrl;
+import com.snow.dingtalk.model.client.SnowDingTalkDefaultClient;
 import com.snow.dingtalk.model.request.AttendanceListRecordRequest;
 import com.snow.dingtalk.model.request.AttendanceListRequest;
 import com.snow.dingtalk.model.request.AttendanceRecordUploadRequest;
@@ -47,7 +48,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         req.setIsI18n(false);
         OapiAttendanceListResponse rsp = null;
         try {
-            rsp = attendanceListRequest.execute(req, BaseConstantUrl.ATTENDANCE_RECORD_LIST);
+             rsp = new SnowDingTalkDefaultClient<OapiAttendanceListResponse>().execute(req,BaseConstantUrl.ATTENDANCE_RECORD_LIST);
             if(rsp.getErrcode()!=0){
                 log.error("@@获取考勤记录信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
@@ -69,7 +70,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         req.setIsI18n(false);
         OapiAttendanceListRecordResponse  rsp =null;
         try {
-            rsp = attendanceListRecordRequest.execute(req,BaseConstantUrl.ATTENDANCE_RECORD_RECORD);
+            rsp = new SnowDingTalkDefaultClient<OapiAttendanceListRecordResponse>().execute(req,BaseConstantUrl.ATTENDANCE_RECORD_RECORD);
             if(rsp.getErrcode()!=0){
                 log.error("@@获取考勤记录信息详情返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());
@@ -88,8 +89,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         req.setUserid(attendanceRecordUploadRequest.getDingUserId());
         OapiAttendanceRecordUploadResponse rsp = null;
         try {
-
-            rsp = attendanceRecordUploadRequest.execute(req, BaseConstantUrl.ATTENDANCE_RECORD_UPLOAD);
+            rsp = new SnowDingTalkDefaultClient<OapiAttendanceRecordUploadResponse>().execute(req,BaseConstantUrl.ATTENDANCE_RECORD_UPLOAD);
             if(rsp.getErrcode()!=0){
                 log.error("@@上传考勤记录信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(req),rsp.getErrmsg());

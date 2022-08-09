@@ -1,6 +1,5 @@
 package com.snow.dingtalk.model.request;
 
-import com.snow.dingtalk.model.client.SnowDingTalkDefaultClient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceListRequest extends SnowDingTalkDefaultClient implements Serializable {
+public class AttendanceListRequest  implements Serializable {
     private static final long serialVersionUID = 1746815839189321601L;
     /**
      * 员工在企业内的userid列表，最多不能超过50个。

@@ -26,6 +26,7 @@ import com.snow.system.service.ISysUserService;
 import com.snow.system.service.impl.SysConfigServiceImpl;
 import com.snow.system.service.impl.SysPostServiceImpl;
 import com.taobao.api.ApiException;
+import com.taobao.api.TaobaoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class UserServiceImpl  extends BaseService implements UserService {
     public String createDingUser(DingUserCreateRequest createRequest) {
         OapiV2UserCreateRequest oapiV2UserCreateRequest = BeanUtil.toBean(createRequest, OapiV2UserCreateRequest.class);
         try {
-            OapiV2UserCreateResponse rsp = new SnowDingTalkDefaultClient(BaseConstantUrl.USER_CREATE).execute(oapiV2UserCreateRequest);
+            OapiV2UserCreateResponse rsp = new SnowDingTalkDefaultClient<OapiV2UserCreateResponse>().execute(oapiV2UserCreateRequest,BaseConstantUrl.USER_CREATE);
             if(rsp.getErrcode()!=0){
                 log.error("@@创建钉钉用户信息返回异常：{}",rsp.getErrmsg());
                 throw new SyncDataException(JSON.toJSONString(oapiV2UserCreateRequest),rsp.getErrmsg());

@@ -13,6 +13,10 @@ import com.taobao.api.TaobaoResponse;
  */
 public interface SnowDingTalkClient {
 
+    default  <T extends TaobaoResponse> T execute(TaobaoRequest<T> request) throws ApiException{
+        throw new DingTalkApiException("调用钉钉接口异常");
+    }
+
     default  String getAccessToken() {
         throw new DingTalkApiException("调用钉钉接口获取token异常");
     }
