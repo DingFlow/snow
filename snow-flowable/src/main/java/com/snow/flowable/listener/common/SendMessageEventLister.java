@@ -1,8 +1,10 @@
 package com.snow.flowable.listener.common;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ExecutorBuilder;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -19,7 +21,6 @@ import com.snow.flowable.service.FlowableService;
 import com.snow.flowable.service.impl.FlowableUserServiceImpl;
 import com.snow.framework.web.domain.common.SysSendMessageRequest;
 import com.snow.framework.web.service.MailMessageService;
-import com.snow.framework.web.service.NewsTriggerService;
 import com.snow.system.domain.SysUser;
 import com.snow.system.event.SyncEvent;
 import com.snow.system.service.impl.SysUserServiceImpl;
@@ -37,14 +38,14 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
+
 
 /**
  * @author qimingjin
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
  * @date 2020/12/8 14:38
  */
 @Slf4j
-@Service
+@Component
 @Deprecated
 public class SendMessageEventLister extends AbstractEventListener {
 
@@ -72,7 +73,9 @@ public class SendMessageEventLister extends AbstractEventListener {
                 new HashSet<>(Arrays.asList(
                         FlowDefEnum.SNOW_OA_LEAVE,
                         FlowDefEnum.PURCHASE_ORDER_PROCESS,
-                        FlowDefEnum.SNOW_OA_RESIGN_PROCESS
+                        FlowDefEnum.SNOW_OA_RESIGN_PROCESS,
+                        FlowDefEnum.SNOW_FN_PAYMENT,
+                        FlowDefEnum.SNOW_OA_CUSTOMER_ADMITTANCE
                 )));
     }
 
@@ -87,17 +90,19 @@ public class SendMessageEventLister extends AbstractEventListener {
         log.info("ManagerTaskEventListener----processStarted流程创建监听：{}", JSON.toJSONString(event));
         ExecutionEntity execution = (ExecutionEntity) event.getEntity();
 
-        NewsTriggerService newsTriggerService = (NewsTriggerService) SpringContextUtil.getBean(NewsTriggerService.class);
-        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(execution.getProcessDefinitionKey(), FlowableEngineEventType.TASK_CREATED.name());
-        boolean emailOnOff = newsTriggerService.getEmailOnOff(execution.getProcessDefinitionKey(), FlowableEngineEventType.TASK_CREATED.name());
+        //消息发送开关先废弃掉
+       // NewsTriggerService newsTriggerService = (NewsTriggerService) SpringContextUtil.getBean(NewsTriggerService.class);
+
+       // boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(execution.getProcessDefinitionKey(), FlowableEngineEventType.TASK_CREATED.name());
+       // boolean emailOnOff = newsTriggerService.getEmailOnOff(execution.getProcessDefinitionKey(), FlowableEngineEventType.TASK_CREATED.name());
         //钉钉通知
-        if (dingTalkOnOff) {
-            sendProcessStartedDingTalkMessage(event);
-        }
+       // if (dingTalkOnOff) {
+            this.sendProcessStartedDingTalkMessage(event);
+      //  }
         // 邮件通知
-        if (emailOnOff) {
-            sendProcessStartedEmailMessage(event);
-        }
+       // if (emailOnOff) {
+           this.sendProcessStartedEmailMessage(event);
+      //  }
     }
 
     /**
@@ -108,17 +113,16 @@ public class SendMessageEventLister extends AbstractEventListener {
     protected void processCompleted(FlowableEngineEntityEvent event) {
         log.info("ManagerTaskEventListener----processCompleted流程创建监听：{}", JSON.toJSONString(event));
         HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
-        NewsTriggerService newsTriggerService = (NewsTriggerService) SpringContextUtil.getBean(NewsTriggerService.class);
-        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(hisProcessInstance.getProcessDefinitionKey(), FlowableEngineEventType.PROCESS_COMPLETED.name());
-        boolean emailOnOff = newsTriggerService.getEmailOnOff(hisProcessInstance.getProcessDefinitionKey(), FlowableEngineEventType.PROCESS_COMPLETED.name());
+       // boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(hisProcessInstance.getProcessDefinitionKey(), FlowableEngineEventType.PROCESS_COMPLETED.name());
+       // boolean emailOnOff = newsTriggerService.getEmailOnOff(hisProcessInstance.getProcessDefinitionKey(), FlowableEngineEventType.PROCESS_COMPLETED.name());
         //钉钉通知
-        if (dingTalkOnOff) {
-            sendProcessCompletedDingTalkMessage(event);
-        }
+      //  if (dingTalkOnOff) {
+            this.sendProcessCompletedDingTalkMessage(event);
+      //  }
         // 邮件通知
-        if (emailOnOff) {
-            sendProcessCompletedEmailMessage(event);
-        }
+       // if (emailOnOff) {
+            this.sendProcessCompletedEmailMessage(event);
+       // }
     }
 
 
@@ -132,17 +136,17 @@ public class SendMessageEventLister extends AbstractEventListener {
         //任务创建可发送短信，邮件通知接收人(代办人)
         log.info("ManagerTaskEventListener----taskCreated任务创建监听：{}", JSON.toJSONString(event));
         ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
-        NewsTriggerService newsTriggerService = (NewsTriggerService) SpringContextUtil.getBean(NewsTriggerService.class);
-        boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(processDefinition.getKey(), FlowableEngineEventType.TASK_CREATED.name());
-        boolean emailOnOff = newsTriggerService.getEmailOnOff(processDefinition.getKey(), FlowableEngineEventType.TASK_CREATED.name());
+       // NewsTriggerService newsTriggerService = (NewsTriggerService) SpringContextUtil.getBean(NewsTriggerService.class);
+       // boolean dingTalkOnOff = newsTriggerService.getDingTalkOnOff(processDefinition.getKey(), FlowableEngineEventType.TASK_CREATED.name());
+      //  boolean emailOnOff = newsTriggerService.getEmailOnOff(processDefinition.getKey(), FlowableEngineEventType.TASK_CREATED.name());
         //钉钉通知
-        if (dingTalkOnOff) {
-            sendDingTalkMessage(event);
-        }
+       // if (dingTalkOnOff) {
+            this.sendDingTalkMessage(event);
+     //   }
         // 邮件通知
-        if (emailOnOff) {
-            sendTaskCreateEmailMessage(event);
-        }
+     //   if (emailOnOff) {
+            this.sendTaskCreateEmailMessage(event);
+      //  }
 
     }
 
@@ -182,12 +186,11 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessStartedEmailMessage(FlowableProcessStartedEvent event) {
-        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
+        MailMessageService mailService = (MailMessageService)SpringContextUtil.getBean(MailMessageService.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
                 .build();
-
         executor.execute(() -> {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
@@ -214,22 +217,18 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendTaskCreateEmailMessage(FlowableEngineEntityEvent event) {
-
-        FlowableService flowableService = (FlowableService) SpringContextUtil.getBean(FlowableService.class);
-        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
+        FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
+        MailMessageService mailService = (MailMessageService)SpringContextUtil.getBean(MailMessageService.class);
         ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
         ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
         //根据任务ID获取任务获选人
         TaskEntity entity = (TaskEntity) event.getEntity();
         Set<SysUser> flowCandidates = getFlowCandidates(entity);
         if (CollectionUtils.isNotEmpty(flowCandidates)) {
-            //  Set<String> emailSet = flowCandidates.stream().map(SysUser::getEmail).collect(Collectors.toSet());
-
             ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                     .setMaxPoolSize(10)
                     .setWorkQueue(new LinkedBlockingQueue<>(100))
                     .build();
-
             executor.execute(() ->
                     flowCandidates.forEach(t -> {
                         Map<String, Object> map = new HashMap<>();
@@ -258,12 +257,10 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessStartedDingTalkMessage(FlowableProcessStartedEvent event) {
-
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
                 .build();
-
         executor.execute(() -> {
 
             ExecutionEntity execution = (ExecutionEntity) event.getEntity();
@@ -280,7 +277,7 @@ public class SendMessageEventLister extends AbstractEventListener {
                     .paramMap(map)
                     .dingTalkMessageType(DingTalkMessageType.TEXT)
                     .build();
-            SyncEvent syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
+            SyncEvent<SysSendMessageRequest> syncEventGroup = new SyncEvent(sysSendMessageDTO, DingTalkListenerType.ASYNCSEND_V2);
             applicationContext.publishEvent(syncEventGroup);
         });
         executor.shutdown();
@@ -293,12 +290,11 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessCompletedEmailMessage(FlowableEngineEntityEvent event) {
-        MailMessageService mailService = (MailMessageService) SpringContextUtil.getBean(MailMessageService.class);
+        MailMessageService mailService = (MailMessageService)SpringContextUtil.getBean(MailMessageService.class);
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
                 .build();
-
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
             Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
@@ -318,12 +314,10 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @param event
      */
     public void sendProcessCompletedDingTalkMessage(FlowableEngineEntityEvent event) {
-
         ThreadPoolExecutor executor = ExecutorBuilder.create().setCorePoolSize(5)
                 .setMaxPoolSize(10)
                 .setWorkQueue(new LinkedBlockingQueue<>(100))
                 .build();
-
         executor.execute(() -> {
             HistoricProcessInstance hisProcessInstance = getHisProcessInstance(event.getProcessInstanceId());
             Map<String, Object> map = buildSendProcessCompletedParam(hisProcessInstance);
@@ -366,8 +360,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     public WorkrecordAddRequest initWorkRecordAddRequest(String userId, FlowableEngineEntityEvent event) {
-
-        FlowableService flowableService = (FlowableService) SpringContextUtil.getBean(FlowableService.class);
+        FlowableService flowableService = (FlowableService)SpringContextUtil.getBean(FlowableService.class);
         ProcessInstance processInstance = flowableService.getProcessInstanceById(event.getProcessInstanceId());
         TaskEntity entity = (TaskEntity) event.getEntity();
         ProcessDefinition processDefinition = getProcessDefinition(event.getProcessDefinitionId());
@@ -409,8 +402,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     protected ProcessDefinition getProcessDefinition(String processDefinitionId) {
-
-        RepositoryService repositoryService = (RepositoryService) SpringContextUtil.getBean(RepositoryService.class);
+        RepositoryService repositoryService = (RepositoryService)SpringContextUtil.getBean(RepositoryService.class);
         return repositoryService.createProcessDefinitionQuery()
                 .processDefinitionId(processDefinitionId)
                 .singleResult();
@@ -423,8 +415,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     protected HistoricProcessInstance getHisProcessInstance(String processInstanceId) {
-
-        HistoryService historyService = (HistoryService) SpringContextUtil.getBean(HistoryService.class);
+        HistoryService historyService = (HistoryService)SpringContextUtil.getBean(HistoryService.class);
         return historyService.createHistoricProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .singleResult();
@@ -437,7 +428,7 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     protected SysUser getUserInfo(String userId) {
-        SysUserServiceImpl sysUserService = (SysUserServiceImpl) SpringContextUtil.getBean(SysUserServiceImpl.class);
+        SysUserServiceImpl sysUserService = (SysUserServiceImpl)SpringContextUtil.getBean(SysUserServiceImpl.class);
         return Optional.ofNullable(sysUserService.selectUserById(Long.parseLong(userId))).orElse(
                 new SysUser(1L, "System", "manager4480")
         );
@@ -451,22 +442,19 @@ public class SendMessageEventLister extends AbstractEventListener {
      * @return
      */
     private Set<SysUser> getFlowCandidates(TaskEntity entity) {
-        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl) SpringContextUtil.getBean(FlowableUserServiceImpl.class);
-
+        FlowableUserServiceImpl flowableUserService = (FlowableUserServiceImpl)SpringContextUtil.getBean(FlowableUserServiceImpl.class);
         Set<IdentityLink> candidates = entity.getCandidates();
         Set<SysUser> sysUserSet = new HashSet<>();
         if (!CollectionUtils.isEmpty(candidates)) {
             candidates.forEach(t -> {
                 String userId = t.getUserId();
                 String groupId = t.getGroupId();
-                if (!StringUtils.isEmpty(userId)) {
-                    SysUser userInfo = getUserInfo(userId);
-                    sysUserSet.add(userInfo);
-                } else if (!StringUtils.isEmpty(groupId)) {
+                if (StrUtil.isNotEmpty(userId)) {
+                    sysUserSet.add(getUserInfo(userId));
+                } else if (StrUtil.isNotEmpty(groupId)) {
                     List<SysUser> sysUsers = flowableUserService.getUserByFlowGroupId(Long.parseLong(groupId));
-                    if (org.apache.commons.collections.CollectionUtils.isNotEmpty(sysUsers)) {
-                        Set<SysUser> userSet = sysUsers.stream().collect(Collectors.toSet());
-                        sysUserSet.addAll(userSet);
+                    if (CollUtil.isNotEmpty(sysUsers)) {
+                        sysUserSet.addAll(CollUtil.newHashSet(sysUsers));
                     }
                 }
             });

@@ -23,7 +23,7 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">开始时间：</label>
                 <div class="col-sm-8">
-                    <div class="input-group date">
+                    <div class="input-group ">
                         <input type="text" class="datetime-input form-control" name="startTime" placeholder="开始时间" required/>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">结束时间：</label>
                 <div class="col-sm-8">
-                    <div class="input-group date">
+                    <div class="input-group ">
                         <input type="text" class="datetime-input form-control" name="endTime"  placeholder="结束时间" required/>
                     </div>
                 </div>
@@ -61,18 +61,7 @@
                 $.operate.save(prefix + "/add", $('#form-leave-add').serialize());
             }
         }
-
-        $("input[name='startTime']").datetimepicker({
-            format: "yyyy-mm-dd hh:ii:ss",
-            minView: "hour",
-            autoclose: true
-        });
-
-        $("input[name='endTime']").datetimepicker({
-            format: "yyyy-mm-dd hh:ii:ss",
-            minView: "hour",
-            autoclose: true
-        });
+        
 
         $(".file-upload").fileinput({
             uploadUrl: '/common/upload',

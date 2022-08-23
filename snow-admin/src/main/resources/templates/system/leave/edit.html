@@ -59,7 +59,7 @@
                     <input type="hidden" name="fileUrl" id="filekey" th:field="*{fileUrl}">
                     <div class="form-control-static">
                         <a id="fileName"></a>
-                        <button id="preview">预览</button>
+                       <!-- <button id="preview">预览</button>-->
                     </div>
                     <div class="file-loading">
                         <input class="form-control file-upload" id="fileUrl"  name="file" type="file">
@@ -91,6 +91,7 @@
                 preview(data.url);
             })
         });
+        //文件预览服务器
         function preview(url) {
             window.open('http://47.98.36.102:8012/onlinePreview?url='+encodeURIComponent(Base64.encode(url)));
         }
