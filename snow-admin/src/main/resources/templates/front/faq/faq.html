@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>DingFlow</title>
+    <meta name="description" content="DingFlow">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.3.1}" rel="stylesheet"/>
+    <link th:href="@{/ajax/libs/layui/layui.css}" rel="stylesheet"/>
+    <link th:href="@{/ajax/libs/layer/theme/moon/style.css}" rel="stylesheet"/>
+    <!-- 360浏览器急速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+</head>
+<body id="page-top" class="landing-page no-skin-config">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <th:block th:include="include :: front-header" />
+    <div class="row" style="margin-top: 50px">
+        <div class="col-sm-12">
+            <div class="wrapper wrapper-content animated fadeInUp">
+
+                <div class="ibox-content m-b-sm border-bottom">
+                    <div class="text-center p-lg">
+                        <h2>如果没有找到您需要的问题</h2>
+                        <span>您可以点击</span>
+                        <button title="Create new cluster" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#onlineIssue"><i class="fa fa-plus"></i> <span class="bold">在线提问</span>
+                        </button>按钮
+                    </div>
+                </div>
+
+                <div class="faq-item" th:each="sysOaFaq,iterStat : ${dataTable.rows}">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <a data-toggle="collapse" th:href="'faq.html#'+${sysOaFaq.faqNo}" class="faq-question" > <span  class="faq-question" >[[${iterStat.index+1}]]、[[${sysOaFaq.faqTitle}]]</span></a>
+                        </div>
+                        <div class="col-md-3">
+                           <!-- <span class="small font-bold" th:text="${@dict.getLabel('sys_faq_type', sysOaFaq.faqSource)}"></span>
+                            <div class="tag-list" th:each="sysOaFaqLabel,iterStat : ${sysOaFaq.sysOaFaqLabelList}">
+                                <span class="tag-item" th:text="${sysOaFaqLabel.faqLabel}"></span>
+                            </div>-->
+                            <small> <i class="fa fa-clock-o"></i> <label class="control-label" th:text="${#dates.format(sysOaFaq.createTime, 'yyyy-MM-dd HH:mm:ss')}"/></small>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <label th:switch="${sysOaFaq.faqStatus}">
+                                <button class="btn btn-primary btn-sm" th:case="1" type="button" data-toggle="modal"  data-target="#onlineAnswer" th:data-whatever="${sysOaFaq.faqNo}" ><i class="fa fa-pencil"></i>&nbsp;&nbsp;<span class="bold">回答</span></button>
+                                <h4  class="badge badge-info"  th:case="3">已完结</h4>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div th:id="${sysOaFaq.faqNo}" class="panel-collapse collapse faq-answer">
+                                <div th:each="sysOaFaqAnswer,iterStat : ${sysOaFaq.SysOaFaqAnswerList}">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <!--    <span class="text-primary"> 第<label th:text="${iterStat.index}+1"/>条</span>-->
+                                            <small class="faq-question-status"><i class="fa fa-comments-o"></i> <span th:text="${@user.getName(sysOaFaqAnswer.createBy)}"></span> 于<span th:text="${#dates.format(sysOaFaqAnswer.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span> 回答了您：</small>
+
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==0}">
+                                            <span class="badge badge-info">待采纳</span>
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==1}">
+                                            <span class="badge badge-success">已被采纳</span>
+                                            <span class="badge badge-danger" th:if="${sysOaFaqAnswer.answerFraction>5}">[[${sysOaFaqAnswer.answerFraction}]]分</span>
+                                            <span class="badge badge-success" th:if="${sysOaFaqAnswer.answerFraction<=5}">[[${sysOaFaqAnswer.answerFraction}]]分</span>
+                                        </div>
+                                        <div class="col-md-2 text-right" th:if="${sysOaFaqAnswer.isAdopt==2}">
+                                            <span class="badge badge-warning">未被采纳</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p th:text="${sysOaFaqAnswer.answerAnswer}">
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5  style="font-size:15px;color:#379bb;border-bottom:1px solid #ddd;margin:4px 10px 25px 10px;padding-bottom:5px"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--分页-->
+                <div id="footPage" style="text-align: center;"></div>
+
+                <div class="modal fade" id="onlineIssue" tabindex="-1" role="dialog"  aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content animated fadeIn">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+                                <h4 class="modal-title text-primary">在线提问</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="faqNo" class="control-label">问题:</label>
+                                    <textarea name="faqTitle"  id="faqTitle" class="form-control"  rows="7" placeholder="请输入问题..." ></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" onclick="saveOnlineIssue()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="onlineAnswer" tabindex="-1" role="dialog"  aria-labelledby="exampleModalLabel">
+                    <div class="modal-dialog">
+                        <div class="modal-content animated fadeIn">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title text-primary">在线回答</h4>
+                                <!--  <small>这里可以显示副标题。-->
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="faqNo" class="control-label">编号:</label>
+                                    <input type="text" class="form-control" id="faqNoId" name="faqNo" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="faqNo" class="control-label">答案:</label>
+                                    <textarea name="answerAnswer"  id="answerAnswer" class="form-control" rows="10" placeholder="请输入你的答案..."></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary" onclick="saveOnlineAnswer()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6 b-r"><h3 class="m-t-none m-b">登录</h3>
+                        <form id="signupForm" autocomplete="off">
+                            <div class="form-group"><input type="text"   name="username" class="form-control uname"   required  placeholder="请输入用户名"     /></div>
+                            <div class="form-group"><input type="password"  name="password"  placeholder="请输入密码" required class="form-control pword"></div>
+                            <div class="row m-t form-group">
+                                <div class="col-xs-6">
+                                    <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" required/>
+                                </div>
+                                <div class="col-xs-6">
+                                    <a href="javascript:void(0);" title="点击更换验证码">
+                                        <img th:src="@{../captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="checkbox-custom form-group" th:classappend="${captchaEnabled==false} ? 'm-t'">
+                                <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>
+                            </div>
+                            <div class="form-group">
+                                <a class="btn btn-sm btn-primary pull-right m-t-n-xs  btn-block"  id="btnSubmit" data-loading="正在验证登录，请稍后..."><strong>登录</strong></a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>非企业用户?</h3>
+                        <p>您可以创建一个帐户:</p>
+                        <p class="text-center">
+                            <a th:href="@{/front/register}" target="_blank"><i class="fa fa-sign-in big-icon"></i></a>
+                        </p>
+                        <br/>
+                        <br/>
+                        <h4 class="text-info" style="font-weight: bold">借助钉钉，致力于流程，让流程更简单</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: front-footer" />
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+<script th:src="@{/js/content.min.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/layui/layui.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ruoyi/front-login.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:inline="javascript">
+    var ctx = [[@{/}]];
+    var captchaType = [[${captchaType}]];
+</script>
+<script>
+    function saveOnlineIssue(){
+        var faqTitle= $("#faqTitle").val();
+        if($.common.isEmpty(faqTitle)){
+            $.modal.msgWarning("请先填写问题，再提交");
+            return false;
+        }
+        var config = {
+            url: "/system/faq/add",
+            type: "post",
+            dataType: "json",
+            data: {
+                "faqTitle":faqTitle,
+                "faqType":1,
+                "faqSource":1
+            },
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+            },
+            success: function(result) {
+                if (typeof callback == "function") {
+                    callback(result);
+                }
+                if (result.code == web_status.SUCCESS) {
+                    $.modal.alertSuccess(result.msg)
+                    location.reload();
+                } else if (result.code == web_status.WARNING) {
+                    $.modal.alertWarning(result.msg)
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+                $.modal.closeLoading();
+
+            }
+        };
+        $.ajax(config)
+    }
+
+    function saveOnlineAnswer(){
+        var answerAnswer= $("#answerAnswer").val();
+        var faqNo= $("#faqNoId").val();
+
+        if($.common.isEmpty(faqTitle)){
+            $.modal.msgWarning("请先填写答案，再提交");
+            return false;
+        }
+        var config = {
+            url: "/system/answer/add",
+            type: "post",
+            dataType: "json",
+            data: {
+                "answerAnswer":answerAnswer,
+                "faqNo":faqNo
+            },
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+            },
+            success: function(result) {
+                if (typeof callback == "function") {
+                    callback(result);
+                }
+                if (result.code == web_status.SUCCESS) {
+                    $.modal.alertSuccess(result.msg)
+                    location.reload();
+                } else if (result.code == web_status.WARNING) {
+                    $.modal.alertWarning(result.msg)
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+                $.modal.closeLoading();
+
+            }
+        };
+        $.ajax(config)
+    }
+
+    $('#onlineAnswer').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // 触发事件的按钮
+        var recipient = button.data('whatever')
+        var modal = $(this)  //获得模态框本身
+        modal.find('.modal-body input').val(recipient)
+    });
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+        laypage.render({
+            elem: 'footPage'
+            ,count: [[${dataTable.total}]]
+            ,curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/pageNum=(\d+)/);
+                return page ? page[1] : 1;
+            }()
+            ,jump: function(obj, first){
+                //首次不执行
+                if(!first){
+                    window.location.href="?pageNum="+obj.curr+"&pageSize=10"
+                }
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

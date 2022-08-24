@@ -1,8 +1,7 @@
 package com.snow.framework.shiro.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.snow.common.constant.Constants;
 import com.snow.common.constant.ShiroConstants;
 import com.snow.common.constant.UserConstants;
@@ -13,6 +12,8 @@ import com.snow.framework.manager.factory.AsyncFactory;
 import com.snow.framework.util.ShiroUtils;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 注册校验方法
@@ -35,15 +36,15 @@ public class SysRegisterService
     {
         String msg = "", username = user.getLoginName(), password = user.getPassword();
 
-        if (!StringUtils.isEmpty(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
+        if (ObjectUtil.isNotEmpty(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
         {
             msg = "验证码错误";
         }
-        else if (StringUtils.isEmpty(username))
+        else if (StrUtil.isEmpty(username))
         {
             msg = "用户名不能为空";
         }
-        else if (StringUtils.isEmpty(password))
+        else if (StrUtil.isEmpty(password))
         {
             msg = "用户密码不能为空";
         }

@@ -313,9 +313,11 @@
 					<li><a class="page-scroll" href="/front/index#testimonials">获奖</a></li>
 					<li><a class="page-scroll" href="/front/index#pricing">价格</a></li>
 					<li><a class="page-scroll" href="/front/index#contact">联系</a></li>
+					<li><a class="page-scroll" href="/front/faq">FAQ</a></li>
 					<li><a class="page-scroll" href="https://www.dingflow.yifaoa.top/docs" target="_blank">文档</a></li>
 					<li shiro:guest=""><a  data-toggle="modal" class="page-scroll"   href="#modal-form">登录</a></li>
 					<li shiro:user=""><a class="page-scroll" th:href="@{/front/main}">我的主页</a></li>
+					<li shiro:user=""> <a th:href="@{../logout}" class="page-scroll"><i class="fa fa-sign-out text-danger"></i> 注销</a></li>
 				</ul>
 			</div>
 		</div>

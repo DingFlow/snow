@@ -7,6 +7,7 @@ import com.snow.common.constant.MessageConstants;
 import com.snow.common.constant.UserConstants;
 import com.snow.common.enums.MessageEventType;
 import com.snow.common.core.domain.MessageEventRequest;
+import com.snow.common.enums.UserType;
 import com.snow.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -71,6 +72,7 @@ public class SysRegisterController extends BaseController
     public AjaxResult afrontRegister(SysUser user)
     {
 
+        user.setUserType(UserType.FRONT_USER_TYPE.getCode());
         String msg = registerService.register(user);
 
         SysUser sysUser = userService.selectUserByLoginName(user.getLoginName());

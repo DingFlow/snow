@@ -3,18 +3,18 @@ package com.snow.web.controller.front;
 import cn.hutool.core.collection.CollectionUtil;
 import com.snow.common.config.Global;
 import com.snow.common.core.controller.BaseController;
+import com.snow.common.core.page.TableDataInfo;
 import com.snow.common.enums.MessageReadStatus;
 import com.snow.flowable.domain.FlowGeneralSituationVO;
 import com.snow.flowable.service.FlowableService;
 import com.snow.framework.util.ShiroUtils;
-import com.snow.system.domain.SysMenu;
-import com.snow.system.domain.SysMessageTransition;
-import com.snow.system.domain.SysNotice;
-import com.snow.system.domain.SysUser;
+import com.snow.system.domain.*;
 import com.snow.system.service.ISysMessageTransitionService;
 import com.snow.system.service.ISysNoticeService;
+import com.snow.system.service.ISysOaFaqService;
 import com.snow.system.service.impl.SysMenuServiceImpl;
 import com.snow.system.service.impl.SysNoticeServiceImpl;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -37,7 +37,6 @@ public class FrontIndexController extends BaseController {
     @Autowired
     private SysMenuServiceImpl sysMenuService;
 
-
     @Autowired
     private FlowableService flowableService;
 
@@ -46,6 +45,9 @@ public class FrontIndexController extends BaseController {
 
     @Autowired
     private ISysNoticeService sysNoticeService;
+
+    @Autowired
+    private ISysOaFaqService sysOaFaqService;
 
     private String prefix = "front";
 
@@ -147,6 +149,22 @@ public class FrontIndexController extends BaseController {
         SysNotice sysNotice = sysNoticeService.selectNoticeById(id);
         mmap.put("sysNotice",sysNotice);
         return prefix+ "/news/common";
+    }
+
+    /**
+     *  跳转答疑中心
+     * @return
+     */
+    @GetMapping("/faq")
+    public String toFaq(SysOaFaq sysOaFaq,ModelMap mmap) {
+        startPage();
+        List<SysOaFaq> list = sysOaFaqService.selectSysOaFaqList(sysOaFaq);
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(0);
+        rspData.setRows(list);
+        TableDataInfo dataTable = getDataTable(list);
+        mmap.put("dataTable",dataTable);
+        return prefix+ "/faq/faq";
     }
 
 }
