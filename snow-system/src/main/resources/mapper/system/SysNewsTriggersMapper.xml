@@ -37,7 +37,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertSysNewsTriggers" parameterType="SysNewsTriggers" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSysNewsTriggers" parameterType="SysNewsTriggers" >
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
         insert into sys_news_triggers
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="newsNodeId != null">news_node_id,</if>

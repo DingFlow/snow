@@ -1,6 +1,5 @@
 package com.snow.framework.excel;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.snow.common.enums.FinanceTradeType;
@@ -12,8 +11,7 @@ import com.snow.system.domain.FinanceAlipayFlow;
 import com.snow.system.domain.FinanceAlipayFlowImport;
 import com.snow.system.domain.SysUser;
 import com.snow.system.service.IFinanceAlipayFlowService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,14 +25,9 @@ import java.util.stream.Collectors;
  * @Description:
  * @date 2020/11/4 10:43
  */
-
+@Slf4j
 public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlipayFlowImport> {
 
-    private static final Logger log = LoggerFactory.getLogger(FinanceAlipayFlowListener.class);
-
-    /**
-     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
-     */
 
     private IFinanceAlipayFlowService financeAlipayFlowService;
 
@@ -44,7 +37,6 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
     private SysUser sysUser;
 
     /** 交易主体账户 */
-
     private String tradeAccount;
 
 
@@ -55,10 +47,13 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
      * 账单类型
      */
     private Integer billType;
+
+    //创建list集合封装最终的数据
+    List<FinanceAlipayFlowImport> list = new ArrayList<>();
+
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
      *
-     * @param financeAlipayFlowService
      */
     public FinanceAlipayFlowListener(IFinanceAlipayFlowService financeAlipayFlowService, SysUser sysUser, String tradeAccount, String tradeRealName, Integer billType) {
         this.financeAlipayFlowService = financeAlipayFlowService;
@@ -67,13 +62,10 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
         this.tradeRealName=tradeRealName;
         this.billType=billType;
     }
-    //创建list集合封装最终的数据
-    List<FinanceAlipayFlowImport> list = new ArrayList<>();
 
     //一行一行去读取excle内容
     @Override
     public void invoke(FinanceAlipayFlowImport financeAlipayFlowImport, AnalysisContext analysisContext) {
-
         //没有读取到金额直接返回
         if(StringUtils.isNull(financeAlipayFlowImport.getTradePrice())){
             return;
@@ -177,7 +169,6 @@ public class FinanceAlipayFlowListener extends AnalysisEventListener<FinanceAlip
             return financeAlipayFlow;
         }).collect(Collectors.toList());
         financeAlipayFlowService.insertBatchFinanceAlipayFlow(financeAlipayFlowList);
-
     }
 
 }

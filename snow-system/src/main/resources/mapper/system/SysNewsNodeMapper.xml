@@ -47,7 +47,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysNewsNodeVo"/>
         where news_node_key = #{newsNodeKey} and parent_id = #{parentId} and is_delete=0
     </select>
-    <insert id="insertSysNewsNode" parameterType="SysNewsNode" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSysNewsNode" parameterType="SysNewsNode" >
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
         insert into sys_news_node
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="newsNodeName != null and newsNodeName != ''">news_node_name,</if>

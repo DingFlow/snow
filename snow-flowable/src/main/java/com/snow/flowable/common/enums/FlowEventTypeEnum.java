@@ -6,22 +6,22 @@ package com.snow.flowable.common.enums;
  * @Description:
  * @date 2020/12/7 15:54
  */
-public enum  FlowDefEnum {
+public enum FlowEventTypeEnum {
 
-    SNOW_OA_LEAVE("snow_oa_leave", "请假申请流程"),
+    PROCESS_STARTED("PROCESS_STARTED", "流程开始"),
 
-    PURCHASE_ORDER_PROCESS("purchase_order_process", "采购审批流程"),
+    PROCESS_COMPLETED("PROCESS_COMPLETED", "流程完结"),
 
-    SNOW_OA_RESIGN_PROCESS("snow_oa_resign", "离职审批流程"),
+    TASK_CREATED("TASK_CREATED", "任务创建"),
 
-    SNOW_OA_CUSTOMER_ADMITTANCE("snow_oa_customer_admittance","客户准入流程"),
+    TASK_OWNER_CHANGED("TASK_OWNER_CHANGED","转办任务"),
 
-    SNOW_FN_PAYMENT("snow_fn_payment","付款审批流程");
+    TASK_COMPLETED("TASK_COMPLETED","完成任务");
 
     private final String code;
     private final String info;
 
-    FlowDefEnum(String code, String info)
+    FlowEventTypeEnum(String code, String info)
     {
         this.code = code;
         this.info = info;
@@ -37,8 +37,8 @@ public enum  FlowDefEnum {
         return info;
     }
 
-    public static FlowDefEnum getByCode(String code) {
-        for (FlowDefEnum value : FlowDefEnum.values()) {
+    public static FlowEventTypeEnum getByCode(String code) {
+        for (FlowEventTypeEnum value : FlowEventTypeEnum.values()) {
             if (value.getCode().equals(code)) {
                 return value;
             }

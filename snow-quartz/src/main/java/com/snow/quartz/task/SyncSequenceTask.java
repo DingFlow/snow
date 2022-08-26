@@ -17,14 +17,14 @@ import java.util.List;
  **/
 @Component("sequenceTask")
 @Slf4j
-public class SequenceTask {
+public class SyncSequenceTask {
+
     @Autowired
     private SysSequenceServiceImpl sysSequenceService;
     /**
      *每日凌晨更新序列值
      */
-    public void updateSequenceValue()
-    {
+    public void updateSequenceValue() {
         log.info("开始更新序列值时间:{}",DateUtil.now());
         SysSequence sysSequence=new SysSequence();
         List<SysSequence> sysSequences = sysSequenceService.selectSysSequenceList(sysSequence);
