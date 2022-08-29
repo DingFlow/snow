@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/report")
 @Slf4j
-public class ReportController extends BaseController
-{
+public class ReportController extends BaseController {
+
 
     private String prefix = "/jmreport";
 
@@ -32,8 +32,8 @@ public class ReportController extends BaseController
     @GetMapping("/design")
     public String reportDesign()
     {
-
         return redirect(prefix+"/list");
     }
+
 
 }

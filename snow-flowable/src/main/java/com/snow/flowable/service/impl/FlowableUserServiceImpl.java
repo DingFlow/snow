@@ -215,24 +215,25 @@ public class FlowableUserServiceImpl implements FlowableUserService {
     public List<RemoteGroup> getLinkFlowUserGroupList(String filter) {
         List<RemoteGroup> returnFlowUserGroupList=Lists.newArrayList();
         List<RemoteGroup> flowUserGroupList = getFlowUserGroupList(filter);
-        if(CollectionUtil.isNotEmpty(flowUserGroupList)){
-            flowUserGroupList.forEach(t->{
-                FlowGroupDO flowGroupDOById = flowGroupDOService.selectFlowGroupDOById(Long.parseLong(t.getId()));
-                if(flowGroupDOById.getParentId()==0L){
-                    return;
-                }
-                FlowGroupDO flowGroupDO=new FlowGroupDO();
-                flowGroupDO.setParentId(Long.parseLong(t.getId()));
-                List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
-                if(CollectionUtil.isEmpty(flowGroupDOS)){
-                    RemoteGroup remoteGroup=new RemoteGroup();
-                    FlowGroupDO parentFlowGroupDO = flowGroupDOService.selectFlowGroupDOById(flowGroupDOById.getParentId());
-                    remoteGroup.setId(t.getId());
-                    remoteGroup.setName(parentFlowGroupDO.getRoleName()+"---"+t.getName());
-                    returnFlowUserGroupList.add(remoteGroup);
-                }
-            });
+        if(CollUtil.isEmpty(flowUserGroupList)){
+            return returnFlowUserGroupList;
         }
+        flowUserGroupList.forEach(t->{
+            FlowGroupDO flowGroupDOById = flowGroupDOService.selectFlowGroupDOById(Long.parseLong(t.getId()));
+            if(flowGroupDOById.getParentId()==0L){
+                return;
+            }
+            FlowGroupDO flowGroupDO=new FlowGroupDO();
+            flowGroupDO.setParentId(Long.parseLong(t.getId()));
+            List<FlowGroupDO> flowGroupDOS = flowGroupDOService.selectFlowGroupDOList(flowGroupDO);
+            if(CollectionUtil.isEmpty(flowGroupDOS)){
+                RemoteGroup remoteGroup=new RemoteGroup();
+                FlowGroupDO parentFlowGroupDO = flowGroupDOService.selectFlowGroupDOById(flowGroupDOById.getParentId());
+                remoteGroup.setId(t.getId());
+                remoteGroup.setName(parentFlowGroupDO.getRoleName()+"---"+t.getName());
+                returnFlowUserGroupList.add(remoteGroup);
+            }
+        });
         return returnFlowUserGroupList;
     }
 

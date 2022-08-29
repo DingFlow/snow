@@ -236,7 +236,7 @@
                 if (result.code == web_status.SUCCESS) {
                     $.modal.msg("标记成功，即将跳转到重要邮件箱", modal_status.SUCCESS);
                     setTimeout(function(){
-                        window.location.href="/system/email/mailbox/3";
+                        window.location.href="/system/email/importantMail";
                     },3000);
                 } else if (result.code == web_status.WARNING) {
                     $.modal.alertWarning(result.msg)
@@ -269,7 +269,7 @@
                 if (result.code == web_status.SUCCESS) {
                     $.modal.msg("标记成功，即将跳转到垃圾箱", modal_status.SUCCESS);
                     setTimeout(function(){
-                        window.location.href="/system/email/mailbox/4";
+                        window.location.href="/system/email/trashMail";
                     },3000);
                 } else if (result.code == web_status.WARNING) {
                     $.modal.alertWarning(result.msg)

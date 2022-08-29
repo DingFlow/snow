@@ -61,9 +61,10 @@ public interface FlowableUserService {
      List<SysUser> getCandidateUsers(String assignee,String taskId);
 
     /**
-     *
-     * @param filter
-     * @return
+     * 获取流程组列表
+     *    该方法主要用于流程编译器获取用户组信息
+     * @param filter 流程组名称
+     * @return 流程组列表
      */
     List<RemoteGroup> getLinkFlowUserGroupList(String filter);
 

@@ -353,8 +353,10 @@ public class SysOaEmailController extends BaseController {
 
     /**
      * 跳转邮件列表
+     * 老版本邮件列表，现在已不再使用
      */
     @GetMapping("/mailbox/{mailType}")
+    @Deprecated
     public String mailbox(@PathVariable("mailType") Long mailType,ModelMap mmap)
     {
         mmap.put("mailType",mailType);

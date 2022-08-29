@@ -200,7 +200,7 @@
                     if (result.code == web_status.SUCCESS) {
                         $.modal.msg("删除成功，即将跳转到收件箱", modal_status.SUCCESS);
                         setTimeout(function(){
-                            window.location.href="/system/email/mailbox/6";
+                            window.location.href="/system/email/sendMail";
                         },3000);
                     } else if (result.code == web_status.WARNING) {
                         $.modal.alertWarning(result.msg)

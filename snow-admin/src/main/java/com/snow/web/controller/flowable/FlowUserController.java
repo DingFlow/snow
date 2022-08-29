@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @author qimingjin
- * @Title:
+ * @author Agee
+ * @Title:  流程编译器用户和用户组
  * @Description:
  * @date 2020/11/20 10:34
  */
@@ -26,7 +26,8 @@ public class FlowUserController extends BaseController {
 
     /**
      * 编译器登录
-     * @return
+     *   集成flowable官方编译器，指定特定用户
+     * @return 用户信息
      */
     @RequestMapping(value="/rest/account")
     public String getAccount() {
@@ -36,14 +37,15 @@ public class FlowUserController extends BaseController {
 
     /**
      * 获取用户列表
+     *   流程编译器分配用户时查询
      * @param filter
      */
     @GetMapping(value = "/rest/getUserList")
-    public FlowRemoteVO getFlowUserList(@RequestParam(value = "filter",required = false) String filter) {
+    public FlowRemoteVO<RemoteUser> getFlowUserList(@RequestParam(value = "filter",required = false) String filter) {
         startPage();
         List<RemoteUser> flowUserList = flowableUserService.getFlowUserList(filter);
         TableDataInfo dataTable = getDataTable(flowUserList);
-        FlowRemoteVO flowRemoteVO = new FlowRemoteVO();
+        FlowRemoteVO flowRemoteVO = new FlowRemoteVO<>();
         flowRemoteVO.setData(dataTable.getRows());
         flowRemoteVO.setSize(dataTable.getPageSize());
         flowRemoteVO.setStart(dataTable.getPageIndex());

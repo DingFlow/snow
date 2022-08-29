@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -243,6 +245,7 @@ public class SysIndexController extends BaseController {
         //获取当天发起的流程
         processInstanceDTO.setStartedAfter(DateUtils.parseDate(DateUtils.getDate()+"00:00:00"));
         processInstanceDTO.setStartedBefore(DateUtils.parseDate(DateUtils.getDate()+"23:59:59"));
+        processInstanceDTO.setStartedUserId(user.getUserId().toString());
         List<ProcessInstanceVO> historicProcessInstanceList = flowableService.getHistoricProcessInstanceList(processInstanceDTO);
         mmap.put("historicProcessInstanceList",historicProcessInstanceList);
         return "big_screen";
