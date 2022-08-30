@@ -1,8 +1,8 @@
 <p align="center">
-	<img alt="logo" src="/static/logo.png" width="150" height="150">
+	<img alt="logo" src="https://static.xiaofengwang.com/dev/img/k0snnry9xfx9ublk74ur.jpg" width="150" height="150">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">DingFlow v2.0.0</h1>
-<h4 align="center">一个轻量级 Java 权限认证框架，让鉴权变得简单、优雅！</h4>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">DingFlow V2.0.0</h1>
+<h4 align="center">借助钉钉，致力于流程，让流程更简单！</h4>
 
 ## 平台简介
 
