@@ -250,4 +250,9 @@ public class SysIndexController extends BaseController {
         mmap.put("historicProcessInstanceList",historicProcessInstanceList);
         return "big_screen";
     }
+
+    @GetMapping("/test")
+    public String test(ModelMap mmap) {
+        return "system/notice/test";
+    }
 }

@@ -429,8 +429,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param user 用户信息
      */
     @Override
-    public void checkUserAllowed(SysUser user)
-    {
+    public void checkUserAllowed(SysUser user) {
         if (StringUtils.isNotNull(user.getUserId()) && user.isAdmin())
         {
             throw new BusinessException("不允许操作超级管理员用户");
